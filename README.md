@@ -3,6 +3,8 @@
 
 ## Developer section
 
+When developing add `*` in .eslintignore. Do not forget to remove it before you create a new pull request!
+
 ### `yarn start`
 
 Runs the app in the development mode.\
