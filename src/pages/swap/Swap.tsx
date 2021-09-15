@@ -1,13 +1,7 @@
-import React from "react"
+import React from 'react';
 
-interface Swap {
-
-}
-
-const Swap = ({} : Swap): JSX.Element => {
-  return (
-    <div></div>
-  );
-}
+const Swap = (): JSX.Element => (
+  <div />
+);
 
 export default Swap;

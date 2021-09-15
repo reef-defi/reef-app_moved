@@ -1,13 +1,7 @@
-import React from "react"
+import React from 'react';
 
-interface Pools {
-
-}
-
-const Pools = ({} : Pools): JSX.Element => {
-  return (
-    <div></div>
-  );
-}
+const Pools = (): JSX.Element => (
+  <div />
+);
 
 export default Pools;

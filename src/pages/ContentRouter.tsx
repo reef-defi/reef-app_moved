@@ -1,15 +1,7 @@
-import React from "react"
+import React from 'react';
 
-interface ContentRouter {
-
-}
-
-const ContentRouter = ({} : ContentRouter): JSX.Element => {
-  return (
-    <div>
-      
-    </div>
-  );
-}
+const ContentRouter = (): JSX.Element => (
+  <div />
+);
 
 export default ContentRouter;

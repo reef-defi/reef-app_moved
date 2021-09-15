@@ -1,13 +1,7 @@
-import React from "react"
+import React from 'react';
 
-interface Dashboard {
-
-}
-
-const Dashboard = ({} : Dashboard): JSX.Element => {
-  return (
-    <div></div>
-  );
-}
+const Dashboard = (): JSX.Element => (
+  <div />
+);
 
 export default Dashboard;
