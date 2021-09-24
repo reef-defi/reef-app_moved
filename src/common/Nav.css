@@ -1,0 +1,63 @@
+
+.reef-logo {
+  fill: #681cff;
+  transition: fill .6s cubic-bezier(.26,1,.48,1);
+}
+
+/* FADE ANIMATIONS */
+.fade-enter {
+  opacity: 0;
+}
+
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 400ms;
+}
+
+.fade-exit {
+  opacity: 1;
+}
+
+.fade-exit-active {
+  opacity: 0;
+  transition: opacity 400ms;
+}
+
+/* SIDEBAR */
+.sidebar__listItem:hover {
+  border-radius: 30px;
+  background-color: #46288b;
+  color: white;
+}
+
+.sidebar {
+  min-width: 200px;
+  background: white;
+  padding: 20px 5px;
+  color: grey;
+  transition: 0.4s ease-in;
+  border-right: 1px solid;
+}
+
+.sidebar-closed {
+  min-width: 70px;
+}
+
+.sidebar-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.sidebar__listItem {
+  margin: 10px 0px;
+  padding: 7px 20px;
+  display: flex;
+}
+
+.sidebar__listItem span {
+  white-space: nowrap;
+}
+
+.sidebar__icon {
+  margin: 0 15px 0 0;
+}
