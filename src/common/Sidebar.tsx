@@ -14,7 +14,7 @@ const menuItems = [
 
 const SCREEN_BREAK_POINT = 700;
 
-const Nav = (): JSX.Element => {
+const Sidebar = (): JSX.Element => {
   const [isOpen, setIsOpen] = useState(true);
   const {width} = useWindowDimensions();
 
@@ -60,5 +60,4 @@ const Nav = (): JSX.Element => {
     </div>
   );
 }
-
-export default Nav;
+export default Sidebar;
