@@ -10,7 +10,7 @@ When developing add `*` in .eslintignore. Do not forget to remove it before you 
 For developing the app and lib simultaneously you will need to do certain steps:
 
 1. Fork/Clone [@reef-defi/react-lib](git@github.com:reef-defi/reef-react-lib.git) besides reef-app project.
-2. In `package.json` replace `"@reef-defi/react-components": "v..."` with `"@reef-defi/react-components": "link:./../reef-react-lib/packages/react-components/"`
+2. In `package.json` replace `"@reef-defi/react-components": "v..."` with `"@reef-defi/react-lib": "link:./../reef-react-lib/"`
 3. `yarn`
 4. `yarn start`
 
