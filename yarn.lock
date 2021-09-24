@@ -2905,6 +2905,10 @@
     blakejs "^1.1.0"
     ethers "5.0.24"
 
+"@reef-defi/react-components@link:../reef-react-lib/packages/react-components":
+  version "0.0.0"
+  uid ""
+
 "@reef-defi/type-definitions@^0.1.7":
   version "0.1.8"
   resolved "https://registry.yarnpkg.com/@reef-defi/type-definitions/-/type-definitions-0.1.8.tgz#00a8baa0b730e579773ea380ff6c97618f0ba769"
