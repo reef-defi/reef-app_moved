@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import './assets/index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import "@reef-defi/react-lib/dist/index.css";
+import '@reef-defi/react-lib/dist/index.css';
 
 ReactDOM.render(
   <React.StrictMode>

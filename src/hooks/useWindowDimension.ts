@@ -1,20 +1,23 @@
 import { useState, useEffect } from 'react';
 
-function getWindowDimensions() {
+interface Dimenisons {
+  width: number;
+  height: number;
+}
+
+const getWindowDimensions = (): Dimenisons => {
   const { innerWidth: width, innerHeight: height } = window;
   return {
     width,
-    height
+    height,
   };
-}
+};
 
-export default function useWindowDimensions() {
+export default function useWindowDimensions(): Dimenisons {
   const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
 
   useEffect(() => {
-    function handleResize() {
-      setWindowDimensions(getWindowDimensions());
-    }
+    const handleResize = (): void => setWindowDimensions(getWindowDimensions());
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
