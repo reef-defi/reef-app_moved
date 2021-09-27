@@ -1,26 +1,16 @@
 import React, { useState } from 'react';
-import {Components} from "@reef-defi/react-lib";
-import ContentRouter from './pages/ContentRouter';
-import Footer from './common/Footer';
 import Sidebar from './common/Sidebar';
+import Nav from './common/Nav';
+import ContentRouter from './pages/ContentRouter';
 
 const App = (): JSX.Element => {
   return (
-    <div className="App d-flex" >
-      <Sidebar />
-      <div className="content">
-        hello everybody my name is Verkas I Ljučka. Me English night firštend. Lets zpeck then!
-        hello everybody my name is Verkas I Ljučka. Me English night firštend. Lets zpeck then!
-        hello everybody my name is Verkas I Ljučka. Me English night firštend. Lets zpeck then!
-        hello everybody my name is Verkas I Ljučka. Me English night firštend. Lets zpeck then!
-        hello everybody my name is Verkas I Ljučka. Me English night firštend. Lets zpeck then!
-        hello everybody my name is Verkas I Ljučka. Me English night firštend. Lets zpeck then!
-        hello everybody my name is Verkas I Ljučka. Me English night firštend. Lets zpeck then!
-        hello everybody my name is Verkas I Ljučka. Me English night firštend. Lets zpeck then!
-        hello everybody my name is Verkas I Ljučka. Me English night firštend. Lets zpeck then!
-        hello everybody my name is Verkas I Ljučka. Me English night firštend. Lets zpeck then!
-
-      </div>
+    <div className="App d-flex w-100 h-100">
+        <Sidebar />
+        <div className="w-100">
+          <Nav />
+          <ContentRouter />
+        </div>
     </div>
   );
 }

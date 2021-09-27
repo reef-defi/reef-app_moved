@@ -1,7 +1,7 @@
-import React, { createRef, useEffect, useRef, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { CSSTransition } from "react-transition-group";
 import {BsFillGrid1X2Fill, BsBagFill, BsHammer, BsArrowLeftRight} from "react-icons/bs";
-import "./Nav.css";
+import "./Sidebar.css";
 import useWindowDimensions from "../hooks/useWindowDimension";
 import { ReefLogo } from "./Icons";
 
