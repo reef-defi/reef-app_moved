@@ -4,5 +4,19 @@ html, body, #root, .App {
 }
 
 .content {
+  display: flex;
   padding: 40px 60px;
+}
+
+/* Footer WIP */
+.footer {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+
+  background: #252a47;
+  display: grid;
+  place-items: center;
+  padding: 50px;
 }
