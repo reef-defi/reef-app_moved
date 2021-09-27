@@ -5,6 +5,20 @@
 
 When developing add `*` in .eslintignore. Do not forget to remove it before you create a new pull request!
 
+## Developing with @reef-defi/react-lib
+
+For developing the app and lib simultaneously you will need to do certain steps:
+
+1. Fork/Clone [@reef-defi/react-lib](git@github.com:reef-defi/reef-react-lib.git) besides reef-app project.
+2. In `package.json` replace `"@reef-defi/react-components": "v..."` with `"@reef-defi/react-lib": "link:./../reef-react-lib/"`
+3. `yarn`
+4. `yarn start`
+
+# Steps before Deployment when developing with react-lib * 
+Do not forget to publish the lib before app deployment! 
+In `package.json` replace `@reef-defi/react-lib` local link with the latest published version!
+Install and test Reefapp
+
 ### `yarn start`
 
 Runs the app in the development mode.\
