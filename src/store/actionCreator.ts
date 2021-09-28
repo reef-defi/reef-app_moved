@@ -1,0 +1,12 @@
+// Signers
+export const SET_SIGNERS_ACTION = "SET_SIGNERS_ACTION";
+export const SELECT_SGNER_ACTION = "SELECT_SGNER_ACTION";
+
+// Tokens
+export const SET_TOKENS_ACTION = "SET_TOKENS_ACTION";
+
+// Settings
+export const SELECT_CHAIN_ACTION = "SELECT_CHAIN_ACTION";
+
+// Pools
+export const SET_POOLS_ACTION = "SET_POOLS_ACTION";
