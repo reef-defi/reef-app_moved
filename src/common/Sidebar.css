@@ -25,7 +25,6 @@
 
 /* SIDEBAR */
 .sidebar__listItem:hover {
-  border-radius: 30px;
   background-color: #46288b;
   color: white;
 }
@@ -49,6 +48,8 @@
 }
 
 .sidebar__listItem {
+  color: inherit;
+  text-decoration: none;
   margin: 10px 0px;
   padding: 7px 20px;
   display: flex;
