@@ -1,25 +1,23 @@
 import React, { useState } from 'react';
-import { Provider as StoreProvider } from 'react-redux';
-import {
-  BrowserRouter as Router,
-} from 'react-router-dom';
 import Sidebar from './common/Sidebar';
 import Nav from './common/Nav';
 import ContentRouter from './pages/ContentRouter';
-import { store } from './store';
+import {hooks} from "@reef-defi/react-lib";
 
-const App = (): JSX.Element => (
-  <Router>
-    <StoreProvider store={store}>
-      <div className="App d-flex w-100 h-100">
-        <Sidebar />
-        <div className="w-100">
-          <Nav />
-          <ContentRouter />
-        </div>
+const {useProvider} = hooks;
+
+const App = (): JSX.Element => {
+  const [provider, isProviderLoading, providerError] = useProvider("");
+  
+  return (
+    <div className="App d-flex w-100 h-100">
+      <Sidebar />
+      <div className="w-100">
+        <Nav />
+        <ContentRouter />
       </div>
-    </StoreProvider>
-  </Router>
-);
+    </div>
+  );
+}
 
 export default App;
