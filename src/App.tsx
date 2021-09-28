@@ -7,6 +7,7 @@ import Sidebar from './common/Sidebar';
 import Nav from './common/Nav';
 import ContentRouter from './pages/ContentRouter';
 import { store } from './store';
+import AppInitialization from './pages/AppInitialization';
 
 const App = (): JSX.Element => (
   <Router>
@@ -15,7 +16,8 @@ const App = (): JSX.Element => (
         <Sidebar />
         <div className="w-100">
           <Nav />
-          <ContentRouter />
+          {/* <ContentRouter /> */}
+          <AppInitialization />
         </div>
       </div>
     </StoreProvider>

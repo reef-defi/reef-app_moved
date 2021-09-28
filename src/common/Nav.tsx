@@ -8,7 +8,6 @@ const Nav = (): JSX.Element => {
   return (
     <nav className="navigation px-3 py-2 d-flex justify-content-end">
       {signersExist && <div>Available</div>}
-      {!signersExist && <Components.Button.Button>Connect to wallet</Components.Button.Button>}
     </nav>
   );
 };
