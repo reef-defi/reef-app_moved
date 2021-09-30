@@ -1,19 +1,17 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
+import { rpc, math } from '@reef-defi/react-lib';
 import { useAppSelector } from '../../store/hooks';
-import { Token } from '../../moveToLib/rpc/tokens';
-import { UtilsReducer } from '../../store/reducers/accounts';
-import { convert2Normal, transformAmount } from '../../moveToLib/utils/math';
 
 const WalletContoller = (): JSX.Element => {
   const history = useHistory();
   const accountTokens = useAppSelector((state) => state.accounts.tokens);
   const tokenList = accountTokens
-    .map((token: Token) => (
+    .map((token: rpc.Token) => (
       <li key={token.address} className="list-item mt-2">
         {token.name}
         =
-        {convert2Normal(token.decimals, token.balance.toString())}
+        {math.convert2Normal(token.decimals, token.balance.toString())}
       </li>
     ));
 

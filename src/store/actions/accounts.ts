@@ -1,9 +1,9 @@
 import { Signer } from '@reef-defi/evm-provider';
+import { rpc } from '@reef-defi/react-lib';
 import {
   SET_ACCOUNT,
   SET_ACCOUNTS, SET_ACCOUNT_BALANCE, SET_SELECTED_ACCOUNT, SET_ACCOUNT_TOKENS,
 } from '../actionCreator';
-import { TokenWithAmount } from '../../moveToLib/rpc/tokens';
 
 export interface ReefswapSigner {
   signer: Signer;
@@ -35,7 +35,7 @@ interface SetAccountBalanceAction {
 
 interface SetAccountTokensAction {
   type: typeof SET_ACCOUNT_TOKENS;
-  tokens: TokenWithAmount[];
+  tokens: rpc.TokenWithAmount[];
 }
 
 export type UtilsActions =
@@ -60,7 +60,7 @@ export const accountsSetAccountBalance = (balance: string): SetAccountBalanceAct
   balance,
 });
 
-export const accountsSetAccountTokens = (tokens: TokenWithAmount[]): SetAccountTokensAction => ({
+export const accountsSetAccountTokens = (tokens: rpc.TokenWithAmount[]): SetAccountTokensAction => ({
   type: SET_ACCOUNT_TOKENS,
   tokens,
 });

@@ -1,15 +1,15 @@
+import { rpc } from '@reef-defi/react-lib';
 import {
   SET_ACCOUNT,
   SET_ACCOUNTS, SET_ACCOUNT_BALANCE, SET_SELECTED_ACCOUNT, SET_ACCOUNT_TOKENS,
 } from '../actionCreator';
 import { ReefswapSigner, UtilsActions } from '../actions/accounts';
-import { Token, TokenWithAmount } from '../../moveToLib/rpc/tokens';
 
 export interface UtilsReducer {
   selectedAccount: number;
   accounts: ReefswapSigner[];
   balance: string;
-  tokens: TokenWithAmount[];
+  tokens: rpc.TokenWithAmount[];
 }
 
 const defaultUtilsState: UtilsReducer = {

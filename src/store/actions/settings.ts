@@ -1,5 +1,5 @@
 import { Provider } from '@reef-defi/evm-provider';
-import { AvailableNetworks } from '../../moveToLib/rpc/rpc';
+import { AvailableNetworks, TokenWithAmount } from '@reef-defi/react-lib';
 import { RELOAD_APP, SET_CHAIN_URL } from '../actionCreator';
 
 interface SetNetworkAction {
