@@ -1,6 +1,6 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { math, rpc } from '@reef-defi/react-lib';
+import { math, Token } from '@reef-defi/react-lib';
 import { useAppSelector } from '../../store/hooks';
 
 const Dashboard = (): JSX.Element => {
@@ -8,7 +8,7 @@ const Dashboard = (): JSX.Element => {
   const accountTokens = useAppSelector((state) => state.accounts.tokens);
   console.log('TKNS=', accountTokens);
   const tokenList = accountTokens
-    .map((token: rpc.Token) => (
+    .map((token: Token) => (
       <li key={token.address} className="list-item mt-2">
         {token.name}
         =

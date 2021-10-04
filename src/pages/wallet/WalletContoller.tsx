@@ -1,13 +1,13 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { rpc, math } from '@reef-defi/react-lib';
+import { rpc, math, Token } from '@reef-defi/react-lib';
 import { useAppSelector } from '../../store/hooks';
 
 const WalletContoller = (): JSX.Element => {
   const history = useHistory();
   const accountTokens = useAppSelector((state) => state.accounts.tokens);
   const tokenList = accountTokens
-    .map((token: rpc.Token) => (
+    .map((token: Token) => (
       <li key={token.address} className="list-item mt-2">
         {token.name}
         =

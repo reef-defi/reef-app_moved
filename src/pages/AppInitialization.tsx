@@ -66,7 +66,7 @@ const AppInitialization = (): JSX.Element => {
         setProvider(newProvider);
 
         message('Loading tokens...');
-        const verifiedTokens = await rpc.loadVerifiedERC20Tokens(settings);
+        const verifiedTokens = await rpc.loadVerifiedERC20Tokens();
         // TODO move out of interval
         const newTokens = await rpc.loadTokens(verifiedTokens, signers[selectedSigner].signer);
         dispatch(setAllTokensAction(newTokens));

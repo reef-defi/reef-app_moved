@@ -1,9 +1,9 @@
-import { rpc } from '@reef-defi/react-lib';
+import { Token } from '@reef-defi/react-lib';
 import { ADD_TOKEN, SET_ALL_TOKENS } from '../actionCreator';
 import { TokensAction } from '../actions/tokens';
 
 export interface TokensReducer {
-  tokens: rpc.Token[];
+  tokens: Token[];
 }
 
 const defaultTokensReducer: TokensReducer = {
