@@ -34,6 +34,7 @@ const AppInitialization = (): JSX.Element => {
   const message = (msg: string): void => setState(toLoadingMessage(msg));
   const { accounts, selectedAccount } = useAppSelector((appState) => appState.accounts);
 
+  hooks.useUpdateAccountBalance(selectedAccount > -1 && accounts.length >= selectedAccount ? accounts[selectedAccount].address : undefined, provider);
   // Initial setup
   useEffect(() => {
     const load = async (): Promise<void> => {
@@ -91,12 +92,9 @@ const AppInitialization = (): JSX.Element => {
       provider?.api.disconnect();
     };
   }, [settings.reload]);
-
   useEffect(() => {
     message('Loading account tokens ...');
     if (selectedAccount === -1 || !provider) { return; }
-    hooks.useUpdateAccountBalance(accounts[selectedAccount].address, provider);
-    console.log('ACCCC');
     const exeInterval = async (): Promise<void> => {
       try {
         if (selectedAccount === -1 || !provider) { return; }
