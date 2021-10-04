@@ -1,11 +1,4 @@
-import { Provider } from '@reef-defi/evm-provider';
-import { AvailableNetworks, TokenWithAmount } from '@reef-defi/react-lib';
-import { RELOAD_APP, SET_CHAIN_URL } from '../actionCreator';
-
-interface SetNetworkAction {
-  type: typeof SET_CHAIN_URL;
-  name: AvailableNetworks;
-}
+import { RELOAD_APP } from '../actionCreator';
 
 interface ReloadAction {
   type: typeof RELOAD_APP;
@@ -13,13 +6,7 @@ interface ReloadAction {
 
 export type SettingsActions =
   | ReloadAction
-  | SetNetworkAction;
 
 export const appReload = (): ReloadAction => ({
   type: RELOAD_APP,
-});
-
-export const settingsSetNetwork = (name: AvailableNetworks): SetNetworkAction => ({
-  type: SET_CHAIN_URL,
-  name,
 });

@@ -1,11 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Provider as StoreProvider } from 'react-redux';
-import {
-  BrowserRouter as Router,
-} from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 import Sidebar from './common/Sidebar';
 import Nav from './common/Nav';
-import ContentRouter from './pages/ContentRouter';
 import { store } from './store';
 import AppInitialization from './pages/AppInitialization';
 
@@ -16,7 +13,6 @@ const App = (): JSX.Element => (
         <Sidebar />
         <div className="w-100">
           <Nav />
-          {/* <ContentRouter /> */}
           <AppInitialization />
         </div>
       </div>
