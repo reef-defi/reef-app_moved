@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux';
-import { settingsReducer } from './settings';
+import signersReducer from "./signers";
 
 const rootReducer = combineReducers({
-  settings: settingsReducer
+  signers: signersReducer
 });
 
 export default rootReducer;
