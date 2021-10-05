@@ -1,5 +1,5 @@
-import { SELECT_SIGNER_ACTION, SET_SIGNERS_ACTION } from "../actionCreator";
-import { ReefSigner } from "@reef-defi/react-lib";
+import { ReefSigner } from '@reef-defi/react-lib';
+import { SELECT_SIGNER_ACTION, SET_SIGNERS_ACTION } from '../actionCreator';
 
 interface SetSigners {
   type: typeof SET_SIGNERS_ACTION;

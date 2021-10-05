@@ -1,16 +1,16 @@
 import React from 'react';
+import { availableNetworks, hooks } from '@reef-defi/react-lib';
 import Sidebar from './common/Sidebar';
 import Nav from './common/Nav';
 import ContentRouter from './pages/ContentRouter';
-import {availableNetworks, hooks} from "@reef-defi/react-lib";
 import { useLoadSigners } from './hooks/useLoadSigners';
 
-const {useProvider} = hooks;
+const { useProvider } = hooks;
 
 const App = (): JSX.Element => {
   const [provider, isProviderLoading, providerError] = useProvider(availableNetworks.mainnet.rpcUrl);
   useLoadSigners(provider);
-  
+
   return (
     <div className="App d-flex w-100 h-100">
       <Sidebar />
@@ -20,6 +20,6 @@ const App = (): JSX.Element => {
       </div>
     </div>
   );
-}
+};
 
 export default App;

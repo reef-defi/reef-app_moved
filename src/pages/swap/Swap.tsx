@@ -1,23 +1,24 @@
 import React from 'react';
 
-import {availableNetworks, Components} from '@reef-defi/react-lib';
+import { availableNetworks, Components } from '@reef-defi/react-lib';
 
-const {SwapComponent, Display} = Components;
+const { SwapComponent, Display } = Components;
 
-const Swap = (): JSX.Element => {
+const none = (): void => {
+  const a = 1;
+};
 
-  return (
-    <Display.CenterColumn>
-      <div style={{ minWidth: "500px" }}>
-        <SwapComponent
-          tokens={[]}
-          reloadTokens={() => {}}
-          network={{...availableNetworks.mainnet}}
-          notify={(message, type) => {}}
-          />
-      </div>
-    </Display.CenterColumn>
-  )
-}
+const Swap = (): JSX.Element => (
+  <Display.CenterColumn>
+    <div style={{ minWidth: '500px' }}>
+      <SwapComponent
+        tokens={[]}
+        reloadTokens={none}
+        network={{ ...availableNetworks.mainnet }}
+        notify={none}
+      />
+    </div>
+  </Display.CenterColumn>
+);
 
 export default Swap;

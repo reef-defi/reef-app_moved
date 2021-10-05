@@ -4,10 +4,12 @@ import {
   BsFillGrid1X2Fill, BsBagFill, BsHammer, BsArrowLeftRight,
 } from 'react-icons/bs';
 import './Sidebar.css';
+import { Link } from 'react-router-dom';
 import useWindowDimensions from '../hooks/useWindowDimension';
 import { ReefLogo } from './Icons';
-import { Link } from 'react-router-dom';
-import { ADD_LIQUIDITY_URL, CREATE_ERC20_TOKEN_URL, DASHBOARD_URL, SWAP_URL } from '../urls';
+import {
+  ADD_LIQUIDITY_URL, CREATE_ERC20_TOKEN_URL, DASHBOARD_URL, SWAP_URL,
+} from '../urls';
 
 const menuItems = [
   { title: 'Dashboard', url: DASHBOARD_URL, icon: <BsFillGrid1X2Fill /> },
