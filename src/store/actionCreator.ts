@@ -1,9 +1,12 @@
 // Signers
+export const RELOAD_SIGNER = 'RELOAD_SIGNER';
 export const SET_SIGNERS_ACTION = 'SET_SIGNERS_ACTION';
 export const SELECT_SIGNER_ACTION = 'SELECT_SIGNER_ACTION';
 
 // Tokens
+export const RELOAD_TOKENS = 'RELOAD_TOKENS';
 export const SET_TOKENS_ACTION = 'SET_TOKENS_ACTION';
 
 // Pools
+export const RELOAD_POOLS = 'RELOAD_POOLS';
 export const SET_POOLS_ACTION = 'SET_POOLS_ACTION';

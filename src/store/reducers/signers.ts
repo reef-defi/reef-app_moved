@@ -3,12 +3,14 @@ import { SELECT_SIGNER_ACTION, SET_SIGNERS_ACTION } from '../actionCreator';
 import { SignersActions } from '../actions/signers';
 
 interface SignersReducer {
+  reloadToggle: boolean;
   accounts: ReefSigner[];
   selectedAccount: number;
 }
 
 const defaultState: SignersReducer = {
   accounts: [],
+  reloadToggle: false,
   selectedAccount: -1,
 };
 
