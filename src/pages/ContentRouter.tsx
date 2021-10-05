@@ -7,7 +7,6 @@ const ContentRouter = (): JSX.Element => (
   <div className="content">
     <Switch>
       <Route exact path={SWAP_URL} component={Swap} />
-      <Route exact path={SETTINGS_URL} render={() => (<div/>)} />
       <Route exact path={DASHBOARD_URL} render={() => (<div/>)} />
       <Route exact path={ADD_LIQUIDITY_URL} render={() => (<div/>)} />
       <Route exact path={REMOVE_LIQUIDITY_URL} render={() => (<div/>)} />
