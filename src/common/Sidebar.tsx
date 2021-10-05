@@ -6,12 +6,14 @@ import {
 import './Sidebar.css';
 import useWindowDimensions from '../hooks/useWindowDimension';
 import { ReefLogo } from './Icons';
+import { Link } from 'react-router-dom';
+import { ADD_LIQUIDITY_URL, CREATE_ERC20_TOKEN_URL, DASHBOARD_URL, SWAP_URL } from '../urls';
 
 const menuItems = [
-  { title: 'Dashboard', icon: <BsFillGrid1X2Fill /> },
-  { title: 'Swap', icon: <BsArrowLeftRight /> },
-  { title: 'Pools', icon: <BsBagFill /> },
-  { title: 'Creator', icon: <BsHammer /> },
+  { title: 'Dashboard', url: DASHBOARD_URL, icon: <BsFillGrid1X2Fill /> },
+  { title: 'Swap', url: SWAP_URL, icon: <BsArrowLeftRight /> },
+  { title: 'Pools', url: ADD_LIQUIDITY_URL, icon: <BsBagFill /> },
+  { title: 'Creator', url: CREATE_ERC20_TOKEN_URL, icon: <BsHammer /> },
 ];
 
 const SCREEN_BREAK_POINT = 700;
@@ -33,18 +35,20 @@ const Sidebar = (): JSX.Element => {
   // TODO add references
   const menuItemsView = menuItems
     .map((item) => (
-      <li key={item.title} className="sidebar__listItem">
-        <div className="sidebar__icon">
-          {item.icon}
-        </div>
-        <CSSTransition
-          in={isOpen}
-          timeout={200}
-          classNames="fade"
-          unmountOnExit
-        >
-          <span className="">{item.title}</span>
-        </CSSTransition>
+      <li key={item.title}>
+        <Link to={item.url} className="sidebar__listItem border-rad">
+          <div className="sidebar__icon">
+            {item.icon}
+          </div>
+          <CSSTransition
+            in={isOpen}
+            timeout={200}
+            classNames="fade"
+            unmountOnExit
+          >
+            <span className="">{item.title}</span>
+          </CSSTransition>
+        </Link>
       </li>
     ));
 
