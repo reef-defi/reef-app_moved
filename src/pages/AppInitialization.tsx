@@ -17,6 +17,8 @@ import {
 } from '../store/internalStore';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { getSignerLocalPointer } from '../store/localStore';
+import useAccountBalanceRedux from '../hooks/useAccountBalanceRedux';
+import useSelectedSignerAddress from '../util/getSelectedSignerUtil';
 
 type State =
   | ErrorState
@@ -33,8 +35,9 @@ const AppInitialization = (): JSX.Element => {
 
   const message = (msg: string): void => setState(toLoadingMessage(msg));
   const { accounts, selectedAccount } = useAppSelector((appState) => appState.accounts);
+  const selectedAddress = useSelectedSignerAddress();
+  useAccountBalanceRedux(selectedAddress, provider);
 
-  hooks.useUpdateAccountBalance(selectedAccount > -1 && accounts.length >= selectedAccount ? accounts[selectedAccount].address : undefined, provider);
   // Initial setup
   useEffect(() => {
     const load = async (): Promise<void> => {
@@ -44,7 +47,6 @@ const AppInitialization = (): JSX.Element => {
           provider: new WsProvider(utils.availableReefNetworks.mainnet.rpcUrl),
         });
         await newProvider.api.isReadyOrError;
-        console.log('PROVIDER CONN');
 
         message('Connecting to Polkadot extension...');
         const inj = await web3Enable('Reefswap');
@@ -92,33 +94,26 @@ const AppInitialization = (): JSX.Element => {
       provider?.api.disconnect();
     };
   }, [settings.reload]);
+
   useEffect(() => {
     message('Loading account tokens ...');
-    if (selectedAccount === -1 || !provider) { return; }
-    const exeInterval = async (): Promise<void> => {
+    if (selectedAccount === -1 || !provider) {
+      return;
+    }
+    const exeAsync = async (): Promise<void> => {
       try {
-        if (selectedAccount === -1 || !provider) { return; }
+        if (selectedAccount === -1 || !provider) {
+          return;
+        }
         const { address, signer } = accounts[selectedAccount];
-
         const accountTokens = await rpc.loadAccountTokens(signer, settings);
         dispatch(accountsSetAccountTokens(accountTokens));
-
-        const providerBalance = await provider.api.derive.balances.all(address);
-        const freeBalance = providerBalance.freeBalance.toHuman();
-        const result = freeBalance === '0' ? '0 REEF' : freeBalance;
-        console.log('bb', result);
-        dispatch(accountsSetAccountBalance(result));
       } catch (error) {
         console.log('loading account err', error);
       }
     };
-    // const intervalId = setInterval(() => exeInterval(), 1000);
     setState(toSuccess());
-    exeInterval();
-    // eslint-disable-next-line consistent-return
-    return () => {
-      // clearInterval(intervalId);
-    };
+    exeAsync();
   }, [selectedAccount, provider]);
 
   return (
