@@ -1,7 +1,9 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { math, Token } from '@reef-defi/react-lib';
+import { Token, utils } from '@reef-defi/react-lib';
 import { useAppSelector } from '../../store/hooks';
+
+const { convert2Normal } = utils;
 
 const Dashboard = (): JSX.Element => {
   const history = useHistory();
@@ -12,7 +14,7 @@ const Dashboard = (): JSX.Element => {
       <li key={token.address} className="list-item mt-2">
         {token.name}
         =
-        {math.convert2Normal(token.decimals, token.balance.toString())}
+        {convert2Normal(token.decimals, token.balance.toString())}
       </li>
     ));
 

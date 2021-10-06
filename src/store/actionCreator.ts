@@ -11,8 +11,12 @@ export const SET_ALL_TOKENS = 'SET_ALL_TOKENS';
 
 // Settings
 export const RELOAD_APP = 'RELOAD_APP';
+// Signers
+export const SET_SIGNERS_ACTION = 'SET_SIGNERS_ACTION';
+export const SELECT_SIGNER_ACTION = 'SELECT_SIGNER_ACTION';
+
+// Tokens
+export const SET_TOKENS_ACTION = 'SET_TOKENS_ACTION';
 
 // Pools
-// export const ADD_POOL = 'ADD_POOL';
-// export const SET_POOLS = 'SET_POOLS';
-// export const LOADING_POOLS = 'LOADING_POOLS';
+export const SET_POOLS_ACTION = 'SET_POOLS_ACTION';

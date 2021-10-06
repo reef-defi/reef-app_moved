@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@polkadot/extension-dapp": "^0.38.6",
+    "@polkadot/extension-dapp": "^0.40.3",
     "@reef-defi/react-lib": "link:../reef-react-lib/",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
@@ -19,7 +19,6 @@
     "react-redux": "^7.2.5",
     "react-router-dom": "^5.3.0",
     "react-scripts": "4.0.3",
-    "react-toastify": "^8.0.3",
     "react-transition-group": "^4.4.2",
     "redux": "^4.1.1",
     "redux-devtools-extension": "^2.13.9",

@@ -68,3 +68,14 @@ export const resolveSettings = ({ deadline, gasLimit, percentage }: Settings, de
 export const toGasLimitObj = (gasLimit: string): {gasLimit: string} => ({
   gasLimit,
 });
+
+const SIGNER_POINTER = 'reef-app-signer-pointer';
+
+export const saveSignerLocalPointer = (index: number): void => {
+  localStorage.setItem(SIGNER_POINTER, `${index}`);
+};
+
+export const getSignerLocalPointer = (): number => {
+  const item = localStorage.getItem(SIGNER_POINTER);
+  return item ? parseInt(item, 10) : 0;
+};

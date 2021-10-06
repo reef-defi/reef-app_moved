@@ -1,4 +1,4 @@
-import { ReefSigner, TokenWithAmount } from '@reef-defi/react-lib';
+import { ReefSigner, Token, TokenWithAmount } from '@reef-defi/react-lib';
 import {
   SET_ACCOUNT,
   SET_ACCOUNTS, SET_ACCOUNT_BALANCE, SET_SELECTED_ACCOUNT, SET_ACCOUNT_TOKENS,
@@ -9,7 +9,7 @@ export interface UtilsReducer {
   selectedAccount: number;
   accounts: ReefSigner[];
   balance: string;
-  tokens: TokenWithAmount[];
+  tokens: Token[];
 }
 
 const defaultUtilsState: UtilsReducer = {
