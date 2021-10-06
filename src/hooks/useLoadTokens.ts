@@ -12,8 +12,10 @@ export default function useLoadSelectedSignerTokens(selectedSigner?: Signer): To
   useEffect(() => {
     const fetchTokens = async (): Promise<void> => {
       if (!selectedSigner) { return; }
-      const verifiedTokens = await rpc.loadVerifiedERC20Tokens();
-      const newTokens = await rpc.loadTokens(verifiedTokens, selectedSigner);
+      // TODO
+      // const verifiedTokens = await rpc.loadVerifiedERC20Tokens();
+      // const newTokens = await rpc.loadTokens(verifiedTokens, selectedSigner);
+      const newTokens: Token[] = [];
       dispatch(accountsSetAccountTokens(newTokens));
       setTokens(newTokens);
     };
