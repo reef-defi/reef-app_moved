@@ -33,5 +33,5 @@ export const selectSigner = (index: number): SelectSigner => ({
 
 export const setSignersLoading = (loading: boolean): SetSignerLoading => ({
   loading,
-  type: SET_SIGNERS_LOADING
+  type: SET_SIGNERS_LOADING,
 });

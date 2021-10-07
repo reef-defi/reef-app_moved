@@ -1,5 +1,5 @@
-import { Token } from "@reef-defi/react-lib";
-import { RELOAD_TOKENS, SET_TOKENS_ACTION, SET_TOKENS_LOADING } from "../actionCreator";
+import { Token } from '@reef-defi/react-lib';
+import { RELOAD_TOKENS, SET_TOKENS_ACTION, SET_TOKENS_LOADING } from '../actionCreator';
 
 interface ReloadTokens {
   type: typeof RELOAD_TOKENS;
@@ -13,7 +13,7 @@ interface SetTokens {
 interface SetTokensLoading {
   type: typeof SET_TOKENS_LOADING;
   loading: boolean;
-};
+}
 
 export type TokensActions =
   | ReloadTokens
@@ -31,5 +31,5 @@ export const setTokens = (tokens: Token[]): SetTokens => ({
 
 export const setTokensLoading = (loading: boolean): SetTokensLoading => ({
   loading,
-  type: SET_TOKENS_LOADING
+  type: SET_TOKENS_LOADING,
 });

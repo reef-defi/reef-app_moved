@@ -18,7 +18,7 @@ export default (state = defaultState, action: SignersActions): SignersReducer =>
   switch (action.type) {
     case SELECT_SIGNER_ACTION: return { ...state, selectedAccount: action.index };
     case SET_SIGNERS_ACTION: return { ...state, accounts: [...action.signers] };
-    case SET_SIGNERS_LOADING: return {...state, isLoading: action.loading};
+    case SET_SIGNERS_LOADING: return { ...state, isLoading: action.loading };
     default: return state;
   }
 };
