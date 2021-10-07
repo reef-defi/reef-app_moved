@@ -6,11 +6,8 @@ export const SET_SELECTED_ACCOUNT = 'SET_SELECTED_ACCOUNT';
 export const SET_ACCOUNT_TOKENS = 'SET_ACCOUNT_TOKENS';
 
 // Tokens
-export const ADD_TOKEN = 'ADD_TOKEN';
 export const SET_ALL_TOKENS = 'SET_ALL_TOKENS';
 
-// Settings
-export const RELOAD_APP = 'RELOAD_APP';
 // Signers
 export const SET_SIGNERS_ACTION = 'SET_SIGNERS_ACTION';
 export const SELECT_SIGNER_ACTION = 'SELECT_SIGNER_ACTION';
