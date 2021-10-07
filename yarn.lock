@@ -2355,6 +2355,16 @@
     "@polkadot/x-rxjs" "^6.11.1"
     eventemitter3 "^4.0.7"
 
+"@polkadot/extension-dapp@^0.38.6":
+  version "0.38.8"
+  resolved "https://registry.yarnpkg.com/@polkadot/extension-dapp/-/extension-dapp-0.38.8.tgz#a1073f647d23cce37b2b73df72f32444a7ab828f"
+  integrity sha512-I39aeUDmA28DXXSFS521jiyLjinQIaGkOaH+kDYqridKbEmeO/CT3Rebb9Z6zhBa9aMRau8w4UypHXOTaDAtgQ==
+  dependencies:
+    "@babel/runtime" "^7.14.6"
+    "@polkadot/extension-inject" "^0.38.8"
+    "@polkadot/util" "^6.11.1"
+    "@polkadot/util-crypto" "^6.11.1"
+
 "@polkadot/extension-dapp@^0.40.3":
   version "0.40.3"
   resolved "https://registry.yarnpkg.com/@polkadot/extension-dapp/-/extension-dapp-0.40.3.tgz#3fa4bf840492ec814a2abcaa3404124c06dc58ab"
@@ -2364,6 +2374,13 @@
     "@polkadot/extension-inject" "^0.40.3"
     "@polkadot/util" "^7.4.1"
     "@polkadot/util-crypto" "^7.4.1"
+
+"@polkadot/extension-inject@^0.38.8":
+  version "0.38.8"
+  resolved "https://registry.yarnpkg.com/@polkadot/extension-inject/-/extension-inject-0.38.8.tgz#0d3b3819eadc48f18d58d409d1c71c146e0f504b"
+  integrity sha512-TMkifhCvnDYFxpGgZSwn5XIxCPVjozb7506rHWUP+lCeXq2hjTMKoEYKAUFXo2xnQPJTyqO3/8XPPkKAfPJe/w==
+  dependencies:
+    "@babel/runtime" "^7.14.6"
 
 "@polkadot/extension-inject@^0.40.3":
   version "0.40.3"
@@ -2689,15 +2706,9 @@
     blakejs "^1.1.0"
     ethers "5.0.24"
 
-"@reef-defi/react-lib@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@reef-defi/react-lib/-/react-lib-1.0.0.tgz#c4480ebfca678329e73a1df655947dc469893bfd"
-  integrity sha512-R6LFZKlbsIOgrIk6NANtaHCTJlv00k9ZyARrX30zuEh9Z2S27Oq/x5RWPYTnQU3p4sjN8l+WF+leZd/BCgWvJw==
-  dependencies:
-    "@reef-defi/evm-provider" "^0.1.10"
-    bootstrap "^5.1.1"
-    eslint-import-resolver-typescript "^2.4.0"
-    react-tooltip "^4.2.21"
+"@reef-defi/react-lib@link:../reef-react-lib":
+  version "0.0.0"
+  uid ""
 
 "@reef-defi/type-definitions@^0.1.7":
   version "0.1.8"
@@ -3152,6 +3163,15 @@
   version "5.3.0"
   resolved "https://registry.yarnpkg.com/@types/react-router-dom/-/react-router-dom-5.3.0.tgz#8c4e0aa0ccaf638ba965829ad29a10ac3cbe2212"
   integrity sha512-svUzpEpKDwK8nmfV2vpZNSsiijFNKY8+gUqGqvGGOVrXvX58k1JIJubZa5igkwacbq/0umphO5SsQn/BQsnKpw==
+  dependencies:
+    "@types/history" "*"
+    "@types/react" "*"
+    "@types/react-router" "*"
+
+"@types/react-router-dom@^5.3.0":
+  version "5.3.1"
+  resolved "https://registry.yarnpkg.com/@types/react-router-dom/-/react-router-dom-5.3.1.tgz#76700ccce6529413ec723024b71f01fc77a4a980"
+  integrity sha512-UvyRy73318QI83haXlaMwmklHHzV9hjl3u71MmM6wYNu0hOVk9NLTa0vGukf8zXUqnwz4O06ig876YSPpeK28A==
   dependencies:
     "@types/history" "*"
     "@types/react" "*"
