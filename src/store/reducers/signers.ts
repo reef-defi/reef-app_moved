@@ -14,7 +14,7 @@ const defaultState: SignersReducer = {
   selectedAccount: -1,
 };
 
-export const signersReducer = (state = defaultState, action: SignersActions): SignersReducer => {
+export default (state = defaultState, action: SignersActions): SignersReducer => {
   switch (action.type) {
     case SELECT_SIGNER_ACTION: return { ...state, selectedAccount: action.index };
     case SET_SIGNERS_ACTION: return { ...state, accounts: [...action.signers] };

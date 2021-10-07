@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Token, rpc } from '@reef-defi/react-lib';
+import { rpc, Token } from '@reef-defi/react-lib';
 import { Signer } from '@reef-defi/evm-provider';
-import { useAppDispatch } from '../store/hooks';
-import { setAllTokensAction } from '../store/actions/tokens';
 
 export default function useLoadVerifiedTokens(selectedSigner?: Signer): Token[] {
   const [tokens, setTokens] = useState<Token[]>([]);

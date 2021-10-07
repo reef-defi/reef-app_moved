@@ -19,7 +19,7 @@ const defaultUtilsState: UtilsReducer = {
   tokens: [],
 };
 
-export const utilsReducer = (state = defaultUtilsState, action: UtilsActions): UtilsReducer => {
+export default (state = defaultUtilsState, action: UtilsActions): UtilsReducer => {
   switch (action.type) {
     case SET_ACCOUNT: return {
       ...state,
