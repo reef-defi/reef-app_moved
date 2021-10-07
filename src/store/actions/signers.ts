@@ -11,13 +11,8 @@ interface SelectSigner {
   index: number;
 }
 
-interface ReloadSigners {
-  type: typeof RELOAD_SIGNER;
-}
-
 export type SignersActions =
   | SetSigners
-  | ReloadSigners
   | SelectSigner;
 
 export const setSigners = (signers: ReefSigner[]): SetSigners => ({
@@ -28,8 +23,4 @@ export const setSigners = (signers: ReefSigner[]): SetSigners => ({
 export const selectSigner = (index: number): SelectSigner => ({
   index,
   type: SELECT_SIGNER_ACTION,
-});
-
-export const reloadSigners = (): ReloadSigners => ({
-  type: RELOAD_SIGNER
 });

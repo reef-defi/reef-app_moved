@@ -3,14 +3,12 @@ import { RELOAD_SIGNER, SELECT_SIGNER_ACTION, SET_SIGNERS_ACTION } from '../acti
 import { SignersActions } from '../actions/signers';
 
 interface SignersReducer {
-  reloadToggle: boolean;
   accounts: ReefSigner[];
   selectedAccount: number;
 }
 
 const defaultState: SignersReducer = {
   accounts: [],
-  reloadToggle: false,
   selectedAccount: -1,
 };
 
@@ -18,7 +16,6 @@ export default (state = defaultState, action: SignersActions): SignersReducer =>
   switch (action.type) {
     case SELECT_SIGNER_ACTION: return { ...state, selectedAccount: action.index };
     case SET_SIGNERS_ACTION: return { ...state, accounts: [...action.signers] };
-    case RELOAD_SIGNER: return {...state, reloadToggle: !state.reloadToggle};
     default: return state;
   }
 };
