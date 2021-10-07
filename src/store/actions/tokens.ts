@@ -1,15 +1,35 @@
 import { Token } from '@reef-defi/react-lib';
-import { SET_ALL_TOKENS } from '../actionCreator';
+import { RELOAD_TOKENS, SET_TOKENS_ACTION, SET_TOKENS_LOADING } from '../actionCreator';
 
-interface SetAllTokens {
-  type: typeof SET_ALL_TOKENS,
-  tokens: Token[]
+interface ReloadTokens {
+  type: typeof RELOAD_TOKENS;
 }
 
-export type TokensAction =
-  | SetAllTokens;
+interface SetTokens {
+  type: typeof SET_TOKENS_ACTION;
+  tokens: Token[];
+}
 
-export const setAllTokensAction = (tokens: Token[]): SetAllTokens => ({
-  type: SET_ALL_TOKENS,
+interface SetTokensLoading {
+  type: typeof SET_TOKENS_LOADING;
+  loading: boolean;
+}
+
+export type TokensActions =
+  | ReloadTokens
+  | SetTokens
+  | SetTokensLoading;
+
+export const reloadTokens = (): ReloadTokens => ({
+  type: RELOAD_TOKENS,
+});
+
+export const setTokens = (tokens: Token[]): SetTokens => ({
   tokens,
+  type: SET_TOKENS_ACTION,
+});
+
+export const setTokensLoading = (loading: boolean): SetTokensLoading => ({
+  loading,
+  type: SET_TOKENS_LOADING,
 });

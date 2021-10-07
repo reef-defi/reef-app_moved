@@ -1,18 +1,24 @@
 import { Token } from '@reef-defi/react-lib';
-import { SET_ALL_TOKENS } from '../actionCreator';
-import { TokensAction } from '../actions/tokens';
+import { RELOAD_TOKENS, SET_TOKENS_ACTION, SET_TOKENS_LOADING } from '../actionCreator';
+import { TokensActions } from '../actions/tokens';
 
-export interface TokensReducer {
+interface TokensReducer {
   tokens: Token[];
+  isLoading: boolean;
+  reloadToggle: boolean;
 }
 
-const defaultTokensReducer: TokensReducer = {
+const defaultState: TokensReducer = {
   tokens: [],
+  isLoading: false,
+  reloadToggle: false,
 };
 
-export const tokensReducer = (state = defaultTokensReducer, action: TokensAction): TokensReducer => {
+export default (state = defaultState, action: TokensActions): TokensReducer => {
   switch (action.type) {
-    case SET_ALL_TOKENS: return { ...state, tokens: [...action.tokens] };
+    case RELOAD_TOKENS: return { ...state, reloadToggle: !state.reloadToggle };
+    case SET_TOKENS_ACTION: return { ...state, tokens: [...action.tokens] };
+    case SET_TOKENS_LOADING: return { ...state, isLoading: action.loading };
     default: return state;
   }
 };
