@@ -1,7 +1,7 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { Token, utils } from '@reef-defi/react-lib';
-import { useAppSelector } from '../../store/hooks';
+import { useAppSelector } from '../../store';
 
 const { convert2Normal } = utils;
 

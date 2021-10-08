@@ -5,7 +5,7 @@ import type { Signer as InjectedSigner } from '@polkadot/api/types';
 import type { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { useAppDispatch } from '../store';
 import { selectSignerIndex, setSigners, setSignersLoading } from '../store/actions/signers';
-import { getSignerLocalPointer } from '../store/internalStore';
+import { getSignerLocalPointer } from '../store/localStore';
 import { reloadTokens } from '../store/actions/tokens';
 
 const { ensure } = utils;
