@@ -1,17 +1,17 @@
-import { getSigner } from "../utils";
-import { setPools, setPoolsLoading } from "../store/actions/pools";
-import { useAppDispatch, useAppSelector } from "../store";
-import { utils, hooks, rpc } from "@reef-defi/react-lib";
+import { utils, hooks, rpc } from '@reef-defi/react-lib';
+import { setPools, setPoolsLoading } from '../store/actions/pools';
+import { useAppDispatch, useAppSelector } from '../store';
+import { useGetSigner } from './useGetSigner';
 
 const { loadPools } = rpc;
 const { useAsyncEffect } = hooks;
-const { availableReefNetworks  } = utils;
+const { availableReefNetworks } = utils;
 
 export const useLoadPools = () => {
-  const signer = getSigner();
+  const signer = useGetSigner();
   const dispatch = useAppDispatch();
-  const {tokens} = useAppSelector((state) => state.tokens);
-  const {reloadToggle} = useAppSelector((state) => state.pools);
+  const { tokens } = useAppSelector((state) => state.tokens);
+  const { reloadToggle } = useAppSelector((state) => state.pools);
 
   useAsyncEffect(async () => {
     if (!signer) { return; }
@@ -21,6 +21,6 @@ export const useLoadPools = () => {
       .then(() => loadPools(tokens, signer, availableReefNetworks.mainnet.factoryAddress))
       .then((pools) => dispatch(setPools(pools)))
       .catch((error) => console.error(error))
-      .finally(() => dispatch(setPoolsLoading(false)))
-  }, [reloadToggle])
-}
+      .finally(() => dispatch(setPoolsLoading(false)));
+  }, [reloadToggle]);
+};
