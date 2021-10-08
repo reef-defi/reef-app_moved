@@ -7,7 +7,7 @@ const { convert2Normal } = utils;
 
 const WalletContoller = (): JSX.Element => {
   const history = useHistory();
-  const accountTokens = useAppSelector((state) => state.accounts.tokens);
+  const accountTokens = useAppSelector((state) => state.signers.selectedAccountTokens);
   const tokenList = accountTokens
     .map((token: Token) => (
       <li key={token.address} className="list-item mt-2">

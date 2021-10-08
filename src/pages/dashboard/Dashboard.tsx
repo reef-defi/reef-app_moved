@@ -7,7 +7,7 @@ const { convert2Normal } = utils;
 
 const Dashboard = (): JSX.Element => {
   const history = useHistory();
-  const accountTokens = useAppSelector((state) => state.accounts.tokens);
+  const accountTokens = useAppSelector((state) => state.signers.selectedAccountTokens);
   console.log('TKNS=', accountTokens);
   const tokenList = accountTokens
     .map((token: Token) => (
