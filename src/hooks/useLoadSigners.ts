@@ -46,7 +46,7 @@ export const useLoadSigners = (provider?: Provider): void => {
         provider,
         inj[0].signer,
       );
-      
+
       // TODO signers objects are large cause of provider object inside. Find a way to overcome this problem.
       const pointer = getSignerLocalPointer();
       dispatch(setSigners(signers));

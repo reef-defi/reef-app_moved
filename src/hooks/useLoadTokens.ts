@@ -7,9 +7,12 @@ import { useGetSigner } from './useGetSigner';
 const { useAsyncEffect } = hooks;
 
 // This will be placed on reefscan backend. just a temporary solution.
-const existingTokens: BasicToken[] = require('../validated-tokens-mainnet.json').tokens;
+// eslint-disable-next-line
+const validatedTokens = require('../validated-tokens-mainnet.json');
 
-export const useLoadTokens = () => {
+const existingTokens: BasicToken[] = validatedTokens.tokens;
+
+export const useLoadTokens = (): void => {
   const dispatch = useAppDispatch();
   const { tokens, reloadToggle } = useAppSelector((state) => state.tokens);
   const signer = useGetSigner();

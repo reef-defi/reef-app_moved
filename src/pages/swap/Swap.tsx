@@ -6,12 +6,16 @@ import { useAppDispatch, useAppSelector } from '../../store';
 
 const { SwapComponent } = Components;
 
+// eslint-disable-next-line
 const none = (): void => {};
 
 const Swap = (): JSX.Element => {
   const dispatch = useAppDispatch();
-  const reloadToggle = () => dispatch(reloadTokens())  
-  const {tokens} = useAppSelector((state) => state.tokens);
+  const { tokens } = useAppSelector((state) => state.tokens);
+
+  const reloadToggle = (): void => {
+    dispatch(reloadTokens());
+  };
 
   return (
     <SwapComponent
@@ -21,6 +25,6 @@ const Swap = (): JSX.Element => {
       notify={none}
     />
   );
-}
+};
 
 export default Swap;

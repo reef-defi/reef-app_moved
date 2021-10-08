@@ -7,7 +7,7 @@ const { loadPools } = rpc;
 const { useAsyncEffect } = hooks;
 const { availableReefNetworks } = utils;
 
-export const useLoadPools = () => {
+export const useLoadPools = (): void => {
   const signer = useGetSigner();
   const dispatch = useAppDispatch();
   const { tokens } = useAppSelector((state) => state.tokens);
