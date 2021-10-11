@@ -1,23 +1,23 @@
 import { Token } from '@reef-defi/react-lib';
 import {
-  RELOAD_TOKENS_APPROVED,
-  SET_TOKENS_APPROVED_ACTION,
-  SET_TOKENS_APPROVED_LOADING,
+  RELOAD_TOKENS,
+  SET_TOKENS_ACTION,
+  SET_TOKENS_LOADING,
   SET_TOKENS_SELECTED_SIGNER_ACTION,
   SET_TOKENS_SELECTED_SIGNER_LOADING,
 } from '../actionCreator';
 
 interface ReloadTokens {
-  type: typeof RELOAD_TOKENS_APPROVED;
+  type: typeof RELOAD_TOKENS;
 }
 
-interface SetTokensApproved {
-  type: typeof SET_TOKENS_APPROVED_ACTION;
+interface SetTokens {
+  type: typeof SET_TOKENS_ACTION;
   tokens: Token[];
 }
 
-interface SetTokensApprovedLoading {
-  type: typeof SET_TOKENS_APPROVED_LOADING;
+interface SetTokensLoading {
+  type: typeof SET_TOKENS_LOADING;
   loading: boolean;
 }
 
@@ -33,23 +33,23 @@ interface SetTokensSignerBalanceLoading {
 
 export type TokensActions =
   | ReloadTokens
-  | SetTokensApproved
+  | SetTokens
   | SetTokensSignerBalance
   | SetTokensSignerBalanceLoading
-  | SetTokensApprovedLoading;
+  | SetTokensLoading;
 
-export const reloadTokensAvailable = (): ReloadTokens => ({
-  type: RELOAD_TOKENS_APPROVED,
+export const reloadTokens = (): ReloadTokens => ({
+  type: RELOAD_TOKENS,
 });
 
-export const setTokensAvailable = (tokens: Token[]): SetTokensApproved => ({
+export const setTokens = (tokens: Token[]): SetTokens => ({
   tokens,
-  type: SET_TOKENS_APPROVED_ACTION,
+  type: SET_TOKENS_ACTION,
 });
 
-export const setTokensAvailableLoading = (loading: boolean): SetTokensApprovedLoading => ({
+export const setTokensLoading = (loading: boolean): SetTokensLoading => ({
   loading,
-  type: SET_TOKENS_APPROVED_LOADING,
+  type: SET_TOKENS_LOADING,
 });
 
 export const setTokensSignerBalance = (tokens: Token[]): SetTokensSignerBalance => ({

@@ -14,7 +14,7 @@ const existingTokens: BasicToken[] = validatedTokens.tokens;
 
 export const useLoadTokens = (): void => {
   const dispatch = useAppDispatch();
-  const { tokens, reloadToggle } = useAppSelector((state) => state.tokens);
+  const { tokens, reloadTokensToggle } = useAppSelector((state) => state.tokens);
   const signer = useGetSigner();
 
   useAsyncEffect(async () => {
@@ -26,5 +26,5 @@ export const useLoadTokens = (): void => {
       .then(() => dispatch(reloadPools()))
       .catch((error) => console.log(error))
       .finally(() => dispatch(setTokensLoading(false)));
-  }, [reloadToggle]);
+  }, [reloadTokensToggle]);
 };

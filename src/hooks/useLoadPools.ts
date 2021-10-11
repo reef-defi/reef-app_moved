@@ -10,7 +10,7 @@ const { availableReefNetworks } = utils;
 export const useLoadPools = (): void => {
   const signer = useGetSigner();
   const dispatch = useAppDispatch();
-  const { approvedTokens } = useAppSelector((state) => state.tokens);
+  const { tokens } = useAppSelector((state) => state.tokens);
   const { reloadToggle } = useAppSelector((state) => state.pools);
 
   useAsyncEffect(async () => {
@@ -18,7 +18,7 @@ export const useLoadPools = (): void => {
 
     await Promise.resolve()
       .then(() => dispatch(setPoolsLoading(true)))
-      .then(() => loadPools(approvedTokens, signer, availableReefNetworks.mainnet))
+      .then(() => loadPools(tokens, signer, availableReefNetworks.mainnet))
       .then((pools) => dispatch(setPools(pools)))
       .catch((error) => console.error(error))
       .finally(() => dispatch(setPoolsLoading(false)));

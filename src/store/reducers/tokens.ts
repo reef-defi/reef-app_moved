@@ -1,34 +1,34 @@
 import { Token } from '@reef-defi/react-lib';
 import {
-  RELOAD_TOKENS_APPROVED,
-  SET_TOKENS_APPROVED_ACTION,
-  SET_TOKENS_APPROVED_LOADING,
+  RELOAD_TOKENS,
+  SET_TOKENS_ACTION,
+  SET_TOKENS_LOADING,
   SET_TOKENS_SELECTED_SIGNER_ACTION,
   SET_TOKENS_SELECTED_SIGNER_LOADING,
 } from '../actionCreator';
 import { TokensActions } from '../actions/tokens';
 
 interface TokensReducer {
-  approvedTokens: Token[];
+  tokens: Token[];
   selectedSignerTokens: Token[];
-  isLoadingApprovedTokens: boolean;
+  isLoadingTokens: boolean;
   isLoadingSelectedSignerTokens: boolean;
-  reloadTokensApprovedToggle: boolean;
+  reloadTokensToggle: boolean;
 }
 
 const defaultState: TokensReducer = {
-  approvedTokens: [],
+  tokens: [],
   selectedSignerTokens: [],
-  isLoadingApprovedTokens: false,
-  reloadTokensApprovedToggle: false,
+  isLoadingTokens: false,
+  reloadTokensToggle: false,
   isLoadingSelectedSignerTokens: false,
 };
 
 export default (state = defaultState, action: TokensActions): TokensReducer => {
   switch (action.type) {
-    case RELOAD_TOKENS_APPROVED: return { ...state, reloadTokensApprovedToggle: !state.reloadTokensApprovedToggle };
-    case SET_TOKENS_APPROVED_ACTION: return { ...state, approvedTokens: [...action.tokens] };
-    case SET_TOKENS_APPROVED_LOADING: return { ...state, isLoadingApprovedTokens: action.loading };
+    case RELOAD_TOKENS: return { ...state, reloadTokensToggle: !state.reloadTokensToggle };
+    case SET_TOKENS_ACTION: return { ...state, tokens: [...action.tokens] };
+    case SET_TOKENS_LOADING: return { ...state, isLoadingTokens: action.loading };
     case SET_TOKENS_SELECTED_SIGNER_ACTION: return { ...state, selectedSignerTokens: [...action.tokens] };
     case SET_TOKENS_SELECTED_SIGNER_LOADING: return { ...state, isLoadingSelectedSignerTokens: action.loading };
     default: return state;
