@@ -18,7 +18,7 @@ const menuItems = [
   { title: 'Creator', url: CREATE_ERC20_TOKEN_URL, icon: <BsHammer /> },
 ];
 
-const SCREEN_BREAK_POINT = 700;
+const SCREEN_BREAK_POINT = 870;
 
 const Sidebar = (): JSX.Element => {
   const [isOpen, setIsOpen] = useState(true);
