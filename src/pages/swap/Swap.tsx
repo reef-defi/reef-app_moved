@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { availableNetworks, Components } from '@reef-defi/react-lib';
-import { reloadTokens } from '../../store/actions/tokens';
+import { reloadTokensAvailable } from '../../store/actions/tokens';
 import { useAppDispatch, useAppSelector } from '../../store';
 
 const { SwapComponent } = Components;
@@ -11,15 +11,15 @@ const none = (): void => {};
 
 const Swap = (): JSX.Element => {
   const dispatch = useAppDispatch();
-  const { tokens } = useAppSelector((state) => state.tokens);
+  const { approvedTokens } = useAppSelector((state) => state.tokens);
 
   const reloadToggle = (): void => {
-    dispatch(reloadTokens());
+    dispatch(reloadTokensAvailable());
   };
 
   return (
     <SwapComponent
-      tokens={tokens}
+      tokens={approvedTokens}
       reloadTokens={reloadToggle}
       network={{ ...availableNetworks.mainnet }}
       notify={none}

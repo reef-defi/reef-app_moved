@@ -1,35 +1,63 @@
 import { Token } from '@reef-defi/react-lib';
-import { RELOAD_TOKENS, SET_TOKENS_ACTION, SET_TOKENS_LOADING } from '../actionCreator';
+import {
+  RELOAD_TOKENS_APPROVED,
+  SET_TOKENS_APPROVED_ACTION,
+  SET_TOKENS_APPROVED_LOADING,
+  SET_TOKENS_SELECTED_SIGNER_ACTION,
+  SET_TOKENS_SELECTED_SIGNER_LOADING,
+} from '../actionCreator';
 
 interface ReloadTokens {
-  type: typeof RELOAD_TOKENS;
+  type: typeof RELOAD_TOKENS_APPROVED;
 }
 
-interface SetTokens {
-  type: typeof SET_TOKENS_ACTION;
+interface SetTokensApproved {
+  type: typeof SET_TOKENS_APPROVED_ACTION;
   tokens: Token[];
 }
 
-interface SetTokensLoading {
-  type: typeof SET_TOKENS_LOADING;
+interface SetTokensApprovedLoading {
+  type: typeof SET_TOKENS_APPROVED_LOADING;
+  loading: boolean;
+}
+
+interface SetTokensSignerBalance {
+  type: typeof SET_TOKENS_SELECTED_SIGNER_ACTION;
+  tokens: Token[];
+}
+
+interface SetTokensSignerBalanceLoading {
+  type: typeof SET_TOKENS_SELECTED_SIGNER_LOADING;
   loading: boolean;
 }
 
 export type TokensActions =
   | ReloadTokens
-  | SetTokens
-  | SetTokensLoading;
+  | SetTokensApproved
+  | SetTokensSignerBalance
+  | SetTokensSignerBalanceLoading
+  | SetTokensApprovedLoading;
 
-export const reloadTokens = (): ReloadTokens => ({
-  type: RELOAD_TOKENS,
+export const reloadTokensAvailable = (): ReloadTokens => ({
+  type: RELOAD_TOKENS_APPROVED,
 });
 
-export const setTokens = (tokens: Token[]): SetTokens => ({
+export const setTokensAvailable = (tokens: Token[]): SetTokensApproved => ({
   tokens,
-  type: SET_TOKENS_ACTION,
+  type: SET_TOKENS_APPROVED_ACTION,
 });
 
-export const setTokensLoading = (loading: boolean): SetTokensLoading => ({
+export const setTokensAvailableLoading = (loading: boolean): SetTokensApprovedLoading => ({
   loading,
-  type: SET_TOKENS_LOADING,
+  type: SET_TOKENS_APPROVED_LOADING,
+});
+
+export const setTokensSignerBalance = (tokens: Token[]): SetTokensSignerBalance => ({
+  tokens,
+  type: SET_TOKENS_SELECTED_SIGNER_ACTION,
+});
+
+export const setTokensSignerBalanceLoading = (loading: boolean): SetTokensSignerBalanceLoading => ({
+  loading,
+  type: SET_TOKENS_SELECTED_SIGNER_LOADING,
 });

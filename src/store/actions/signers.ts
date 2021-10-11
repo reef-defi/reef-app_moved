@@ -17,11 +17,6 @@ interface SelectSigner {
     index: number;
 }
 
-interface SetSignerTokens {
-    type: typeof SET_SIGNER_TOKENS_ACTION;
-    tokens: Token[];
-}
-
 interface SetSignerBalance {
     type: typeof SET_SIGNER_BALANCE_ACTION;
     balance: string;
@@ -35,7 +30,6 @@ interface SetSignerLoading {
 export type SignersActions =
     | SetSigners
     | SelectSigner
-    | SetSignerTokens
     | SetSignerLoading
     | SetSignerBalance;
 
@@ -47,11 +41,6 @@ export const setSigners = (signers: ReefSigner[]): SetSigners => ({
 export const selectSignerIndex = (index: number): SelectSigner => ({
   index,
   type: SELECT_SIGNER_ACTION,
-});
-
-export const setSignerTokens = (tokens: Token[]): SetSignerTokens => ({
-  tokens,
-  type: SET_SIGNER_TOKENS_ACTION,
 });
 
 export const setSignerBalance = (balance: string): SetSignerBalance => ({

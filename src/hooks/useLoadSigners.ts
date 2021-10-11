@@ -6,7 +6,7 @@ import type { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { useAppDispatch } from '../store';
 import { selectSignerIndex, setSigners, setSignersLoading } from '../store/actions/signers';
 import { getSignerLocalPointer } from '../store/localStore';
-import { reloadTokens } from '../store/actions/tokens';
+import { reloadTokensAvailable } from '../store/actions/tokens';
 
 const { ensure } = utils;
 const { useAsyncEffect } = hooks;
@@ -52,7 +52,7 @@ export const useLoadSigners = (provider?: Provider): void => {
       // dispatch(accountsSetAccounts(signers));
       dispatch(setSigners(signers));
       dispatch(selectSignerIndex(pointer));
-      dispatch(reloadTokens());
+      dispatch(reloadTokensAvailable());
     } catch (e) {
       console.log('Error when loading signers!');
       console.error(e);
