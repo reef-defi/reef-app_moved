@@ -3,24 +3,31 @@ import React, { useEffect, useState } from 'react';
 import {Components, Pool, utils} from "@reef-defi/react-lib"
 import { useAppSelector } from '../../store';
 
-interface State {
+interface DefaultState {
   pool: Pool;
+}
+
+interface State extends DefaultState {
   toggle: () => void;
 }
 
+const DefaultState = ({pool}: DefaultState): JSX.Element => (
+  <Components.Display.FlexRow>
+  <Components.Icons.TokenIcon src={pool.token1.iconUrl} />
+  <Components.Icons.TokenIcon src={pool.token2.iconUrl} />
+  <Components.Display.CenterRow>
+    <Components.Display.MS size="2">
+      <Components.Text.Text>
+        {pool.token1.name}/{pool.token2.name}
+      </Components.Text.Text>
+    </Components.Display.MS>
+  </Components.Display.CenterRow>
+</Components.Display.FlexRow>
+);
+
 const CloseState = ({pool, toggle}: State): JSX.Element => (
   <>
-    <Components.Display.FlexRow>
-      <Components.Icons.TokenIcon src={pool.token1.iconUrl} />
-      <Components.Icons.TokenIcon src={pool.token2.iconUrl} />
-      <Components.Display.CenterRow>
-        <Components.Display.MS size="2">
-          <Components.Text.LeadText>
-            {pool.token1.name}/{pool.token2.name}
-          </Components.Text.LeadText>
-        </Components.Display.MS>
-      </Components.Display.CenterRow>
-    </Components.Display.FlexRow>
+    <DefaultState pool={pool} />
     <Components.Display.FlexColumn>
       <Components.Text.MiniText>
         <Components.Text.MutedText>Liquidity:</Components.Text.MutedText>
@@ -44,17 +51,7 @@ const OpenState = ({pool, toggle}: State): JSX.Element => {
   return (
     <Components.Display.FullColumn>
       <Components.Display.ContentBetween>
-        <Components.Display.FlexRow>
-          <Components.Icons.TokenIcon src={pool.token1.iconUrl} />
-          <Components.Icons.TokenIcon src={pool.token2.iconUrl} />
-          <Components.Display.CenterRow>
-            <Components.Display.MS size="2">
-              <Components.Text.LeadText>
-                {pool.token1.name}/{pool.token2.name}
-              </Components.Text.LeadText>
-            </Components.Display.MS>
-          </Components.Display.CenterRow>
-        </Components.Display.FlexRow>
+        <DefaultState pool={pool} />
         <Components.Button.EmptyButton onClick={toggle}>
           <Components.Icons.UpIcon />
         </Components.Button.EmptyButton>
