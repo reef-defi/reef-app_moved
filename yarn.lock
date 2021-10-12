@@ -2838,10 +2838,10 @@
     blakejs "^1.1.0"
     ethers "5.0.24"
 
-"@reef-defi/react-lib@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@reef-defi/react-lib/-/react-lib-1.0.2.tgz#bf6d414683ec3a8a1f4cffadc2a5fd1e35e319d3"
-  integrity sha512-UYkviwvAccnZzBTIuPpOIXHoR6PbQeqhNLBttUR1nUuJQrtr1PS1FtozfD/W2smmupfmHliNVRlmSZQZ0UriQg==
+"@reef-defi/react-lib@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@reef-defi/react-lib/-/react-lib-1.0.3.tgz#d77b0bd06468ecfa2f0ca40252e3d73c2df7d77c"
+  integrity sha512-7PUpm+0ducAb44ScUTUkOk4M456bJIhbcpprPBh2yxBOzoDmkc7rPH0v8EvhYnna6INgsBk8iNWYxUbl3sJfgg==
   dependencies:
     "@polkadot/extension-dapp" "^0.38.6"
     "@polkadot/react-identicon" "^0.85.5"
