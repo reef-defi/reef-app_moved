@@ -1,4 +1,5 @@
 export const SWAP_URL = '/swap';
+export const POOLS_URL = '/pools';
 export const SETTINGS_URL = '/settings';
 export const DASHBOARD_URL = '/dashboard';
 export const ADD_LIQUIDITY_URL = '/supply';

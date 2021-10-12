@@ -21,7 +21,7 @@ export const useLoadTokens = (): void => {
     if (!signer) { return; }
     await Promise.resolve()
       .then(() => dispatch(setTokensLoading(true)))
-      .then(() => rpc.loadTokens(tokens.length === 0 ? existingTokens : tokens, signer))
+      .then(() => rpc.loadTokens(tokens.length === 0 ? existingTokens : tokens, signer.signer))
       .then((newTokens) => dispatch(setTokens(newTokens)))
       .then(() => dispatch(reloadPools()))
       .catch((error) => console.log(error))
