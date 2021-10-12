@@ -1,14 +1,27 @@
 import React from 'react';
-import { Components } from '@reef-defi/react-lib';
+import { availableNetworks, Components } from '@reef-defi/react-lib';
 import './Nav.css';
+import { useGetSigner } from '../hooks/useGetSigner';
+import { useAppDispatch, useAppSelector } from '../store';
+import { selectSigner } from '../store/actions/signers';
 
 const Nav = (): JSX.Element => {
-  const signersExist = false;
+  const signer = useGetSigner();
+  const dispatch = useAppDispatch();
+  const {accounts} = useAppSelector((state) => state.signers);
+
+  const selectAccount = (index: number): void => {
+    dispatch(selectSigner(index));
+  }
 
   return (
     <nav className="navigation px-3 py-2 d-flex justify-content-end">
-      {signersExist && <div>Available</div>}
-      {!signersExist && <Components.Button.Button>Connect to wallet</Components.Button.Button>}
+      <Components.AccountSelector
+        accounts={accounts}
+        selectedSigner={signer}
+        selectAccount={selectAccount}
+        reefscanUrl={availableNetworks.mainnet.reefscanUrl}
+      />
     </nav>
   );
 };
