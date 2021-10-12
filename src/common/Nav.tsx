@@ -8,11 +8,11 @@ import { selectSigner } from '../store/actions/signers';
 const Nav = (): JSX.Element => {
   const signer = useGetSigner();
   const dispatch = useAppDispatch();
-  const {accounts} = useAppSelector((state) => state.signers);
+  const { accounts } = useAppSelector((state) => state.signers);
 
   const selectAccount = (index: number): void => {
     dispatch(selectSigner(index));
-  }
+  };
 
   return (
     <nav className="navigation px-3 py-2 d-flex justify-content-end">
