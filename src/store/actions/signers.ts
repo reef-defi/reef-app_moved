@@ -1,10 +1,9 @@
-import { ReefSigner, Token } from '@reef-defi/react-lib';
+import { ReefSigner } from '@reef-defi/react-lib';
 import {
-  SET_SIGNERS_LOADING,
   SELECT_SIGNER_ACTION,
-  SET_SIGNERS_ACTION,
-  SET_SIGNER_TOKENS_ACTION,
   SET_SIGNER_BALANCE_ACTION,
+  SET_SIGNERS_ACTION,
+  SET_SIGNERS_LOADING,
 } from '../actionCreator';
 
 interface SetSigners {

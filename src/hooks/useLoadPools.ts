@@ -18,7 +18,7 @@ export const useLoadPools = (): void => {
 
     await Promise.resolve()
       .then(() => dispatch(setPoolsLoading(true)))
-      .then(() => loadPools(tokens, signer, availableReefNetworks.mainnet))
+      .then(() => loadPools(tokens, signer, availableReefNetworks.mainnet.factoryAddress))
       .then((pools) => dispatch(setPools(pools)))
       .catch((error) => console.error(error))
       .finally(() => dispatch(setPoolsLoading(false)));
