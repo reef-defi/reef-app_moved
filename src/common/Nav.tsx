@@ -4,6 +4,7 @@ import './Nav.css';
 import { useGetSigner } from '../hooks/useGetSigner';
 import { useAppDispatch, useAppSelector } from '../store';
 import { selectSigner } from '../store/actions/signers';
+import { reloadTokens } from '../store/actions/tokens';
 
 const Nav = (): JSX.Element => {
   const signer = useGetSigner();
@@ -12,6 +13,7 @@ const Nav = (): JSX.Element => {
 
   const selectAccount = (index: number): void => {
     dispatch(selectSigner(index));
+    dispatch(reloadTokens());
   };
 
   return (
