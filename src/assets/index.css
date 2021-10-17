@@ -20,3 +20,7 @@ html, body, #root, .App {
   place-items: center;
   padding: 50px;
 }
+
+.main-content {
+  background-color: #f7f5f5;
+}
