@@ -1,11 +1,6 @@
-import { rpc, hooks, utils } from '@reef-defi/react-lib';
+import { hooks, rpc, utils } from '@reef-defi/react-lib';
 import { Provider } from '@reef-defi/evm-provider';
-import { web3Enable, web3Accounts } from '@polkadot/extension-dapp';
-import { hooks, ReefSigner, utils } from '@reef-defi/react-lib';
-import { Provider, Signer } from '@reef-defi/evm-provider';
 import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
-import type { Signer as InjectedSigner } from '@polkadot/api/types';
-import type { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { useAppDispatch } from '../store';
 import { selectSignerIndex, setSigners, setSignersLoading } from '../store/actions/signers';
 import { getSignerLocalPointer } from '../store/localStore';

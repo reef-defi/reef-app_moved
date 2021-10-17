@@ -3,8 +3,6 @@ import {
   RELOAD_TOKENS,
   SET_TOKENS_ACTION,
   SET_TOKENS_LOADING,
-  SET_TOKENS_SELECTED_SIGNER_ACTION,
-  SET_TOKENS_SELECTED_SIGNER_LOADING,
 } from '../actionCreator';
 
 interface ReloadTokens {
@@ -21,21 +19,9 @@ interface SetTokensLoading {
   loading: boolean;
 }
 
-interface SetTokensSignerBalance {
-  type: typeof SET_TOKENS_SELECTED_SIGNER_ACTION;
-  tokens: Token[];
-}
-
-interface SetTokensSignerBalanceLoading {
-  type: typeof SET_TOKENS_SELECTED_SIGNER_LOADING;
-  loading: boolean;
-}
-
 export type TokensActions =
   | ReloadTokens
   | SetTokens
-  | SetTokensSignerBalance
-  | SetTokensSignerBalanceLoading
   | SetTokensLoading;
 
 export const reloadTokens = (): ReloadTokens => ({
@@ -50,14 +36,4 @@ export const setTokens = (tokens: Token[]): SetTokens => ({
 export const setTokensLoading = (loading: boolean): SetTokensLoading => ({
   loading,
   type: SET_TOKENS_LOADING,
-});
-
-export const setTokensSignerBalance = (tokens: Token[]): SetTokensSignerBalance => ({
-  tokens,
-  type: SET_TOKENS_SELECTED_SIGNER_ACTION,
-});
-
-export const setTokensSignerBalanceLoading = (loading: boolean): SetTokensSignerBalanceLoading => ({
-  loading,
-  type: SET_TOKENS_SELECTED_SIGNER_LOADING,
 });

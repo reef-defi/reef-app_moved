@@ -3,7 +3,7 @@ import { availableNetworks, Components } from '@reef-defi/react-lib';
 import './Nav.css';
 import { useGetSigner } from '../hooks/useGetSigner';
 import { useAppDispatch, useAppSelector } from '../store';
-import { selectSigner } from '../store/actions/signers';
+import { selectSignerIndex } from '../store/actions/signers';
 
 const Nav = (): JSX.Element => {
   const signer = useGetSigner();
@@ -11,7 +11,7 @@ const Nav = (): JSX.Element => {
   const { accounts } = useAppSelector((state) => state.signers);
 
   const selectAccount = (index: number): void => {
-    dispatch(selectSigner(index));
+    dispatch(selectSignerIndex(index));
   };
 
   return (

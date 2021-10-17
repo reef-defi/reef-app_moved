@@ -2,7 +2,6 @@ import { ReefSigner, Token } from '@reef-defi/react-lib';
 import {
   SELECT_SIGNER_ACTION,
   SET_SIGNER_BALANCE_ACTION,
-  SET_SIGNER_TOKENS_ACTION,
   SET_SIGNERS_ACTION,
   SET_SIGNERS_LOADING,
 } from '../actionCreator';
@@ -19,7 +18,7 @@ const defaultState: SignersReducer = {
   accounts: [],
   isLoading: false,
   selectedAccount: -1,
-  balance: '- REEF',
+  balance: '- REEF ',
 };
 
 export default (state = defaultState, action: SignersActions): SignersReducer => {

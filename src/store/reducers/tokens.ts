@@ -3,8 +3,6 @@ import {
   RELOAD_TOKENS,
   SET_TOKENS_ACTION,
   SET_TOKENS_LOADING,
-  SET_TOKENS_SELECTED_SIGNER_ACTION,
-  SET_TOKENS_SELECTED_SIGNER_LOADING,
 } from '../actionCreator';
 import { TokensActions } from '../actions/tokens';
 
@@ -29,8 +27,6 @@ export default (state = defaultState, action: TokensActions): TokensReducer => {
     case RELOAD_TOKENS: return { ...state, reloadTokensToggle: !state.reloadTokensToggle };
     case SET_TOKENS_ACTION: return { ...state, tokens: [...action.tokens] };
     case SET_TOKENS_LOADING: return { ...state, isLoadingTokens: action.loading };
-    case SET_TOKENS_SELECTED_SIGNER_ACTION: return { ...state, selectedSignerTokens: [...action.tokens] };
-    case SET_TOKENS_SELECTED_SIGNER_LOADING: return { ...state, isLoadingSelectedSignerTokens: action.loading };
     default: return state;
   }
 };
