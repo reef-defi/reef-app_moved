@@ -4,11 +4,9 @@ import { availableNetworks, Components } from '@reef-defi/react-lib';
 import { reloadTokens } from '../../store/actions/tokens';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { useGetSigner } from '../../hooks/useGetSigner';
+import { notify } from '../../utils/utils';
 
 const { SwapComponent } = Components;
-
-// eslint-disable-next-line
-const none = (): void => {};
 
 const Swap = (): JSX.Element => {
   const dispatch = useAppDispatch();
@@ -26,7 +24,7 @@ const Swap = (): JSX.Element => {
       account={selectedAccount}
       reloadTokens={reloadToggle}
       network={{ ...availableNetworks.mainnet }}
-      notify={none}
+      notify={notify}
     />
   );
 };
