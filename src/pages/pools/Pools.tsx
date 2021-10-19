@@ -1,155 +1,28 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
-import { Components, Pool, utils } from '@reef-defi/react-lib';
+import { Components } from '@reef-defi/react-lib';
+import { useHistory } from 'react-router-dom';
 import { useAppSelector } from '../../store';
-
-interface DefaultState {
-  pool: Pool;
-}
-
-interface State extends DefaultState {
-  toggle: () => void;
-}
-
-const DefaultState = ({ pool }: DefaultState): JSX.Element => (
-  <Components.Display.FlexRow>
-    <Components.Icons.TokenIcon src={pool.token1.iconUrl} />
-    <Components.Icons.TokenIcon src={pool.token2.iconUrl} />
-    <Components.Display.CenterRow>
-      <Components.Display.MS size="2">
-        <Components.Text.Text>
-          {pool.token1.name}
-          /
-          {pool.token2.name}
-        </Components.Text.Text>
-      </Components.Display.MS>
-    </Components.Display.CenterRow>
-  </Components.Display.FlexRow>
-);
-
-const CloseState = ({ pool, toggle }: State): JSX.Element => (
-  <>
-    <DefaultState pool={pool} />
-    <Components.Display.FlexColumn>
-      <Components.Text.MiniText>
-        <Components.Text.MutedText>Liquidity:</Components.Text.MutedText>
-      </Components.Text.MiniText>
-      <Components.Text.Text>{utils.convert2Normal(pool.decimals, pool.minimumLiquidity).toFixed(4)}</Components.Text.Text>
-    </Components.Display.FlexColumn>
-    <Components.Display.FlexColumn>
-      <Components.Text.MiniText>
-        <Components.Text.MutedText>Supply:</Components.Text.MutedText>
-      </Components.Text.MiniText>
-      <Components.Text.Text>{utils.convert2Normal(pool.decimals, pool.totalSupply).toFixed(4)}</Components.Text.Text>
-    </Components.Display.FlexColumn>
-    <Components.Button.EmptyButton onClick={toggle}>
-      <Components.Icons.DownIcon />
-    </Components.Button.EmptyButton>
-  </>
-);
-
-const OpenState = ({ pool, toggle }: State): JSX.Element => (
-  <Components.Display.FullColumn>
-    <Components.Display.ContentBetween>
-      <DefaultState pool={pool} />
-      <Components.Button.EmptyButton onClick={toggle}>
-        <Components.Icons.UpIcon />
-      </Components.Button.EmptyButton>
-    </Components.Display.ContentBetween>
-    <Components.Display.ContentBetween>
-      <div className="w-50 me-1 p-3 border border-1 border-rad">Basic Chart WIP...</div>
-      <div className="w-50 ms-1">
-        <Components.Card.SubCard>
-          <Components.Label.ConfirmLabel
-            title="Supply: "
-            value={utils.convert2Normal(pool.decimals, pool.totalSupply).toFixed(4)}
-          />
-          <Components.Label.ConfirmLabel
-            title="Liquidity: "
-            value={utils.convert2Normal(pool.decimals, pool.minimumLiquidity).toFixed(4)}
-          />
-          <Components.Label.ConfirmLabel
-            title="Locked 1: "
-            value={utils.toBalance(pool.token1).toFixed(4)}
-          />
-          <Components.Label.ConfirmLabel
-            title="Locked 2: "
-            value={utils.toBalance(pool.token2).toFixed(4)}
-          />
-          <Components.Label.ConfirmLabel
-            title="Your share: "
-            value={`${utils.calculatePoolShare(pool).toFixed(4)} %`}
-          />
-        </Components.Card.SubCard>
-      </div>
-    </Components.Display.ContentBetween>
-    <Components.Display.MT size="2" />
-    <Components.Display.ContentEnd>
-      <Components.Button.Button>Open pool</Components.Button.Button>
-    </Components.Display.ContentEnd>
-  </Components.Display.FullColumn>
-);
+import { ADD_LIQUIDITY_URL, REMOVE_LIQUIDITY_URL } from '../../urls';
 
 const Pools = (): JSX.Element => {
+  const history = useHistory();
   const { isLoading, pools } = useAppSelector((state) => state.pools);
-  const [isOpen, setIsOpen] = useState<boolean[]>([]);
 
-  const closeAll = (): void => {
-    setIsOpen(pools.map(() => false));
-  };
-  const open = (index: number): void => {
-    closeAll();
-    setIsOpen([
-      ...isOpen.slice(0, index),
-      true,
-      ...isOpen.slice(index + 1, isOpen.length),
-    ]);
-  };
-  useEffect(() => {
-    closeAll();
-  }, [pools]);
-
-  const poolsView = pools
-    .map((pool, index) => (
-      <Components.List.ListItem key={pool.poolAddress}>
-        {isOpen[index]
-          ? (
-            <OpenState
-              pool={pool}
-              toggle={closeAll}
-            />
-          )
-          : (
-            <CloseState
-              pool={pool}
-              toggle={() => open(index)}
-            />
-          )}
-      </Components.List.ListItem>
-    ));
+  const openAddLiquidity = (): void => history.push(ADD_LIQUIDITY_URL);
+  const openRemoveLiquidity = (address1: string, address2: string): void => history.push(
+    REMOVE_LIQUIDITY_URL
+      .replace(':address1', address1)
+      .replace(':address2', address2),
+  );
 
   return (
-    <Components.Display.CenterColumn>
-      <Components.Display.MinWidth size={500}>
-        <Components.Card.Card>
-          <Components.Card.CardHeader>
-            <Components.Card.CardTitle title="Pools" />
-            <Components.Display.FlexRow>
-              <Components.Button.Button>Remove supply</Components.Button.Button>
-              <Components.Display.MS size="1" />
-              <Components.Button.Button>Add supply</Components.Button.Button>
-            </Components.Display.FlexRow>
-          </Components.Card.CardHeader>
-          <Components.Display.MT size="3">
-            <Components.List.List>
-              <Components.List.ListEmptyItem />
-              {isLoading ? <Components.Loading.Loading /> : poolsView}
-              <Components.List.ListEmptyItem />
-            </Components.List.List>
-          </Components.Display.MT>
-        </Components.Card.Card>
-      </Components.Display.MinWidth>
-    </Components.Display.CenterColumn>
+    <Components.PoolsComponent
+      pools={pools}
+      isLoading={isLoading}
+      openAddLiquidity={openAddLiquidity}
+      openRemoveLiquidity={openRemoveLiquidity}
+    />
   );
 };
 
