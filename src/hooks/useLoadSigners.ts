@@ -2,7 +2,7 @@ import { hooks, rpc, utils } from '@reef-defi/react-lib';
 import { Provider } from '@reef-defi/evm-provider';
 import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 import { useAppDispatch } from '../store';
-import { selectSignerIndex, setSigners, setSignersLoading } from '../store/actions/signers';
+import { selectSigner, setSigners, setSignersLoading } from '../store/actions/signers';
 import { getSignerLocalPointer } from '../store/localStore';
 import { reloadTokens } from '../store/actions/tokens';
 
@@ -33,7 +33,7 @@ export const useLoadSigners = (provider?: Provider): void => {
       const pointer = getSignerLocalPointer();
       // dispatch(accountsSetAccounts(signers));
       dispatch(setSigners(signers));
-      dispatch(selectSignerIndex(pointer));
+      dispatch(selectSigner(pointer));
       dispatch(reloadTokens());
     } catch (e) {
       console.log('Error when loading signers!');

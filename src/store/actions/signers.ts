@@ -1,19 +1,16 @@
 import { ReefSigner } from '@reef-defi/react-lib';
 import {
-  SELECT_SIGNER_ACTION,
-  SET_SIGNER_BALANCE_ACTION,
-  SET_SIGNERS_ACTION,
-  SET_SIGNERS_LOADING,
+  SET_SIGNERS_LOADING, SELECT_SIGNER_ACTION, SET_SIGNERS_ACTION, SET_SIGNER_BALANCE_ACTION,
 } from '../actionCreator';
 
 interface SetSigners {
-    type: typeof SET_SIGNERS_ACTION;
-    signers: ReefSigner[];
+  type: typeof SET_SIGNERS_ACTION;
+  signers: ReefSigner[];
 }
 
 interface SelectSigner {
-    type: typeof SELECT_SIGNER_ACTION;
-    index: number;
+  type: typeof SELECT_SIGNER_ACTION;
+  index: number;
 }
 
 interface SetSignerBalance {
@@ -22,8 +19,8 @@ interface SetSignerBalance {
 }
 
 interface SetSignerLoading {
-    type: typeof SET_SIGNERS_LOADING;
-    loading: boolean;
+  type: typeof SET_SIGNERS_LOADING;
+  loading: boolean;
 }
 
 export type SignersActions =
@@ -37,7 +34,7 @@ export const setSigners = (signers: ReefSigner[]): SetSigners => ({
   type: SET_SIGNERS_ACTION,
 });
 
-export const selectSignerIndex = (index: number): SelectSigner => ({
+export const selectSigner = (index: number): SelectSigner => ({
   index,
   type: SELECT_SIGNER_ACTION,
 });

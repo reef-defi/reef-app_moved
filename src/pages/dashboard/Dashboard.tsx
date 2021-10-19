@@ -1,14 +1,15 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { Token, utils } from '@reef-defi/react-lib';
+import { hooks, Token, utils } from '@reef-defi/react-lib';
 import { useAppSelector } from '../../store';
 
 const { convert2Normal } = utils;
+const { useLoadSignerTokens } = hooks;
 
 const Dashboard = (): JSX.Element => {
   const history = useHistory();
-  const accountTokens = useAppSelector((state) => state.tokens.selectedSignerTokens);
-  console.log('TKNS=', accountTokens);
+  const { selectedAccount, accounts } = useAppSelector((state) => state.signers);
+  const accountTokens = useLoadSignerTokens(accounts[selectedAccount].signer);
   const tokenList = accountTokens
     .map((token: Token) => (
       <li key={token.address} className="list-item mt-2">

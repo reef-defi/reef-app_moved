@@ -5,7 +5,7 @@ import { useGetSigner } from '../hooks/useGetSigner';
 import { useAppDispatch, useAppSelector } from '../store';
 import { selectSigner } from '../store/actions/signers';
 import { reloadTokens } from '../store/actions/tokens';
-import { saveSignerLocalPointer } from '../store/internalStore';
+import { saveSignerLocalPointer } from '../store/localStore';
 
 const Nav = (): JSX.Element => {
   const signer = useGetSigner();

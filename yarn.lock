@@ -2838,21 +2838,9 @@
     blakejs "^1.1.0"
     ethers "5.0.24"
 
-"@reef-defi/react-lib@^1.0.4":
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/@reef-defi/react-lib/-/react-lib-1.0.4.tgz#cffc1914c33bfd87530fd34fc2288c1c4c2869a9"
-  integrity sha512-46XiMT+tlfTjDG2+7PhI5m2koyBWvHA/P8/hppyfSwLuaS2eAYk6SzctO/NUn4+ygXRMe66I6XIlMFCfatvjwg==
-  dependencies:
-    "@polkadot/extension-dapp" "^0.38.6"
-    "@polkadot/react-identicon" "^0.85.5"
-    "@reef-defi/evm-provider" "^0.1.10"
-    "@types/react-router-dom" "^5.3.0"
-    axios "^0.21.4"
-    bootstrap "^5.1.1"
-    eslint-import-resolver-typescript "^2.4.0"
-    react-copy-to-clipboard "^5.0.4"
-    react-router-dom "^5.3.0"
-    react-tooltip "^4.2.21"
+"@reef-defi/react-lib@link:../reef-react-lib":
+  version "0.0.0"
+  uid ""
 
 "@reef-defi/type-definitions@^0.1.7":
   version "0.1.8"
