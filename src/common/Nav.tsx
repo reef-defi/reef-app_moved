@@ -4,6 +4,8 @@ import './Nav.css';
 import { useGetSigner } from '../hooks/useGetSigner';
 import { useAppDispatch, useAppSelector } from '../store';
 import { selectSigner } from '../store/actions/signers';
+import { reloadTokens } from '../store/actions/tokens';
+import { saveSignerLocalPointer } from '../store/internalStore';
 
 const Nav = (): JSX.Element => {
   const signer = useGetSigner();
@@ -11,7 +13,9 @@ const Nav = (): JSX.Element => {
   const { accounts } = useAppSelector((state) => state.signers);
 
   const selectAccount = (index: number): void => {
+    saveSignerLocalPointer(index);
     dispatch(selectSigner(index));
+    dispatch(reloadTokens());
   };
 
   return (
