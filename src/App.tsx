@@ -21,6 +21,9 @@ const App = (): JSX.Element => {
       <div className="w-100 main-content">
         <Nav />
         <ContentRouter />
+        <div className="w-100" style={{ height: '600px' }}>
+          <img src="/design.png" alt="" style={{ width: '100%' }} />
+        </div>
       </div>
     </div>
   );
