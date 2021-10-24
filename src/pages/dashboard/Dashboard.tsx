@@ -1,7 +1,6 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { Token, utils, Components } from '@reef-defi/react-lib';
-import { getTokenEthAddressListPrices } from '@reef-defi/react-lib/dist/api/prices';
+import { utils } from '@reef-defi/react-lib';
 import { useAppSelector } from '../../store';
 import { useLoadSignerTokens } from '../../hooks/useLoadSignerTokens';
 import { TokenBalancePills } from './TokenBalancesPills';
@@ -14,7 +13,6 @@ const Dashboard = (): JSX.Element => {
   const { selectedAccount, accounts } = useAppSelector((state) => state.signers);
   const selectedSigner = selectedAccount > -1 && accounts.length > 0 ? accounts[selectedAccount].signer : undefined;
   const signerTokens = useLoadSignerTokens(selectedSigner);
-  console.log('TTT', signerTokens);
 
   return (
     <div className="">
@@ -29,13 +27,21 @@ const Dashboard = (): JSX.Element => {
         </div>
         <div className="dashboard_actions col-12 col-md-6 d-flex d-flex-end d-flex-vert-center">
           <div className="mr-1">
-            <button type="button" className="button-light dashboard_actions_button dashboard_actions_button-swap radius-border ">Swap</button>
+            <button type="button" className="button-light dashboard_actions_button dashboard_actions_button-swap radius-border" onClick={() => { history.push('/swap'); }}>
+              <svg className="fill-white" strokeWidth="0" viewBox="0 0 16 16" height="1.5em" width="1.5em" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M1 11.5a.5.5 0 0 0 .5.5h11.793l-3.147 3.146a.5.5 0 0 0 .708.708l4-4a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 11H1.5a.5.5 0 0 0-.5.5zm14-7a.5.5 0 0 1-.5.5H2.707l3.147 3.146a.5.5 0 1 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 4H14.5a.5.5 0 0 1 .5.5z" /></svg>
+              <br />
+              <span className="dashboard_actions_button_text">Swap</span>
+            </button>
           </div>
           <div className="mr-1">
-            <button type="button" className="button-light dashboard_actions_button dashboard_actions_button-send radius-border">Send</button>
+            <button type="button" className="button-light dashboard_actions_button dashboard_actions_button-send radius-border">
+              <span className="dashboard_actions_button_text">Send</span>
+            </button>
           </div>
           <div className="">
-            <button type="button" className="button-light dashboard_actions_button dashboard_actions_button-buy radius-border">Buy</button>
+            <button type="button" className="button-light dashboard_actions_button dashboard_actions_button-buy radius-border">
+              <span className="dashboard_actions_button_text">Buy</span>
+            </button>
           </div>
         </div>
       </div>

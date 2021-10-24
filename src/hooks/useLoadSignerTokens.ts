@@ -13,11 +13,11 @@ const loadAccountTokens = async (address: string, network: Network): Promise<Tok
     return axios.post(`${network.reefscanUrl}api/account/tokens`, { account: address })
       .then((res) => {
         const tkns: Token[] = [];
-        for (let i = 0; i < 10; i += 1) {
+        for (let i = 0; i < 1; i += 1) {
           console.log('TODO REMOVEEE!!!!');
           const tkn = reefTokenWithAmount();
           tkn.balance = BigNumber.from(1000);
-          tkn.address += Math.random().toString().substr(3);
+          // tkn.address += Math.random().toString().substr(3);
           tkn.amount = (1 * 1e18).toString(10);
           tkns.push(tkn);
         }

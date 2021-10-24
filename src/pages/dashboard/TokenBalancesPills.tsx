@@ -1,32 +1,22 @@
-import { Token, utils } from '@reef-defi/react-lib';
-import React from 'react';
+import { Token } from '@reef-defi/react-lib';
+import React, { useEffect } from 'react';
+import { TokenPill } from './TokenPill';
+import { useAppSelector } from '../../store';
 
-const { convert2Normal } = utils;
 interface TokenBalancesPills {
     tokens: Token[]
 }
 
 export const TokenBalancePills = ({ tokens }: TokenBalancesPills): JSX.Element => {
-  const tokenList = tokens.map((token: Token) => (
-    <div key={token.address} className="col-12 col-md-6">
-      <div className="token-balance-item radius-border d-flex d-flex-space-between d-flex-vert-center">
-        <div className="token-balance-item_icon-text mr-1">
-          <div className=" mr-1"><img src={token.iconUrl} alt={token.name} /></div>
-          <div className="">
-            <div className="title-font text-bold ">{token.name}</div>
-            <div className="">{convert2Normal(token.decimals, token.balance.toString())}</div>
-          </div>
-        </div>
-        <div className=" title-font text-bold text-color-dark-accent">
-          $0.044
-        </div>
-      </div>
-    </div>
-  ));
+  const pools = useAppSelector((state) => state.pools);
+  useEffect(() => () => {
+    console.log('pp', pools);
+  }, [pools]);
 
   return (
     <div className="row overflow-auto" style={{ maxHeight: 'auto' }}>
-      {tokenList}
+      {tokens.map((token: Token) => (<TokenPill token={token} key={token.address} />
+      ))}
     </div>
   );
 };

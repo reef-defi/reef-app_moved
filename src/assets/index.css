@@ -54,6 +54,10 @@ svg {
     fill: #76319b;
 }
 
+svg.fill-white {
+    fill: white;
+}
+
 .mr-1 {
     margin-right: 1em;
 }
@@ -120,6 +124,11 @@ svg {
 .dashboard_actions_button{
     width: 5em;
     height: 5em;
+    color: white;
+}
+
+.dashboard_actions_button_text {
+    font-size: 0.8em;
 }
 
 .dashboard_actions_button-swap {
