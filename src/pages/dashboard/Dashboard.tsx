@@ -1,18 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { utils } from '@reef-defi/react-lib';
 import { useAppSelector } from '../../store';
 import { useLoadSignerTokens } from '../../hooks/useLoadSignerTokens';
 import { TokenBalancePills } from './TokenBalancesPills';
+import { TokenWithPrice, useSignerTokenBalances } from '../../hooks/useSignerTokenBalances';
 
 const { convert2Normal } = utils;
 
 const Dashboard = (): JSX.Element => {
   const history = useHistory();
-  const { isLoading } = useAppSelector((state) => state.tokens);
+  const { isLoading: tokensLoading } = useAppSelector((state) => state.tokens);
+  const { pools } = useAppSelector((state) => state.pools);
   const { selectedAccount, accounts } = useAppSelector((state) => state.signers);
   const selectedSigner = selectedAccount > -1 && accounts.length > 0 ? accounts[selectedAccount].signer : undefined;
   const signerTokens = useLoadSignerTokens(selectedSigner);
+  const reefPrice = 0.031;
+  const signerTokenBalances: TokenWithPrice[] = useSignerTokenBalances(signerTokens, pools, reefPrice);
 
   return (
     <div className="">
@@ -57,13 +61,13 @@ const Dashboard = (): JSX.Element => {
         </div>
       </div>
 
-      { isLoading && (
+      { tokensLoading && (
       <div className="mt-5">
         {/* <Components.Loading /> */}
         LOADING
       </div>
       )}
-      {!isLoading && <TokenBalancePills tokens={signerTokens} />}
+      {!tokensLoading && <TokenBalancePills tokens={signerTokenBalances} />}
     </div>
   );
 };

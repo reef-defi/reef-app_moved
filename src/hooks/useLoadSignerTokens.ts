@@ -42,11 +42,11 @@ export const useLoadSignerTokens = (signer?: Signer): Token[] => {
   useEffect(() => {
     const fetchTokens = async (): Promise<void> => {
       if (!signer) {
+        setTokens([]);
         return;
       }
       const address = await signer.getAddress();
       const selectedAccountTokens: Token[] = await loadAccountTokens(address, availableReefNetworks.mainnet);
-      console.log('eee', selectedAccountTokens);
       setTokens(selectedAccountTokens);
     };
     fetchTokens();

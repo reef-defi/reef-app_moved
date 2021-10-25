@@ -1,17 +1,14 @@
-import {
-  Pool, reefTokenWithAmount, Token, utils,
-} from '@reef-defi/react-lib';
+import { Token, utils } from '@reef-defi/react-lib';
 import React from 'react';
-import { BigNumber, utils as eUtils } from 'ethers';
 import { useAppSelector } from '../../store';
+import { TokenWithPrice } from '../../hooks/useSignerTokenBalances';
 
 const { showBalance } = utils;
-const { parseUnits, formatEther, parseEther } = eUtils;
 
 interface TokenPill {
-    token: Token
+    token: TokenWithPrice
 }
-
+/*
 const calculateBalanceValue = (price: string, token: Token): string => {
   const priceBN = BigNumber.from(parseUnits(price));
   const balanceFixed = parseInt(formatEther(token.balance.toString()), 10);
@@ -46,15 +43,12 @@ const calculateTokenPrice = (token: Token, pools: Pool[], reefPrice: number): nu
     return 0;
   }
   return reefPrice;
-};
+}; */
 
 export const TokenPill = ({ token }: TokenPill): JSX.Element => {
   const { isLoading: poolsLoading, pools } = useAppSelector((state) => state.pools);
-  const reefPrice = 0.31;
-  let balance = '0';
-  const priceAmt = calculateTokenPrice(token, pools, reefPrice);
-  const price = priceAmt.toFixed(priceAmt < 1 ? 4 : 2);
-  balance = calculateBalanceValue(price, token);
+  const priceDisplay = 0; // priceAmt.toFixed(priceAmt < 1 ? 4 : 2);
+  const balance = '0';
 
   return (
     <div key={token.address} className="col-12 col-md-6">
@@ -69,11 +63,11 @@ export const TokenPill = ({ token }: TokenPill): JSX.Element => {
         <div className=" title-font text-bold text-color-dark-accent">
           <div>
             $
-            {price}
+            {token.price.toFixed(token.price < 1 ? 4 : 2)}
           </div>
           <div>
             balance: $
-            {balance}
+            {token.balanceValue}
           </div>
 
         </div>
