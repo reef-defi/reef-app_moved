@@ -4,7 +4,24 @@ import { BigNumber, utils } from 'ethers';
 
 const { parseUnits, formatEther } = utils;
 
-const calculateBalanceValue = (price: number, token: Token): number => {
+export interface TokenWithPrice extends Token {
+  price: number | ValueWithStatus;
+  balanceValue: number | ValueWithStatus;
+}
+
+export enum ValueWithStatus {
+  LOADING= 'LOADING',
+  NO_DATA = 'NO_DATA'
+}
+
+// eslint-disable-next-line no-prototype-builtins
+export const isValueWithStatusSet = (priceValue: number | ValueWithStatus): boolean => !ValueWithStatus.hasOwnProperty(priceValue);
+
+const calculateBalanceValue = (price: number | ValueWithStatus, token: Token): number | ValueWithStatus => {
+  // eslint-disable-next-line no-prototype-builtins
+  if (!isValueWithStatusSet(price)) {
+    return price;
+  }
   const priceBN = BigNumber.from(parseUnits(price.toString()));
   const balanceFixed = parseInt(formatEther(token.balance.toString()), 10);
   return parseFloat(formatEther(priceBN.mul(BigNumber.from(balanceFixed)).toString()));
@@ -25,7 +42,10 @@ const getReefTokenPoolReserves = (reefTokenPool: Pool, reefAddress: string): {re
 
 const findReefTokenPool = (pools: Pool[], reefAddress: string, token: Token): Pool | undefined => pools.find((pool) => (pool.token1.address === reefAddress && pool.token2.address === token.address) || (pool.token2.address === reefAddress && pool.token1.address === token.address));
 
-const calculateTokenPrice = (token: Token, pools: Pool[], reefPrice: number): number => {
+const calculateTokenPrice = (token: Token, pools: Pool[], reefPrice: number | ValueWithStatus): number | ValueWithStatus => {
+  if (!isValueWithStatusSet(reefPrice)) {
+    return reefPrice;
+  }
   const { address: reefAddress } = reefTokenWithAmount();
   let ratio: number;
   if (token.address !== reefAddress) {
@@ -33,27 +53,25 @@ const calculateTokenPrice = (token: Token, pools: Pool[], reefPrice: number): nu
     if (reefTokenPool) {
       const { reefReserve, tokenReserve } = getReefTokenPoolReserves(reefTokenPool, reefAddress);
       ratio = tokenReserve / reefReserve;
-      return ratio * reefPrice;
+      return ratio * (reefPrice as number);
     }
-    return 0;
+    return ValueWithStatus.NO_DATA;
   }
-  return reefPrice;
+  return reefPrice || ValueWithStatus.NO_DATA;
 };
 
-export interface TokenWithPrice extends Token {
-  price: number;
-  balanceValue: number;
-}
-
-export const useSignerTokenBalances = (tokens: Token[], pools: Pool[], reefPrice: number): TokenWithPrice[] => {
+export const useSignerTokenBalances = (tokens: Token[], pools: Pool[], reefPrice: number | ValueWithStatus): TokenWithPrice[] => {
   const [balances, setBalances] = useState<TokenWithPrice[]>([]);
   useEffect(() => {
     if (!tokens.length) {
       setBalances([]);
       return;
     }
-    if (!pools.length || !reefPrice) {
-      setBalances(tokens.map((tkn) => ({ ...tkn, balanceValue: -1, price: -1 } as TokenWithPrice)));
+    if (!pools.length || !isValueWithStatusSet(reefPrice)) {
+      setBalances(tokens.map((tkn) => {
+        const stat = !isValueWithStatusSet(reefPrice) ? reefPrice : ValueWithStatus.LOADING;
+        return { ...tkn, balanceValue: stat, price: stat } as TokenWithPrice;
+      }));
       return;
     }
 

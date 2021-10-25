@@ -1,12 +1,19 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { utils } from '@reef-defi/react-lib';
+import { api, Components } from '@reef-defi/react-lib';
 import { useAppSelector } from '../../store';
 import { useLoadSignerTokens } from '../../hooks/useLoadSignerTokens';
 import { TokenBalancePills } from './TokenBalancesPills';
-import { TokenWithPrice, useSignerTokenBalances } from '../../hooks/useSignerTokenBalances';
+import {
+  isValueWithStatusSet,
+  TokenWithPrice,
+  useSignerTokenBalances,
+  ValueWithStatus,
+} from '../../hooks/useSignerTokenBalances';
+import { toCurrencyFormat } from '../../utils/utils';
 
-const { convert2Normal } = utils;
+const { retrieveReefCoingeckoPrice } = api;
+const { Loading } = Components.Loading;
 
 const Dashboard = (): JSX.Element => {
   const history = useHistory();
@@ -15,18 +22,47 @@ const Dashboard = (): JSX.Element => {
   const { selectedAccount, accounts } = useAppSelector((state) => state.signers);
   const selectedSigner = selectedAccount > -1 && accounts.length > 0 ? accounts[selectedAccount].signer : undefined;
   const signerTokens = useLoadSignerTokens(selectedSigner);
-  const reefPrice = 0.031;
+  const [reefPrice, setReefPrice] = useState<number|ValueWithStatus>(ValueWithStatus.LOADING);
   const signerTokenBalances: TokenWithPrice[] = useSignerTokenBalances(signerTokens, pools, reefPrice);
 
+  const totalBalance = signerTokenBalances.reduce((state: number | ValueWithStatus, curr) => {
+    if (!isValueWithStatusSet(state)) {
+      return curr.balanceValue;
+    }
+    return (state as number) + (curr.balanceValue as number);
+  }, ValueWithStatus.LOADING);
+
+  useEffect(() => {
+    const getPrice = async ():Promise<void> => {
+      let price: number|ValueWithStatus = ValueWithStatus.NO_DATA;
+      try {
+        price = await retrieveReefCoingeckoPrice();
+      } catch (e) {
+      }
+      setReefPrice(price);
+    };
+    const interval = setInterval(getPrice, 30000);
+    getPrice();
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+
   return (
-    <div className="">
+    <div className="w-100">
       <div className="mb-4 row">
         <div className="dashboard_balance col-12 col-md-6">
           <div>
             <h5 className="text-semi-bold">Balance</h5>
           </div>
           <div>
-            <span className="dashboard_balance-txt title-font text-bold text-color-dark-accent">$1423</span>
+            {isValueWithStatusSet(totalBalance) && (
+            <span className="dashboard_balance-txt title-font text-bold text-color-dark-accent">
+              {toCurrencyFormat(totalBalance as number, { maximumFractionDigits: totalBalance < 10000 ? 2 : 0 })}
+            </span>
+            )}
+            {!isValueWithStatusSet(totalBalance) && totalBalance === ValueWithStatus.LOADING && <Loading />}
+            {!isValueWithStatusSet(totalBalance) && totalBalance === ValueWithStatus.NO_DATA && ' - '}
           </div>
         </div>
         <div className="dashboard_actions col-12 col-md-6 d-flex d-flex-end d-flex-vert-center">
@@ -61,10 +97,9 @@ const Dashboard = (): JSX.Element => {
         </div>
       </div>
 
-      { tokensLoading && (
+      { (tokensLoading || !signerTokenBalances) && (
       <div className="mt-5">
-        {/* <Components.Loading /> */}
-        LOADING
+        <Loading />
       </div>
       )}
       {!tokensLoading && <TokenBalancePills tokens={signerTokenBalances} />}

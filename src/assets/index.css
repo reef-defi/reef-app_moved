@@ -26,6 +26,10 @@ html, body, #root, .App {
     padding: 50px;
 }
 
+.w-100 {
+    width: 100%;
+}
+
 .title-font {
     font-family: 'Lato', sans-serif;
 }
