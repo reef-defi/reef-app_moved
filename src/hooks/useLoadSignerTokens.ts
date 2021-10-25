@@ -4,9 +4,10 @@ import axios from 'axios';
 import {
   createEmptyToken, Network, reefTokenWithAmount, Token, utils,
 } from '@reef-defi/react-lib';
-import { BigNumber } from 'ethers';
+import { BigNumber, utils as eUtils } from 'ethers';
 
 const { availableReefNetworks } = utils;
+const { parseUnits } = eUtils;
 
 const loadAccountTokens = async (address: string, network: Network): Promise<Token[]> => {
   try {
@@ -14,11 +15,14 @@ const loadAccountTokens = async (address: string, network: Network): Promise<Tok
       .then((res) => {
         const tkns: Token[] = [];
         for (let i = 0; i < 1; i += 1) {
-          console.log('TODO REMOVEEE!!!!');
+          console.log('TODO REMOVEEE!!!!', parseUnits('1000').toString());
+
           const tkn = reefTokenWithAmount();
-          tkn.balance = BigNumber.from(1000);
+          const balanceFromUnits = parseUnits('100');
+          // parseUnits returned BigNumber type is different than one in lib??
+          tkn.balance = BigNumber.from(balanceFromUnits.toString());
           // tkn.address += Math.random().toString().substr(3);
-          tkn.amount = (1 * 1e18).toString(10);
+          tkn.amount = parseUnits('2').toString();
           tkns.push(tkn);
         }
         return tkns;
