@@ -5,19 +5,21 @@ import { BigNumber, utils } from 'ethers';
 const { parseUnits, formatEther } = utils;
 
 export interface TokenWithPrice extends Token {
-  price: number | ValueWithStatus;
-  balanceValue: number | ValueWithStatus;
+  price: ValueWithStatus;
+  balanceValue: ValueWithStatus;
 }
 
-export enum ValueWithStatus {
+export enum ValueStatus {
   LOADING= 'LOADING',
   NO_DATA = 'NO_DATA'
 }
 
-// eslint-disable-next-line no-prototype-builtins
-export const isValueWithStatusSet = (priceValue: number | ValueWithStatus): boolean => !ValueWithStatus.hasOwnProperty(priceValue);
+export type ValueWithStatus = number | ValueStatus;
 
-const calculateBalanceValue = (price: number | ValueWithStatus, token: Token): number | ValueWithStatus => {
+// eslint-disable-next-line no-prototype-builtins
+export const isValueWithStatusSet = (priceValue: ValueWithStatus): boolean => !ValueStatus.hasOwnProperty(priceValue);
+
+const calculateBalanceValue = (price: ValueWithStatus, token: Token): ValueWithStatus => {
   // eslint-disable-next-line no-prototype-builtins
   if (!isValueWithStatusSet(price)) {
     return price;
@@ -30,7 +32,7 @@ const calculateBalanceValue = (price: number | ValueWithStatus, token: Token): n
 const getReefTokenPoolReserves = (reefTokenPool: Pool, reefAddress: string): {reefReserve:number, tokenReserve: number} => {
   let reefReserve: number;
   let tokenReserve: number;
-  if (reefTokenPool.token1.address === reefAddress) {
+  if (reefTokenPool.token1.address.toLowerCase() === reefAddress.toLowerCase()) {
     reefReserve = parseInt(reefTokenPool.reserve1, 10);
     tokenReserve = parseInt(reefTokenPool.reserve2, 10);
   } else {
@@ -40,27 +42,27 @@ const getReefTokenPoolReserves = (reefTokenPool: Pool, reefAddress: string): {re
   return { reefReserve, tokenReserve };
 };
 
-const findReefTokenPool = (pools: Pool[], reefAddress: string, token: Token): Pool | undefined => pools.find((pool) => (pool.token1.address === reefAddress && pool.token2.address === token.address) || (pool.token2.address === reefAddress && pool.token1.address === token.address));
+const findReefTokenPool = (pools: Pool[], reefAddress: string, token: Token): Pool | undefined => pools.find((pool) => (pool.token1.address.toLowerCase() === reefAddress.toLowerCase() && pool.token2.address.toLowerCase() === token.address.toLowerCase()) || (pool.token2.address.toLowerCase() === reefAddress.toLowerCase() && pool.token1.address.toLowerCase() === token.address.toLowerCase()));
 
-const calculateTokenPrice = (token: Token, pools: Pool[], reefPrice: number | ValueWithStatus): number | ValueWithStatus => {
+const calculateTokenPrice = (token: Token, pools: Pool[], reefPrice: ValueWithStatus): ValueWithStatus => {
   if (!isValueWithStatusSet(reefPrice)) {
     return reefPrice;
   }
   const { address: reefAddress } = reefTokenWithAmount();
   let ratio: number;
-  if (token.address !== reefAddress) {
+  if (token.address.toLowerCase() !== reefAddress.toLowerCase()) {
     const reefTokenPool = findReefTokenPool(pools, reefAddress, token);
     if (reefTokenPool) {
       const { reefReserve, tokenReserve } = getReefTokenPoolReserves(reefTokenPool, reefAddress);
-      ratio = tokenReserve / reefReserve;
+      ratio = reefReserve / tokenReserve;
       return ratio * (reefPrice as number);
     }
-    return ValueWithStatus.NO_DATA;
+    return ValueStatus.NO_DATA;
   }
-  return reefPrice || ValueWithStatus.NO_DATA;
+  return reefPrice || ValueStatus.NO_DATA;
 };
 
-export const useSignerTokenBalances = (tokens: Token[], pools: Pool[], reefPrice: number | ValueWithStatus): TokenWithPrice[] => {
+export const useSignerTokenBalances = (tokens: Token[], pools: Pool[], reefPrice: ValueWithStatus): TokenWithPrice[] => {
   const [balances, setBalances] = useState<TokenWithPrice[]>([]);
   useEffect(() => {
     if (!tokens.length) {
@@ -69,7 +71,7 @@ export const useSignerTokenBalances = (tokens: Token[], pools: Pool[], reefPrice
     }
     if (!pools.length || !isValueWithStatusSet(reefPrice)) {
       setBalances(tokens.map((tkn) => {
-        const stat = !isValueWithStatusSet(reefPrice) ? reefPrice : ValueWithStatus.LOADING;
+        const stat = !isValueWithStatusSet(reefPrice) ? reefPrice : ValueStatus.LOADING;
         return { ...tkn, balanceValue: stat, price: stat } as TokenWithPrice;
       }));
       return;

@@ -3,14 +3,17 @@ import { useHistory } from 'react-router-dom';
 import { api, Components } from '@reef-defi/react-lib';
 import { useAppSelector } from '../../store';
 import { useLoadSignerTokens } from '../../hooks/useLoadSignerTokens';
-import { TokenBalancePills } from './TokenBalancesPills';
+import { TokenBalances } from './TokenBalances';
 import {
   isValueWithStatusSet,
   TokenWithPrice,
   useSignerTokenBalances,
-  ValueWithStatus,
+  ValueStatus, ValueWithStatus,
 } from '../../hooks/useSignerTokenBalances';
 import { toCurrencyFormat } from '../../utils/utils';
+import { Balance } from './Balance';
+import { SendIcon } from '../../common/Icons';
+import { ActionButtons } from './ActionButtons';
 
 const { retrieveReefCoingeckoPrice } = api;
 const { Loading } = Components.Loading;
@@ -22,19 +25,23 @@ const Dashboard = (): JSX.Element => {
   const { selectedAccount, accounts } = useAppSelector((state) => state.signers);
   const selectedSigner = selectedAccount > -1 && accounts.length > 0 ? accounts[selectedAccount].signer : undefined;
   const signerTokens = useLoadSignerTokens(selectedSigner);
-  const [reefPrice, setReefPrice] = useState<number|ValueWithStatus>(ValueWithStatus.LOADING);
+  const [reefPrice, setReefPrice] = useState<number|ValueStatus>(ValueStatus.LOADING);
   const signerTokenBalances: TokenWithPrice[] = useSignerTokenBalances(signerTokens, pools, reefPrice);
 
-  const totalBalance = signerTokenBalances.reduce((state: number | ValueWithStatus, curr) => {
-    if (!isValueWithStatusSet(state)) {
-      return curr.balanceValue;
+  const totalBalance = signerTokenBalances.reduce((state: ValueWithStatus, curr) => {
+    if (Number.isNaN(curr.balanceValue) || !isValueWithStatusSet(curr.balanceValue)) {
+      return state;
     }
-    return (state as number) + (curr.balanceValue as number);
-  }, ValueWithStatus.LOADING);
+    if (!Number.isNaN(+curr.balanceValue as number) && isValueWithStatusSet(curr.balanceValue)) {
+      const stateNr = isValueWithStatusSet(state) ? state as number : 0;
+      return stateNr + (curr.balanceValue as number);
+    }
+    return state;
+  }, ValueStatus.LOADING);
 
   useEffect(() => {
     const getPrice = async ():Promise<void> => {
-      let price: number|ValueWithStatus = ValueWithStatus.NO_DATA;
+      let price: number|ValueStatus = ValueStatus.NO_DATA;
       try {
         price = await retrieveReefCoingeckoPrice();
       } catch (e) {
@@ -51,21 +58,9 @@ const Dashboard = (): JSX.Element => {
   return (
     <div className="w-100">
       <div className="mb-4 row">
-        <div className="dashboard_balance col-12 col-md-6">
-          <div>
-            <h5 className="text-semi-bold">Balance</h5>
-          </div>
-          <div>
-            {isValueWithStatusSet(totalBalance) && (
-            <span className="dashboard_balance-txt title-font text-bold text-color-dark-accent">
-              {toCurrencyFormat(totalBalance as number, { maximumFractionDigits: totalBalance < 10000 ? 2 : 0 })}
-            </span>
-            )}
-            {!isValueWithStatusSet(totalBalance) && totalBalance === ValueWithStatus.LOADING && <Loading />}
-            {!isValueWithStatusSet(totalBalance) && totalBalance === ValueWithStatus.NO_DATA && ' - '}
-          </div>
-        </div>
-        <div className="dashboard_actions col-12 col-md-6 d-flex d-flex-end d-flex-vert-center">
+        <Balance balance={totalBalance} />
+        <ActionButtons />
+        {/* <div className="dashboard_actions col-12 col-md-6 d-flex d-flex-end d-flex-vert-center">
           <div className="mr-1">
             <button type="button" className="button-light dashboard_actions_button dashboard_actions_button-swap radius-border" onClick={() => { history.push('/swap'); }}>
               <svg className="fill-white" strokeWidth="0" viewBox="0 0 16 16" height="1.5em" width="1.5em" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M1 11.5a.5.5 0 0 0 .5.5h11.793l-3.147 3.146a.5.5 0 0 0 .708.708l4-4a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 11H1.5a.5.5 0 0 0-.5.5zm14-7a.5.5 0 0 1-.5.5H2.707l3.147 3.146a.5.5 0 1 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 4H14.5a.5.5 0 0 1 .5.5z" /></svg>
@@ -75,6 +70,8 @@ const Dashboard = (): JSX.Element => {
           </div>
           <div className="mr-1">
             <button type="button" className="button-light dashboard_actions_button dashboard_actions_button-send radius-border">
+              <SendIcon />
+              <br />
               <span className="dashboard_actions_button_text">Send</span>
             </button>
           </div>
@@ -83,26 +80,9 @@ const Dashboard = (): JSX.Element => {
               <span className="dashboard_actions_button_text">Buy</span>
             </button>
           </div>
-        </div>
+        </div> */}
       </div>
-      <div className="mb-4 d-flex d-flex-space-between d-flex-vert-base">
-        <div>
-          <h5 className="my-auto title-color text-semi-bold">Tokens</h5>
-        </div>
-        <div>
-          <button type="button" className="dashboard_refresh-btn button-light radius-border text-color-dark-accent text-regular">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M9 12l-4.463 4.969-4.537-4.969h3c0-4.97 4.03-9 9-9 2.395 0 4.565.942 6.179 2.468l-2.004 2.231c-1.081-1.05-2.553-1.699-4.175-1.699-3.309 0-6 2.691-6 6h3zm10.463-4.969l-4.463 4.969h3c0 3.309-2.691 6-6 6-1.623 0-3.094-.65-4.175-1.699l-2.004 2.231c1.613 1.526 3.784 2.468 6.179 2.468 4.97 0 9-4.03 9-9h3l-4.537-4.969z" /></svg>
-            Refresh
-          </button>
-        </div>
-      </div>
-
-      { (tokensLoading || !signerTokenBalances) && (
-      <div className="mt-5">
-        <Loading />
-      </div>
-      )}
-      {!tokensLoading && <TokenBalancePills tokens={signerTokenBalances} />}
+      <TokenBalances tokens={signerTokenBalances} />
     </div>
   );
 };
