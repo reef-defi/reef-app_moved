@@ -10,7 +10,12 @@ html, body, #root, .App {
 
 .content {
     display: flex;
-    padding: 40px 60px;
+    padding: 2.5rem 3.5rem;
+}
+
+.nav-content {
+    padding-left: 3.5rem;
+    padding-right: 3.5rem;
 }
 
 /* Footer WIP */
@@ -43,7 +48,7 @@ html, body, #root, .App {
 }
 
 .text-color-dark-accent {
-    color: #76319b;
+    color: #76319b !important;
 }
 
 .text-color-dark {
@@ -186,8 +191,8 @@ svg.fill-white {
 }
 
 .dashboard_actions_button-buy {
-    background-color: #bf37a7;
-    background: linear-gradient(90deg, rgb(191, 55, 167) 0%, rgb(173, 51, 153) 100%);
+        background-color: #bf37a7;
+        background: linear-gradient(90deg, rgb(191, 55, 167) 0%, rgb(173, 51, 153) 100%);
 }
 
 .dashboard_actions_button-buy .svg-w {
