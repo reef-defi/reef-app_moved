@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { Signer } from '@reef-defi/evm-provider';
 import axios, { AxiosResponse } from 'axios';
 import {
-  Network, ReefSigner, Token, utils,
+  createEmptyTokenWithAmount,
+  Network, ReefSigner, reefTokenWithAmount, Token, utils,
 } from '@reef-defi/react-lib';
 import { BigNumber, utils as eUtils } from 'ethers';
 
@@ -32,7 +33,7 @@ const loadAccountTokens = async (address: string, network: Network): Promise<Tok
   try {
     return axios.post<void, AxiosResponse<AccountTokensRes>>(`${network.reefscanUrl}api/account/tokens`, { account: address })
       .then((res) => {
-        /* const tkns: Token[] = [];
+        const tkns: Token[] = [];
 
         console.log('TODO REMOVEEE!!!!');
         const reefTkn = reefTokenWithAmount();
@@ -48,7 +49,6 @@ const loadAccountTokens = async (address: string, network: Network): Promise<Tok
         testTkn.iconUrl = 'https://assets.coingecko.com/coins/images/9956/small/dai-multi-collateral-mcd.png?1574218774';
         tkns.push(testTkn);
         return tkns;
-*/
         /* for (let i = 0; i < 10; i += 1) {
 
           const tkn = reefTokenWithAmount();
@@ -74,6 +74,9 @@ const loadAccountTokens = async (address: string, network: Network): Promise<Tok
           iconUrl: '',
           isEmpty: false,
         } as Token));
+      }, (err) => {
+        console.log('EEEEE');
+        return [];
       });
   } catch (err) {
     console.log('loadAccountTokens error = ', err);

@@ -6,13 +6,11 @@ import { useLoadSignerTokens } from '../../hooks/useLoadSignerTokens';
 import { TokenBalances } from './TokenBalances';
 import {
   isValueWithStatusSet,
-  TokenWithPrice,
   useSignerTokenBalances,
-  ValueStatus, ValueWithStatus,
+  ValueStatus,
+  ValueWithStatus,
 } from '../../hooks/useSignerTokenBalances';
-import { toCurrencyFormat } from '../../utils/utils';
 import { Balance } from './Balance';
-import { SendIcon } from '../../common/Icons';
 import { ActionButtons } from './ActionButtons';
 import { useGetSigner } from '../../hooks/useGetSigner';
 
@@ -28,7 +26,7 @@ const Dashboard = (): JSX.Element => {
   const [reefPrice, setReefPrice] = useState<number|ValueStatus>(ValueStatus.LOADING);
   const signerTokenBalances = useSignerTokenBalances(signerTokens, pools, reefPrice);
 
-  const totalBalance = signerTokenBalances.reduce((state: ValueWithStatus, curr) => {
+  const totalBalance = signerTokenBalances.length ? signerTokenBalances.reduce((state: ValueWithStatus, curr) => {
     if (Number.isNaN(curr.balanceValue) || !isValueWithStatusSet(curr.balanceValue)) {
       return state;
     }
@@ -37,7 +35,7 @@ const Dashboard = (): JSX.Element => {
       return stateNr + (curr.balanceValue as number);
     }
     return state;
-  }, ValueStatus.LOADING);
+  }, ValueStatus.LOADING) : ValueStatus.NO_DATA;
 
   useEffect(() => {
     const getPrice = async ():Promise<void> => {
@@ -48,7 +46,7 @@ const Dashboard = (): JSX.Element => {
       }
       setReefPrice(price);
     };
-    const interval = setInterval(getPrice, 30000);
+    const interval = setInterval(getPrice, 60000);
     getPrice();
     return () => {
       clearInterval(interval);

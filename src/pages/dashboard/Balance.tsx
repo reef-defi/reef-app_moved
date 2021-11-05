@@ -21,7 +21,11 @@ export const Balance = ({ balance }:Balance): JSX.Element => (
         </span>
       )}
       {!isValueWithStatusSet(balance) && balance === ValueStatus.LOADING && <Loading />}
-      {!isValueWithStatusSet(balance) && balance === ValueStatus.NO_DATA && ' - '}
+      {!isValueWithStatusSet(balance) && balance === ValueStatus.NO_DATA && (
+      <span className="dashboard_balance-txt title-font text-bold text-color-dark-accent">
+        {toCurrencyFormat(0, { maximumFractionDigits: 0 })}
+      </span>
+      )}
     </div>
   </div>
 );

@@ -35,6 +35,9 @@ export const TokenBalances = ({ tokens }: TokenBalances): JSX.Element => (
           ))}
         </div>
       )}
+      {!tokens || !tokens?.length && (
+        <div>No tokens to display.</div>
+      )}
     </div>
   </div>
 
