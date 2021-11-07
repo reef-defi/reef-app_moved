@@ -24,6 +24,12 @@
 .nav-account {
   background: linear-gradient( 0deg, rgb(250 248 255) 0%, rgb(217 211 235) 100%);
   height: 2.5em;
+  background-color: #f3f0f8;
+  box-shadow: 0.2em 0.2em 1.5em #e2def1;
+  padding:0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .logo-btn {
@@ -36,4 +42,10 @@
 .logo-w {
   width: 6em;
   min-width: 6em;
+}
+
+.no-break-text {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
