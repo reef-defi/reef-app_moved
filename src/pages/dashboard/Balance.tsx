@@ -6,7 +6,7 @@ import { toCurrencyFormat } from '../../utils/utils';
 const { Loading } = Components.Loading;
 
 interface Balance {
-    balance: ValueWithStatus;
+    balance: ValueWithStatus<number>;
 }
 
 export const Balance = ({ balance }:Balance): JSX.Element => (

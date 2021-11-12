@@ -24,7 +24,7 @@ export const useLoadTokens = (): void => {
       .then(() => rpc.loadTokens(tokens.length === 0 ? existingTokens : tokens, signer.signer))
       .then((newTokens) => dispatch(setTokens(newTokens)))
       .then(() => dispatch(reloadPools()))
-      .catch((error) => console.log(error))
+      .catch((error) => console.log('load tokens err=', error))
       .finally(() => dispatch(setTokensLoading(false)));
   }, [reloadToggle]);
 };

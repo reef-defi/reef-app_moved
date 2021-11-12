@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Signer } from '@reef-defi/evm-provider';
 import axios, { AxiosResponse } from 'axios';
 import {
-  createEmptyTokenWithAmount,
-  Network, ReefSigner, reefTokenWithAmount, Token, utils,
+  Network, ReefSigner, Token, utils,
 } from '@reef-defi/react-lib';
 import { BigNumber, utils as eUtils } from 'ethers';
+import { ValueStatus, ValueWithStatus } from './useSignerTokenBalances';
 
 const { availableReefNetworks } = utils;
 const { parseUnits } = eUtils;
@@ -71,12 +70,12 @@ const loadAccountTokens = async (address: string, network: Network): Promise<Tok
   }
 };
 
-export const useLoadSignerTokens = (signer?: ReefSigner): Token[] => {
-  const [tokens, setTokens] = useState<Token[]>([]);
+export const useLoadSignerTokens = (signer?: ReefSigner): ValueWithStatus<Token[]> => {
+  const [tokens, setTokens] = useState<ValueWithStatus<Token[]>>(ValueStatus.LOADING);
   useEffect(() => {
     const fetchTokens = async (): Promise<void> => {
       if (!signer) {
-        setTokens([]);
+        setTokens(ValueStatus.LOADING);
         return;
       }
       const selectedAccountTokens: Token[] = await loadAccountTokens(signer.address, availableReefNetworks.mainnet);
