@@ -13,6 +13,7 @@ import {
 import { Balance } from './Balance';
 import { ActionButtons } from './ActionButtons';
 import { useGetSigner } from '../../hooks/useGetSigner';
+import './Dashboard.css';
 
 const { retrieveReefCoingeckoPrice } = api;
 const { Loading } = Components.Loading;

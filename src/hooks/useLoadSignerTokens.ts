@@ -34,7 +34,6 @@ const loadAccountTokens = async (address: string, network: Network): Promise<Tok
     return axios.post<void, AxiosResponse<AccountTokensRes>>(`${network.reefscanUrl}api/account/tokens`, { account: address })
       .then((res) => {
         /* const tkns: Token[] = [];
-
         console.log('TODO REMOVEEE!!!!');
         const reefTkn = reefTokenWithAmount();
         const balanceFromUnits = parseUnits('100');
@@ -49,19 +48,6 @@ const loadAccountTokens = async (address: string, network: Network): Promise<Tok
         testTkn.iconUrl = 'https://assets.coingecko.com/coins/images/9956/small/dai-multi-collateral-mcd.png?1574218774';
         tkns.push(testTkn);
         return tkns; */
-        /* for (let i = 0; i < 10; i += 1) {
-
-          const tkn = reefTokenWithAmount();
-          const balanceFromUnits = parseUnits('100');
-          // parseUnits returned BigNumber type is different than one in lib??
-          tkn.balance = BigNumber.from(balanceFromUnits.toString());
-          if (i > 0) {
-            tkn.address += i;
-          }
-          tkn.amount = parseUnits('2').toString();
-          tkns.push(tkn);
-        } */
-
         if (!res.status) {
           return [];
         }
@@ -71,7 +57,8 @@ const loadAccountTokens = async (address: string, network: Network): Promise<Tok
           amount: resBal.balance,
           decimals: resBal.decimals,
           balance: BigNumber.from(resBal.balance),
-          iconUrl: '',
+          // TODO add icons in response
+          iconUrl: resBal.symbol === 'REEF' ? 'https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png' : '',
           isEmpty: false,
         } as Token));
       }, (err) => {
