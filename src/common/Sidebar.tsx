@@ -6,19 +6,19 @@ import {
 import './Sidebar.css';
 import { Link } from 'react-router-dom';
 import useWindowDimensions from '../hooks/useWindowDimension';
-import { ReefLogo } from './Icons';
+import { ReefLogo, WalletIcon } from './Icons';
 import {
-  ADD_LIQUIDITY_URL, CREATE_ERC20_TOKEN_URL, DASHBOARD_URL, SWAP_URL,
+  ADD_LIQUIDITY_URL, CREATE_ERC20_TOKEN_URL, DASHBOARD_URL, POOLS_URL, SWAP_URL,
 } from '../urls';
 
 const menuItems = [
-  { title: 'Dashboard', url: DASHBOARD_URL, icon: <BsFillGrid1X2Fill /> },
+  { title: 'Dashboard', url: DASHBOARD_URL, icon: <WalletIcon /> },
   { title: 'Swap', url: SWAP_URL, icon: <BsArrowLeftRight /> },
-  { title: 'Pools', url: ADD_LIQUIDITY_URL, icon: <BsBagFill /> },
+  { title: 'Pools', url: POOLS_URL, icon: <BsBagFill /> },
   { title: 'Creator', url: CREATE_ERC20_TOKEN_URL, icon: <BsHammer /> },
 ];
 
-const SCREEN_BREAK_POINT = 700;
+const SCREEN_BREAK_POINT = 870;
 
 const Sidebar = (): JSX.Element => {
   const [isOpen, setIsOpen] = useState(true);

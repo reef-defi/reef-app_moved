@@ -1,24 +1,32 @@
 import React from 'react';
 
 import { availableNetworks, Components } from '@reef-defi/react-lib';
+import { reloadTokens } from '../../store/actions/tokens';
+import { useAppDispatch, useAppSelector } from '../../store';
+import { useGetSigner } from '../../hooks/useGetSigner';
+import { notify } from '../../utils/utils';
 
-const { SwapComponent, Display } = Components;
+const { SwapComponent } = Components;
 
-const none = (): void => {
-  const a = 1;
+const Swap = (): JSX.Element => {
+  const dispatch = useAppDispatch();
+  const { tokens } = useAppSelector((state) => state.tokens);
+
+  const selectedAccount = useGetSigner();
+
+  const reloadToggle = (): void => {
+    dispatch(reloadTokens());
+  };
+
+  return (
+    <SwapComponent
+      tokens={tokens}
+      account={selectedAccount}
+      reloadTokens={reloadToggle}
+      network={{ ...availableNetworks.mainnet }}
+      notify={notify}
+    />
+  );
 };
-
-const Swap = (): JSX.Element => (
-  <Display.CenterColumn>
-    <div style={{ minWidth: '500px' }}>
-      <SwapComponent
-        tokens={[]}
-        reloadTokens={none}
-        network={{ ...availableNetworks.mainnet }}
-        notify={none}
-      />
-    </div>
-  </Display.CenterColumn>
-);
 
 export default Swap;
