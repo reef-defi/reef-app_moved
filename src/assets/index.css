@@ -121,7 +121,7 @@ svg.fill-white {
     border: none;
     background-color: #e6ddf0;
 }
-
+/*
 .token-balance-item {
     background-color: #f8f7fc;
     box-shadow: 0em 0em 0.3em #e6e3f3;
@@ -145,7 +145,7 @@ svg.fill-white {
 .token-balance-item_balance-value-icon-w {
     width: 1.4em;
     height: 1.4em;
-}
+}*/
 
 .dashboard_refresh-btn {
     padding: 0.2em 0.7em !important;

@@ -33,7 +33,7 @@ const loadAccountTokens = async (address: string, network: Network): Promise<Tok
   try {
     return axios.post<void, AxiosResponse<AccountTokensRes>>(`${network.reefscanUrl}api/account/tokens`, { account: address })
       .then((res) => {
-        const tkns: Token[] = [];
+        /* const tkns: Token[] = [];
 
         console.log('TODO REMOVEEE!!!!');
         const reefTkn = reefTokenWithAmount();
@@ -48,7 +48,7 @@ const loadAccountTokens = async (address: string, network: Network): Promise<Tok
         testTkn.decimals = 18;
         testTkn.iconUrl = 'https://assets.coingecko.com/coins/images/9956/small/dai-multi-collateral-mcd.png?1574218774';
         tkns.push(testTkn);
-        return tkns;
+        return tkns; */
         /* for (let i = 0; i < 10; i += 1) {
 
           const tkn = reefTokenWithAmount();
@@ -75,7 +75,7 @@ const loadAccountTokens = async (address: string, network: Network): Promise<Tok
           isEmpty: false,
         } as Token));
       }, (err) => {
-        console.log('EEEEE');
+        console.log('Error loading tokens =', err);
         return [];
       });
   } catch (err) {
