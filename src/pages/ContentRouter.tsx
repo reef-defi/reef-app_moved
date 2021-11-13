@@ -16,6 +16,7 @@ import RemoveLiquidity from './pools/RemoveLiquidity';
 import Swap from './swap/Swap';
 import Dashboard from './dashboard/Dashboard';
 import { Transfer } from './transfer/Transfer';
+import { Creator } from './creator/Creator';
 
 const ContentRouter = (): JSX.Element => (
   <div className="content">
@@ -26,7 +27,7 @@ const ContentRouter = (): JSX.Element => (
       <Route exact path={ADD_LIQUIDITY_URL} component={AddLiqudity} />
       <Route path={REMOVE_LIQUIDITY_URL} component={RemoveLiquidity} />
       <Route exact path={TRANSFER_TOKEN} component={Transfer} />
-      <Route exact path={CREATE_ERC20_TOKEN_URL} render={() => (<div />)} />
+      <Route exact path={CREATE_ERC20_TOKEN_URL} component={Creator} />
       <Route path="/" render={() => (<Redirect to={DASHBOARD_URL} />)} />
     </Switch>
   </div>
