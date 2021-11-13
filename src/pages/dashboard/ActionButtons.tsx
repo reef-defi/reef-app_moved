@@ -31,8 +31,9 @@ export const ActionButtons = (): JSX.Element => {
         <button
           type="button"
           className="button-light dashboard_actions_button dashboard_actions_button-send radius-border"
-          data-bs-toggle="modal"
-          data-bs-target="#transfer-modal"
+          onClick={() => {
+            history.push('/send');
+          }}
         >
           <div className="svg-w fill-white">
             <SendIcon />
@@ -51,65 +52,6 @@ export const ActionButtons = (): JSX.Element => {
           <span className="dashboard_actions_button_text">Buy</span>
         </button>
       </div>
-
-      <Components.Modal.Modal id="transfer-modal">
-        <Components.Modal.ModalHeader>
-          <Components.Text.Title>Account</Components.Text.Title>
-          <Components.Modal.ModalClose />
-        </Components.Modal.ModalHeader>
-        <Components.Modal.ModalBody>
-          <Components.Display.Border size="2">
-            <Components.Display.ContentBetween>
-              <Components.Display.Margin size="2">
-                <Components.Display.FlexRow>
-                  ttt
-                </Components.Display.FlexRow>
-              </Components.Display.Margin>
-              <Components.TokenAmountFieldMax
-                token={txToken}
-                tokens={txTokens}
-                id="sell-token-field-23"
-                onAmountChange={setTxAmount}
-                onTokenSelect={(t: Token) => setTxToken(t as TokenWithAmount)}
-              />
-            </Components.Display.ContentBetween>
-            {/* <ContentBetween>
-               <Components.Display.MutedText>
-                <Components.Display..MiniText>
-                  Connected with polkadot-extension
-                </Components.Display..MiniText>
-              </Components.Display.MutedText>
-              <button
-                type="button"
-                className="btn btn-sm btn-reef border-rad"
-                data-bs-target="#select-account-modal"
-                data-bs-toggle="modal"
-              >
-                Switch account
-              </button>
-            </ContentBetween> */}
-            {/* <Margin size="2">
-              <FlexRow>
-                ttt
-              </FlexRow>
-            </Margin> */}
-            {/* <MT size="2" />
-            <MX size="2">
-                    <CopyToClipboard text={evmAddress}>
-                <span className="form-text text-muted ms-2" style={{ cursor: 'pointer' }}>
-                  <CopyIcon small />
-                  <MiniText>Copy EVM Address</MiniText>
-                </span>
-                    </CopyToClipboard>
-                    <a href={`${reefscanUrl}account/${address}`} target="_blank" className="form-text text-muted ms-3" style={{ textDecoration: 'none' }} rel="noreferrer">
-                        <ExploreIcon small />
-                        <small className="ms-1">View on Explorer</small>
-                    </a>
-                </MX> */}
-          </Components.Display.Border>
-          {/* <MT size="2" /> */}
-        </Components.Modal.ModalBody>
-      </Components.Modal.Modal>
     </div>
   );
 };

@@ -1,19 +1,35 @@
 import {
-  Components, Network, ReefSigner, Token, TokenWithAmount,
+  Components,
+  ensureTokenAmount,
+  Network,
+  ReefSigner,
+  rpc,
+  Token,
+  TokenWithAmount,
+  utils as reefUtils,
 } from '@reef-defi/react-lib';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { utils } from 'ethers';
 
 const {
   Display, Card: CardModule, TokenAmountFieldMax, Modal, Loading, Input: InputModule,
+  TokenAmountView, Label, Button: ButtonModule,
 } = Components;
-const { ComponentCenter, MT, CenterColumn } = Display;
+const {
+  ComponentCenter, MT, CenterColumn, Margin, CenterRow,
+} = Display;
 const {
   CardHeader, CardHeaderBlank, CardTitle, Card,
 } = CardModule;
-const { OpenModalButton } = Modal;
+const {
+  OpenModalButton, default: ConfirmationModal, ModalFooter, ModalBody,
+} = Modal;
 const { LoadingButtonIconWithText } = Loading;
 const { Input } = InputModule;
+const { ConfirmLabel } = Label;
+const { calculateUsdAmount } = reefUtils;
+const { Button } = ButtonModule;
 
 interface TransferComponent {
     tokens: Token[];
@@ -26,70 +42,156 @@ export const TransferComponent = ({
   tokens, network, from, token,
 }: TransferComponent): JSX.Element => {
   const [isLoading, setIsLoading] = useState(false);
-  const history = useHistory();
   const [txToken, setTxToken] = useState(token);
-  const [txAmt, setTxAmt] = useState(token.amount);
   const [to, setTo] = useState('');
+  const [validationError, setValidationError] = useState('');
+  const [resultMessage, setResultMessage] = useState('');
 
-  const amountChanged = (amt: string): void => {
+  const amountChanged = (amount: string): void => {
+    let amt = amount;
+    if (parseFloat(amt) <= 0) {
+      amt = '';
+    }
     setTxToken({ ...txToken, amount: amt });
   };
 
-  const addressChanged = (addr: string): Promise<void> => {
-    console.log('ADR change =', addr);
-    return Promise.resolve();
-  };
+  const addressChanged = (addr: string): Promise<void> => Promise.resolve();
 
   const tokenSelected = (tkn: Token): void => {
-    console.log('AAA', tkn);
     setTxToken({ ...tkn, amount: '0', isEmpty: false } as TokenWithAmount);
   };
 
-  /* useEffect(() => {
+  const onConfirmed = async (): Promise<void> => {
+    if (isLoading) {
+      return;
+    }
+    setIsLoading(true);
+    const { signer, evmAddress } = from;
+    ensureTokenAmount(txToken);
+    const contract = await rpc.getContract(txToken.address, signer);
+    const decimals = await contract.decimals();
+    console.log('dec', decimals);
+    const toAmt = utils.parseUnits(txToken.amount, decimals);
+    const myBal = await contract.balanceOf(evmAddress);
+    const hisBal = await contract.balanceOf(to);
+    console.log('BALL=', utils.formatUnits(myBal.toString(), decimals), utils.formatUnits(hisBal.toString(), decimals));
+    try {
+      const contractCall = await contract.transfer(to, toAmt.toString());
+      console.log('CC', contractCall.toString());
+      setResultMessage('Transaction successful');
+      // TODO reload token balance
+    } catch (e: any) {
+      console.log('Transfer error', e, toAmt.toString());
+      setResultMessage('Transaction failed');
+    }
+    setIsLoading(false);
+  };
 
-  }, [txAmt]); */
+  const initTransfer = (): void => {
+    setResultMessage('');
+    amountChanged('');
+    setTo('');
+  };
+
+  useEffect(() => {
+    if (!txToken.amount || utils.parseEther(txToken.amount).isZero()) {
+      setValidationError('Amount is empty');
+      return;
+    }
+
+    if (utils.parseEther(txToken.amount).gt(txToken.balance)) {
+      setValidationError('Value exceeds balance');
+      return;
+    }
+
+    if (to.length > 42) {
+      setValidationError('To value too long');
+      return;
+    }
+
+    if (!utils.isAddress(to)) {
+      setValidationError('Send to not valid address');
+      return;
+    }
+    setValidationError('');
+  }, [to, txToken]);
 
   return (
-    <ComponentCenter>
-      <Card>
-        <CardHeader>
-          <CardHeaderBlank />
-          <CardTitle title="Send Tokens" />
-          <CardHeaderBlank />
-        </CardHeader>
-        <TokenAmountFieldMax
-          token={txToken}
-          tokens={tokens}
-          id="transfer-token"
-          onAmountChange={amountChanged}
-          onTokenSelect={tokenSelected}
-          onAddressChange={addressChanged}
+    <>
+      { !resultMessage
+    && (
+    <>
+      <ComponentCenter>
+        <Card>
+          <CardHeader>
+            <CardHeaderBlank />
+            <CardTitle title="Send Tokens" />
+            <CardHeaderBlank />
+          </CardHeader>
+          <TokenAmountFieldMax
+            token={txToken}
+            tokens={tokens}
+            id="transfer-token"
+            onAmountChange={amountChanged}
+            onTokenSelect={tokenSelected}
+            onAddressChange={addressChanged}
+          />
+          <MT size="2">
+            <Input
+              value={to}
+              maxLength={42}
+              onChange={setTo}
+              placeholder="Send to 0x..."
+              disabled={isLoading}
+            />
+          </MT>
+          <MT size="2">
+            <CenterColumn>
+              <OpenModalButton id="txModalToggle" disabled={!!validationError || isLoading}>
+                {isLoading ? (
+                  <LoadingButtonIconWithText
+                    text="Sending"
+                  />
+                ) : validationError || 'Send'}
+              </OpenModalButton>
+            </CenterColumn>
+          </MT>
+        </Card>
+      </ComponentCenter>
+
+      <ConfirmationModal id="txModalToggle" title="Confirm and Send" confirmFun={onConfirmed} closeOnConfirm>
+        <TokenAmountView
+          name={txToken.name}
+          amount={txToken.amount}
+          usdAmount={calculateUsdAmount(txToken)}
+          placeholder="Send Token"
         />
-        <Input
-          value={to}
-          maxLength={42}
-          onChange={setTo}
-          placeholder="Send to address"
-        />
-        <MT size="2">
-          <CenterColumn>
-            <OpenModalButton id="swapModalToggle">
-              {isLoading ? (
-                <LoadingButtonIconWithText
-                  text="Sending"
-                />
-              ) : 'Send'}
-            </OpenModalButton>
-          </CenterColumn>
-        </MT>
-        {/* <SwapConfirmationModal
-                    buy={buy}
-                    sell={sell}
-                    id="swapModalToggle"
-                    percentage={settings.percentage}
-                    confirmFun={onSwap}
-                /> */}
-      </Card>
-    </ComponentCenter>
+        <Margin size="3">
+          <ConfirmLabel title="Send To" value={`${to.substr(0, 10)} ... ${to.substr(to.length - 10)}`} />
+        </Margin>
+      </ConfirmationModal>
+    </>
+    )}
+
+      {resultMessage && (
+      <ComponentCenter>
+        <Card>
+          <CardHeader>
+            <CardHeaderBlank />
+            <CardTitle title={resultMessage} />
+            <CardHeaderBlank />
+          </CardHeader>
+          <MT size="3">
+            <div className="text-center">No tokens sent.</div>
+          </MT>
+          <MT size="2">
+            <ModalFooter>
+              <Button onClick={initTransfer}>Close</Button>
+            </ModalFooter>
+          </MT>
+        </Card>
+      </ComponentCenter>
+      )}
+    </>
   );
 };

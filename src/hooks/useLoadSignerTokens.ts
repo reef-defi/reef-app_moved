@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import {
-  Network, ReefSigner, Token, utils,
+  createEmptyTokenWithAmount,
+  Network, ReefSigner, reefTokenWithAmount, Token, utils,
 } from '@reef-defi/react-lib';
 import { BigNumber, utils as eUtils } from 'ethers';
 import { ValueStatus, ValueWithStatus } from './useSignerTokenBalances';
@@ -28,17 +29,16 @@ interface AccountTokensResBalance {
     symbol: string
 }
 
-const loadAccountTokens = async (address: string, network: Network): Promise<Token[]> => {
+const loadAccountTokens = async (address: string, network: Network): Promise<Token[] | null> => {
   try {
     return axios.post<void, AxiosResponse<AccountTokensRes>>(`${network.reefscanUrl}api/account/tokens`, { account: address })
       .then((res) => {
-        /* const tkns: Token[] = [];
-        console.log('TODO REMOVEEE!!!!');
+        const tkns: Token[] = [];
+        console.log('TODO REMOVEEE!!!');
         const reefTkn = reefTokenWithAmount();
         const balanceFromUnits = parseUnits('100');
         reefTkn.balance = BigNumber.from(balanceFromUnits.toString());
         tkns.push(reefTkn);
-
         const testTkn = createEmptyTokenWithAmount();
         testTkn.address = '0x15820d37b1cC11f102076070897ACde06511B2fa';
         testTkn.balance = BigNumber.from(parseUnits('1000'));
@@ -46,9 +46,9 @@ const loadAccountTokens = async (address: string, network: Network): Promise<Tok
         testTkn.decimals = 18;
         testTkn.iconUrl = 'https://assets.coingecko.com/coins/images/9956/small/dai-multi-collateral-mcd.png?1574218774';
         tkns.push(testTkn);
-        return tkns; */
-        if (!res.status) {
-          return [];
+        return tkns;
+        if (!res.status || !res.data.data) {
+          return null;
         }
         return res.data.data.balances.map((resBal:AccountTokensResBalance) => ({
           address: resBal.contract_id,
@@ -62,11 +62,11 @@ const loadAccountTokens = async (address: string, network: Network): Promise<Tok
         } as Token));
       }, (err) => {
         console.log('Error loading tokens =', err);
-        return [];
+        return null;
       });
   } catch (err) {
     console.log('loadAccountTokens error = ', err);
-    return Promise.resolve([]);
+    return Promise.resolve(null);
   }
 };
 
@@ -78,7 +78,11 @@ export const useLoadSignerTokens = (signer?: ReefSigner): ValueWithStatus<Token[
         setTokens(ValueStatus.LOADING);
         return;
       }
-      const selectedAccountTokens: Token[] = await loadAccountTokens(signer.address, availableReefNetworks.mainnet);
+      const selectedAccountTokens: Token[] | null = await loadAccountTokens(signer.address, availableReefNetworks.mainnet);
+      if (!selectedAccountTokens) {
+        setTokens(ValueStatus.NO_DATA);
+        return;
+      }
       setTokens(selectedAccountTokens);
     };
     fetchTokens();

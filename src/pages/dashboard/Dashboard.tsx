@@ -25,7 +25,7 @@ const Dashboard = (): JSX.Element => {
   const reefPrice = useReefPrice();
   const signerTokenBalances = useSignerTokenBalances(signerTokens, pools, reefPrice);
 
-  const totalBalance: ValueWithStatus<number> = isValueWithStatusSet(signerTokenBalances) ? (signerTokenBalances as TokenWithPrice[]).reduce((state: ValueWithStatus<number>, curr) => {
+  const totalBalance: ValueWithStatus<number> = isValueWithStatusSet(signerTokenBalances) && signerTokenBalances.length ? (signerTokenBalances as TokenWithPrice[]).reduce((state: ValueWithStatus<number>, curr) => {
     if (Number.isNaN(curr.balanceValue) || !isValueWithStatusSet(curr.balanceValue)) {
       return state;
     }

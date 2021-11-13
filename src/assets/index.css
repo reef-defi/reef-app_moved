@@ -121,3 +121,7 @@ svg.fill-white {
     border: none;
     background-color: #e6ddf0;
 }
+
+.text-center{
+    text-align: center;
+}
