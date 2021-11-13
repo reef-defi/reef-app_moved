@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { api, Components } from '@reef-defi/react-lib';
 import { useAppSelector } from '../../store';
 import { useLoadSignerTokens } from '../../hooks/useLoadSignerTokens';
 import { TokenBalances } from './TokenBalances';
 import {
-  isValueWithStatusSet, TokenWithPrice,
+  isValueWithStatusSet,
+  TokenWithPrice,
   useSignerTokenBalances,
   ValueStatus,
   ValueWithStatus,
@@ -14,17 +15,14 @@ import { Balance } from './Balance';
 import { ActionButtons } from './ActionButtons';
 import { useGetSigner } from '../../hooks/useGetSigner';
 import './Dashboard.css';
-
-const { retrieveReefCoingeckoPrice } = api;
-const { Loading } = Components.Loading;
+import { useReefPrice } from '../../hooks/useReefPrice';
 
 const Dashboard = (): JSX.Element => {
-  const history = useHistory();
   const { isLoading: tokensLoading } = useAppSelector((state) => state.tokens);
   const { pools } = useAppSelector((state) => state.pools);
   const selectedSigner = useGetSigner();
   const signerTokens = useLoadSignerTokens(selectedSigner);
-  const [reefPrice, setReefPrice] = useState<ValueWithStatus<number>>(ValueStatus.LOADING);
+  const reefPrice = useReefPrice();
   const signerTokenBalances = useSignerTokenBalances(signerTokens, pools, reefPrice);
 
   const totalBalance: ValueWithStatus<number> = isValueWithStatusSet(signerTokenBalances) ? (signerTokenBalances as TokenWithPrice[]).reduce((state: ValueWithStatus<number>, curr) => {
@@ -38,7 +36,8 @@ const Dashboard = (): JSX.Element => {
     return state;
   }, ValueStatus.LOADING) : signerTokenBalances as ValueStatus;
 
-  useEffect(() => {
+  /* TODO remove
+      useEffect(() => {
     const getPrice = async ():Promise<void> => {
       let price: number|ValueStatus = ValueStatus.NO_DATA;
       try {
@@ -52,7 +51,7 @@ const Dashboard = (): JSX.Element => {
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  }, []); */
 
   return (
     <div className="w-100">
