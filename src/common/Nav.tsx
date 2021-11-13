@@ -12,11 +12,12 @@ import { reloadTokens } from '../store/actions/tokens';
 import { saveSignerLocalPointer } from '../store/internalStore';
 import { ReefLogo, SwapIcon, WalletIcon } from './Icons';
 import {
-  ADD_LIQUIDITY_URL, CREATE_ERC20_TOKEN_URL, DASHBOARD_URL, POOLS_URL, SWAP_URL,
+  ADD_LIQUIDITY_URL, CREATE_ERC20_TOKEN_URL, DASHBOARD_URL, POOLS_URL, SWAP_URL, TRANSFER_TOKEN,
 } from '../urls';
 
 const menuItems = [
   { title: 'Dashboard', url: DASHBOARD_URL },
+  { title: 'Send', url: TRANSFER_TOKEN },
   { title: 'Swap', url: SWAP_URL },
   { title: 'Pools', url: POOLS_URL },
   { title: 'Creator', url: CREATE_ERC20_TOKEN_URL },
