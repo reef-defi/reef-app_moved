@@ -45,7 +45,7 @@ export const TransferComponent = ({
   const [txToken, setTxToken] = useState(token);
   const [to, setTo] = useState('');
   const [validationError, setValidationError] = useState('');
-  const [resultMessage, setResultMessage] = useState('');
+  const [resultMessage, setResultMessage] = useState<{success: boolean, title: string, message: string} | null>(null);
 
   const amountChanged = (amount: string): void => {
     let amt = amount;
@@ -78,17 +78,17 @@ export const TransferComponent = ({
     try {
       const contractCall = await contract.transfer(to, toAmt.toString());
       console.log('CC', contractCall.toString());
-      setResultMessage('Transaction successful');
+      setResultMessage({ success: true, title: 'Transaction successful', message: contractCall.hash });
       // TODO reload token balance
-    } catch (e: any) {
+    } catch (e) {
       console.log('Transfer error', e, toAmt.toString());
-      setResultMessage('Transaction failed');
+      setResultMessage({ success: false, title: 'Transaction failed', message: 'No tokens transfered.' });
     }
     setIsLoading(false);
   };
 
   const initTransfer = (): void => {
-    setResultMessage('');
+    setResultMessage(null);
     amountChanged('');
     setTo('');
   };
@@ -178,11 +178,19 @@ export const TransferComponent = ({
         <Card>
           <CardHeader>
             <CardHeaderBlank />
-            <CardTitle title={resultMessage} />
+            <CardTitle title={resultMessage.title} />
             <CardHeaderBlank />
           </CardHeader>
           <MT size="3">
-            <div className="text-center">No tokens sent.</div>
+            <div className="text-center">
+              {resultMessage.success ? (
+                <div>
+                  Tokens sent. Check transaction on&nbsp;
+                  <a target="_blank" href={`https://reefscan.com/extrinsic/${resultMessage.message}`} rel="noreferrer">reefscan</a>
+                  .
+                </div>
+              ) : (<div>{resultMessage.message}</div>)}
+            </div>
           </MT>
           <MT size="2">
             <ModalFooter>
