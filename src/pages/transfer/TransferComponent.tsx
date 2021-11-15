@@ -159,7 +159,7 @@ export const TransferComponent = ({
         </Card>
       </ComponentCenter>
 
-      <ConfirmationModal id="txModalToggle" title="Confirm and Send" confirmFun={onConfirmed} closeOnConfirm>
+      <ConfirmationModal id="txModalToggle" title="Confirm Transaction" confirmFun={onConfirmed} confirmLabel="Send">
         <TokenAmountView
           name={txToken.name}
           amount={txToken.amount}
