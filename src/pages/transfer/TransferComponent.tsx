@@ -101,6 +101,11 @@ export const TransferComponent = ({
       return;
     }
 
+    if (!to.trim()) {
+      setValidationError('Set address');
+      return;
+    }
+
     if (!utils.isAddress(to)) {
       setValidationError('Send to not valid address');
       return;
