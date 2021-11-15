@@ -5,3 +5,7 @@ export const notify = (message: string, type: Notify): void => {};
 export const toCurrencyFormat = (value: number, options?: any): string => Intl.NumberFormat(navigator.language, {
   style: 'currency', currency: 'USD', currencyDisplay: 'symbol', ...options,
 }).format(value);
+
+export const delay = async (milliseconds: number): Promise<void> => new Promise((resolve) => {
+  setTimeout(resolve, milliseconds);
+});
