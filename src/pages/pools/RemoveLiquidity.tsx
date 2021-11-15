@@ -1,11 +1,12 @@
 import React from 'react';
-import { availableNetworks, Components, Token } from '@reef-defi/react-lib';
+import { Components, Token } from '@reef-defi/react-lib';
 import { Redirect, useHistory, useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { useGetSigner } from '../../hooks/useGetSigner';
 import { POOLS_URL } from '../../urls';
 import { reloadTokens } from '../../store/actions/tokens';
 import { notify } from '../../utils/utils';
+import { currentNetwork } from '../../environment';
 
 const { RemoveLiquidityComponent } = Components;
 
@@ -38,7 +39,7 @@ const RemoveLiquidity = (): JSX.Element => {
         token1={token1}
         token2={token2}
         signer={signer}
-        network={availableNetworks.mainnet}
+        network={currentNetwork}
         back={back}
         notify={notify}
         reloadTokens={reload}

@@ -2,6 +2,7 @@ import { utils, hooks, rpc } from '@reef-defi/react-lib';
 import { setPools, setPoolsLoading } from '../store/actions/pools';
 import { useAppDispatch, useAppSelector } from '../store';
 import { useGetSigner } from './useGetSigner';
+import { currentNetwork } from '../environment';
 
 const { loadPools } = rpc;
 const { useAsyncEffect } = hooks;
@@ -18,7 +19,7 @@ export const useLoadPools = (): void => {
 
     await Promise.resolve()
       .then(() => dispatch(setPoolsLoading(true)))
-      .then(() => loadPools(tokens, signer.signer, availableReefNetworks.mainnet.factoryAddress))
+      .then(() => loadPools(tokens, signer.signer, currentNetwork.factoryAddress))
       .then((pools) => dispatch(setPools(pools)))
       .catch((error) => console.error('load pools err=', error))
       .finally(() => dispatch(setPoolsLoading(false)));

@@ -14,6 +14,7 @@ import { ReefLogo, SwapIcon, WalletIcon } from './Icons';
 import {
   ADD_LIQUIDITY_URL, CREATE_ERC20_TOKEN_URL, DASHBOARD_URL, POOLS_URL, SWAP_URL, TRANSFER_TOKEN,
 } from '../urls';
+import { currentNetwork } from '../environment';
 
 const menuItems = [
   { title: 'Dashboard', url: DASHBOARD_URL },
@@ -68,7 +69,7 @@ const Nav = (): JSX.Element => {
           accounts={accounts}
           selectedSigner={signer}
           selectAccount={selectAccount}
-          reefscanUrl={availableNetworks.mainnet.reefscanUrl}
+          reefscanUrl={currentNetwork.reefscanUrl}
         />
       </nav>
     </div>

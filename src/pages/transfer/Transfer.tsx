@@ -12,6 +12,7 @@ import {
   ValueStatus,
   ValueWithStatus,
 } from '../../hooks/useSignerTokenBalances';
+import { currentNetwork } from '../../environment';
 
 const { Loading } = Components;
 
@@ -45,7 +46,7 @@ export const Transfer = (): JSX.Element => {
       {!isValueWithStatusSet(token) && token === ValueStatus.LOADING && <Loading.Loading />}
       {!isValueWithStatusSet(token) && token === ValueStatus.NO_DATA && <div>No tokens for transaction.</div>}
       { isValueWithStatusSet(token) && selectedSigner
-          && <TransferComponent tokens={signerTokenBalances as TokenWithPrice[]} network={availableNetworks.mainnet} from={selectedSigner} token={token as TokenWithAmount} />}
+          && <TransferComponent tokens={signerTokenBalances as TokenWithPrice[]} network={currentNetwork} from={selectedSigner} token={token as TokenWithAmount} />}
     </>
   );
 };

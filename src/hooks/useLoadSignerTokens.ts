@@ -6,6 +6,7 @@ import {
 } from '@reef-defi/react-lib';
 import { BigNumber, utils as eUtils } from 'ethers';
 import { ValueStatus, ValueWithStatus } from './useSignerTokenBalances';
+import { currentNetwork } from '../environment';
 
 const { availableReefNetworks } = utils;
 const { parseUnits } = eUtils;
@@ -78,7 +79,7 @@ export const useLoadSignerTokens = (signer?: ReefSigner): ValueWithStatus<Token[
         setTokens(ValueStatus.LOADING);
         return;
       }
-      const selectedAccountTokens: Token[] | null = await loadAccountTokens(signer.address, availableReefNetworks.mainnet);
+      const selectedAccountTokens: Token[] | null = await loadAccountTokens(signer.address, currentNetwork);
       if (!selectedAccountTokens) {
         setTokens(ValueStatus.NO_DATA);
         return;
