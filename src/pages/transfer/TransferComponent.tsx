@@ -70,14 +70,11 @@ export const TransferComponent = ({
     ensureTokenAmount(txToken);
     const contract = await rpc.getContract(txToken.address, signer);
     const decimals = await contract.decimals();
-    console.log('dec', decimals);
     const toAmt = utils.parseUnits(txToken.amount, decimals);
     const myBal = await contract.balanceOf(evmAddress);
     const hisBal = await contract.balanceOf(to);
-    console.log('BALL=', utils.formatUnits(myBal.toString(), decimals), utils.formatUnits(hisBal.toString(), decimals));
     try {
       const contractCall = await contract.transfer(to, toAmt.toString());
-      console.log('CC', contractCall.toString());
       setResultMessage({ success: true, title: 'Transaction successful', message: contractCall.hash });
       // TODO reload token balance
     } catch (e) {
@@ -95,17 +92,12 @@ export const TransferComponent = ({
 
   useEffect(() => {
     if (!txToken.amount || utils.parseEther(txToken.amount).isZero()) {
-      setValidationError('Amount is empty');
+      setValidationError('Set amount');
       return;
     }
 
     if (utils.parseEther(txToken.amount).gt(txToken.balance)) {
-      setValidationError('Value exceeds balance');
-      return;
-    }
-
-    if (to.length > 42) {
-      setValidationError('To value too long');
+      setValidationError('Amount exceeds balance');
       return;
     }
 
@@ -141,7 +133,7 @@ export const TransferComponent = ({
               value={to}
               maxLength={42}
               onChange={setTo}
-              placeholder="Send to 0x..."
+              placeholder="Send to address 0x..."
               disabled={isLoading}
             />
           </MT>
