@@ -11,6 +11,8 @@ import {
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { utils } from 'ethers';
+import { useAppDispatch } from '../../store';
+import { reloadTokens } from '../../store/actions/tokens';
 
 const {
   Display, Card: CardModule, TokenAmountFieldMax, Modal, Loading, Input: InputModule,
@@ -41,6 +43,7 @@ interface TransferComponent {
 export const TransferComponent = ({
   tokens, network, from, token,
 }: TransferComponent): JSX.Element => {
+  const dispatch = useAppDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [txToken, setTxToken] = useState(token);
   const [to, setTo] = useState('');
@@ -112,6 +115,12 @@ export const TransferComponent = ({
     }
     setValidationError('');
   }, [to, txToken]);
+
+  useEffect(() => {
+    if (resultMessage && resultMessage.success) {
+      dispatch(reloadTokens());
+    }
+  }, [resultMessage]);
 
   return (
     <>
