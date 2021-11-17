@@ -2,14 +2,13 @@ import axios, { AxiosResponse } from 'axios';
 import { Contract } from 'ethers';
 import { delay } from './utils';
 
-const CONTRACT_VERIFICATION_URL = '/api/verificator/submit-verification';
+const CONTRACT_VERIFICATION_URL = 'api/verificator/submit-verification';
 
 interface BaseContract {
     runs: number;
     source: string;
     target: string;
-    license: string;
-    optimization: boolean;
+    optimization: string;
     compilerVersion: string;
 }
 
@@ -26,11 +25,7 @@ export interface ReefContract extends BaseContract {
     // payload: CompiledContract;
 }
 
-const contractVerificatorApi = axios.create({
-  headers: {
-    'Access-Control-Allow-Origin': '*',
-  },
-});
+const contractVerificatorApi = axios.create();
 
 export const verifyContract = async (deployedContract: Contract, contract: ReefContract, arg: string[], url?: string): Promise<boolean> => {
   if (!url) { return false; }
@@ -45,7 +40,7 @@ export const verifyContract = async (deployedContract: Contract, contract: ReefC
       source: contract.source,
       optimization: contract.optimization,
       compilerVersion: contract.compilerVersion,
-      license: contract.license,
+      // not required - license: contract.license,
       runs: contract.runs,
     };
     await contractVerificatorApi.post<VerificationContractReq, AxiosResponse<string>>(`${url}${CONTRACT_VERIFICATION_URL}`, body);
