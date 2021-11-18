@@ -100,7 +100,10 @@ export const CreatorComponent = ({
   useEffect(() => {
     // update balance when tx completes
     if (resultMessage) {
-      dispatch(reloadTokens());
+      // TODO remove delay when crawler is updated
+      setTimeout(() => {
+        dispatch(reloadTokens());
+      }, 5000);
     }
   }, [resultMessage]);
 
@@ -112,8 +115,8 @@ export const CreatorComponent = ({
   };
 
   const createToken = async (): Promise<void> => {
-    dispatch(reloadTokens());
-    return;
+    // dispatch(reloadTokens());
+    // return;
     if (!signer) {
       console.log('signer not set ');
       return;

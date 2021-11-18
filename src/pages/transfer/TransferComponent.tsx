@@ -116,9 +116,10 @@ export const TransferComponent = ({
     setValidationError('');
   }, [to, txToken]);
 
+  // update balance
   useEffect(() => {
     if (resultMessage && resultMessage.success) {
-      dispatch(reloadTokens());
+      setTimeout(() => dispatch(reloadTokens()), 1000);
     }
   }, [resultMessage]);
 

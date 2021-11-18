@@ -12,14 +12,9 @@ const { useProvider } = hooks;
 
 const App = (): JSX.Element => {
   const [provider, isProviderLoading, providerError] = useProvider(currentNetwork.rpcUrl);
-  const { reloadToggle: reloadTokens } = useAppSelector((state) => state.tokens);
   useLoadSigners(provider);
   useLoadTokens();
   useLoadPools();
-
-  useEffect(() => {
-    console.log('tkkkkk reload ');
-  }, [reloadTokens]);
 
   return (
     <div className="App d-flex w-100 h-100">
