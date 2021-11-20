@@ -115,8 +115,6 @@ export const CreatorComponent = ({
   };
 
   const createToken = async (): Promise<void> => {
-    // dispatch(reloadTokens());
-    // return;
     if (!signer) {
       console.log('signer not set ');
       return;
