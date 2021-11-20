@@ -20,7 +20,7 @@ export const useLoadPools = (): void => {
       .then(() => dispatch(setPoolsLoading(true)))
       .then(() => loadPools(tokens, signer.signer, availableReefNetworks.mainnet.factoryAddress))
       .then((pools) => dispatch(setPools(pools)))
-      .catch((error) => console.error(error))
+      .catch((error) => console.error('load pools err=', error))
       .finally(() => dispatch(setPoolsLoading(false)));
   }, [reloadToggle]);
 };

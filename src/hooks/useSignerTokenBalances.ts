@@ -5,8 +5,8 @@ import { BigNumber, utils } from 'ethers';
 const { parseUnits, formatEther } = utils;
 
 export interface TokenWithPrice extends Token {
-  price: ValueWithStatus;
-  balanceValue: ValueWithStatus;
+  price: ValueWithStatus<number>;
+  balanceValue: ValueWithStatus<number>;
 }
 
 export enum ValueStatus {
@@ -14,12 +14,12 @@ export enum ValueStatus {
   NO_DATA = 'NO_DATA'
 }
 
-export type ValueWithStatus = number | ValueStatus;
+export type ValueWithStatus<T> = T | ValueStatus;
 
 // eslint-disable-next-line no-prototype-builtins
-export const isValueWithStatusSet = (priceValue: ValueWithStatus): boolean => !ValueStatus.hasOwnProperty(priceValue);
+export const isValueWithStatusSet = (priceValue: ValueWithStatus<any>): boolean => !ValueStatus.hasOwnProperty(priceValue);
 
-const calculateBalanceValue = (price: ValueWithStatus, token: Token): ValueWithStatus => {
+const calculateBalanceValue = (price: ValueWithStatus<number>, token: Token): ValueWithStatus<number> => {
   // eslint-disable-next-line no-prototype-builtins
   if (!isValueWithStatusSet(price)) {
     return price;
@@ -44,7 +44,7 @@ const getReefTokenPoolReserves = (reefTokenPool: Pool, reefAddress: string): {re
 
 const findReefTokenPool = (pools: Pool[], reefAddress: string, token: Token): Pool | undefined => pools.find((pool) => (pool.token1.address.toLowerCase() === reefAddress.toLowerCase() && pool.token2.address.toLowerCase() === token.address.toLowerCase()) || (pool.token2.address.toLowerCase() === reefAddress.toLowerCase() && pool.token1.address.toLowerCase() === token.address.toLowerCase()));
 
-const calculateTokenPrice = (token: Token, pools: Pool[], reefPrice: ValueWithStatus): ValueWithStatus => {
+const calculateTokenPrice = (token: Token, pools: Pool[], reefPrice: ValueWithStatus<number>): ValueWithStatus<number> => {
   if (!isValueWithStatusSet(reefPrice)) {
     return reefPrice;
   }
@@ -62,22 +62,23 @@ const calculateTokenPrice = (token: Token, pools: Pool[], reefPrice: ValueWithSt
   return reefPrice || ValueStatus.NO_DATA;
 };
 
-export const useSignerTokenBalances = (tokens: Token[], pools: Pool[], reefPrice: ValueWithStatus): TokenWithPrice[] => {
-  const [balances, setBalances] = useState<TokenWithPrice[]>([]);
+export const useSignerTokenBalances = (tokens: ValueWithStatus<Token[]>, pools: Pool[], reefPrice: ValueWithStatus<number>): ValueWithStatus<TokenWithPrice[]> => {
+  const [balances, setBalances] = useState<ValueWithStatus<TokenWithPrice[]>>(ValueStatus.LOADING);
   useEffect(() => {
-    if (!tokens.length) {
-      setBalances([]);
+    console.log('TKNS', tokens);
+    if (!isValueWithStatusSet(tokens)) {
+      setBalances(tokens as ValueWithStatus<TokenWithPrice[]>);
       return;
     }
     if (!pools.length || !isValueWithStatusSet(reefPrice)) {
-      setBalances(tokens.map((tkn) => {
+      setBalances((tokens as Token[]).map((tkn) => {
         const stat = !isValueWithStatusSet(reefPrice) ? reefPrice : ValueStatus.LOADING;
         return { ...tkn, balanceValue: stat, price: stat } as TokenWithPrice;
       }));
       return;
     }
 
-    const bal = tokens.map((token) => {
+    const bal = (tokens as Token[]).map((token: Token) => {
       const price = calculateTokenPrice(token, pools, reefPrice);
       const balanceValue = calculateBalanceValue(price, token);
       return { ...token, price, balanceValue };

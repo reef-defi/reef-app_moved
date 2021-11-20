@@ -3,6 +3,7 @@ import React from 'react';
 import { useAppSelector } from '../../store';
 import { isValueWithStatusSet, ValueStatus, TokenWithPrice } from '../../hooks/useSignerTokenBalances';
 import { toCurrencyFormat } from '../../utils/utils';
+import './TokenPill.css';
 
 const { showBalance } = utils;
 const { Loading } = Components.Loading;
@@ -15,7 +16,7 @@ export const TokenPill = ({ token }: TokenPill): JSX.Element => (
   <div key={token.address} className="col-12 col-md-6">
     <div className="token-balance-item radius-border d-flex d-flex-space-between d-flex-vert-center">
       <div className="token-balance-item_icon-text mr-1">
-        <div className=" mr-1"><img src={token.iconUrl} alt={token.name} /></div>
+        <div className="token-balance-item_icon-text_w mr-1"><img src={token.iconUrl} alt={token.name} /></div>
         <div className="">
           <div className="title-font text-bold ">{token.name}</div>
           <div className="">{showBalance(token)}</div>
