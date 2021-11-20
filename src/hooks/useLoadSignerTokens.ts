@@ -33,8 +33,17 @@ interface AccountTokensResBalance {
 const loadAccountTokens = async (address: string, network: Network): Promise<Token[] | null> => {
   try {
     return axios.post<void, AxiosResponse<AccountTokensRes>>(`${network.reefscanUrl}api/account/tokens`, { account: address })
-      .then((res) => {
-        const tkns: Token[] = [];
+      .then((res) => res.data.data.balances.map((resBal:AccountTokensResBalance) => ({
+        address: resBal.contract_id,
+        name: resBal.symbol,
+        amount: resBal.balance,
+        decimals: resBal.decimals,
+        balance: BigNumber.from(resBal.balance),
+        // TODO add icons in response
+        iconUrl: resBal.symbol === 'REEF' ? 'https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png' : '',
+        isEmpty: false,
+      } as Token)),
+      /* const tkns: Token[] = [];
         console.log('TODO REMOVEEE!!!');
         const reefTkn = reefTokenWithAmount();
         const balanceFromUnits = parseUnits('100');
@@ -50,18 +59,8 @@ const loadAccountTokens = async (address: string, network: Network): Promise<Tok
         return tkns;
         if (!res.status || !res.data.data) {
           return null;
-        }
-        return res.data.data.balances.map((resBal:AccountTokensResBalance) => ({
-          address: resBal.contract_id,
-          name: resBal.symbol,
-          amount: resBal.balance,
-          decimals: resBal.decimals,
-          balance: BigNumber.from(resBal.balance),
-          // TODO add icons in response
-          iconUrl: resBal.symbol === 'REEF' ? 'https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png' : '',
-          isEmpty: false,
-        } as Token));
-      }, (err) => {
+        } */
+      (err) => {
         console.log('Error loading tokens =', err);
         return null;
       });
