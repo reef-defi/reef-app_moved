@@ -55,6 +55,10 @@ html, body, #root, .App {
     color: #313a52;
 }
 
+.text-color-disabled {
+    color: grey;
+}
+
 .text-xs {
     font-size: 0.7em;
     font-weight: 400;

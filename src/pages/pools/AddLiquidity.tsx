@@ -7,6 +7,7 @@ import { useGetSigner } from '../../hooks/useGetSigner';
 import { POOLS_URL } from '../../urls';
 import { reloadTokens } from '../../store/actions/tokens';
 import { notify } from '../../utils/utils';
+import { currentNetwork } from '../../environment';
 
 const AddLiqudity = (): JSX.Element => {
   const history = useHistory();
@@ -23,7 +24,7 @@ const AddLiqudity = (): JSX.Element => {
     <Components.AddLiquidityComponent
       tokens={tokens}
       signer={signer}
-      network={availableNetworks.mainnet}
+      network={currentNetwork}
       back={back}
       reloadTokens={reload}
       notify={notify}

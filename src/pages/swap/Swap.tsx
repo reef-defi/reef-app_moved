@@ -5,6 +5,7 @@ import { reloadTokens } from '../../store/actions/tokens';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { useGetSigner } from '../../hooks/useGetSigner';
 import { notify } from '../../utils/utils';
+import { currentNetwork } from '../../environment';
 
 const { SwapComponent } = Components;
 
@@ -23,7 +24,7 @@ const Swap = (): JSX.Element => {
       tokens={tokens}
       account={selectedAccount}
       reloadTokens={reloadToggle}
-      network={{ ...availableNetworks.mainnet }}
+      network={{ ...currentNetwork }}
       notify={notify}
     />
   );

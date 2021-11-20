@@ -6,11 +6,12 @@ import ContentRouter from './pages/ContentRouter';
 import { useLoadSigners } from './hooks/useLoadSigners';
 import { useLoadTokens } from './hooks/useLoadTokens';
 import { useLoadPools } from './hooks/useLoadPools';
+import { currentNetwork } from './environment';
 
 const { useProvider } = hooks;
 
 const App = (): JSX.Element => {
-  const [provider, isProviderLoading, providerError] = useProvider(availableNetworks.mainnet.rpcUrl);
+  const [provider, isProviderLoading, providerError] = useProvider(currentNetwork.rpcUrl);
   useLoadSigners(provider);
   useLoadTokens();
   useLoadPools();
