@@ -33,7 +33,7 @@ interface AccountTokensResBalance {
 const loadAccountTokens = async (address: string, network: Network): Promise<Token[] | null> => {
   try {
     return axios.post<void, AxiosResponse<AccountTokensRes>>(`${network.reefscanUrl}api/account/tokens`, { account: address })
-      .then((res) => res.data.data.balances.map((resBal:AccountTokensResBalance) => ({
+      .then((res) => res.data.data?.balances.map((resBal:AccountTokensResBalance) => ({
         address: resBal.contract_id,
         name: resBal.symbol,
         amount: resBal.balance,

@@ -69,13 +69,11 @@ export const TransferComponent = ({
       return;
     }
     setIsLoading(true);
-    const { signer, evmAddress } = from;
+    const { signer } = from;
     ensureTokenAmount(txToken);
     const contract = await rpc.getContract(txToken.address, signer);
     const decimals = await contract.decimals();
     const toAmt = utils.parseUnits(txToken.amount, decimals);
-    const myBal = await contract.balanceOf(evmAddress);
-    const hisBal = await contract.balanceOf(to);
     try {
       const contractCall = await contract.transfer(to, toAmt.toString());
       setResultMessage({ success: true, title: 'Transaction successful', message: contractCall.hash });
