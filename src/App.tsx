@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { hooks, Components } from '@reef-defi/react-lib';
-import { ethers } from 'ethers';
-import Nav from './common/Nav';
-import ContentRouter from './pages/ContentRouter';
-import { useLoadSigners } from './hooks/useLoadSigners';
-import { useLoadTokens } from './hooks/useLoadTokens';
-import { useLoadPools } from './hooks/useLoadPools';
-import { currentNetwork } from './environment';
-import { useReloadSelectedBalance } from './hooks/useReloadSelectedBalance';
+import { Components, hooks } from '@reef-defi/react-lib';
 import { useGetSigner } from './hooks/useGetSigner';
+import { useReloadSelectedBalance } from './hooks/useReloadSelectedBalance';
+import { currentNetwork } from './environment';
+import { useLoadPools } from './hooks/useLoadPools';
+import { useLoadTokens } from './hooks/useLoadTokens';
+import { useLoadSigners } from './hooks/useLoadSigners';
+import ContentRouter from './pages/ContentRouter';
+import Nav from './common/Nav';
+import { claimEvmAccount, getMetamaskSigner } from './utils/evmBind';
 
 const { useProvider } = hooks;
 const { Modal } = Components;
@@ -27,39 +27,32 @@ const App = (): JSX.Element => {
 
   useEffect(() => {
     async function bindEvmAddress(): Promise<void> {
+      if (!provider) {
+        return Promise.resolve();
+      }
       if (currentSigner && !currentSigner?.isEvmClaimed) {
         // eslint-disable-next-line no-restricted-globals
         const isCustom = confirm('Use your Ethereum address?');
         if (!isCustom) {
-          currentSigner.signer.claimDefaultAccount();
-        } else {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          const { ethereum } = window;
-          if (ethereum) {
-            const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-            if (!accounts) {
-              alert('Metamask connection refused');
-              return;
+          try {
+            await currentSigner.signer.claimDefaultAccount();
+          } catch (err: any) {
+            if (err.startsWith('1010')) {
+              alert('Add few Reef coins to this account\nto enable Ethereum functionality.');
+            } else {
+              alert(`Transaction failed, err= ${err.toString()}`);
             }
-            const ethereumProvider = new ethers.providers.Web3Provider(ethereum);
-            const ethereumSigner = ethereumProvider.getSigner(0);
-            if (ethereumSigner) {
-              const ethereumAddress = await ethereumSigner.getAddress();
-              const signature = await ethereumSigner.signMessage(ethereumAddress);
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              await currentSigner.signer.claimEvmAccount(ethereumAddress, signature);
-            }
-          } else {
-            alert('You must install Metamask plugin');
           }
+        } else {
+          return claimEvmAccount(currentSigner, provider);
         }
       }
+      return Promise.resolve();
     }
 
+    console.log('EEEE=', currentSigner, provider);
     bindEvmAddress();
-  }, [currentSigner]);
+  }, [currentSigner, provider]);
 
   return (
     <div className="App d-flex w-100 h-100">
