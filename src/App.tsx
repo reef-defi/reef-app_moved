@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Components, hooks } from '@reef-defi/react-lib';
+import { BigNumber } from 'ethers';
 import { useGetSigner } from './hooks/useGetSigner';
 import { useReloadSelectedBalance } from './hooks/useReloadSelectedBalance';
 import { currentNetwork } from './environment';
@@ -9,6 +10,7 @@ import { useLoadSigners } from './hooks/useLoadSigners';
 import ContentRouter from './pages/ContentRouter';
 import Nav from './common/Nav';
 import { claimEvmAccount, getMetamaskSigner } from './utils/evmBind';
+import { useBindEvmAddress } from './hooks/useBindEvmAddress';
 
 const { useProvider } = hooks;
 const { Modal } = Components;
@@ -17,42 +19,13 @@ const {
 } = Modal;
 
 const App = (): JSX.Element => {
-  const [provider, isProviderLoading, providerError] = useProvider(currentNetwork.rpcUrl);
+  const [provider, isProviderLoading, providerError] = hooks.useProvider(currentNetwork.rpcUrl);
+  const currentSigner = useGetSigner();
   useLoadSigners(provider);
   useLoadTokens();
   useLoadPools();
   useReloadSelectedBalance();
-  const currentSigner = useGetSigner();
-  const [isModalOpen, setIsModalOpen] = useState(true);
-
-  useEffect(() => {
-    async function bindEvmAddress(): Promise<void> {
-      if (!provider) {
-        return Promise.resolve();
-      }
-      if (currentSigner && !currentSigner?.isEvmClaimed) {
-        // eslint-disable-next-line no-restricted-globals
-        const isCustom = confirm('Use your Ethereum address?');
-        if (!isCustom) {
-          try {
-            await currentSigner.signer.claimDefaultAccount();
-          } catch (err: any) {
-            if (err.startsWith('1010')) {
-              alert('Add few Reef coins to this account\nto enable Ethereum functionality.');
-            } else {
-              alert(`Transaction failed, err= ${err.toString()}`);
-            }
-          }
-        } else {
-          return claimEvmAccount(currentSigner, provider);
-        }
-      }
-      return Promise.resolve();
-    }
-
-    console.log('EEEE=', currentSigner, provider);
-    bindEvmAddress();
-  }, [currentSigner, provider]);
+  useBindEvmAddress(currentSigner, provider);
 
   return (
     <div className="App d-flex w-100 h-100">
