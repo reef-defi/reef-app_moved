@@ -1,6 +1,4 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
-import { api, Components } from '@reef-defi/react-lib';
 import { useAppSelector } from '../../store';
 import { useLoadSignerTokens } from '../../hooks/useLoadSignerTokens';
 import { TokenBalances } from './TokenBalances';
@@ -16,6 +14,7 @@ import { ActionButtons } from './ActionButtons';
 import { useGetSigner } from '../../hooks/useGetSigner';
 import './Dashboard.css';
 import { useReefPrice } from '../../hooks/useReefPrice';
+import { TokenActivity } from './TokenActivity';
 
 const Dashboard = (): JSX.Element => {
   const { isLoading: tokensLoading } = useAppSelector((state) => state.tokens);
@@ -60,6 +59,7 @@ const Dashboard = (): JSX.Element => {
         <ActionButtons />
       </div>
       <TokenBalances tokens={signerTokenBalances} />
+      <TokenActivity address={selectedSigner?.evmAddress} />
     </div>
   );
 };
