@@ -9,7 +9,6 @@ import { useLoadTokens } from './hooks/useLoadTokens';
 import { useLoadSigners } from './hooks/useLoadSigners';
 import ContentRouter from './pages/ContentRouter';
 import Nav from './common/Nav';
-import { claimEvmAccount, getMetamaskSigner } from './utils/evmBind';
 import { useBindEvmAddress } from './hooks/useBindEvmAddress';
 
 const { useProvider } = hooks;
