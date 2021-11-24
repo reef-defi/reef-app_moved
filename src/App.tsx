@@ -1,21 +1,30 @@
-import React from 'react';
-import { hooks } from '@reef-defi/react-lib';
-import Nav from './common/Nav';
-import ContentRouter from './pages/ContentRouter';
-import { useLoadSigners } from './hooks/useLoadSigners';
-import { useLoadTokens } from './hooks/useLoadTokens';
-import { useLoadPools } from './hooks/useLoadPools';
-import { currentNetwork } from './environment';
+import React, { useEffect, useState } from 'react';
+import { Components, hooks } from '@reef-defi/react-lib';
+import { BigNumber } from 'ethers';
+import { useGetSigner } from './hooks/useGetSigner';
 import { useReloadSelectedBalance } from './hooks/useReloadSelectedBalance';
+import { currentNetwork } from './environment';
+import { useLoadPools } from './hooks/useLoadPools';
+import { useLoadTokens } from './hooks/useLoadTokens';
+import { useLoadSigners } from './hooks/useLoadSigners';
+import ContentRouter from './pages/ContentRouter';
+import Nav from './common/Nav';
+import { useBindEvmAddress } from './hooks/useBindEvmAddress';
 
 const { useProvider } = hooks;
+const { Modal } = Components;
+const {
+  OpenModalButton, ModalFooter, ModalBody,
+} = Modal;
 
 const App = (): JSX.Element => {
-  const [provider, isProviderLoading, providerError] = useProvider(currentNetwork.rpcUrl);
+  const [provider, isProviderLoading, providerError] = hooks.useProvider(currentNetwork.rpcUrl);
+  const currentSigner = useGetSigner();
   useLoadSigners(provider);
   useLoadTokens();
   useLoadPools();
   useReloadSelectedBalance();
+  useBindEvmAddress(currentSigner, provider);
 
   return (
     <div className="App d-flex w-100 h-100">
