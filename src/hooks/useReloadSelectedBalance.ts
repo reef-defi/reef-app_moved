@@ -6,9 +6,8 @@ import { currentNetwork } from '../environment';
 
 const resetBal = async (sigr: ReefSigner, prov: Provider): Promise<void> => {
   const balanceForAddr = sigr.address;
-  const balance = await rpc.getReefCoinBalance(balanceForAddr, prov);
   // eslint-disable-next-line no-param-reassign
-  sigr.balance = balance;
+  sigr.balance = await rpc.getReefCoinBalance(balanceForAddr, prov);
 };
 
 export const useReloadSelectedBalance = (): void => {

@@ -7,6 +7,7 @@ import {
 import { BigNumber, utils as eUtils } from 'ethers';
 import { ValueStatus, ValueWithStatus } from './useSignerTokenBalances';
 import { currentNetwork } from '../environment';
+import { getReefCoinBalance } from '../../../reef-react-lib/dist/rpc';
 
 const { availableReefNetworks } = utils;
 const { parseUnits } = eUtils;
@@ -30,19 +31,26 @@ interface AccountTokensResBalance {
     symbol: string
 }
 
-const loadAccountTokens = async (address: string, network: Network): Promise<Token[] | null> => {
+const loadAccountTokens = async (reefSigner: ReefSigner, network: Network): Promise<Token[] | null> => {
   try {
-    return axios.post<void, AxiosResponse<AccountTokensRes>>(`${network.reefscanUrl}api/account/tokens`, { account: address })
-      .then((res) => res.data.data.balances.map((resBal:AccountTokensResBalance) => ({
-        address: resBal.contract_id,
-        name: resBal.symbol,
-        amount: resBal.balance,
-        decimals: resBal.decimals,
-        balance: BigNumber.from(resBal.balance),
-        // TODO add icons in response
-        iconUrl: resBal.symbol === 'REEF' ? 'https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png' : '',
-        isEmpty: false,
-      } as Token)),
+    return axios.post<void, AxiosResponse<AccountTokensRes>>(`${network.reefscanUrl}api/account/tokens`, { account: reefSigner.address })
+      .then((res) => {
+        if (!res || !res.data || !res.data.data || !res.data.data.balances || !res.data.data.balances.length) {
+          const reefTkn = reefTokenWithAmount();
+          reefTkn.balance = reefSigner.balance;
+          return Promise.resolve([reefTkn as Token]);
+        }
+        return res.data.data.balances.map((resBal:AccountTokensResBalance) => ({
+          address: resBal.contract_id,
+          name: resBal.symbol,
+          amount: resBal.balance,
+          decimals: resBal.decimals,
+          balance: BigNumber.from(resBal.balance),
+          // TODO add icons in response
+          iconUrl: resBal.symbol === 'REEF' ? 'https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png' : '',
+          isEmpty: false,
+        } as Token));
+      },
       /* const tkns: Token[] = [];
         console.log('TODO REMOVEEE!!!');
         const reefTkn = reefTokenWithAmount();
@@ -78,7 +86,7 @@ export const useLoadSignerTokens = (signer?: ReefSigner): ValueWithStatus<Token[
         setTokens(ValueStatus.LOADING);
         return;
       }
-      const selectedAccountTokens: Token[] | null = await loadAccountTokens(signer.address, currentNetwork);
+      const selectedAccountTokens: Token[] | null = await loadAccountTokens(signer, currentNetwork);
       if (!selectedAccountTokens) {
         setTokens(ValueStatus.NO_DATA);
         return;
