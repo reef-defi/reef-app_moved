@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { api, Components } from '@reef-defi/react-lib';
 import { useAppSelector } from '../../store';
@@ -21,9 +21,14 @@ const Dashboard = (): JSX.Element => {
   const { isLoading: tokensLoading } = useAppSelector((state) => state.tokens);
   const { pools } = useAppSelector((state) => state.pools);
   const selectedSigner = useGetSigner();
-  const signerTokens = useLoadSignerTokens(selectedSigner);
+  const [refreshSignerTokens, setRefreshSignerTokens] = useState(false);
+  const signerTokens = useLoadSignerTokens(refreshSignerTokens, selectedSigner);
   const reefPrice = useReefPrice();
   const signerTokenBalances = useSignerTokenBalances(signerTokens, pools, reefPrice);
+
+  const refreshTokens = (): void => {
+    setRefreshSignerTokens(!refreshSignerTokens);
+  };
 
   const totalBalance: ValueWithStatus<number> = isValueWithStatusSet(signerTokenBalances) && signerTokenBalances.length ? (signerTokenBalances as TokenWithPrice[]).reduce((state: ValueWithStatus<number>, curr) => {
     if (Number.isNaN(curr.balanceValue) || !isValueWithStatusSet(curr.balanceValue)) {
@@ -59,7 +64,7 @@ const Dashboard = (): JSX.Element => {
         <Balance balance={totalBalance} />
         <ActionButtons />
       </div>
-      <TokenBalances tokens={signerTokenBalances} />
+      <TokenBalances tokens={signerTokenBalances} onRefresh={refreshTokens} />
     </div>
   );
 };

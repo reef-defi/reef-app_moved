@@ -19,7 +19,7 @@ const { Loading } = Components;
 export const Transfer = (): JSX.Element => {
   const { pools } = useAppSelector((state) => state.pools);
   const selectedSigner = useGetSigner();
-  const signerTokens = useLoadSignerTokens(selectedSigner);
+  const signerTokens = useLoadSignerTokens(false, selectedSigner);
   const reefPrice = useReefPrice();
   const signerTokenBalances = useSignerTokenBalances(signerTokens, pools, reefPrice);
   const [token, setToken] = useState<ValueWithStatus<TokenWithAmount>>(ValueStatus.LOADING);
