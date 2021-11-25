@@ -130,6 +130,15 @@ export const TransferComponent = ({
     if (parseFloat(amt) <= 0) {
       amt = '';
     }
+    if (amt) {
+      const maxWithoutTxFee = txToken.balance.sub(utils.parseEther('2'));
+      if (!maxWithoutTxFee.gt(BigNumber.from('0'))) {
+        amt = '';
+      } else if (maxWithoutTxFee.lt(utils.parseEther(amount))) {
+        amt = utils.formatUnits(maxWithoutTxFee, 18).toString();
+      }
+    }
+
     setTxToken({ ...txToken, amount: toDecimalPlaces(amt, 8) });
   };
 
