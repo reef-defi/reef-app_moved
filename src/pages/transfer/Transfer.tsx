@@ -1,5 +1,6 @@
 import { availableNetworks, Components, TokenWithAmount } from '@reef-defi/react-lib';
 import React, { useEffect, useState } from 'react';
+import { BigNumber } from 'ethers';
 import { useAppSelector } from '../../store';
 import { TransferComponent } from './TransferComponent';
 import { useGetSigner } from '../../hooks/useGetSigner';
@@ -23,6 +24,7 @@ export const Transfer = (): JSX.Element => {
   const reefPrice = useReefPrice();
   const signerTokenBalances = useSignerTokenBalances(signerTokens, pools, reefPrice);
   const [token, setToken] = useState<ValueWithStatus<TokenWithAmount>>(ValueStatus.LOADING);
+
   useEffect(() => {
     if (isValueWithStatusSet(signerTokenBalances)) {
       if (!signerTokenBalances.length) {
@@ -35,18 +37,29 @@ export const Transfer = (): JSX.Element => {
         setToken(tkn);
         return;
       }
+      if (!isValueWithStatusSet(signerTokenBalance.balanceValue) && isValueWithStatusSet(signerTokens)) {
+        const sToken = signerTokens[0] as TokenWithPrice;
+        const tkn = { ...sToken, amount: '', isEmpty: false } as TokenWithAmount;
+        setToken(tkn);
+        return;
+      }
       setToken(signerTokenBalance.balanceValue as ValueStatus);
       return;
     }
     setToken(signerTokenBalances as ValueStatus);
-  }, [signerTokenBalances]);
+  }, [signerTokenBalances, signerTokens]);
+
+  /* useEffect(() => {
+    console.log('BBBB=', selectedSigner?.balance?.toString());
+    setToken((prevState: ValueWithStatus<TokenWithAmount>) => ({ ...(prevState as TokenWithAmount), balance: (selectedSigner?.balance as BigNumber) }));
+  }, [selectedSigner?.balance]); */
 
   return (
     <>
       {!isValueWithStatusSet(token) && token === ValueStatus.LOADING && <Loading.Loading />}
       {!isValueWithStatusSet(token) && token === ValueStatus.NO_DATA && <div>No tokens for transaction.</div>}
-      { isValueWithStatusSet(token) && selectedSigner
-          && <TransferComponent tokens={signerTokenBalances as TokenWithPrice[]} network={currentNetwork} from={selectedSigner} token={token as TokenWithAmount} />}
+      { isValueWithStatusSet(token) && isValueWithStatusSet(signerTokens) && isValueWithStatusSet(signerTokenBalances) && selectedSigner
+          && <TransferComponent tokens={signerTokenBalances as TokenWithPrice[] || signerTokens} network={currentNetwork} from={selectedSigner} token={token as TokenWithAmount} />}
     </>
   );
 };

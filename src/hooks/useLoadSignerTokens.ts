@@ -5,9 +5,10 @@ import {
   Network, ReefSigner, reefTokenWithAmount, Token, utils,
 } from '@reef-defi/react-lib';
 import { BigNumber, utils as eUtils } from 'ethers';
-import { ValueStatus, ValueWithStatus } from './useSignerTokenBalances';
+import { isValueWithStatusSet, ValueStatus, ValueWithStatus } from './useSignerTokenBalances';
 import { currentNetwork } from '../environment';
 import { getReefCoinBalance } from '../../../reef-react-lib/dist/rpc';
+import { useAppSelector } from '../store';
 
 const { availableReefNetworks } = utils;
 const { parseUnits } = eUtils;
@@ -31,14 +32,18 @@ interface AccountTokensResBalance {
     symbol: string
 }
 
-const loadAccountTokens = async (reefSigner: ReefSigner, network: Network): Promise<Token[] | null> => {
+function getReefTokenBalance(reefSigner: ReefSigner): Promise<Token[]> {
+  const reefTkn = reefTokenWithAmount();
+  reefTkn.balance = reefSigner.balance;
+  return Promise.resolve([reefTkn as Token]);
+}
+
+const loadAccountTokens = async (reefSigner: ReefSigner, network: Network): Promise<Token[]> => {
   try {
     return axios.post<void, AxiosResponse<AccountTokensRes>>(`${network.reefscanUrl}api/account/tokens`, { account: reefSigner.address })
       .then((res) => {
         if (!res || !res.data || !res.data.data || !res.data.data.balances || !res.data.data.balances.length) {
-          const reefTkn = reefTokenWithAmount();
-          reefTkn.balance = reefSigner.balance;
-          return Promise.resolve([reefTkn as Token]);
+          return getReefTokenBalance(reefSigner);
         }
         return res.data.data.balances.map((resBal:AccountTokensResBalance) => ({
           address: resBal.contract_id,
@@ -70,16 +75,17 @@ const loadAccountTokens = async (reefSigner: ReefSigner, network: Network): Prom
         } */
       (err) => {
         console.log('Error loading tokens =', err);
-        return null;
+        return getReefTokenBalance(reefSigner);
       });
   } catch (err) {
     console.log('loadAccountTokens error = ', err);
-    return Promise.resolve(null);
+    return getReefTokenBalance(reefSigner);
   }
 };
 
 export const useLoadSignerTokens = (signer?: ReefSigner): ValueWithStatus<Token[]> => {
   const [tokens, setTokens] = useState<ValueWithStatus<Token[]>>(ValueStatus.LOADING);
+  const { reloadToggle } = useAppSelector((state) => state.tokens);
   useEffect(() => {
     const fetchTokens = async (): Promise<void> => {
       if (!signer) {
@@ -95,5 +101,18 @@ export const useLoadSignerTokens = (signer?: ReefSigner): ValueWithStatus<Token[
     };
     fetchTokens();
   }, [signer]);
+
+  useEffect(() => {
+    if (isValueWithStatusSet(tokens)) {
+      const tkns = tokens as Token[];
+      const { address: reefAddr } = reefTokenWithAmount();
+      const reefToken = tkns.find((t) => t.address === reefAddr);
+      if (reefToken) {
+        reefToken.balance = signer?.balance || BigNumber.from(0);
+        setTokens([...tkns]);
+      }
+    }
+  }, [signer?.balance]);
+
   return tokens;
 };
