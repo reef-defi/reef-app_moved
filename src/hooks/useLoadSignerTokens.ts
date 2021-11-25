@@ -83,7 +83,7 @@ const loadAccountTokens = async (reefSigner: ReefSigner, network: Network): Prom
   }
 };
 
-export const useLoadSignerTokens = (signer?: ReefSigner): ValueWithStatus<Token[]> => {
+export const useLoadSignerTokens = (refreshToggle: boolean, signer?: ReefSigner): ValueWithStatus<Token[]> => {
   const [tokens, setTokens] = useState<ValueWithStatus<Token[]>>(ValueStatus.LOADING);
   const { reloadToggle } = useAppSelector((state) => state.tokens);
   useEffect(() => {
