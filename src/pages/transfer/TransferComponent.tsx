@@ -132,8 +132,9 @@ export const TransferComponent = ({
     }
     if (amt) {
       const maxWithoutTxFee = txToken.balance.sub(utils.parseEther('2'));
-      if (!maxWithoutTxFee.gt(BigNumber.from('0'))) {
-        amt = '';
+      console.log('aaa=', amt, maxWithoutTxFee.toString());
+      if (maxWithoutTxFee.lt(BigNumber.from('0'))) {
+        amt = '0';
       } else if (maxWithoutTxFee.lt(utils.parseEther(amount))) {
         amt = utils.formatUnits(maxWithoutTxFee, 18).toString();
       }
