@@ -17,6 +17,7 @@ import { Provider } from '@reef-defi/evm-provider';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { reloadTokens } from '../../store/actions/tokens';
 import { currentNetwork } from '../../environment';
+import { toDecimalPlaces } from '../../utils/utils';
 
 const {
   Display, Card: CardModule, TokenAmountFieldMax, Modal, Loading, Input: InputModule,
@@ -104,7 +105,7 @@ export const TransferComponent = ({
   const [provider] = hooks.useProvider(currentNetwork.rpcUrl);
   const dispatch = useAppDispatch();
   const { selectedAccount: selectedAccountIndex, accounts } = useAppSelector((state) => state.signers);
-  const [accountsExceptCurrent, setAccountsExceptCurrent] = useState(filterCurrentAccount(accounts, selectedAccountIndex));
+  const [availableTxAccounts, setAvailableTxAccounts] = useState<ReefSigner[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [txToken, setTxToken] = useState(token);
   const [to, setTo] = useState('');
@@ -116,15 +117,20 @@ export const TransferComponent = ({
   }, [token]);
 
   useEffect(() => {
-    setAccountsExceptCurrent(filterCurrentAccount(accounts, selectedAccountIndex));
-  }, [accounts, selectedAccountIndex]);
+    const exceptCurrent = filterCurrentAccount(accounts, selectedAccountIndex);
+    if (txToken.address === reefTokenWithAmount().address) {
+      setAvailableTxAccounts(exceptCurrent);
+      return;
+    }
+    setAvailableTxAccounts(exceptCurrent.filter((a) => !!a.isEvmClaimed));
+  }, [accounts, selectedAccountIndex, txToken]);
 
   const amountChanged = (amount: string): void => {
     let amt = amount;
     if (parseFloat(amt) <= 0) {
       amt = '';
     }
-    setTxToken({ ...txToken, amount: amt });
+    setTxToken({ ...txToken, amount: toDecimalPlaces(amt, 8) });
   };
 
   const addressChanged = (addr: string): Promise<void> => Promise.resolve();
@@ -133,7 +139,7 @@ export const TransferComponent = ({
     setTxToken({ ...tkn, amount: '0', isEmpty: false } as TokenWithAmount);
   };
 
-  const onConfirmed = async (): Promise<void> => {
+  const onSendTxConfirmed = async (): Promise<void> => {
     if (isLoading || !provider) {
       return;
     }
@@ -186,17 +192,12 @@ export const TransferComponent = ({
 
   const onAccountSelect = (accountIndex: number, selected: ReefSigner):void => {
     const selectAcc = async (): Promise<void> => {
-      console.log('SSS=', accountIndex);
-      // TODO if reef set substrate else address
-      // TOOD remove token balance change from account
       let addr = '';
-      const reefToken = reefTokenWithAmount();
-      // if (txToken.address === reefToken.address) {
-      //   addr = await toAccount.signer.getSubstrateAddress();
-      // }
-      const binded = selected.signer.;
-      if (!addr && binded) {
-        addr = selected.evmAddress || selected.address;
+      if (txToken.address === reefTokenWithAmount().address) {
+        addr = await selected.signer.getSubstrateAddress();
+      }
+      if (!addr && selected.isEvmClaimed) {
+        addr = selected.evmAddress;
       }
       setTo(addr);
     };
@@ -215,9 +216,6 @@ export const TransferComponent = ({
             <CardTitle title="Send Tokens" />
             <CardHeaderBlank />
           </CardHeader>
-          {from?.balance?.toString()}
-          {' txTKN= '}
-          {txToken?.balance?.toString()}
           <TokenAmountFieldMax
             token={txToken}
             tokens={tokens}
@@ -230,11 +228,11 @@ export const TransferComponent = ({
             <Input
               value={to}
               maxLength={70}
-              onChange={setTo}
+              onChange={(toVal) => setTo(toVal.trim())}
               placeholder="Send to address"
               disabled={isLoading}
             />
-            <OpenModalButton id="selectMyAddress" disabled={isLoading}>
+            <OpenModalButton id="selectMyAddress" disabled={isLoading} className="btn-empty link-text text-xs text-primary pl-1rem">
               Select account
             </OpenModalButton>
           </MT>
@@ -252,9 +250,20 @@ export const TransferComponent = ({
         </Card>
       </ComponentCenter>
 
-      <AccountListModal id="selectMyAddress" accounts={accountsExceptCurrent} selectAccount={onAccountSelect} />
+      <AccountListModal
+        id="selectMyAddress"
+        accounts={availableTxAccounts}
+        selectAccount={onAccountSelect}
+        title={(
+          <>
+            Select account&nbsp;
+            {txToken.address !== reefTokenWithAmount().address
+            && <span className="text-xs">(Ethereum VM enabled)</span>}
+          </>
+        )}
+      />
 
-      <ConfirmationModal id="txModalToggle" title="Confirm Transaction" confirmFun={onConfirmed} confirmLabel="Send">
+      <ConfirmationModal id="txModalToggle" title="Confirm Transaction" confirmFun={onSendTxConfirmed} confirmLabel="Send">
         <TokenAmountView
           name={txToken.name}
           amount={txToken.amount}

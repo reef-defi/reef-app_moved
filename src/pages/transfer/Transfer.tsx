@@ -49,11 +49,6 @@ export const Transfer = (): JSX.Element => {
     setToken(signerTokenBalances as ValueStatus);
   }, [signerTokenBalances, signerTokens]);
 
-  /* useEffect(() => {
-    console.log('BBBB=', selectedSigner?.balance?.toString());
-    setToken((prevState: ValueWithStatus<TokenWithAmount>) => ({ ...(prevState as TokenWithAmount), balance: (selectedSigner?.balance as BigNumber) }));
-  }, [selectedSigner?.balance]); */
-
   return (
     <>
       {!isValueWithStatusSet(token) && token === ValueStatus.LOADING && <Loading.Loading />}
