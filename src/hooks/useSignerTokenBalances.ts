@@ -65,7 +65,6 @@ const calculateTokenPrice = (token: Token, pools: Pool[], reefPrice: ValueWithSt
 export const useSignerTokenBalances = (tokens: ValueWithStatus<Token[]>, pools: Pool[], reefPrice: ValueWithStatus<number>): ValueWithStatus<TokenWithPrice[]> => {
   const [balances, setBalances] = useState<ValueWithStatus<TokenWithPrice[]>>(ValueStatus.LOADING);
   useEffect(() => {
-    console.log('TKNS', tokens);
     if (!isValueWithStatusSet(tokens)) {
       setBalances(tokens as ValueWithStatus<TokenWithPrice[]>);
       return;

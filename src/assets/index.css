@@ -97,6 +97,10 @@ svg.fill-white {
     margin-right: 1em;
 }
 
+.pl-1rem{
+    padding-left: 1rem;
+}
+
 .d-flex {
     display: flex;
 }
