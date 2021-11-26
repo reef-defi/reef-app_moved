@@ -21,7 +21,7 @@ import { toDecimalPlaces } from '../../utils/utils';
 
 const {
   Display, Card: CardModule, TokenAmountFieldMax, Modal, Loading, Input: InputModule,
-  TokenAmountView, Label, Button: ButtonModule, AccountListModal,
+  TokenAmountView, Label, Button: ButtonModule, AccountListModal, Text,
 } = Components;
 const {
   ComponentCenter, MT, CenterColumn, Margin, CenterRow,
@@ -32,6 +32,9 @@ const {
 const {
   OpenModalButton, default: ConfirmationModal, ModalFooter, ModalBody,
 } = Modal;
+const {
+  MiniText,
+} = Text;
 const { LoadingButtonIconWithText } = Loading;
 const { Input } = InputModule;
 const { ConfirmLabel } = Label;
@@ -99,6 +102,17 @@ async function sendToNativeAddress(provider: Provider, signer: ReefSigner, toAmt
 
 const filterCurrentAccount = (accounts: ReefSigner[], selectedAccountIndex: number): ReefSigner[] => accounts.filter((a) => a.address !== accounts[selectedAccountIndex].address);
 
+const transferFee = utils.parseEther('1.53').toString();
+const existentialDeposit = utils.parseEther('1.001').toString();
+
+const getSubtractedFeeAndExistential = (txToken: TokenWithAmount): string => reefUtils.toUnits({ balance: txToken.balance.sub(transferFee).sub(existentialDeposit), decimals: 18 });
+
+const getSubtractedFee = (txToken: TokenWithAmount): string => reefUtils.toUnits({ balance: txToken.balance.sub(transferFee), decimals: 18 });
+
+function toAmountInputValue(amt: string): string {
+  return toDecimalPlaces(amt, 8);
+}
+
 export const TransferComponent = ({
   tokens, network, from, token,
 }: TransferComponent): JSX.Element => {
@@ -113,6 +127,8 @@ export const TransferComponent = ({
   const [resultMessage, setResultMessage] = useState<{success: boolean, title: string, message: string} | null>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line no-param-reassign
+    token.amount = txToken.amount;
     setTxToken(token);
   }, [token]);
 
@@ -130,23 +146,15 @@ export const TransferComponent = ({
     if (parseFloat(amt) <= 0) {
       amt = '';
     }
-    if (amt) {
-      const maxWithoutTxFee = txToken.balance.sub(utils.parseEther('2'));
-      console.log('aaa=', amt, maxWithoutTxFee.toString());
-      if (maxWithoutTxFee.lt(BigNumber.from('0'))) {
-        amt = '0';
-      } else if (maxWithoutTxFee.lt(utils.parseEther(amount))) {
-        amt = utils.formatUnits(maxWithoutTxFee, 18).toString();
-      }
-    }
-
-    setTxToken({ ...txToken, amount: toDecimalPlaces(amt, 8) });
+    setTxToken({ ...txToken, amount: toAmountInputValue(amt) });
   };
 
   const addressChanged = (addr: string): Promise<void> => Promise.resolve();
 
   const tokenSelected = (tkn: Token): void => {
-    setTxToken({ ...tkn, amount: '0', isEmpty: false } as TokenWithAmount);
+    if (tkn.address !== txToken.address) {
+      setTxToken({ ...tkn, amount: '', isEmpty: false } as TokenWithAmount);
+    }
   };
 
   const onSendTxConfirmed = async (): Promise<void> => {
@@ -176,7 +184,16 @@ export const TransferComponent = ({
       return;
     }
 
-    if (utils.parseEther(txToken.amount).gt(txToken.balance)) {
+    const amountOverBalance = utils.parseEther(txToken.amount).gt(txToken.balance);
+    if (!amountOverBalance && txToken.address === reefTokenWithAmount().address) {
+      const isOverTxFee = parseFloat(txToken.amount) > parseFloat(toAmountInputValue(getSubtractedFee(txToken)));
+      if (isOverTxFee) {
+        setValidationError(`Amount too high for transfer fee ( ~${utils.formatUnits(transferFee, 18)}REEF)`);
+        return;
+      }
+    }
+
+    if (amountOverBalance) {
       setValidationError('Amount exceeds balance');
       return;
     }
@@ -233,6 +250,13 @@ export const TransferComponent = ({
             onAmountChange={amountChanged}
             onTokenSelect={tokenSelected}
             onAddressChange={addressChanged}
+            hideSelectTokenCommonBaseView
+            afterBalanceEl={txToken.address === reefTokenWithAmount().address ? (
+              <span>
+                {txToken.amount !== toAmountInputValue(getSubtractedFee(txToken)) && <span className="text-primary text-decoration-none" role="button" onClick={() => amountChanged(getSubtractedFee(txToken))}>(Max)</span>}
+                {txToken.amount === toAmountInputValue(getSubtractedFee(txToken)) && <span className="text-primary text-decoration-none" role="button" onClick={() => amountChanged(getSubtractedFeeAndExistential(txToken))}>(Keep existential deposit)</span>}
+              </span>
+            ) : undefined}
           />
           <MT size="2">
             <Input
