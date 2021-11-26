@@ -16,7 +16,6 @@ import { decodeAddress } from '@polkadot/util-crypto';
 import { Provider } from '@reef-defi/evm-provider';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { reloadTokens } from '../../store/actions/tokens';
-import { currentNetwork } from '../../environment';
 import { toDecimalPlaces } from '../../utils/utils';
 
 const {
@@ -43,7 +42,6 @@ const { Button } = ButtonModule;
 
 interface TransferComponent {
     tokens: Token[];
-    network: Network;
     from: ReefSigner;
     token: TokenWithAmount;
 }
@@ -114,7 +112,7 @@ function toAmountInputValue(amt: string): string {
 }
 
 export const TransferComponent = ({
-  tokens, network, from, token,
+  tokens, from, token,
 }: TransferComponent): JSX.Element => {
   const { provider } = useAppSelector((state) => state.app);
   const dispatch = useAppDispatch();
@@ -123,6 +121,7 @@ export const TransferComponent = ({
   const [isLoading, setIsLoading] = useState(false);
   const [txToken, setTxToken] = useState(token);
   const [to, setTo] = useState('');
+  const [foundToAccountAddress, setFoundToAccountAddress] = useState<ReefSigner|null>();
   const [validationError, setValidationError] = useState('');
   const [resultMessage, setResultMessage] = useState<{success: boolean, title: string, message: string} | null>(null);
 
@@ -210,6 +209,19 @@ export const TransferComponent = ({
     setValidationError('');
   }, [to, txToken]);
 
+  useEffect(() => {
+    if (!to || !accounts || !accounts.length) {
+      setFoundToAccountAddress(null);
+      return;
+    }
+    const foundToAddrAccount = accounts.find((a) => a.address === to || a.evmAddress === to);
+    if (foundToAddrAccount) {
+      setFoundToAccountAddress(foundToAddrAccount);
+      return;
+    }
+    setFoundToAccountAddress(null);
+  }, [to, accounts]);
+
   // update balance
   useEffect(() => {
     if (resultMessage && resultMessage.success) {
@@ -266,6 +278,14 @@ export const TransferComponent = ({
               placeholder="Send to address"
               disabled={isLoading}
             />
+            {foundToAccountAddress && (
+              <span className="pl-1rem">
+                <MiniText>
+                  Selected account:&nbsp;
+                  {foundToAccountAddress?.name}
+                </MiniText>
+              </span>
+            )}
             <OpenModalButton id="selectMyAddress" disabled={isLoading} className="btn-empty link-text text-xs text-primary pl-1rem">
               Select account
             </OpenModalButton>
