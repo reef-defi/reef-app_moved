@@ -116,7 +116,7 @@ function toAmountInputValue(amt: string): string {
 export const TransferComponent = ({
   tokens, network, from, token,
 }: TransferComponent): JSX.Element => {
-  const [provider] = hooks.useProvider(currentNetwork.rpcUrl);
+  const { provider } = useAppSelector((state) => state.app);
   const dispatch = useAppDispatch();
   const { selectedAccount: selectedAccountIndex, accounts } = useAppSelector((state) => state.signers);
   const [availableTxAccounts, setAvailableTxAccounts] = useState<ReefSigner[]>([]);

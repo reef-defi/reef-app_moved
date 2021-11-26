@@ -14,7 +14,7 @@ export const useReloadSelectedBalance = (): void => {
   const dispatch = useAppDispatch();
   const { selectedAccount: accountIndex, accounts } = useAppSelector((state) => state.signers);
   const { reloadToggle: reloadTokens } = useAppSelector((state) => state.tokens);
-  const [provider] = hooks.useProvider(currentNetwork.rpcUrl);
+  const { provider } = useAppSelector((state) => state.app);
   useEffect(() => {
     const selectedSigner = accounts[accountIndex];
     if (selectedSigner && provider) {

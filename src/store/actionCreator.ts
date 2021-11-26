@@ -1,3 +1,7 @@
+// App
+export const SET_PROVIDER = 'SET_PROVIDER';
+export const SET_PROVIDER_LOADING = 'SET_PROVIDER_LOADING';
+
 // Signers
 export const SET_SIGNERS_ACTION = 'SET_SIGNERS_ACTION';
 export const SET_SIGNERS_LOADING = 'SET_SIGNERS_LOADING';
