@@ -1,8 +1,6 @@
 import {
   Components,
   ensureTokenAmount,
-  hooks,
-  Network,
   ReefSigner,
   reefTokenWithAmount,
   rpc,
@@ -14,6 +12,7 @@ import React, { useEffect, useState } from 'react';
 import { BigNumber, utils } from 'ethers';
 import { decodeAddress } from '@polkadot/util-crypto';
 import { Provider } from '@reef-defi/evm-provider';
+import { handleTxResponse } from '@reef-defi/evm-provider/utils';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { reloadTokens } from '../../store/actions/tokens';
 import { toDecimalPlaces } from '../../utils/utils';
@@ -57,7 +56,7 @@ const isSubstrateAddress = (to: string): boolean => {
 type ResultMessageSetter = (val: { success: boolean, title: string, message: string }) => void;
 
 const setErrorResultMessage = (e: any, setResultMessage: (val: { success: boolean; title: string; message: string }) => void): void => {
-  const reason = e && e.message?.startsWith('1010') ? 'Balance too low.' : '';
+  const reason = e && e.message?.startsWith('1010') ? 'Balance too low.' : e.toString();
   setResultMessage({ success: false, title: 'Transaction failed', message: `No tokens transfered. ${reason}` });
 };
 
@@ -74,22 +73,41 @@ async function sendToEvmAddress(txToken: TokenWithAmount, signer: ReefSigner, to
   }
 }
 
+function delayResultMessage(val: { success: boolean; title: string; message: string }, setResultMessage: ResultMessageSetter, resolve: () => void):void {
+  // wait for reefscan to register tx
+  setTimeout(() => {
+    setResultMessage(val);
+    resolve();
+  },
+  5000);
+}
+
 async function sendToNativeAddress(provider: Provider, signer: ReefSigner, toAmt: BigNumber, to: string, setResultMessage: ResultMessageSetter): Promise<void> {
   try {
     const transfer = provider.api.tx.balances.transfer(to, toAmt.toString());
     const substrateAddress = await signer.signer.getSubstrateAddress();
-    const hash = await transfer.signAndSend(substrateAddress, { signer: signer.signer.signingKey });
     return new Promise((resolve) => {
-      // wait for reefscan to register tx
-      setTimeout(() => {
-        setResultMessage({
-          success: true,
-          title: 'Transaction successful',
-          message: `https://reefscan.com/transfer/${hash.toString()}`,
-        });
-        resolve();
-      },
-      5000);
+      const unsubscribe = transfer.signAndSend(substrateAddress, { signer: signer.signer.signingKey },
+        (res) => handleTxResponse(res, provider.api).then(
+          (txRes: any): void => {
+            console.log('TRR=', txRes);
+            const hash = '';
+            delayResultMessage({
+              success: true,
+              title: 'Transaction successful',
+              message: `https://reefscan.com/transfer/${hash.toString()}`,
+            }, setResultMessage, resolve);
+          },
+        ).catch((rej: any): void => {
+          delayResultMessage({
+            success: false,
+            title: 'Transaction failed',
+            message: rej.message === 'balances.InsufficientBalance' ? 'Balance too low for transfer and fees.' : rej.message || rej,
+          }, setResultMessage, resolve);
+        }).finally(async (): Promise<void> => {
+          console.log('uuu=', unsubscribe);
+          await unsubscribe;
+        }));
     });
     // TODO reload token balance
   } catch (e: any) {
@@ -160,13 +178,18 @@ export const TransferComponent = ({
     if (isLoading || !provider) {
       return;
     }
-    setIsLoading(true);
-    ensureTokenAmount(txToken);
-    if (utils.isAddress(to)) {
-      await sendToEvmAddress(txToken, from, to, setResultMessage);
-    }
-    if (isSubstrateAddress(to)) {
-      await sendToNativeAddress(provider, from, utils.parseEther(txToken.amount), to, setResultMessage);
+    try {
+      setIsLoading(true);
+      ensureTokenAmount(txToken);
+      if (utils.isAddress(to)) {
+        await sendToEvmAddress(txToken, from, to, setResultMessage);
+      }
+      if (isSubstrateAddress(to)) {
+        await sendToNativeAddress(provider, from, utils.parseEther(txToken.amount), to, setResultMessage);
+      }
+    } catch (err) {
+      console.log('eee=', err);
+      setErrorResultMessage(err, setResultMessage);
     }
     setIsLoading(false);
   };
@@ -292,7 +315,8 @@ export const TransferComponent = ({
           </MT>
           <MT size="2">
             <CenterColumn>
-              <OpenModalButton id="txModalToggle" disabled={!!validationError || isLoading}>
+              {/* <OpenModalButton id="txModalToggle" disabled={!!validationError || isLoading}> */}
+              <OpenModalButton id="txModalToggle" disabled={isLoading}>
                 {isLoading ? (
                   <LoadingButtonIconWithText
                     text="Sending"
