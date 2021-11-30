@@ -66,27 +66,29 @@ const isSubstrateAddress = (to: string): boolean => {
   return false;
 };
 
-type ResultMessageSetter = (val: { success: boolean, title: string, message: string }) => void;
+type TxStatusHandler = (status: TxStatusUpdate)=>void;
 
-function handleErr(e: any, txIdent:string, txHash: string, txHandler: (status: TxStatusUpdate)=>void): void {
+function handleErr(e: any, txIdent:string, txHash: string, txHandler: TxStatusHandler): void {
   const reason = e && (e.message?.startsWith('1010') || e.message?.indexOf('InsufficientBalance') > -1) ? 'Balance too low.' : (e.message || e);
   txHandler({
     txIdent, txHash, error: reason,
   });
 }
 
-async function sendToEvmAddress(txToken: TokenWithAmount, signer: ReefSigner, to: string, txHandler: (status: TxStatusUpdate)=>void): Promise<string> {
+async function sendToEvmAddress(txToken: TokenWithAmount, signer: ReefSigner, to: string, txHandler: TxStatusHandler): Promise<string> {
   const contract = await rpc.getContract(txToken.address, signer.signer);
   const decimals = await contract.decimals();
   const toAmt = utils.parseUnits(txToken.amount, decimals);
   const txIdent = Math.random().toString(10);
-
   try {
     contract.transfer(to, toAmt.toString()).then((contractCall: any) => {
       txHandler({
         txIdent, txHash: contractCall.hash, isInBlock: true, type: TX_TYPE_EVM, url: `https://reefscan.com/extrinsic/${contractCall.hash}`,
       });
-    }).catch((e:any) => {
+    }).catch(async (e:any) => {
+      console.log('AMT=', utils.formatUnits(toAmt.toString()));
+      const bal = await contract.balanceOf(signer.evmAddress);
+      console.log('balance=', utils.formatUnits(bal.toString()));
       console.log('sendToEvmAddress error=', e);
       handleErr(e, txIdent, '', txHandler);
     });
@@ -97,12 +99,10 @@ async function sendToEvmAddress(txToken: TokenWithAmount, signer: ReefSigner, to
   return Promise.resolve(txIdent);
 }
 
-async function sendToNativeAddress(provider: Provider, signer: ReefSigner, toAmt: BigNumber, to: string, txHandler: (status: TxStatusUpdate)=>void): Promise<string> {
-  // try {
+async function sendToNativeAddress(provider: Provider, signer: ReefSigner, toAmt: BigNumber, to: string, txHandler: TxStatusHandler): Promise<string> {
   const transfer = provider.api.tx.balances.transfer(to, toAmt.toString());
   const substrateAddress = await signer.signer.getSubstrateAddress();
   const txIdent = Math.random().toString(10);
-  // return new Promise((resolve, reject) => {
   transfer.signAndSend(substrateAddress, { signer: signer.signer.signingKey },
     (res) => handleTxResponse(res, provider.api).then(
       (txRes: any): void => {
@@ -115,23 +115,12 @@ async function sendToNativeAddress(provider: Provider, signer: ReefSigner, toAmt
       // finalized error is ignored
       if (rej.result.status.isInBlock) {
         const txHash = transfer.hash.toHex();
-        /* txHandler({
-            txIdent,
-            txHash,
-            error: rej.message,
-            isComplete: true,
-          }); */
         handleErr(rej.message, txIdent, txHash, txHandler);
       }
     })).catch((e) => {
-    console.log('E E=', e);
+    console.log('sendToNativeAddress err=', e);
     handleErr(e, txIdent, '', txHandler);
   });
-  // resolve(txIdent);
-  // });
-  /* } catch (e) {
-    console.log('sendToNativeAddress error=', e);
-  } */
   return Promise.resolve(txIdent);
 }
 
@@ -321,7 +310,7 @@ export const TransferComponent = ({
       setFoundToAccountAddress(null);
       return;
     }
-    const foundToAddrAccount = accounts.find((a) => a.address === to || a.evmAddress === to);
+    const foundToAddrAccount = accounts.find((a) => a.address.toLowerCase() === to.toLowerCase() || a.evmAddress.toLowerCase() === to.toLowerCase());
     if (foundToAddrAccount) {
       setFoundToAccountAddress(foundToAddrAccount);
       return;
