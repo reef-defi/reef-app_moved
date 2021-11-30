@@ -68,16 +68,17 @@ const isSubstrateAddress = (to: string): boolean => {
 
 type ResultMessageSetter = (val: { success: boolean, title: string, message: string }) => void;
 
-/* const setErrorResultMessage = (e: any, setResultMessage: (val: { success: boolean; title: string; message: string }) => void): void => {
-  const reason = e && e.message?.startsWith('1010') ? 'Balance too low.' : e.toString();
-  setResultMessage({ success: false, title: 'Transaction failed', message: `No tokens transfered. ${reason}` });
-}; */
-
 async function sendToEvmAddress(txToken: TokenWithAmount, signer: ReefSigner, to: string, txHandler: (status: TxStatusUpdate)=>void): Promise<string> {
   const contract = await rpc.getContract(txToken.address, signer.signer);
   const decimals = await contract.decimals();
   const toAmt = utils.parseUnits(txToken.amount, decimals);
   const txIdent = Math.random().toString(10);
+
+  function handleErr(e: any): void {
+    const reason = e && (e.message?.startsWith('1010') || e.message?.indexOf('InsufficientBalance') > -1) ? 'Balance too low.' : (e.message || e);
+    txHandler({ txIdent, error: reason });
+  }
+
   try {
     contract.transfer(to, toAmt.toString()).then((contractCall: any) => {
       txHandler({
@@ -85,14 +86,12 @@ async function sendToEvmAddress(txToken: TokenWithAmount, signer: ReefSigner, to
       });
     }).catch((e:any) => {
       console.log('sendToEvmAddress error=', e);
-      const reason = e && (e.message?.startsWith('1010') || e.message?.indexOf('InsufficientBalance') > -1) ? 'Balance too low.' : (e.message || e);
-      txHandler({ txIdent, error: reason });
+      handleErr(e);
     });
     return Promise.resolve(txIdent);
   } catch (e: any) {
-    console.log('error evm contract =', e);
-    const reason = e && (e.message?.startsWith('1010') || e.message?.indexOf('InsufficientBalance') > -1) ? 'Balance too low.' : (e.message || e);
-    txHandler({ txIdent, error: reason });
+    console.log('sendToEvmAddress err =', e);
+    handleErr(e);
   }
   return Promise.resolve(txIdent);
 }
@@ -102,7 +101,6 @@ async function sendToNativeAddress(provider: Provider, signer: ReefSigner, toAmt
     const transfer = provider.api.tx.balances.transfer(to, toAmt.toString());
     const substrateAddress = await signer.signer.getSubstrateAddress();
     const txIdent = Math.random().toString(10);
-    console.log('TXXXX=', txIdent);
     return new Promise((resolve) => {
       transfer.signAndSend(substrateAddress, { signer: signer.signer.signingKey },
         (res) => handleTxResponse(res, provider.api).then(
@@ -159,7 +157,7 @@ export const TransferComponent = ({
   const [to, setTo] = useState('');
   const [foundToAccountAddress, setFoundToAccountAddress] = useState<ReefSigner|null>();
   const [validationError, setValidationError] = useState('');
-  const [resultMessage, setResultMessage] = useState<{complete: boolean, title: string, message: string, url?: string} | null>(null);
+  const [resultMessage, setResultMessage] = useState<{complete: boolean, title: string, message: string, url?: string, loading?: boolean} | null>(null);
   const [lastTxIdentInProgress, setLastTxIdentInProgress] = useState<string>();
   const [txUpdateData, setTxUpdateData] = useState<TxStatusUpdate>();
 
@@ -169,7 +167,6 @@ export const TransferComponent = ({
       return;
     }
     if (lastTxIdentInProgress === txUpdateData?.txIdent || txUpdateData?.txIdent === TX_IDENT_ANY) {
-      console.log('upppp=', txUpdateData);
       if (txUpdateData?.error) {
         const errMessage = txUpdateData.error === 'balances.InsufficientBalance' ? 'Balance too low for transfer and fees.' : txUpdateData.error;
         setResultMessage({
@@ -184,6 +181,7 @@ export const TransferComponent = ({
           complete: false,
           title: 'Transaction initiated',
           message: 'Sending transaction to blockchain.',
+          loading: true,
         });
         return;
       }
@@ -197,6 +195,7 @@ export const TransferComponent = ({
           title: 'Transaction successfull',
           message,
           url: txUpdateData.url || `https://reefscan.com/transfer/${txUpdateData.txHash}`,
+          loading: txUpdateData.type !== TX_TYPE_EVM,
         });
         return;
       }
@@ -213,8 +212,8 @@ export const TransferComponent = ({
 
   useEffect(() => {
     if (txUpdateData?.isInBlock || txUpdateData?.error) {
-      console.log('updating tokens=');
-      dispatch(reloadTokens());
+      const delay = txUpdateData.type === TX_TYPE_EVM ? 2000 : 0;
+      setTimeout(() => dispatch(reloadTokens()), delay);
     }
   }, [txUpdateData]);
 
@@ -436,6 +435,7 @@ export const TransferComponent = ({
           </CardHeader>
           <MT size="3">
             <div className="text-center">
+              {resultMessage.loading && <Loading.Loading />}
               <div>
                 {resultMessage.message}
                 {!!resultMessage.url
