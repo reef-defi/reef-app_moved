@@ -1,8 +1,6 @@
 import {
   Components,
   ensureTokenAmount,
-  hooks,
-  Network,
   ReefSigner,
   reefTokenWithAmount,
   rpc,
@@ -14,6 +12,7 @@ import React, { useEffect, useState } from 'react';
 import { BigNumber, utils } from 'ethers';
 import { decodeAddress } from '@polkadot/util-crypto';
 import { Provider } from '@reef-defi/evm-provider';
+import { handleTxResponse } from '@reef-defi/evm-provider/utils';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { reloadTokens } from '../../store/actions/tokens';
 import { toDecimalPlaces } from '../../utils/utils';
@@ -46,6 +45,19 @@ interface TransferComponent {
     token: TokenWithAmount;
 }
 
+interface TxStatusUpdate {
+  txIdent: string;
+  txHash?: string;
+  error?: string;
+  isInBlock?: boolean;
+  isComplete?: boolean;
+  type?: string;
+  url?: string;
+}
+
+const TX_IDENT_ANY = 'TX_HASH_ANY';
+const TX_TYPE_EVM = 'TX_TYPE_EVM';
+
 const isSubstrateAddress = (to: string): boolean => {
   try {
     return !!decodeAddress(to, true, 42);
@@ -56,56 +68,80 @@ const isSubstrateAddress = (to: string): boolean => {
 
 type ResultMessageSetter = (val: { success: boolean, title: string, message: string }) => void;
 
-const setErrorResultMessage = (e: any, setResultMessage: (val: { success: boolean; title: string; message: string }) => void): void => {
-  const reason = e && e.message?.startsWith('1010') ? 'Balance too low.' : '';
+/* const setErrorResultMessage = (e: any, setResultMessage: (val: { success: boolean; title: string; message: string }) => void): void => {
+  const reason = e && e.message?.startsWith('1010') ? 'Balance too low.' : e.toString();
   setResultMessage({ success: false, title: 'Transaction failed', message: `No tokens transfered. ${reason}` });
-};
+}; */
 
-async function sendToEvmAddress(txToken: TokenWithAmount, signer: ReefSigner, to: string, setResultMessage: ResultMessageSetter): Promise<void> {
+async function sendToEvmAddress(txToken: TokenWithAmount, signer: ReefSigner, to: string, txHandler: (status: TxStatusUpdate)=>void): Promise<string> {
   const contract = await rpc.getContract(txToken.address, signer.signer);
   const decimals = await contract.decimals();
   const toAmt = utils.parseUnits(txToken.amount, decimals);
+  const txIdent = Math.random().toString(10);
   try {
-    const contractCall = await contract.transfer(to, toAmt.toString());
-    setResultMessage({ success: true, title: 'Transaction successful', message: `https://reefscan.com/extrinsic/${contractCall.hash}` });
-    // TODO reload token balance
-  } catch (e) {
-    setErrorResultMessage(e, setResultMessage);
+    contract.transfer(to, toAmt.toString()).then((contractCall: any) => {
+      txHandler({
+        txIdent, txHash: contractCall.hash, isInBlock: true, type: TX_TYPE_EVM, url: `https://reefscan.com/extrinsic/${contractCall.hash}`,
+      });
+    }).catch((e:any) => {
+      console.log('sendToEvmAddress error=', e);
+      const reason = e && (e.message?.startsWith('1010') || e.message?.indexOf('InsufficientBalance') > -1) ? 'Balance too low.' : (e.message || e);
+      txHandler({ txIdent, error: reason });
+    });
+    return Promise.resolve(txIdent);
+  } catch (e: any) {
+    console.log('error evm contract =', e);
+    const reason = e && (e.message?.startsWith('1010') || e.message?.indexOf('InsufficientBalance') > -1) ? 'Balance too low.' : (e.message || e);
+    txHandler({ txIdent, error: reason });
   }
+  return Promise.resolve(txIdent);
 }
 
-async function sendToNativeAddress(provider: Provider, signer: ReefSigner, toAmt: BigNumber, to: string, setResultMessage: ResultMessageSetter): Promise<void> {
+async function sendToNativeAddress(provider: Provider, signer: ReefSigner, toAmt: BigNumber, to: string, txHandler: (status: TxStatusUpdate)=>void): Promise<string> {
   try {
     const transfer = provider.api.tx.balances.transfer(to, toAmt.toString());
     const substrateAddress = await signer.signer.getSubstrateAddress();
-    const hash = await transfer.signAndSend(substrateAddress, { signer: signer.signer.signingKey });
+    const txIdent = Math.random().toString(10);
+    console.log('TXXXX=', txIdent);
     return new Promise((resolve) => {
-      // wait for reefscan to register tx
-      setTimeout(() => {
-        setResultMessage({
-          success: true,
-          title: 'Transaction successful',
-          message: `https://reefscan.com/transfer/${hash.toString()}`,
-        });
-        resolve();
-      },
-      5000);
+      transfer.signAndSend(substrateAddress, { signer: signer.signer.signingKey },
+        (res) => handleTxResponse(res, provider.api).then(
+          (txRes: any): void => {
+            const txHash = transfer.hash.toHex();
+            txHandler({
+              txIdent, txHash, isInBlock: txRes.result.status.isInBlock, isComplete: txRes.result.status.isFinalized,
+            });
+          },
+        ).catch((rej: any) => {
+          // finalized error is ignored
+          if (rej.result.status.isInBlock) {
+            const txHash = transfer.hash.toHex();
+            txHandler({
+              txIdent,
+              txHash,
+              error: rej.message,
+              isComplete: true,
+            });
+          }
+        }));
+      resolve(txIdent);
     });
-    // TODO reload token balance
-  } catch (e: any) {
-    setErrorResultMessage(e, setResultMessage);
+  } catch (e) {
+    console.log('sendToNativeAddress error=', e);
+    return Promise.reject(e);
   }
-  return Promise.resolve();
 }
 
 const filterCurrentAccount = (accounts: ReefSigner[], selectedAccountIndex: number): ReefSigner[] => accounts.filter((a) => a.address !== accounts[selectedAccountIndex].address);
 
-const transferFee = utils.parseEther('1.53').toString();
+// const transferFeeNative = utils.parseEther('1.53').toString();
+// use highest fee even for native
+const transferFeeEvm = utils.parseEther('2.6').toString();
 const existentialDeposit = utils.parseEther('1.001').toString();
 
-const getSubtractedFeeAndExistential = (txToken: TokenWithAmount): string => reefUtils.toUnits({ balance: txToken.balance.sub(transferFee).sub(existentialDeposit), decimals: 18 });
+const getSubtractedFeeAndExistential = (txToken: TokenWithAmount): string => reefUtils.toUnits({ balance: txToken.balance.sub(transferFeeEvm).sub(existentialDeposit), decimals: 18 });
 
-const getSubtractedFee = (txToken: TokenWithAmount): string => reefUtils.toUnits({ balance: txToken.balance.sub(transferFee), decimals: 18 });
+const getSubtractedFee = (txToken: TokenWithAmount): string => reefUtils.toUnits({ balance: txToken.balance.sub(transferFeeEvm), decimals: 18 });
 
 function toAmountInputValue(amt: string): string {
   return toDecimalPlaces(amt, 8);
@@ -123,7 +159,64 @@ export const TransferComponent = ({
   const [to, setTo] = useState('');
   const [foundToAccountAddress, setFoundToAccountAddress] = useState<ReefSigner|null>();
   const [validationError, setValidationError] = useState('');
-  const [resultMessage, setResultMessage] = useState<{success: boolean, title: string, message: string} | null>(null);
+  const [resultMessage, setResultMessage] = useState<{complete: boolean, title: string, message: string, url?: string} | null>(null);
+  const [lastTxIdentInProgress, setLastTxIdentInProgress] = useState<string>();
+  const [txUpdateData, setTxUpdateData] = useState<TxStatusUpdate>();
+
+  useEffect(() => {
+    if (!lastTxIdentInProgress) {
+      setResultMessage(null);
+      return;
+    }
+    if (lastTxIdentInProgress === txUpdateData?.txIdent || txUpdateData?.txIdent === TX_IDENT_ANY) {
+      console.log('upppp=', txUpdateData);
+      if (txUpdateData?.error) {
+        const errMessage = txUpdateData.error === 'balances.InsufficientBalance' ? 'Balance too low for transfer and fees.' : txUpdateData.error;
+        setResultMessage({
+          complete: true,
+          title: 'Transaction error',
+          message: errMessage || '',
+        });
+        return;
+      }
+      if (!txUpdateData?.isInBlock && !txUpdateData?.isComplete) {
+        setResultMessage({
+          complete: false,
+          title: 'Transaction initiated',
+          message: 'Sending transaction to blockchain.',
+        });
+        return;
+      }
+      if (txUpdateData?.isInBlock) {
+        let message = 'Transaction was accepted in latest block.';
+        if (txUpdateData.type !== TX_TYPE_EVM) {
+          message += ' For maximum reliability you can wait block finality ~30sec.';
+        }
+        setResultMessage({
+          complete: true,
+          title: 'Transaction successfull',
+          message,
+          url: txUpdateData.url || `https://reefscan.com/transfer/${txUpdateData.txHash}`,
+        });
+        return;
+      }
+      if (txUpdateData?.isComplete) {
+        setResultMessage({
+          complete: true,
+          title: 'Transaction complete',
+          message: 'Token transfer has been finalized.',
+          url: txUpdateData.url || `https://reefscan.com/transfer/${txUpdateData.txHash}`,
+        });
+      }
+    }
+  }, [txUpdateData, lastTxIdentInProgress]);
+
+  useEffect(() => {
+    if (txUpdateData?.isInBlock || txUpdateData?.error) {
+      console.log('updating tokens=');
+      dispatch(reloadTokens());
+    }
+  }, [txUpdateData]);
 
   useEffect(() => {
     // eslint-disable-next-line no-param-reassign
@@ -160,18 +253,28 @@ export const TransferComponent = ({
     if (isLoading || !provider) {
       return;
     }
-    setIsLoading(true);
-    ensureTokenAmount(txToken);
-    if (utils.isAddress(to)) {
-      await sendToEvmAddress(txToken, from, to, setResultMessage);
-    }
-    if (isSubstrateAddress(to)) {
-      await sendToNativeAddress(provider, from, utils.parseEther(txToken.amount), to, setResultMessage);
+    try {
+      setIsLoading(true);
+      ensureTokenAmount(txToken);
+      if (utils.isAddress(to)) {
+        const txIdent = await sendToEvmAddress(txToken, from, to, setTxUpdateData);
+        setLastTxIdentInProgress(txIdent);
+        setTxUpdateData({ txIdent });
+      } else if (isSubstrateAddress(to)) {
+        const txIdent = await sendToNativeAddress(provider, from, utils.parseEther(txToken.amount), to, setTxUpdateData);
+        setLastTxIdentInProgress(txIdent);
+        setTxUpdateData({ txIdent });
+      }
+    } catch (err: any) {
+      console.log('onSendTxConfirmed error =', err);
+      setLastTxIdentInProgress(TX_IDENT_ANY);
+      setTxUpdateData({ txIdent: TX_IDENT_ANY, error: err.message || err });
     }
     setIsLoading(false);
   };
 
   const initTransfer = (): void => {
+    setLastTxIdentInProgress('');
     setResultMessage(null);
     amountChanged('');
     setTo('');
@@ -187,7 +290,7 @@ export const TransferComponent = ({
     if (!amountOverBalance && txToken.address === reefTokenWithAmount().address) {
       const isOverTxFee = parseFloat(txToken.amount) > parseFloat(toAmountInputValue(getSubtractedFee(txToken)));
       if (isOverTxFee) {
-        setValidationError(`Amount too high for transfer fee ( ~${utils.formatUnits(transferFee, 18)}REEF)`);
+        setValidationError(`Amount too high for transfer fee ( ~${utils.formatUnits(transferFeeEvm, 18)}REEF)`);
         return;
       }
     }
@@ -221,13 +324,6 @@ export const TransferComponent = ({
     }
     setFoundToAccountAddress(null);
   }, [to, accounts]);
-
-  // update balance
-  useEffect(() => {
-    if (resultMessage && resultMessage.success) {
-      setTimeout(() => dispatch(reloadTokens()), 4000);
-    }
-  }, [resultMessage]);
 
   const onAccountSelect = (accountIndex: number, selected: ReefSigner):void => {
     const selectAcc = async (): Promise<void> => {
@@ -340,18 +436,24 @@ export const TransferComponent = ({
           </CardHeader>
           <MT size="3">
             <div className="text-center">
-              {resultMessage.success ? (
+              <div>
+                {resultMessage.message}
+                {!!resultMessage.url
+                && (
                 <div>
-                  Tokens sent. Check transaction on&nbsp;
-                  <a target="_blank" href={resultMessage.message} rel="noreferrer">reefscan</a>
-                  .
+                  <br />
+                  <a target="_blank" href={`${resultMessage.url}`} rel="noreferrer">
+                    View transaction on
+                    reefscan.com
+                  </a>
                 </div>
-              ) : (<div>{resultMessage.message}</div>)}
+                )}
+              </div>
             </div>
           </MT>
           <MT size="2">
             <ModalFooter>
-              <Button onClick={initTransfer}>Close</Button>
+              {!!resultMessage.complete && <Button onClick={initTransfer}>Close</Button>}
             </ModalFooter>
           </MT>
         </Card>
