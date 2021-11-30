@@ -68,16 +68,18 @@ const isSubstrateAddress = (to: string): boolean => {
 
 type ResultMessageSetter = (val: { success: boolean, title: string, message: string }) => void;
 
+function handleErr(e: any, txIdent:string, txHash: string, txHandler: (status: TxStatusUpdate)=>void): void {
+  const reason = e && (e.message?.startsWith('1010') || e.message?.indexOf('InsufficientBalance') > -1) ? 'Balance too low.' : (e.message || e);
+  txHandler({
+    txIdent, txHash, error: reason,
+  });
+}
+
 async function sendToEvmAddress(txToken: TokenWithAmount, signer: ReefSigner, to: string, txHandler: (status: TxStatusUpdate)=>void): Promise<string> {
   const contract = await rpc.getContract(txToken.address, signer.signer);
   const decimals = await contract.decimals();
   const toAmt = utils.parseUnits(txToken.amount, decimals);
   const txIdent = Math.random().toString(10);
-
-  function handleErr(e: any): void {
-    const reason = e && (e.message?.startsWith('1010') || e.message?.indexOf('InsufficientBalance') > -1) ? 'Balance too low.' : (e.message || e);
-    txHandler({ txIdent, error: reason });
-  }
 
   try {
     contract.transfer(to, toAmt.toString()).then((contractCall: any) => {
@@ -86,48 +88,51 @@ async function sendToEvmAddress(txToken: TokenWithAmount, signer: ReefSigner, to
       });
     }).catch((e:any) => {
       console.log('sendToEvmAddress error=', e);
-      handleErr(e);
+      handleErr(e, txIdent, '', txHandler);
     });
-    return Promise.resolve(txIdent);
   } catch (e: any) {
     console.log('sendToEvmAddress err =', e);
-    handleErr(e);
+    handleErr(e, txIdent, '', txHandler);
   }
   return Promise.resolve(txIdent);
 }
 
 async function sendToNativeAddress(provider: Provider, signer: ReefSigner, toAmt: BigNumber, to: string, txHandler: (status: TxStatusUpdate)=>void): Promise<string> {
-  try {
-    const transfer = provider.api.tx.balances.transfer(to, toAmt.toString());
-    const substrateAddress = await signer.signer.getSubstrateAddress();
-    const txIdent = Math.random().toString(10);
-    return new Promise((resolve) => {
-      transfer.signAndSend(substrateAddress, { signer: signer.signer.signingKey },
-        (res) => handleTxResponse(res, provider.api).then(
-          (txRes: any): void => {
-            const txHash = transfer.hash.toHex();
-            txHandler({
-              txIdent, txHash, isInBlock: txRes.result.status.isInBlock, isComplete: txRes.result.status.isFinalized,
-            });
-          },
-        ).catch((rej: any) => {
-          // finalized error is ignored
-          if (rej.result.status.isInBlock) {
-            const txHash = transfer.hash.toHex();
-            txHandler({
-              txIdent,
-              txHash,
-              error: rej.message,
-              isComplete: true,
-            });
-          }
-        }));
-      resolve(txIdent);
-    });
-  } catch (e) {
+  // try {
+  const transfer = provider.api.tx.balances.transfer(to, toAmt.toString());
+  const substrateAddress = await signer.signer.getSubstrateAddress();
+  const txIdent = Math.random().toString(10);
+  // return new Promise((resolve, reject) => {
+  transfer.signAndSend(substrateAddress, { signer: signer.signer.signingKey },
+    (res) => handleTxResponse(res, provider.api).then(
+      (txRes: any): void => {
+        const txHash = transfer.hash.toHex();
+        txHandler({
+          txIdent, txHash, isInBlock: txRes.result.status.isInBlock, isComplete: txRes.result.status.isFinalized,
+        });
+      },
+    ).catch((rej: any) => {
+      // finalized error is ignored
+      if (rej.result.status.isInBlock) {
+        const txHash = transfer.hash.toHex();
+        /* txHandler({
+            txIdent,
+            txHash,
+            error: rej.message,
+            isComplete: true,
+          }); */
+        handleErr(rej.message, txIdent, txHash, txHandler);
+      }
+    })).catch((e) => {
+    console.log('E E=', e);
+    handleErr(e, txIdent, '', txHandler);
+  });
+  // resolve(txIdent);
+  // });
+  /* } catch (e) {
     console.log('sendToNativeAddress error=', e);
-    return Promise.reject(e);
-  }
+  } */
+  return Promise.resolve(txIdent);
 }
 
 const filterCurrentAccount = (accounts: ReefSigner[], selectedAccountIndex: number): ReefSigner[] => accounts.filter((a) => a.address !== accounts[selectedAccountIndex].address);
@@ -272,7 +277,7 @@ export const TransferComponent = ({
     setIsLoading(false);
   };
 
-  const initTransfer = (): void => {
+  const initTransferUi = (): void => {
     setLastTxIdentInProgress('');
     setResultMessage(null);
     amountChanged('');
@@ -453,7 +458,7 @@ export const TransferComponent = ({
           </MT>
           <MT size="2">
             <ModalFooter>
-              {!!resultMessage.complete && <Button onClick={initTransfer}>Close</Button>}
+              {!!resultMessage.complete && <Button onClick={initTransferUi}>Close</Button>}
             </ModalFooter>
           </MT>
         </Card>
