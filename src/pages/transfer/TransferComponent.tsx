@@ -16,6 +16,7 @@ import { handleTxResponse } from '@reef-defi/evm-provider/utils';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { reloadTokens } from '../../store/actions/tokens';
 import { toDecimalPlaces } from '../../utils/utils';
+import { getReefCoinBalance } from '../../../../reef-react-lib/dist/rpc';
 
 const {
   Display, Card: CardModule, TokenAmountFieldMax, Modal, Loading, Input: InputModule,
@@ -57,8 +58,12 @@ interface TxStatusUpdate {
 
 const TX_IDENT_ANY = 'TX_HASH_ANY';
 const TX_TYPE_EVM = 'TX_TYPE_EVM';
+const REEF_TOKEN = reefTokenWithAmount();
 
 const isSubstrateAddress = (to: string): boolean => {
+  if (!to || !to.startsWith('5')) {
+    return false;
+  }
   try {
     return !!decodeAddress(to, true, 42);
   } catch (err) {
@@ -69,7 +74,13 @@ const isSubstrateAddress = (to: string): boolean => {
 type TxStatusHandler = (status: TxStatusUpdate)=>void;
 
 function handleErr(e: any, txIdent:string, txHash: string, txHandler: TxStatusHandler): void {
-  const reason = e && (e.message?.startsWith('1010') || e.message?.indexOf('InsufficientBalance') > -1) ? 'Balance too low.' : (e.message || e);
+  let reason = e.message || e;
+  if (e && (e.message.indexOf('-32603: execution revert: 0x') > -1 || e.message?.indexOf('InsufficientBalance') > -1)) {
+    reason = 'You must allow minimum 60 REEF on account for Ethereum VM transaction even if transaction fees will be much lower.';
+  }
+  if (e && (e.message?.startsWith('1010'))) {
+    reason = 'Balance too low.';
+  }
   txHandler({
     txIdent, txHash, error: reason,
   });
@@ -86,9 +97,6 @@ async function sendToEvmAddress(txToken: TokenWithAmount, signer: ReefSigner, to
         txIdent, txHash: contractCall.hash, isInBlock: true, type: TX_TYPE_EVM, url: `https://reefscan.com/extrinsic/${contractCall.hash}`,
       });
     }).catch(async (e:any) => {
-      console.log('AMT=', utils.formatUnits(toAmt.toString()));
-      const bal = await contract.balanceOf(signer.evmAddress);
-      console.log('balance=', utils.formatUnits(bal.toString()));
       console.log('sendToEvmAddress error=', e);
       handleErr(e, txIdent, '', txHandler);
     });
@@ -126,14 +134,12 @@ async function sendToNativeAddress(provider: Provider, signer: ReefSigner, toAmt
 
 const filterCurrentAccount = (accounts: ReefSigner[], selectedAccountIndex: number): ReefSigner[] => accounts.filter((a) => a.address !== accounts[selectedAccountIndex].address);
 
-// const transferFeeNative = utils.parseEther('1.53').toString();
-// use highest fee even for native
-const transferFeeEvm = utils.parseEther('2.6').toString();
+const transferFeeNative = utils.parseEther('1.53').toString();
 const existentialDeposit = utils.parseEther('1.001').toString();
 
-const getSubtractedFeeAndExistential = (txToken: TokenWithAmount): string => reefUtils.toUnits({ balance: txToken.balance.sub(transferFeeEvm).sub(existentialDeposit), decimals: 18 });
+const getSubtractedFeeAndExistential = (txToken: TokenWithAmount): string => reefUtils.toUnits({ balance: txToken.balance.sub(transferFeeNative).sub(existentialDeposit), decimals: 18 });
 
-const getSubtractedFee = (txToken: TokenWithAmount): string => reefUtils.toUnits({ balance: txToken.balance.sub(transferFeeEvm), decimals: 18 });
+const getSubtractedFee = (txToken: TokenWithAmount): string => reefUtils.toUnits({ balance: txToken.balance.sub(transferFeeNative), decimals: 18 });
 
 function toAmountInputValue(amt: string): string {
   return toDecimalPlaces(amt, 8);
@@ -165,7 +171,7 @@ export const TransferComponent = ({
         const errMessage = txUpdateData.error === 'balances.InsufficientBalance' ? 'Balance too low for transfer and fees.' : txUpdateData.error;
         setResultMessage({
           complete: true,
-          title: 'Transaction error',
+          title: 'Transaction failed',
           message: errMessage || '',
         });
         return;
@@ -219,7 +225,7 @@ export const TransferComponent = ({
 
   useEffect(() => {
     const exceptCurrent = filterCurrentAccount(accounts, selectedAccountIndex);
-    if (txToken.address === reefTokenWithAmount().address) {
+    if (txToken.address === REEF_TOKEN.address) {
       setAvailableTxAccounts(exceptCurrent);
       return;
     }
@@ -280,10 +286,10 @@ export const TransferComponent = ({
     }
 
     const amountOverBalance = utils.parseEther(txToken.amount).gt(txToken.balance);
-    if (!amountOverBalance && txToken.address === reefTokenWithAmount().address) {
+    if (!amountOverBalance && txToken.address === REEF_TOKEN.address) {
       const isOverTxFee = parseFloat(txToken.amount) > parseFloat(toAmountInputValue(getSubtractedFee(txToken)));
       if (isOverTxFee) {
-        setValidationError(`Amount too high for transfer fee ( ~${utils.formatUnits(transferFeeEvm, 18)}REEF)`);
+        setValidationError(`Amount too high for transfer fee ( ~${utils.formatUnits(transferFeeNative, 18)}REEF)`);
         return;
       }
     }
@@ -321,7 +327,7 @@ export const TransferComponent = ({
   const onAccountSelect = (accountIndex: number, selected: ReefSigner):void => {
     const selectAcc = async (): Promise<void> => {
       let addr = '';
-      if (txToken.address === reefTokenWithAmount().address) {
+      if (txToken.address === REEF_TOKEN.address) {
         addr = await selected.signer.getSubstrateAddress();
       }
       if (!addr && selected.isEvmClaimed) {
@@ -352,12 +358,12 @@ export const TransferComponent = ({
             onTokenSelect={tokenSelected}
             onAddressChange={addressChanged}
             hideSelectTokenCommonBaseView
-            afterBalanceEl={txToken.address === reefTokenWithAmount().address ? (
+            afterBalanceEl={(txToken.address === REEF_TOKEN.address && isSubstrateAddress(to)) ? (
               <span>
                 {txToken.amount !== toAmountInputValue(getSubtractedFee(txToken)) && <span className="text-primary text-decoration-none" role="button" onClick={() => amountChanged(getSubtractedFee(txToken))}>(Max)</span>}
                 {txToken.amount === toAmountInputValue(getSubtractedFee(txToken)) && <span className="text-primary text-decoration-none" role="button" onClick={() => amountChanged(getSubtractedFeeAndExistential(txToken))}>(Keep existential deposit)</span>}
               </span>
-            ) : undefined}
+            ) : <span />}
           />
           <MT size="2">
             <Input
@@ -400,7 +406,7 @@ export const TransferComponent = ({
         title={(
           <>
             Select account&nbsp;
-            {txToken.address !== reefTokenWithAmount().address
+            {txToken.address !== REEF_TOKEN.address
             && <span className="text-xs">(Ethereum VM enabled)</span>}
           </>
         )}
