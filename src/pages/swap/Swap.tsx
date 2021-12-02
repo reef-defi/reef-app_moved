@@ -1,17 +1,19 @@
 import React from 'react';
 
-import { availableNetworks, Components } from '@reef-defi/react-lib';
+import { Components } from '@reef-defi/react-lib';
 import { reloadTokens } from '../../store/actions/tokens';
-import { useAppDispatch, useAppSelector } from '../../store';
+import { useAppDispatch } from '../../store';
 import { useGetSigner } from '../../hooks/useGetSigner';
 import { notify } from '../../utils/utils';
 import { currentNetwork } from '../../environment';
+import { useAvailableTokens } from '../../hooks/useAvailableTokens';
 
 const { SwapComponent } = Components;
 
 const Swap = (): JSX.Element => {
   const dispatch = useAppDispatch();
-  const { tokens } = useAppSelector((state) => state.tokens);
+  const signer = useGetSigner();
+  const tokensCombined = useAvailableTokens(signer);
 
   const selectedAccount = useGetSigner();
 
@@ -21,7 +23,7 @@ const Swap = (): JSX.Element => {
 
   return (
     <SwapComponent
-      tokens={tokens}
+      tokens={tokensCombined}
       account={selectedAccount}
       reloadTokens={reloadToggle}
       network={{ ...currentNetwork }}

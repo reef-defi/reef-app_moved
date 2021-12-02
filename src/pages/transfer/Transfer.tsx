@@ -1,6 +1,5 @@
-import { availableNetworks, Components, TokenWithAmount } from '@reef-defi/react-lib';
+import { Components, TokenWithAmount } from '@reef-defi/react-lib';
 import React, { useEffect, useState } from 'react';
-import { BigNumber } from 'ethers';
 import { useAppSelector } from '../../store';
 import { TransferComponent } from './TransferComponent';
 import { useGetSigner } from '../../hooks/useGetSigner';
@@ -13,7 +12,6 @@ import {
   ValueStatus,
   ValueWithStatus,
 } from '../../hooks/useSignerTokenBalances';
-import { currentNetwork } from '../../environment';
 
 const { Loading } = Components;
 
