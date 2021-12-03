@@ -22,7 +22,6 @@ export interface VerificationContractReq extends BaseContract {
 export interface ReefContract extends BaseContract {
     filename: string;
     contractName: string;
-    // payload: CompiledContract;
 }
 
 const contractVerificatorApi = axios.create();
@@ -43,8 +42,7 @@ export const verifyContract = async (deployedContract: Contract, contract: ReefC
       // not required - license: contract.license,
       runs: contract.runs,
     };
-    await contractVerificatorApi.post<VerificationContractReq, AxiosResponse<string>>('http://localhost:3000/api/verificator/submit-verification', body);
-    // await contractVerificatorApi.post<VerificationContractReq, AxiosResponse<string>>(`${url}${CONTRACT_VERIFICATION_URL}`, body);
+    await contractVerificatorApi.post<VerificationContractReq, AxiosResponse<string>>(`${url}${CONTRACT_VERIFICATION_URL}`, body);
     // (verification_test, body)
     return true;
   } catch (err) {

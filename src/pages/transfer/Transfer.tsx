@@ -1,58 +1,63 @@
-import { Components, TokenWithAmount } from '@reef-defi/react-lib';
+import {
+  Components, hooks as reefHooks, TokenWithAmount, utils as reefUtils,
+} from '@reef-defi/react-lib';
 import React, { useEffect, useState } from 'react';
 import { useAppSelector } from '../../store';
 import { TransferComponent } from './TransferComponent';
 import { useGetSigner } from '../../hooks/useGetSigner';
-import { useLoadSignerTokens } from '../../hooks/useLoadSignerTokens';
-import { useReefPrice } from '../../hooks/useReefPrice';
-import {
-  isValueWithStatusSet,
-  TokenWithPrice,
-  useSignerTokenBalances,
-  ValueStatus,
-  ValueWithStatus,
-} from '../../hooks/useSignerTokenBalances';
+import { currentNetwork } from '../../environment';
 
+const {
+  isDataSet,
+  getData,
+  DataProgress,
+} = reefUtils;
+
+const { useLoadSignerTokens, useReefPriceInterval, useSignerTokenBalances } = reefHooks;
 const { Loading } = Components;
 
 export const Transfer = (): JSX.Element => {
   const { pools } = useAppSelector((state) => state.pools);
   const selectedSigner = useGetSigner();
-  const signerTokens = useLoadSignerTokens(false, selectedSigner);
-  const reefPrice = useReefPrice();
+  const signerTokens = useLoadSignerTokens(false, currentNetwork, selectedSigner);
+  const reefPrice = useReefPriceInterval(60000);
   const signerTokenBalances = useSignerTokenBalances(signerTokens, pools, reefPrice);
-  const [token, setToken] = useState<ValueWithStatus<TokenWithAmount>>(ValueStatus.LOADING);
+  const [token, setToken] = useState<reefUtils.DataWithProgress<TokenWithAmount>>(DataProgress.LOADING);
 
   useEffect(() => {
-    if (isValueWithStatusSet(signerTokenBalances)) {
-      if (!signerTokenBalances.length) {
-        setToken(ValueStatus.NO_DATA);
+    if (isDataSet(signerTokenBalances)) {
+      const sigTokens = getData(signerTokenBalances);
+      if (!sigTokens?.length) {
+        setToken(DataProgress.NO_DATA);
         return;
       }
-      const signerTokenBalance = (signerTokenBalances as TokenWithPrice[])[0];
-      if (isValueWithStatusSet(signerTokenBalance.balanceValue)) {
+      const signerTokenBalance = sigTokens ? sigTokens[0] : undefined;
+      if (signerTokenBalance && isDataSet(signerTokenBalance.balanceValue)) {
         const tkn = { ...signerTokenBalance, amount: '', isEmpty: false } as TokenWithAmount;
         setToken(tkn);
         return;
       }
-      if (!isValueWithStatusSet(signerTokenBalance.balanceValue) && isValueWithStatusSet(signerTokens)) {
-        const sToken = signerTokens[0] as TokenWithPrice;
-        const tkn = { ...sToken, amount: '', isEmpty: false } as TokenWithAmount;
-        setToken(tkn);
+      if (!isDataSet(signerTokenBalance?.balanceValue) && isDataSet(signerTokens)) {
+        const sTkns = getData(signerTokens);
+        const sToken = sTkns ? sTkns[0] : undefined;
+        if (sToken) {
+          const tkn = { ...sToken, amount: '', isEmpty: false } as TokenWithAmount;
+          setToken(tkn);
+        }
         return;
       }
-      setToken(signerTokenBalance.balanceValue as ValueStatus);
+      setToken(signerTokenBalance?.balanceValue as reefUtils.DataProgress);
       return;
     }
-    setToken(signerTokenBalances as ValueStatus);
+    setToken(signerTokenBalances as reefUtils.DataProgress);
   }, [signerTokenBalances, signerTokens]);
 
   return (
     <>
-      {!isValueWithStatusSet(token) && token === ValueStatus.LOADING && <Loading.Loading />}
-      {!isValueWithStatusSet(token) && token === ValueStatus.NO_DATA && <div>No tokens for transaction.</div>}
-      { isValueWithStatusSet(token) && isValueWithStatusSet(signerTokenBalances) && selectedSigner
-          && <TransferComponent tokens={signerTokenBalances as TokenWithPrice[]} from={selectedSigner} token={token as TokenWithAmount} />}
+      {!isDataSet(token) && token === DataProgress.LOADING && <Loading.Loading />}
+      {!isDataSet(token) && token === DataProgress.NO_DATA && <div>No tokens for transaction.</div>}
+      { isDataSet(token) && isDataSet(signerTokenBalances) && selectedSigner
+          && <TransferComponent tokens={signerTokenBalances as reefHooks.TokenWithPrice[]} from={selectedSigner} token={token as TokenWithAmount} />}
     </>
   );
 };

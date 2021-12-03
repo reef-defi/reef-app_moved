@@ -1,4 +1,3 @@
-import { Components } from '@reef-defi/react-lib';
 import React from 'react';
 import { CreatorComponent } from './CreatorComponent';
 import { useGetSigner } from '../../hooks/useGetSigner';
