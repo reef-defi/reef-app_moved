@@ -1,15 +1,15 @@
-import { utils, Components } from '@reef-defi/react-lib';
+import { Components, hooks as reefHooks, utils as reefUtils } from '@reef-defi/react-lib';
 import React from 'react';
-import { useAppSelector } from '../../store';
-import { isValueWithStatusSet, ValueStatus, TokenWithPrice } from '../../hooks/useSignerTokenBalances';
 import { toCurrencyFormat } from '../../utils/utils';
 import './TokenPill.css';
 
-const { showBalance } = utils;
+const { DataProgress, isDataSet } = reefUtils;
+
+const { showBalance } = reefUtils;
 const { Loading } = Components.Loading;
 
 interface TokenPill {
-    token: TokenWithPrice
+    token: reefHooks.TokenWithPrice
 }
 
 export const TokenPill = ({ token }: TokenPill): JSX.Element => (
@@ -24,12 +24,12 @@ export const TokenPill = ({ token }: TokenPill): JSX.Element => (
       </div>
       <div className=" title-font text-bold text-color-dark-accent">
         <div>
-          {isValueWithStatusSet(token.price) && toCurrencyFormat(token.price as number, { maximumFractionDigits: token.price < 1 ? 4 : 2 }) }
-          {!isValueWithStatusSet(token.price) && token.price === ValueStatus.LOADING && <Loading />}
-          {!isValueWithStatusSet(token.price) && token.price === ValueStatus.NO_DATA && ' - '}
+          {isDataSet(token.price) && toCurrencyFormat(token.price as number, { maximumFractionDigits: token.price < 1 ? 4 : 2 }) }
+          {!isDataSet(token.price) && token.price === DataProgress.LOADING && <Loading />}
+          {!isDataSet(token.price) && token.price === DataProgress.NO_DATA && ' - '}
         </div>
         <div>
-          {isValueWithStatusSet(token.balanceValue) && (
+          {isDataSet(token.balanceValue) && (
           <div className="d-flex d-flex-space-between d-flex-vert-center">
             <div className="svg-w token-balance-item_balance-value-icon-w">
               <svg version="1.1" x="0px" y="0px" viewBox="0 0 100 125">

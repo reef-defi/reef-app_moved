@@ -1,19 +1,20 @@
-import { ReefSigner, Token } from '@reef-defi/react-lib';
+import {
+  ReefSigner, Token, hooks as reefHooks, utils as reefUtils,
+} from '@reef-defi/react-lib';
 import { useEffect, useState } from 'react';
 import { useAppSelector } from '../store';
-import { isValueWithStatusSet } from './useSignerTokenBalances';
-import { useLoadSignerTokens } from './useLoadSignerTokens';
+import { currentNetwork } from '../environment';
 
 export const useAvailableTokens = (signer?: ReefSigner): Token[] => {
   const { tokens } = useAppSelector((state) => state.tokens);
-  const signerTokens = useLoadSignerTokens(false, signer);
+  const signerTokens = reefHooks.useLoadSignerTokens(false, currentNetwork, signer);
   const [tokensCombined, setTokensCombined] = useState<Token[]>([]);
 
   useEffect(() => {
     if (!signer) {
       return;
     }
-    if (!isValueWithStatusSet(signerTokens)) {
+    if (!reefUtils.isDataSet(signerTokens)) {
       setTokensCombined(tokens);
       return;
     }

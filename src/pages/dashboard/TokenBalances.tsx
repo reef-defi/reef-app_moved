@@ -1,15 +1,13 @@
 import React from 'react';
-import { Components } from '@reef-defi/react-lib';
-import { Simulate } from 'react-dom/test-utils';
-import {
-  isValueWithStatusSet, TokenWithPrice, ValueStatus, ValueWithStatus,
-} from '../../hooks/useSignerTokenBalances';
+import { Components, utils, hooks as reefHooks } from '@reef-defi/react-lib';
 import { TokenPill } from './TokenPill';
+
+const { isDataSet, DataProgress } = utils;
 
 const { Loading } = Components.Loading;
 
 interface TokenBalances {
-    tokens: ValueWithStatus<TokenWithPrice[]>;
+    tokens: utils.DataWithProgress<reefHooks.TokenWithPrice[]>;
     onRefresh: any;
 }
 
@@ -28,20 +26,20 @@ export const TokenBalances = ({ tokens, onRefresh }: TokenBalances): JSX.Element
 
     </div>
     <div className="col-12">
-      {(!isValueWithStatusSet(tokens) && tokens === ValueStatus.LOADING) && (
+      {(!isDataSet(tokens) && tokens === DataProgress.LOADING) && (
       <div className="mt-5">
         <Loading />
       </div>
       )}
-      {!!isValueWithStatusSet(tokens) && (
+      {!!isDataSet(tokens) && (
       <div className="row overflow-auto" style={{ maxHeight: 'auto' }}>
-        {(tokens as TokenWithPrice[]).map((token: TokenWithPrice) => (<TokenPill token={token} key={token.address} />
+        {(tokens as reefHooks.TokenWithPrice[]).map((token: reefHooks.TokenWithPrice) => (<TokenPill token={token} key={token.address} />
         ))}
       </div>
       )}
       {(
-        (!!isValueWithStatusSet(tokens) && !(tokens as TokenWithPrice[]).length)
-          || (!isValueWithStatusSet(tokens) && tokens === ValueStatus.NO_DATA)
+        (!!isDataSet(tokens) && !(tokens as reefHooks.TokenWithPrice[]).length)
+          || (!isDataSet(tokens) && tokens === DataProgress.NO_DATA)
       )
       && (
       <div>No tokens to display.</div>
