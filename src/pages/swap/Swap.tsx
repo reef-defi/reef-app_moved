@@ -21,7 +21,7 @@ const Swap = (): JSX.Element => {
     dispatch(reloadTokens());
   };
 
-  return (
+  return selectedAccount ? (
     <SwapComponent
       tokens={tokensCombined}
       account={selectedAccount}
@@ -29,7 +29,7 @@ const Swap = (): JSX.Element => {
       network={{ ...currentNetwork }}
       notify={notify}
     />
-  );
+  ) : (<div />);
 };
 
 export default Swap;

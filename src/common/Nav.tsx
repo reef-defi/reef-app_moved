@@ -1,18 +1,15 @@
 import React from 'react';
-import { availableNetworks, Components } from '@reef-defi/react-lib';
+import { Components } from '@reef-defi/react-lib';
 import './Nav.css';
-import {
-  Link, useHistory, useRouteMatch, useLocation,
-} from 'react-router-dom';
-import { BsArrowLeftRight, BsBagFill, BsHammer } from 'react-icons/bs';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import { useGetSigner } from '../hooks/useGetSigner';
 import { useAppDispatch, useAppSelector } from '../store';
 import { selectSigner } from '../store/actions/signers';
 import { reloadTokens } from '../store/actions/tokens';
 import { saveSignerLocalPointer } from '../store/internalStore';
-import { ReefLogo, SwapIcon, WalletIcon } from './Icons';
+import { ReefLogo } from './Icons';
 import {
-  ADD_LIQUIDITY_URL, CREATE_ERC20_TOKEN_URL, DASHBOARD_URL, POOLS_URL, SWAP_URL, TRANSFER_TOKEN,
+  CREATE_ERC20_TOKEN_URL, DASHBOARD_URL, POOLS_URL, SWAP_URL, TRANSFER_TOKEN,
 } from '../urls';
 import { currentNetwork } from '../environment';
 

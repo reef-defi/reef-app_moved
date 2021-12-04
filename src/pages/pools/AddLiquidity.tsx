@@ -21,7 +21,7 @@ const AddLiqudity = (): JSX.Element => {
     dispatch(reloadTokens());
   };
 
-  return (
+  return signer ? (
     <Components.AddLiquidityComponent
       tokens={tokensCombined}
       signer={signer}
@@ -30,7 +30,7 @@ const AddLiqudity = (): JSX.Element => {
       reloadTokens={reload}
       notify={notify}
     />
-  );
+  ) : (<div />);
 };
 
 export default AddLiqudity;
