@@ -12,11 +12,28 @@ interface TokenPill {
     token: reefHooks.TokenWithPrice
 }
 
+function getHashSumLastNr(address: string): number {
+  const summ = address.split('').reduce((sum, ch) => {
+    const nr = parseInt(ch, 10);
+    if (!Number.isNaN(nr)) {
+      return sum + nr;
+    }
+    return sum;
+  }, 0).toString(10);
+
+  return parseInt(summ.substring(summ.length - 1), 10);
+}
+
+function getIconUrl(tokenAddress: string): string {
+  const lastNr = getHashSumLastNr(tokenAddress);
+  return `/img/token-icons/token-icon-${lastNr}.png`;
+}
+
 export const TokenPill = ({ token }: TokenPill): JSX.Element => (
   <div key={token.address} className="col-12 col-md-6">
     <div className="token-balance-item radius-border d-flex d-flex-space-between d-flex-vert-center">
       <div className="token-balance-item_icon-text mr-1">
-        <div className="token-balance-item_icon-text_w mr-1"><img src={token.iconUrl} alt={token.name} /></div>
+        <div className="token-balance-item_icon-text_w mr-1"><img src={token.iconUrl ? token.iconUrl : getIconUrl(token.address)} alt={token.name} /></div>
         <div className="">
           <div className="title-font text-bold ">{token.name}</div>
           <div className="">{showBalance(token)}</div>
