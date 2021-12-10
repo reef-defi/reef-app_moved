@@ -1,6 +1,9 @@
-import { rpc, hooks, utils } from '@reef-defi/react-lib';
+import {
+  rpc, hooks, utils, ReefSigner,
+} from '@reef-defi/react-lib';
 import { Provider } from '@reef-defi/evm-provider';
-import { web3Enable, web3Accounts } from '@polkadot/extension-dapp';
+import { web3Enable, web3Accounts } from '@reef-defi/extension-dapp';
+import { InjectedExtension, InjectedAccountWithMeta, InjectedAccount } from '@reef-defi/extension-inject/types';
 import { useAppDispatch } from '../store';
 import { selectSigner, setSigners, setSignersLoading } from '../store/actions/signers';
 import { getSignerLocalPointer } from '../store/internalStore';
@@ -13,22 +16,20 @@ export const useLoadSigners = (provider?: Provider): void => {
   const dispatch = useAppDispatch();
 
   useAsyncEffect(async () => {
-    if (!provider) { return; }
+    if (!provider) {
+      return;
+    }
 
     try {
       dispatch(setSignersLoading(true));
-      const inj = await web3Enable('Reef-App');
-      ensure(inj.length > 0, 'Reef-App can not be access Polkadot-Extension. Please install <a href="https://polkadot.js.org/extension/" target="_blank">Polkadot-Extension</a> in your browser and refresh the page to use Reefswap.');
-
+      const extensions: InjectedExtension[] = await web3Enable('Reef-App');
+      ensure(extensions.length > 0, 'Reef-App can not be access Polkadot-Extension. Please install <a href="https://polkadot.js.org/extension/" target="_blank">Polkadot-Extension</a> in your browser and refresh the page to use Reefswap.');
       const web3accounts = await web3Accounts();
       ensure(web3accounts.length > 0, 'Reef-App requires at least one account in Polkadot-extension. Please create or import account/s and refresh the page.');
-
-      const signers = await rpc.accountsToSigners(
-        web3accounts,
-        provider,
-        inj[0].signer,
-      );
-
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      ...
+      const signers = await rpc.getExtensionSigners(extensions, provider);
       // TODO signers objects are large cause of provider object inside. Find a way to overcome this problem.
       const pointer = getSignerLocalPointer();
       dispatch(setSigners(signers));

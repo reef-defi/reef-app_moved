@@ -11,7 +11,7 @@ const { useAsyncEffect } = hooks;
 const validatedTokens = require('../validated-tokens-mainnet.json');
 
 const existingTokens: BasicToken[] = validatedTokens.tokens;
-
+// TODO can be removed when signer tokens api is used - this loads balances from chain and we get them from the api
 export const useLoadTokens = (): void => {
   const dispatch = useAppDispatch();
   const { tokens, reloadToggle } = useAppSelector((state) => state.tokens);
