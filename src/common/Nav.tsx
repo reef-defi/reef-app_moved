@@ -27,7 +27,7 @@ const Nav = (): JSX.Element => {
   const signer = useGetSigner();
   const dispatch = useAppDispatch();
   const { accounts } = useAppSelector((state) => state.signers);
-
+  console.log('SSS=', accounts);
   const selectAccount = (index: number): void => {
     saveSignerLocalPointer(index);
     dispatch(selectSigner(index));

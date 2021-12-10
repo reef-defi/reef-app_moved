@@ -20,7 +20,6 @@ const Dashboard = (): JSX.Element => {
   const signerTokens = reefHooks.useLoadSignerTokens(refreshSignerTokens, currentNetwork, selectedSigner);
   const reefPrice = reefHooks.useReefPriceInterval(60000);
   const signerTokenBalances = reefHooks.useSignerTokenBalances(signerTokens, pools, reefPrice);
-
   const refreshTokens = (): void => {
     setRefreshSignerTokens(!refreshSignerTokens);
   };

@@ -4,17 +4,18 @@ import { useGetSigner } from './hooks/useGetSigner';
 import { useReloadSelectedBalance } from './hooks/useReloadSelectedBalance';
 import { useLoadPools } from './hooks/useLoadPools';
 import { useLoadTokens } from './hooks/useLoadTokens';
-import { useLoadSigners } from './hooks/useLoadSigners';
 import ContentRouter from './pages/ContentRouter';
 import Nav from './common/Nav';
 import { useAppProvider } from './hooks/useAppProvider';
-import { useAppSelector } from './store';
+import { useAppDispatch, useAppSelector } from './store';
+import { useAppLoadSigners } from './hooks/useAppLoadSigners';
 
 const App = (): JSX.Element => {
+  const dispatch = useAppDispatch();
   const { provider } = useAppSelector((state) => state.app);
   useAppProvider();
   const currentSigner = useGetSigner();
-  useLoadSigners(provider);
+  useAppLoadSigners(provider);
   useLoadTokens();
   useLoadPools();
   useReloadSelectedBalance();
