@@ -1,11 +1,11 @@
 import {
   Components, hooks as reefHooks, TokenWithAmount, utils as reefUtils,
 } from '@reef-defi/react-lib';
-import React, { useEffect, useState } from 'react';
+import React, { Dispatch, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { useGetSigner } from '../../hooks/useGetSigner';
 import { currentNetwork } from '../../environment';
-import { reloadTokens } from '../../store/actions/tokens';
+import { reloadTokens, TokensActions } from '../../store/actions/tokens';
 
 const {
   isDataSet,
@@ -17,6 +17,13 @@ const { useLoadSignerTokens, useReefPriceInterval, useSignerTokenBalances } = re
 const {
   Loading, TransferComponent, TX_TYPE_EVM,
 } = Components;
+
+const onTxUpdate = (dispatch: Dispatch<TokensActions>, txUpdateData: Components.TxStatusUpdate): void => {
+  if (txUpdateData?.isInBlock || txUpdateData?.error) {
+    const delay = txUpdateData.type === TX_TYPE_EVM ? 2000 : 0;
+    setTimeout(() => dispatch(reloadTokens()), delay);
+  }
+};
 
 export const Transfer = (): JSX.Element => {
   const dispatch = useAppDispatch();
@@ -57,19 +64,12 @@ export const Transfer = (): JSX.Element => {
     setToken(signerTokenBalances as reefUtils.DataProgress);
   }, [signerTokenBalances, signerTokens]);
 
-  const onTxUpdate = (txUpdateData: Components.TxStatusUpdate): void => {
-    if (txUpdateData?.isInBlock || txUpdateData?.error) {
-      const delay = txUpdateData.type === TX_TYPE_EVM ? 2000 : 0;
-      setTimeout(() => dispatch(reloadTokens()), delay);
-    }
-  };
-
   return (
     <>
       {!isDataSet(token) && token === DataProgress.LOADING && <Loading.Loading />}
       {!isDataSet(token) && token === DataProgress.NO_DATA && <div>No tokens for transaction.</div>}
       { provider && isDataSet(token) && isDataSet(signerTokenBalances) && selectedSigner
-          && <TransferComponent tokens={signerTokenBalances as reefHooks.TokenWithPrice[]} from={selectedSigner} token={token as TokenWithAmount} provider={provider} accounts={accounts} currentAccount={selectedSigner} onTxUpdate={onTxUpdate} />}
+          && <TransferComponent tokens={signerTokenBalances as reefHooks.TokenWithPrice[]} from={selectedSigner} token={token as TokenWithAmount} provider={provider} accounts={accounts} currentAccount={selectedSigner} onTxUpdate={(val) => onTxUpdate(dispatch, val)} />}
     </>
   );
 };
