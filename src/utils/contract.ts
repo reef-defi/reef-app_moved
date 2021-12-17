@@ -1,7 +1,11 @@
 import axios, { AxiosResponse } from 'axios';
 import { Contract } from 'ethers';
+import { Dispatch } from 'react';
+import { utils } from '@reef-defi/react-lib';
 import { delay } from './utils';
+import { reloadTokens, TokensActions } from '../store/actions/tokens';
 
+const { TX_TYPE_EVM } = utils;
 const CONTRACT_VERIFICATION_URL = 'api/verificator/submit-verification';
 
 interface BaseContract {
@@ -27,7 +31,9 @@ export interface ReefContract extends BaseContract {
 const contractVerificatorApi = axios.create();
 
 export const verifyContract = async (deployedContract: Contract, contract: ReefContract, arg: string[], url?: string): Promise<boolean> => {
-  if (!url) { return false; }
+  if (!url) {
+    return false;
+  }
   try {
     await delay(5000);
     const body: VerificationContractReq = {
@@ -49,5 +55,13 @@ export const verifyContract = async (deployedContract: Contract, contract: ReefC
     console.error(err);
     console.log('Verification err=', err);
     return false;
+  }
+};
+
+export const onTxUpdate = (dispatch: Dispatch<TokensActions>, txUpdateData: utils.TxStatusUpdate): void => {
+  if (txUpdateData?.isInBlock || txUpdateData?.error) {
+    console.log('onTxUpdate RELOADDD');
+    const delayMillis = txUpdateData.type === TX_TYPE_EVM ? 2000 : 0;
+    setTimeout(() => dispatch(reloadTokens()), delayMillis);
   }
 };

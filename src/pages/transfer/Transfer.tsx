@@ -1,11 +1,11 @@
 import {
   Components, hooks as reefHooks, TokenWithAmount, utils as reefUtils,
 } from '@reef-defi/react-lib';
-import React, { Dispatch, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { useGetSigner } from '../../hooks/useGetSigner';
 import { currentNetwork } from '../../environment';
-import { reloadTokens, TokensActions } from '../../store/actions/tokens';
+import { onTxUpdate } from '../../utils/contract';
 
 const {
   isDataSet,
@@ -15,15 +15,8 @@ const {
 
 const { useLoadSignerTokens, useReefPriceInterval, useSignerTokenBalances } = reefHooks;
 const {
-  Loading, TransferComponent, TX_TYPE_EVM,
+  Loading, TransferComponent,
 } = Components;
-
-const onTxUpdate = (dispatch: Dispatch<TokensActions>, txUpdateData: Components.TxStatusUpdate): void => {
-  if (txUpdateData?.isInBlock || txUpdateData?.error) {
-    const delay = txUpdateData.type === TX_TYPE_EVM ? 2000 : 0;
-    setTimeout(() => dispatch(reloadTokens()), delay);
-  }
-};
 
 export const Transfer = (): JSX.Element => {
   const dispatch = useAppDispatch();

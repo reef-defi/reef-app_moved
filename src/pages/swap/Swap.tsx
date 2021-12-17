@@ -4,9 +4,9 @@ import { Components } from '@reef-defi/react-lib';
 import { reloadTokens } from '../../store/actions/tokens';
 import { useAppDispatch } from '../../store';
 import { useGetSigner } from '../../hooks/useGetSigner';
-import { notify } from '../../utils/utils';
 import { currentNetwork } from '../../environment';
 import { useAvailableTokens } from '../../hooks/useAvailableTokens';
+import { onTxUpdate } from '../../utils/contract';
 
 const { SwapComponent } = Components;
 
@@ -17,17 +17,12 @@ const Swap = (): JSX.Element => {
 
   const selectedAccount = useGetSigner();
 
-  const reloadToggle = (): void => {
-    dispatch(reloadTokens());
-  };
-
   return selectedAccount ? (
     <SwapComponent
       tokens={tokensCombined}
       account={selectedAccount}
-      reloadTokens={reloadToggle}
       network={{ ...currentNetwork }}
-      notify={notify}
+      onTxUpdate={(val) => onTxUpdate(dispatch, val)}
     />
   ) : (<div />);
 };

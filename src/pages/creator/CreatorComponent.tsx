@@ -192,7 +192,7 @@ export const CreatorComponent = ({
         </Card>
       </ComponentCenter>
 
-      <ConfirmationModal id="createModalToggle" title="Confirm and Create" confirmLabel="Create" confirmFun={createToken}>
+      <ConfirmationModal id="createModalToggle" title="Confirm and Create" confirmBtnLabel="Create" confirmFun={createToken}>
         <Margin size="3">
           <ConfirmLabel title="Name" value={tokenName} />
         </Margin>
