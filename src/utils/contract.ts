@@ -5,7 +5,6 @@ import { utils } from '@reef-defi/react-lib';
 import { delay } from './utils';
 import { reloadTokens, TokensActions } from '../store/actions/tokens';
 
-const { TX_TYPE_EVM } = utils;
 const CONTRACT_VERIFICATION_URL = 'api/verificator/submit-verification';
 
 interface BaseContract {
@@ -61,7 +60,7 @@ export const verifyContract = async (deployedContract: Contract, contract: ReefC
 export const onTxUpdate = (dispatch: Dispatch<TokensActions>, txUpdateData: utils.TxStatusUpdate): void => {
   if (txUpdateData?.isInBlock || txUpdateData?.error) {
     console.log('onTxUpdate RELOADDD');
-    const delayMillis = txUpdateData.type === TX_TYPE_EVM ? 2000 : 0;
+    const delayMillis = txUpdateData.txTypeEvm ? 2000 : 0;
     setTimeout(() => dispatch(reloadTokens()), delayMillis);
   }
 };

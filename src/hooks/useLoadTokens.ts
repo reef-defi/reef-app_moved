@@ -11,7 +11,6 @@ const { useAsyncEffect } = hooks;
 const validatedTokens = require('../validated-tokens-mainnet.json');
 
 const existingTokens: BasicToken[] = validatedTokens.tokens;
-// TODO can be removed when signer tokens api is used - this loads balances from chain and we get them from the api
 export const useLoadTokens = (): void => {
   const dispatch = useAppDispatch();
   const { tokens, reloadToggle } = useAppSelector((state) => state.tokens);
@@ -21,6 +20,7 @@ export const useLoadTokens = (): void => {
     if (!signer) { return; }
     await Promise.resolve()
       .then(() => dispatch(setTokensLoading(true)))
+    // TODO rpc.loadTokens can be removed when signer tokens api is used - rpc.loadTokens loads balances for each token from chain and we get them from the api
       .then(() => rpc.loadTokens(tokens.length === 0 ? existingTokens : tokens, signer.signer))
       .then((newTokens) => dispatch(setTokens(newTokens)))
       .then(() => dispatch(reloadPools()))

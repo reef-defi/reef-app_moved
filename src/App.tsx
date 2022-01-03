@@ -14,15 +14,15 @@ const App = (): JSX.Element => {
   const dispatch = useAppDispatch();
   const { provider } = useAppSelector((state) => state.app);
   useAppProvider();
-  const currentSigner = useGetSigner();
   useAppLoadSigners(provider);
+  const currentSigner = useGetSigner();
   useLoadTokens();
   useLoadPools();
   useReloadSelectedBalance();
   reefHooks.useBindEvmAddressAlert(currentSigner, provider);
 
   return (
-    <div className="App d-flex w-100 h-100">
+    <div className="App d-flex w-100 h-100 ">
       <div className="w-100 main-content">
         <Nav />
         <ContentRouter />
