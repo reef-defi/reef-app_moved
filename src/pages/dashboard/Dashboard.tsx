@@ -1,10 +1,11 @@
 import React from 'react';
-import { utils as reefUtils, utils } from '@reef-defi/react-lib';
+import { TokenWithAmount, utils as reefUtils, utils } from '@reef-defi/react-lib';
 import { Balance } from './Balance';
 import { ActionButtons } from './ActionButtons';
 import './Dashboard.css';
 import { useObservableState } from '../../hooks/useObservableState';
-import { tokenPrices$ } from '../../state/tokenState';
+import { reloadSignerTokens$, tokenPrices$ } from '../../state/tokenState';
+import { TokenBalances } from './TokenBalances';
 
 const {
   DataProgress, isDataSet,
@@ -31,8 +32,7 @@ const Dashboard = (): JSX.Element => {
         <Balance balance={totalBalance} />
         <ActionButtons />
       </div>
-      TODO
-      {/* <TokenBalances tokens={signerTokenBalances as TokenWithPrice} onRefresh={() => reloadSignerTokens$.next()} /> */}
+      <TokenBalances tokens={signerTokenBalances as utils.DataWithProgress<TokenWithAmount[]>} onRefresh={() => reloadSignerTokens$.next()} />
     </div>
   );
 };
