@@ -14,7 +14,6 @@ import {
   withLatestFrom,
 } from 'rxjs';
 import { ReefSigner } from '@reef-defi/react-lib';
-import { provider$ } from './appState';
 import {
   getAddressUpdateActionTypes,
   getUnwrappedData$,
@@ -23,11 +22,12 @@ import {
   UpdateDataType,
 } from './updateCtxUtil';
 import { replaceUpdatedSigners, updateSignersBalances, updateSignersEvmBindings } from './accountStateUtil';
+import { providerSubj } from './providerState';
 
-export const accounts$ = new ReplaySubject<ReefSigner[] | null>(1);
-export const reloadSignersSubject = new Subject<UpdateDataCtx<ReefSigner[]>>();
+export const accountsSubj = new ReplaySubject<ReefSigner[] | null>(1);
+export const reloadSignersSubj = new Subject<UpdateDataCtx<ReefSigner[]>>();
 
-const signersInjected$ = accounts$.pipe(
+const signersInjected$ = accountsSubj.pipe(
   map((signrs) => (signrs?.length ? signrs : [])),
   map((data) => ({
     data,
@@ -36,8 +36,8 @@ const signersInjected$ = accounts$.pipe(
   shareReplay(1),
 );
 
-const signersWithUpdatedData$ = reloadSignersSubject.pipe(
-  withLatestFrom(combineLatest([signersInjected$, provider$])),
+const signersWithUpdatedData$ = reloadSignersSubj.pipe(
+  withLatestFrom(combineLatest([signersInjected$, providerSubj])),
   mergeScan((state: { allUpdated: ReefSigner[], lastUpdatedSigners: ReefSigner[], lastUpdateActions: UpdateAction[] }, [updateCtx, [signersInjectedCtx, provider]]): any => {
     const allUpdatedSigners = replaceUpdatedSigners(signersInjectedCtx.data, state.allUpdated);
     return of(updateCtx.updateActions).pipe(

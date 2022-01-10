@@ -1,16 +1,15 @@
-import { hooks } from '@reef-defi/react-lib';
+import { hooks, ReefSigner } from '@reef-defi/react-lib';
 import { useEffect } from 'react';
-import { appState } from '../state';
+import { accountsSubj, providerSubj, selectedNetworkSubj } from '../state/appState';
 import { useObservableState } from './useObservableState';
 
-export const useInitReefState = (): void => {
-  const network = useObservableState(appState.selectedNetwork$);
+export const useInitReefState = (signers: ReefSigner[]): void => {
+  const network = useObservableState(selectedNetworkSubj);
   const [provider, isProviderLoading] = hooks.useProvider(network?.rpcUrl);
-  const [signers, signersLoading, signersError] = hooks.useLoadSigners('Reef App', provider);
 
   useEffect(() => {
     if (provider) {
-      appState.provider$.next(provider);
+      providerSubj.next(provider);
     }
     return () => {
       provider?.api.disconnect();
@@ -22,7 +21,6 @@ export const useInitReefState = (): void => {
   }, [isProviderLoading]);
 
   useEffect(() => {
-    appState.accounts$.next(signers || []);
-    ...
+    accountsSubj.next(signers || []);
   }, [signers]);
 };
