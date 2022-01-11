@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { Components, utils } from '@reef-defi/react-lib';
-import { useGetSigner } from '../../hooks/useGetSigner';
 import { currentNetwork } from '../../environment';
 import { createUpdateActions, UpdateAction, UpdateDataType } from '../../state/updateCtxUtil';
 import { onTxUpdateReloadSignerBalances } from '../../state/util';
