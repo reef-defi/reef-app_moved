@@ -2,8 +2,6 @@ import {
   Components, Token, TokenWithAmount, utils as reefUtils,
 } from '@reef-defi/react-lib';
 import React, { useEffect, useState } from 'react';
-import { useAppDispatch } from '../../store';
-import { onTxUpdate } from '../../utils/contract';
 import { useObservableState } from '../../hooks/useObservableState';
 import {
   allAvailableSignerTokens$, providerSubj, selectedSigner$, tokenPrices$, signers$,

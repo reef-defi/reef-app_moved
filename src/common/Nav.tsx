@@ -25,8 +25,6 @@ const Nav = (): JSX.Element => {
   const history = useHistory();
   const { pathname } = useLocation();
   const signer = useObservableState(selectedSigner$);
-  // const dispatch = useAppDispatch();
-  // const { accounts } = useAppSelector((state) => state.signers);
   const accounts = useObservableState(signers$);
   const selectAccount = (index: number): void => {
     saveSignerLocalPointer(index);

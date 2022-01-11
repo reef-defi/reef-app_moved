@@ -27,7 +27,7 @@ const Swap = (): JSX.Element => {
       tokens={tokensCombined || []}
       account={selectedAccount}
       network={{ ...currentNetwork }}
-      onTxUpdate={(val) => onSwapTxUpdate}
+      onTxUpdate={onSwapTxUpdate}
     />
   ) : (<div />);
 };
