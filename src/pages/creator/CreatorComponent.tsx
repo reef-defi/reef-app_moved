@@ -4,7 +4,6 @@ import { Contract, ContractFactory, utils } from 'ethers';
 import { Link } from 'react-router-dom';
 import { verifyContract } from '../../utils/contract';
 import { currentNetwork } from '../../environment';
-import { reloadTokens } from '../../store/actions/tokens';
 import { metadataReef20Deploy, contractsReef20Deploy, metadataArtifactReef20Deploy } from './reef20DeployTokenData';
 import { reloadSignerTokens$ } from '../../state/tokenState';
 
@@ -13,6 +12,7 @@ const {
   TokenAmountView, Label, Button: ButtonModule,
 } = Components;
 const {
+
   ComponentCenter, MT, CenterColumn, Margin, CenterRow,
 } = Display;
 const {
@@ -21,6 +21,7 @@ const {
 const {
   OpenModalButton, default: ConfirmationModal, ModalFooter, ModalBody,
 } = Modal;
+
 const { LoadingButtonIconWithText } = Loading;
 const { Input, NumberInput, InputAmount } = InputModule;
 const { ConfirmLabel } = Label;
