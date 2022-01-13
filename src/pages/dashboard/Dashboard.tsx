@@ -1,39 +1,30 @@
-import React, { useState } from 'react';
-import { hooks as reefHooks, utils as reefUtils } from '@reef-defi/react-lib';
-import { useAppSelector } from '../../store';
-import { TokenBalances } from './TokenBalances';
+import React from 'react';
+import { TokenWithAmount, utils as reefUtils, utils } from '@reef-defi/react-lib';
 import { Balance } from './Balance';
 import { ActionButtons } from './ActionButtons';
-import { useGetSigner } from '../../hooks/useGetSigner';
-import { currentNetwork } from '../../environment';
 import './Dashboard.css';
+import { useObservableState } from '../../hooks/useObservableState';
+import { reloadSignerTokens$, tokenPrices$ } from '../../state/tokenState';
+import { TokenBalances } from './TokenBalances';
 
 const {
   DataProgress, isDataSet,
 } = reefUtils;
 
 const Dashboard = (): JSX.Element => {
-  const { isLoading: tokensLoading } = useAppSelector((state) => state.tokens);
-  const { pools } = useAppSelector((state) => state.pools);
-  const selectedSigner = useGetSigner();
-  const [refreshSignerTokens, setRefreshSignerTokens] = useState(false);
-  const signerTokens = reefHooks.useLoadSignerTokens(refreshSignerTokens, currentNetwork, selectedSigner);
-  const reefPrice = reefHooks.useReefPriceInterval(60000);
-  const signerTokenBalances = reefHooks.useSignerTokenBalances(signerTokens, pools, reefPrice);
-  const refreshTokens = (): void => {
-    setRefreshSignerTokens(!refreshSignerTokens);
-  };
+  const signerTokenBalances = useObservableState(tokenPrices$);
 
-  const totalBalance: reefUtils.DataWithProgress<number> = isDataSet(signerTokenBalances) && signerTokenBalances.length ? (signerTokenBalances as reefHooks.TokenWithPrice[]).reduce((state: reefUtils.DataWithProgress<number>, curr) => {
-    if (Number.isNaN(curr.balanceValue) || !isDataSet(curr.balanceValue)) {
+  const totalBalance: reefUtils.DataWithProgress<number> = isDataSet(signerTokenBalances) && signerTokenBalances?.length ? (signerTokenBalances).reduce((state: reefUtils.DataWithProgress<number>, curr) => {
+    if (Number.isNaN(curr.balance) || Number.isNaN(curr.price) || !isDataSet(curr.balance)) {
       return state;
     }
-    if (!Number.isNaN(+curr.balanceValue as number) && isDataSet(curr.balanceValue)) {
+    const balVal = utils.calculateBalanceValue(curr);
+    if (!Number.isNaN(balVal) && isDataSet(balVal)) {
       const stateNr = isDataSet(state) ? state as number : 0;
-      return stateNr + (curr.balanceValue as number);
+      return stateNr + (balVal as number);
     }
     return state;
-  }, DataProgress.LOADING) : signerTokenBalances as reefUtils.DataProgress;
+  }, DataProgress.LOADING) : DataProgress.LOADING;
 
   return (
     <div className="w-100">
@@ -41,7 +32,7 @@ const Dashboard = (): JSX.Element => {
         <Balance balance={totalBalance} />
         <ActionButtons />
       </div>
-      <TokenBalances tokens={signerTokenBalances} onRefresh={refreshTokens} />
+      <TokenBalances tokens={signerTokenBalances as utils.DataWithProgress<TokenWithAmount[]>} onRefresh={() => reloadSignerTokens$.next()} />
     </div>
   );
 };

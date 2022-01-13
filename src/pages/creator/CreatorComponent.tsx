@@ -4,15 +4,15 @@ import { Contract, ContractFactory, utils } from 'ethers';
 import { Link } from 'react-router-dom';
 import { verifyContract } from '../../utils/contract';
 import { currentNetwork } from '../../environment';
-import { reloadTokens } from '../../store/actions/tokens';
-import { useAppDispatch } from '../../store';
 import { metadataReef20Deploy, contractsReef20Deploy, metadataArtifactReef20Deploy } from './reef20DeployTokenData';
+import { reloadSignerTokens$ } from '../../state/tokenState';
 
 const {
   Display, Card: CardModule, TokenAmountFieldMax, Modal, Loading, Input: InputModule,
   TokenAmountView, Label, Button: ButtonModule,
 } = Components;
 const {
+
   ComponentCenter, MT, CenterColumn, Margin, CenterRow,
 } = Display;
 const {
@@ -21,6 +21,7 @@ const {
 const {
   OpenModalButton, default: ConfirmationModal, ModalFooter, ModalBody,
 } = Modal;
+
 const { LoadingButtonIconWithText } = Loading;
 const { Input, NumberInput, InputAmount } = InputModule;
 const { ConfirmLabel } = Label;
@@ -58,7 +59,6 @@ export const CreatorComponent = ({
   const [symbol, setSymbol] = useState('');
   const [initialSupply, setInitialSupply] = useState('');
   const [validationMsg, setValidationMsg] = useState('');
-  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (tokenName.trim().length < 1) {
@@ -96,7 +96,7 @@ export const CreatorComponent = ({
     if (resultMessage && resultMessage.complete) {
       // TODO remove delay when crawler is updated
       setTimeout(() => {
-        dispatch(reloadTokens());
+        reloadSignerTokens$.next();
       }, 2000);
     }
   }, [resultMessage]);

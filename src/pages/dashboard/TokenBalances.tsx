@@ -1,5 +1,5 @@
 import React from 'react';
-import { Components, utils, hooks as reefHooks } from '@reef-defi/react-lib';
+import { Components, TokenWithAmount, utils } from '@reef-defi/react-lib';
 import { TokenPill } from './TokenPill';
 
 const { isDataSet, DataProgress } = utils;
@@ -7,10 +7,9 @@ const { isDataSet, DataProgress } = utils;
 const { Loading } = Components.Loading;
 
 interface TokenBalances {
-    tokens: utils.DataWithProgress<reefHooks.TokenWithPrice[]>;
+    tokens: utils.DataWithProgress<TokenWithAmount[]>;
     onRefresh: any;
 }
-
 export const TokenBalances = ({ tokens, onRefresh }: TokenBalances): JSX.Element => (
   <div className="row">
     <div className="mb-4 col-12 d-flex d-flex-space-between d-flex-vert-base">
@@ -26,19 +25,20 @@ export const TokenBalances = ({ tokens, onRefresh }: TokenBalances): JSX.Element
 
     </div>
     <div className="col-12">
-      {(!isDataSet(tokens) && tokens === DataProgress.LOADING) && (
-      <div className="mt-5">
-        <Loading />
-      </div>
-      )}
-      {!!isDataSet(tokens) && (
+      {(!isDataSet(tokens) && tokens === DataProgress.LOADING)
+          && (
+          <div className="mt-5">
+            <Loading />
+          </div>
+          )}
+      { tokens && !!isDataSet(tokens) && (
       <div className="row overflow-auto" style={{ maxHeight: 'auto' }}>
-        {(tokens as reefHooks.TokenWithPrice[]).map((token: reefHooks.TokenWithPrice) => (<TokenPill token={token} key={token.address} />
+        {(tokens as TokenWithAmount[]).map((token: TokenWithAmount) => (<TokenPill token={token} key={token.address} />
         ))}
       </div>
       )}
       {(
-        (!!isDataSet(tokens) && !(tokens as reefHooks.TokenWithPrice[]).length)
+        (!!tokens && (!!isDataSet(tokens) && !(tokens as TokenWithAmount[]).length))
           || (!isDataSet(tokens) && tokens === DataProgress.NO_DATA)
       )
       && (

@@ -2,16 +2,16 @@ import React from 'react';
 import { Components } from '@reef-defi/react-lib';
 import './Nav.css';
 import { Link, useHistory, useLocation } from 'react-router-dom';
-import { useGetSigner } from '../hooks/useGetSigner';
-import { useAppDispatch, useAppSelector } from '../store';
-import { selectSigner } from '../store/actions/signers';
-import { reloadTokens } from '../store/actions/tokens';
 import { saveSignerLocalPointer } from '../store/internalStore';
 import { ReefLogo } from './Icons';
 import {
   CREATE_ERC20_TOKEN_URL, DASHBOARD_URL, POOLS_URL, SWAP_URL, TRANSFER_TOKEN,
 } from '../urls';
 import { currentNetwork } from '../environment';
+import { useObservableState } from '../hooks/useObservableState';
+import {
+  selectAddressSubj, selectedSigner$, signers$,
+} from '../state/accountState';
 
 const menuItems = [
   { title: 'Dashboard', url: DASHBOARD_URL },
@@ -24,13 +24,13 @@ const menuItems = [
 const Nav = (): JSX.Element => {
   const history = useHistory();
   const { pathname } = useLocation();
-  const signer = useGetSigner();
-  const dispatch = useAppDispatch();
-  const { accounts } = useAppSelector((state) => state.signers);
+  const signer = useObservableState(selectedSigner$);
+  const accounts = useObservableState(signers$);
   const selectAccount = (index: number): void => {
     saveSignerLocalPointer(index);
-    dispatch(selectSigner(index));
-    dispatch(reloadTokens());
+    selectAddressSubj.next(index != null ? accounts?.[index].address : undefined);
+    // dispatch(selectSigner(index));
+    // dispatch(reloadTokens());
   };
 
   const menuItemsView = menuItems
@@ -61,12 +61,15 @@ const Nav = (): JSX.Element => {
         <ul className="navigation_menu-items ">
           {menuItemsView}
         </ul>
+        {accounts && !!accounts.length && (
         <Components.AccountSelector
           accounts={accounts}
           selectedSigner={signer}
           selectAccount={selectAccount}
           reefscanUrl={currentNetwork.reefscanUrl}
         />
+        )}
+
       </nav>
     </div>
 

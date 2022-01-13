@@ -1,28 +1,32 @@
 import React from 'react';
 
-import { Components } from '@reef-defi/react-lib';
-import { reloadTokens } from '../../store/actions/tokens';
-import { useAppDispatch } from '../../store';
-import { useGetSigner } from '../../hooks/useGetSigner';
+import { Components, utils } from '@reef-defi/react-lib';
 import { currentNetwork } from '../../environment';
-import { useAvailableTokens } from '../../hooks/useAvailableTokens';
-import { onTxUpdate } from '../../utils/contract';
+import { createUpdateActions, UpdateAction, UpdateDataType } from '../../state/updateCtxUtil';
+import { onTxUpdateReloadSignerBalances } from '../../state/util';
+import { useObservableState } from '../../hooks/useObservableState';
+import { allAvailableSignerTokens$ } from '../../state/tokenState';
+import { selectedSigner$ } from '../../state/accountState';
 
 const { SwapComponent } = Components;
 
 const Swap = (): JSX.Element => {
-  const dispatch = useAppDispatch();
-  const signer = useGetSigner();
-  const tokensCombined = useAvailableTokens(signer);
+  const tokensCombined = useObservableState(allAvailableSignerTokens$);
 
-  const selectedAccount = useGetSigner();
+  const selectedAccount = useObservableState(selectedSigner$);
+
+  const onSwapTxUpdate = (txState: utils.TxStatusUpdate): void => {
+    const updateTypes = [UpdateDataType.ACCOUNT_NATIVE_BALANCE, UpdateDataType.ACCOUNT_TOKENS];
+    const updateActions: UpdateAction[] = createUpdateActions(updateTypes, txState.addresses);
+    onTxUpdateReloadSignerBalances(txState, updateActions);
+  };
 
   return selectedAccount ? (
     <SwapComponent
-      tokens={tokensCombined}
+      tokens={tokensCombined || []}
       account={selectedAccount}
       network={{ ...currentNetwork }}
-      onTxUpdate={(val) => onTxUpdate(dispatch, val)}
+      onTxUpdate={onSwapTxUpdate}
     />
   ) : (<div />);
 };

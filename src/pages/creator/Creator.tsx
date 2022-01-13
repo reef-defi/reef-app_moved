@@ -1,9 +1,10 @@
 import React from 'react';
 import { CreatorComponent } from './CreatorComponent';
-import { useGetSigner } from '../../hooks/useGetSigner';
+import { useObservableState } from '../../hooks/useObservableState';
+import { selectedSigner$ } from '../../state/appState';
 
 export const Creator = (): JSX.Element => {
-  const selectedSigner = useGetSigner();
+  const selectedSigner = useObservableState(selectedSigner$);
 
   return (
     <CreatorComponent signer={selectedSigner} />

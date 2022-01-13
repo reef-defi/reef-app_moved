@@ -4,11 +4,9 @@ import {
   Components, reefTokenWithAmount, Token, TokenWithAmount,
 } from '@reef-defi/react-lib';
 import { RIcon, SendIcon, SwapIcon } from '../../common/Icons';
-import { useAppSelector } from '../../store';
 
 export const ActionButtons = (): JSX.Element => {
   const history = useHistory();
-  const { tokens: txTokens } = useAppSelector((state) => state.tokens);
   const [txToken, setTxToken] = useState(reefTokenWithAmount());
   const [txAmount, setTxAmount] = useState('0');
   return (
