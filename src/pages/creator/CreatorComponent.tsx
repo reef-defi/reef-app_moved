@@ -1,11 +1,12 @@
-import { Components, ReefSigner, utils as reefUtils } from '@reef-defi/react-lib';
+import {
+  availableNetworks,
+  Components, Network, ReefSigner, reefTokenWithAmount, utils as reefUtils,
+} from '@reef-defi/react-lib';
 import React, { useEffect, useState } from 'react';
 import { Contract, ContractFactory, utils } from 'ethers';
 import { Link } from 'react-router-dom';
 import { verifyContract } from '../../utils/contract';
-import { currentNetwork } from '../../environment';
 import { metadataReef20Deploy, contractsReef20Deploy, metadataArtifactReef20Deploy } from './reef20DeployTokenData';
-import { reloadSignerTokens$ } from '../../state/tokenState';
 
 const {
   Display, Card: CardModule, TokenAmountFieldMax, Modal, Loading, Input: InputModule,
@@ -30,9 +31,11 @@ const { Button } = ButtonModule;
 
 interface CreatorComponent {
     signer: ReefSigner | undefined;
+    network: Network;
+    onTxUpdate?: reefUtils.TxStatusHandler;
 }
 
-async function verify(contract: Contract, args: string[]): Promise<boolean> {
+async function verify(contract: Contract, args: string[], network: Network): Promise<boolean> {
   const { compilationTarget } = metadataArtifactReef20Deploy.settings;
   const compTargetFileName = Object.keys(compilationTarget)[0];
   const verified = await verifyContract(contract, {
@@ -47,18 +50,82 @@ async function verify(contract: Contract, args: string[]): Promise<boolean> {
     runs: metadataArtifactReef20Deploy.settings.optimizer.runs,
   },
   args,
-  currentNetwork.reefscanUrl);
+  network.reefscanUrl);
   return verified;
 }
 
+const createToken = async ({
+  signer, network, tokenName, symbol, initialSupply, onTxUpdate, setResultMessage, setVerifiedContract, setDeployedContract,
+}: {signer?: ReefSigner, setResultMessage: any, tokenName: string, symbol: string, initialSupply: string, network: Network, onTxUpdate?: reefUtils.TxStatusHandler, setVerifiedContract: any, setDeployedContract: any}): Promise<void> => {
+  if (!signer) {
+    console.log('signer not set ');
+    return;
+  }
+  setResultMessage({ complete: false, title: 'Deploying token', message: 'Sending token contract to blockchain.' });
+  const args = [tokenName, symbol.toUpperCase(), utils.parseEther(initialSupply).toString()];
+  const deployAbi = metadataReef20Deploy.abi;
+  const deployBytecode = `0x${metadataReef20Deploy.data.bytecode.object}`;
+  const reef20Contract = new ContractFactory(deployAbi, deployBytecode, signer?.signer);
+  const txIdent = Math.random().toString(10);
+  let contract: Contract|undefined;
+  let verified = false;
+  if (onTxUpdate) {
+    onTxUpdate({
+      txIdent,
+    });
+  }
+  try {
+    contract = await reef20Contract.deploy(...args);
+  } catch (err:any) {
+    if (onTxUpdate) {
+      onTxUpdate({
+        txIdent,
+        error: { message: err.message, code: reefUtils.TX_STATUS_ERROR_CODE.ERROR_UNDEFINED },
+        txTypeEvm: true,
+        addresses: [signer.address],
+      });
+    }
+    console.log('deploy err=', err);
+  }
+  if (!contract) {
+    setResultMessage({ complete: true, title: 'Error creating token', message: 'Deploying contract failed.' });
+    return;
+  }
+  setDeployedContract(contract);
+  if (onTxUpdate) {
+    onTxUpdate({
+      txIdent,
+      txHash: contract.hash,
+      isInBlock: true,
+      txTypeEvm: true,
+      url: `https://${network === availableNetworks.mainnet ? '' : `${network.name}.`}reefscan.com/extrinsic/${contract.hash}`,
+      addresses: [signer.address],
+    });
+  }
+  try {
+    setResultMessage({ complete: false, title: 'Verifying deployed token', message: 'Smart contract bytecode is being validated.' });
+    verified = await verify(contract, args, network);
+  } catch (err) {
+    console.log('verify err=', err);
+  }
+  if (verified) {
+    setVerifiedContract(contract);
+    setResultMessage({ complete: true, title: 'Token created', message: `Congratulations, you have your new token ${tokenName} with address ${contract.address} in your assets. Innitial supply is ${initialSupply} ${symbol.toUpperCase()}. Next step is to create a pool so users can start trading.` });
+  } else {
+    setResultMessage({ complete: true, title: 'Error verifying token', message: `Verifying deployed contract ${contract.address} failed.` });
+  }
+};
+
 export const CreatorComponent = ({
-  signer,
+  signer, onTxUpdate, network,
 }: CreatorComponent): JSX.Element => {
   const [resultMessage, setResultMessage] = useState<{complete: boolean, title: string, message: string} | null>(null);
   const [tokenName, setTokenName] = useState('');
   const [symbol, setSymbol] = useState('');
   const [initialSupply, setInitialSupply] = useState('');
   const [validationMsg, setValidationMsg] = useState('');
+  const [verifiedContract, setVerifiedContract] = useState<Contract>();
+  const [deployedContract, setDeployedContract] = useState<Contract>();
 
   useEffect(() => {
     if (tokenName.trim().length < 1) {
@@ -90,56 +157,11 @@ export const CreatorComponent = ({
     setValidationMsg('');
   }, [tokenName, symbol, initialSupply]);
 
-  useEffect(() => {
-    // update balance when tx completes
-    // TODO
-    if (resultMessage && resultMessage.complete) {
-      // TODO remove delay when crawler is updated
-      setTimeout(() => {
-        reloadSignerTokens$.next();
-      }, 2000);
-    }
-  }, [resultMessage]);
-
   const init = (): void => {
     setTokenName('');
     setSymbol('');
     setInitialSupply('');
     setResultMessage(null);
-  };
-
-  const createToken = async (): Promise<void> => {
-    if (!signer) {
-      console.log('signer not set ');
-      return;
-    }
-    setResultMessage({ complete: false, title: 'Deploying token', message: 'Sending token contract to blockchain.' });
-    const args = [tokenName, symbol.toUpperCase(), utils.parseEther(initialSupply).toString()];
-    const deployAbi = metadataReef20Deploy.abi;
-    const deployBytecode = `0x${metadataReef20Deploy.data.bytecode.object}`;
-    const reef20Contract = new ContractFactory(deployAbi, deployBytecode, signer?.signer);
-    let contract: Contract|undefined;
-    let verified = false;
-    try {
-      contract = await reef20Contract.deploy(...args);
-    } catch (err) {
-      console.log('deploy err=', err);
-    }
-    if (!contract) {
-      setResultMessage({ complete: true, title: 'Error creating token', message: 'Deploying contract failed.' });
-      return;
-    }
-    try {
-      setResultMessage({ complete: false, title: 'Verifying deployed token', message: 'Smart contract bytecode is being validated.' });
-      verified = await verify(contract, args);
-    } catch (err) {
-      console.log('verify err=', err);
-    }
-    if (verified) {
-      setResultMessage({ complete: true, title: 'Token created', message: `Congratulations, you have your new token ${tokenName} with address ${contract.address} in your assets. Innitial supply is ${initialSupply} ${symbol.toUpperCase()}. Next step is to create a pool so users can start trading.` });
-    } else {
-      setResultMessage({ complete: true, title: 'Error verifying token', message: `Verifying deployed contract ${contract.address} failed.` });
-    }
   };
 
   return (
@@ -192,7 +214,14 @@ export const CreatorComponent = ({
         </Card>
       </ComponentCenter>
 
-      <ConfirmationModal id="createModalToggle" title="Confirm and Create" confirmBtnLabel="Create" confirmFun={createToken}>
+      <ConfirmationModal
+        id="createModalToggle"
+        title="Confirm and Create"
+        confirmBtnLabel="Create"
+        confirmFun={() => createToken({
+          signer, network, tokenName, symbol, initialSupply, onTxUpdate, setResultMessage, setVerifiedContract, setDeployedContract,
+        })}
+      >
         <Margin size="3">
           <ConfirmLabel title="Name" value={tokenName} />
         </Margin>
@@ -224,7 +253,7 @@ export const CreatorComponent = ({
             <ModalFooter>
               <Button disabled={!resultMessage.complete} onClick={init}>Close</Button>
               {resultMessage.complete && (
-              <Link to="/add-supply" className="btn btn-reef border-rad">
+              <Link to={`/add-supply//${deployedContract?.address}`} className="btn btn-reef border-rad">
                 Create pool
               </Link>
               )}

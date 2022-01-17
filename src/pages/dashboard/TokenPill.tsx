@@ -15,20 +15,8 @@ interface TokenPill {
     token: TokenWithAmount
 }
 
-function getHashSumLastNr(address: string): number {
-  const summ = address.split('').reduce((sum, ch) => {
-    const nr = parseInt(ch, 10);
-    if (!Number.isNaN(nr)) {
-      return sum + nr;
-    }
-    return sum;
-  }, 0).toString(10);
-
-  return parseInt(summ.substring(summ.length - 1), 10);
-}
-
 function getIconUrl(tokenAddress: string): string {
-  const lastNr = getHashSumLastNr(tokenAddress);
+  const lastNr = utils.getHashSumLastNr(tokenAddress);
   return `/img/token-icons/token-icon-${lastNr}.png`;
 }
 
