@@ -1,17 +1,18 @@
 import React from 'react';
 
 import { Components, utils } from '@reef-defi/react-lib';
-import { currentNetwork } from '../../environment';
 import { createUpdateActions, UpdateAction, UpdateDataType } from '../../state/updateCtxUtil';
 import { onTxUpdateReloadSignerBalances } from '../../state/util';
 import { useObservableState } from '../../hooks/useObservableState';
 import { allAvailableSignerTokens$ } from '../../state/tokenState';
 import { selectedSigner$ } from '../../state/accountState';
+import { selectedNetworkSubj } from '../../state/providerState';
 
 const { SwapComponent } = Components;
 
 const Swap = (): JSX.Element => {
   const tokensCombined = useObservableState(allAvailableSignerTokens$);
+  const network = useObservableState(selectedNetworkSubj);
 
   const selectedAccount = useObservableState(selectedSigner$);
 
@@ -21,11 +22,11 @@ const Swap = (): JSX.Element => {
     onTxUpdateReloadSignerBalances(txState, updateActions);
   };
 
-  return selectedAccount ? (
+  return selectedAccount && network ? (
     <SwapComponent
       tokens={tokensCombined || []}
       account={selectedAccount}
-      network={{ ...currentNetwork }}
+      network={{ ...network }}
       onTxUpdate={onSwapTxUpdate}
     />
   ) : (<div />);

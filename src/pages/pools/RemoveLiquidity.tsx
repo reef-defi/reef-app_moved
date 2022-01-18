@@ -2,12 +2,12 @@ import React from 'react';
 import { Components, Token, utils } from '@reef-defi/react-lib';
 import { Redirect, useHistory, useParams } from 'react-router-dom';
 import { POOLS_URL } from '../../urls';
-import { currentNetwork } from '../../environment';
 import { createUpdateActions, UpdateAction, UpdateDataType } from '../../state/updateCtxUtil';
 import { onTxUpdateReloadSignerBalances } from '../../state/util';
 import { useObservableState } from '../../hooks/useObservableState';
 import { selectedSigner$ } from '../../state/accountState';
 import { allAvailableSignerTokens$ } from '../../state/tokenState';
+import { selectedNetworkSubj } from '../../state/providerState';
 
 const { RemoveLiquidityComponent } = Components;
 
@@ -22,6 +22,7 @@ const RemoveLiquidity = (): JSX.Element => {
   const history = useHistory();
   const { address1, address2 } = useParams<UrlParams>();
   const tokens = useObservableState(allAvailableSignerTokens$);
+  const network = useObservableState(selectedNetworkSubj);
 
   const signer = useObservableState(selectedSigner$);
   const token1 = findToken(address1, tokens);
@@ -34,18 +35,23 @@ const RemoveLiquidity = (): JSX.Element => {
     onTxUpdateReloadSignerBalances(txState, updateActions);
   };
 
-  return (!token1 || !token2
-    ? <Redirect to={POOLS_URL} />
-    : (
-      <RemoveLiquidityComponent
-        token1={token1}
-        token2={token2}
-        signer={signer}
-        network={currentNetwork}
-        back={back}
-        onTxUpdate={onRemoveLiqUpdate}
-      />
-    )
+  return (
+    <>
+      {(!token1 || !token2)
+      && (<Redirect to={POOLS_URL} />)}
+      { token1 && token2 && network
+     && (
+     <RemoveLiquidityComponent
+       token1={token1}
+       token2={token2}
+       signer={signer}
+       network={network}
+       back={back}
+       onTxUpdate={onRemoveLiqUpdate}
+     />
+     )}
+
+    </>
   );
 };
 

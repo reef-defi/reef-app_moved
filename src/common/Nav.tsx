@@ -7,11 +7,9 @@ import { ReefLogo } from './Icons';
 import {
   CREATE_ERC20_TOKEN_URL, DASHBOARD_URL, POOLS_URL, SWAP_URL, TRANSFER_TOKEN,
 } from '../urls';
-import { currentNetwork } from '../environment';
 import { useObservableState } from '../hooks/useObservableState';
-import {
-  selectAddressSubj, selectedSigner$, signers$,
-} from '../state/accountState';
+import { selectAddressSubj, selectedSigner$, signers$ } from '../state/accountState';
+import { selectedNetworkSubj } from '../state/providerState';
 
 const menuItems = [
   { title: 'Dashboard', url: DASHBOARD_URL },
@@ -26,6 +24,7 @@ const Nav = (): JSX.Element => {
   const { pathname } = useLocation();
   const signer = useObservableState(selectedSigner$);
   const accounts = useObservableState(signers$);
+  const network = useObservableState(selectedNetworkSubj);
   const selectAccount = (index: number): void => {
     saveSignerLocalPointer(index);
     selectAddressSubj.next(index != null ? accounts?.[index].address : undefined);
@@ -61,12 +60,12 @@ const Nav = (): JSX.Element => {
         <ul className="navigation_menu-items ">
           {menuItemsView}
         </ul>
-        {accounts && !!accounts.length && (
+        {accounts && !!accounts.length && network && (
         <Components.AccountSelector
           accounts={accounts}
           selectedSigner={signer}
           selectAccount={selectAccount}
-          reefscanUrl={currentNetwork.reefscanUrl}
+          reefscanUrl={network.reefscanUrl}
         />
         )}
 
