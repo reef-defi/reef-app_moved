@@ -60,7 +60,7 @@ const AddLiqudity = (): JSX.Element => {
   };
 
   return signer && network ? (
-    <Components.AddLiquidityComponent1
+    <Components.AddLiquidityComponent
       tokens={tokensCombined || []}
       signer={signer}
       network={network}
