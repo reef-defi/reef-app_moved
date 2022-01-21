@@ -1,32 +1,43 @@
-import { ApolloClient, ApolloLink, HttpLink, InMemoryCache, split } from '@apollo/client';
+import {
+  ApolloClient, ApolloLink, HttpLink, InMemoryCache, split,
+} from '@apollo/client';
 import { WebSocketLink } from '@apollo/client/link/ws';
 import { getMainDefinition } from '@apollo/client/utilities';
+import { map } from 'rxjs';
+import { selectedNetworkSubj } from '../state/providerState';
 
-const httpLink = new HttpLink({
-  uri: 'https://dev.reef.polkastats.io/api/v3'
-});
+const splitLink$ = selectedNetworkSubj.pipe(
+  map((selNetwork) => {
+    const httpLink = new HttpLink({
+      uri: `${selNetwork.reefscanUrl}graphql`,
+    });
 
-const wsLink = new WebSocketLink({
-  options: {
-    reconnect: true
-  },
-  uri: 'wss://dev.reef.polkastats.io/api/v3'
-});
+    const wssBase = selNetwork.reefscanUrl.replace('https', 'wss');
+    const wsLink = new WebSocketLink({
+      options: {
+        reconnect: true,
+      },
+      uri: `${wssBase}graphql`,
+    });
 
-const splitLink = split(
-  ({ query }) => {
-    const definition = getMainDefinition(query);
+    return split(
+      ({ query }) => {
+        const definition = getMainDefinition(query);
 
-    return (
-      definition.kind === 'OperationDefinition' &&
-      definition.operation === 'subscription'
+        return (
+          definition.kind === 'OperationDefinition'
+                    && definition.operation === 'subscription'
+        );
+      },
+      wsLink,
+      httpLink,
     );
-  },
-  wsLink,
-  httpLink
+  }),
 );
 
-export const apolloClientInstance = new ApolloClient({
-  cache: new InMemoryCache(),
-  link: ApolloLink.from([splitLink])
-});
+export const apolloClientInstance$ = splitLink$.pipe(
+  map((splitLink) => new ApolloClient({
+    cache: new InMemoryCache(),
+    link: ApolloLink.from([splitLink]),
+  })),
+);
