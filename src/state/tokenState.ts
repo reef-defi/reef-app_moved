@@ -6,10 +6,12 @@ import {
   api, Network, Pool, ReefSigner, reefTokenWithAmount, rpc, Token,
 } from '@reef-defi/react-lib';
 import { BigNumber } from 'ethers';
+import { gql } from '@apollo/client';
 import { combineTokensDistinct, toTokensWithPrice } from './util';
 import { getAddressUpdateActionTypes, UpdateDataCtx, UpdateDataType } from './updateCtxUtil';
 import { selectedSigner$, selectedSignerUpdateCtx$ } from './accountState';
 import { selectedNetworkSubj } from './providerState';
+import { apolloClientInstance$ } from '../utils/apolloConfig';
 
 const validatedTokens = { tokens: [] };
 
@@ -67,4 +69,17 @@ export const pools$: Observable<Pool[]> = combineLatest([allAvailableSignerToken
 export const tokenPrices$ = combineLatest([allAvailableSignerTokens$, reefPrice$, pools$]).pipe(
   map(toTokensWithPrice),
   shareReplay(1),
+);
+
+const CHAIN_INFO_GQL = gql`
+  subscription query {
+            chain_info {
+              name
+              count
+            }
+          }
+`;
+export const lastBblock$ = apolloClientInstance$.pipe(
+  switchMap((apollo) => apollo.subscribe({ query: CHAIN_INFO_GQL, variables: {}, fetchPolicy: 'network-only' })),
+  map((res: any) => (res.data && res.data.chain_info ? res.data.chain_info[2].count : undefined)),
 );

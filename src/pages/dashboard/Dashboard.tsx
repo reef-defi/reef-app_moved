@@ -1,10 +1,11 @@
 import React from 'react';
 import { TokenWithAmount, utils as reefUtils, utils } from '@reef-defi/react-lib';
+import { gql, useSubscription } from '@apollo/client';
 import { Balance } from './Balance';
 import { ActionButtons } from './ActionButtons';
 import './Dashboard.css';
 import { useObservableState } from '../../hooks/useObservableState';
-import { reloadSignerTokens$, tokenPrices$ } from '../../state/tokenState';
+import { lastBblock$, reloadSignerTokens$, tokenPrices$ } from '../../state/tokenState';
 import { TokenBalances } from './TokenBalances';
 
 const {
@@ -26,6 +27,19 @@ const Dashboard = (): JSX.Element => {
     return state;
   }, DataProgress.LOADING) : DataProgress.LOADING;
 
+  /* const COMMENTS_SUBSCRIPTION = gql`
+  subscription chain_info {
+            chain_info {
+              name
+              count
+            }
+          }
+`;
+  const { data, loading } = useSubscription(
+    COMMENTS_SUBSCRIPTION,
+    { variables: { } },
+  ); */
+  // const data = useObservableState(lastBblock$);
   return (
     <div className="w-100">
       <div className="mb-4 row">

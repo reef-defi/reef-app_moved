@@ -5,19 +5,19 @@ import { WebSocketLink } from '@apollo/client/link/ws';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { map } from 'rxjs';
 import { selectedNetworkSubj } from '../state/providerState';
+import { getGQLUrls } from '../environment';
 
 const splitLink$ = selectedNetworkSubj.pipe(
-  map((selNetwork) => {
+  map(getGQLUrls),
+  map((urls:{ws:string, http:string}) => {
     const httpLink = new HttpLink({
-      uri: `${selNetwork.reefscanUrl}graphql`,
+      uri: urls.http,
     });
-
-    const wssBase = selNetwork.reefscanUrl.replace('https', 'wss');
     const wsLink = new WebSocketLink({
       options: {
         reconnect: true,
       },
-      uri: `${wssBase}graphql`,
+      uri: urls.ws,
     });
 
     return split(
