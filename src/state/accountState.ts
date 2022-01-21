@@ -12,6 +12,7 @@ import {
   Subject,
   switchMap,
   withLatestFrom,
+  skipWhile,
 } from 'rxjs';
 import { ReefSigner } from '@reef-defi/react-lib';
 import {
@@ -128,11 +129,12 @@ export const selectedSignerUpdateCtx$ = combineLatest([selectAddressSubj.pipe(di
         type: UpdateDataType.ACCOUNT_NATIVE_BALANCE,
       }] as UpdateAction[];
     }
-
-    localStorage.setItem('selected_address_reef', foundSigner?.address || '');
+    if (foundSigner) {
+      localStorage.setItem('selected_address_reef', foundSigner?.address || '');
+    }
     return {
       result: ({
-        data: { ...foundSigner },
+        data: foundSigner ? { ...foundSigner } : undefined,
         updateActions: selectedAddressUpdateActions,
       } as UpdateDataCtx<ReefSigner>),
       lastSelectedAddress: selectedAddress,
