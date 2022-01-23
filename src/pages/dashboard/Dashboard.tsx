@@ -1,11 +1,10 @@
 import React from 'react';
 import { TokenWithAmount, utils as reefUtils, utils } from '@reef-defi/react-lib';
-import { gql, useSubscription } from '@apollo/client';
 import { Balance } from './Balance';
 import { ActionButtons } from './ActionButtons';
 import './Dashboard.css';
 import { useObservableState } from '../../hooks/useObservableState';
-import { lastBblock$, reloadSignerTokens$, tokenPrices$ } from '../../state/tokenState';
+import { reloadSignerTokens$, tokenPrices$ } from '../../state/tokenState';
 import { TokenBalances } from './TokenBalances';
 
 const {
