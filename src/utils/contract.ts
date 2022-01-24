@@ -44,7 +44,7 @@ export const verifyContract = async (deployedContract: Contract, contract: ReefC
       // not required - license: contract.license,
       runs: contract.runs,
     };
-    await contractVerificatorApi.post<VerificationContractReq, AxiosResponse<string>>(`${url}${CONTRACT_VERIFICATION_URL}`, body);
+    await contractVerificatorApi.post<VerificationContractReq, AxiosResponse<string>>(`${url}/${CONTRACT_VERIFICATION_URL}`, body);
     // (verification_test, body)
     return true;
   } catch (err) {
@@ -53,12 +53,3 @@ export const verifyContract = async (deployedContract: Contract, contract: ReefC
     return false;
   }
 };
-
-/* TODO remove
-export const onTxUpdate = (dispatch: Dispatch<TokensActions>, txUpdateData: utils.TxStatusUpdate): void => {
-  if (txUpdateData?.isInBlock || txUpdateData?.error) {
-    console.log('onTxUpdate RELOADDD');
-    const delayMillis = txUpdateData.txTypeEvm ? 2000 : 0;
-    setTimeout(() => dispatch(reloadTokens()), delayMillis);
-  }
-}; */
