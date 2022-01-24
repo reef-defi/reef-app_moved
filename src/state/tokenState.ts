@@ -1,17 +1,21 @@
 import {
-  combineLatest, map, mergeScan, Observable, of, shareReplay, startWith, Subject, switchMap, timer, from,
+  combineLatest, from, map, mergeScan, Observable, of, shareReplay, switchMap, timer,
 } from 'rxjs';
-import { filter } from 'rxjs/operators';
 import {
-  api, Network, Pool, ReefSigner, reefTokenWithAmount, rpc, Token,
+  api, Pool, reefTokenWithAmount, rpc, Token,
 } from '@reef-defi/react-lib';
-import { BigNumber } from 'ethers';
+import { BigNumber, utils } from 'ethers';
 import { ApolloClient, gql } from '@apollo/client';
 import { combineTokensDistinct, toTokensWithPrice } from './util';
-import { getAddressUpdateActionTypes, UpdateDataCtx, UpdateDataType } from './updateCtxUtil';
-import { selectedSigner$, selectedSignerUpdateCtx$ } from './accountState';
-import { selectedNetworkSubj } from './providerState';
+import { selectedSigner$ } from './accountState';
+import { providerSubj, selectedNetworkSubj } from './providerState';
 import { apolloClientInstance$ } from '../utils/apolloConfig';
+
+// TODO replace with our own from lib and remove
+const toPlainString = (num: number): string => (`${+num}`).replace(/(-?)(\d*)\.?(\d*)e([+-]\d+)/,
+  (a, b, c, d, e) => (e < 0
+    ? `${b}0.${Array(1 - e - c.length).join('0')}${c}${d}`
+    : b + c + d + Array(e - d.length + 1).join('0')));
 
 const validatedTokens = { tokens: [] };
 
@@ -21,35 +25,6 @@ export const reefPrice$ = timer(0, 60000).pipe(
 );
 
 export const validatedTokens$ = of(validatedTokens.tokens as Token[]);
-export const reloadSignerTokens$ = new Subject<void>();
-
-function updateReefBalance(tokens: Token[], balance: BigNumber): Promise<Token[]> {
-  const reefTkn = tokens.find((t) => t.address === reefTokenWithAmount().address);
-  if (reefTkn) {
-    reefTkn.balance = balance;
-  }
-  return Promise.resolve([...tokens]);
-}
-
-export const selectedSignerTokenBalancesHTTP$ = combineLatest([selectedSignerUpdateCtx$, selectedNetworkSubj, reloadSignerTokens$.pipe(startWith(null))]).pipe(
-  mergeScan((state: { tokens: Token[], stopEmit?: boolean }, [signerCtx, network, _]: [UpdateDataCtx<ReefSigner>, Network, any]) => {
-    if (!signerCtx.data) {
-      return Promise.resolve({ tokens: [], stopEmit: false });
-    }
-    const isTokenUpdate = getAddressUpdateActionTypes(signerCtx.data.address, signerCtx.updateActions).indexOf(UpdateDataType.ACCOUNT_TOKENS) >= 0;
-    if (isTokenUpdate) {
-      return api.loadSignerTokens(signerCtx.data, network).then((tokens) => ({ tokens, stopEmit: false }));
-    }
-    const isReefUpdate = getAddressUpdateActionTypes(signerCtx.data.address, signerCtx.updateActions).indexOf(UpdateDataType.ACCOUNT_NATIVE_BALANCE) >= 0;
-    if (isReefUpdate) {
-      return updateReefBalance(state.tokens, signerCtx.data.balance).then((tokens) => ({ tokens, stopEmit: false }));
-    }
-    return Promise.resolve({ tokens: state.tokens, stopEmit: true });
-  }, { tokens: [], stopEmit: false }),
-  filter((v: { tokens: Token[], stopEmit?: boolean }) => !v.stopEmit),
-  map((state) => state.tokens),
-  shareReplay(1),
-) as Observable<Token[]>;
 
 const SIGNER_TOKENS_GQL = gql`
   subscription query ($accountId: String!) {
@@ -59,7 +34,6 @@ const SIGNER_TOKENS_GQL = gql`
             ) {
               token_address
               balance
-              decimals
             }
           }
 `;
@@ -89,14 +63,24 @@ const fetchTokensData = (apollo: ApolloClient<any>, missingCacheContractDataAddr
   } as Token)))
   .then((newTokens) => newTokens.concat(state.contractData));
 
-// TODO replace with our own from lib and remove
-const toPlainString = (num: number): string => (`${+num}`).replace(/(-?)(\d*)\.?(\d*)e([+-]\d+)/,
-  (a, b, c, d, e) => (e < 0
-    ? `${b}0.${Array(1 - e - c.length).join('0')}${c}${d}`
-    : b + c + d + Array(e - d.length + 1).join('0')));
+// eslint-disable-next-line camelcase
+const tokenBalancesWithContractDataCache = (apollo: ApolloClient<any>) => (state: { tokens: Token[], contractData: Token[] }, tokenBalances: { token_address: string, balance: number}[]) => {
+  const missingCacheContractDataAddresses = tokenBalances.filter((tb) => !state.contractData.some((cd) => cd.address === tb.token_address)).map((tb) => tb.token_address);
+  const contractDataPromise = missingCacheContractDataAddresses.length
+    ? fetchTokensData(apollo, missingCacheContractDataAddresses, state)
+    : Promise.resolve(state.contractData);
 
-export const selectedSignerTokenBalancesWS$ = combineLatest([apolloClientInstance$, selectedSigner$]).pipe(
-  switchMap(([apollo, signer]) => (!signer ? []
+  return contractDataPromise.then((cData: Token[]) => {
+    const tkns = tokenBalances.map((tBalance) => {
+      const cDataTkn = cData.find((cd) => cd.address === tBalance.token_address) as Token;
+      return { ...cDataTkn, balance: BigNumber.from(toPlainString(tBalance.balance)) };
+    }).filter((v) => !!v);
+    return { tokens: tkns, contractData: cData };
+  });
+};
+
+export const selectedSignerTokenBalancesWS$ = combineLatest([apolloClientInstance$, selectedSigner$, providerSubj]).pipe(
+  switchMap(([apollo, signer, provider]) => (!signer ? []
     : from(apollo.subscribe({
       query: SIGNER_TOKENS_GQL,
       variables: { accountId: signer.address },
@@ -104,24 +88,21 @@ export const selectedSignerTokenBalancesWS$ = combineLatest([apolloClientInstanc
     })).pipe(
       map((res: any) => (res.data && res.data.token_holder ? res.data.token_holder : undefined)),
       // eslint-disable-next-line camelcase
-      mergeScan((state: { tokens: Token[], contractData: Token[] }, tokenBalances: { token_address: string, balance: number, decimals: number }[]) => {
-        const missingCacheContractDataAddresses = tokenBalances.filter((tb) => !state.contractData.some((cd) => cd.address === tb.token_address)).map((tb) => tb.token_address);
-        const contractDataPromise = missingCacheContractDataAddresses.length
-        // eslint-disable-next-line camelcase
-          ? fetchTokensData(apollo, missingCacheContractDataAddresses, state)
-          : Promise.resolve(state.contractData);
-
-        return contractDataPromise.then((cData: Token[]) => {
-          const tkns = tokenBalances.map((tBalance) => {
-            const cDataTkn = cData.find((cd) => cd.address === tBalance.token_address) as Token;
-            return { ...cDataTkn, balance: BigNumber.from(toPlainString(tBalance.balance)) };
-          }).filter((v) => !!v);
-          return { tokens: tkns, contractData: cData };
-        });
-      }, { tokens: [], contractData: [] }),
+      switchMap((tokenBalances:{token_address: string, balance: number}[]) => {
+        const reefTkn = reefTokenWithAmount();
+        const hasReefBalance = tokenBalances.some((tb) => tb.token_address === reefTkn.address);
+        if (!hasReefBalance) {
+          return rpc.getReefCoinBalance(signer.address, provider).then((reefBalance) => {
+            tokenBalances.push({ token_address: reefTkn.address, balance: parseInt(utils.formatUnits(reefBalance, 'wei'), 10) });
+            return tokenBalances;
+          });
+        }
+        return Promise.resolve(tokenBalances);
+      }),
+      // eslint-disable-next-line camelcase
+      mergeScan(tokenBalancesWithContractDataCache(apollo), { tokens: [], contractData: [reefTokenWithAmount()] }),
       map((val: {tokens: Token[]}) => val.tokens),
     )
-
   )),
 );
 
