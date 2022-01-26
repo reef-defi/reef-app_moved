@@ -37,27 +37,6 @@ const SIGNER_TOKENS_GQL = gql`
             }
           }
 `;
-const TRANSFER_HISTORY_GQL = gql`
-subscription query($accountId: String!){
-    transfer(
-        where: {_or: [
-                  { to_address: { _eq: $accountId } }
-                  { from_address: { _eq: $accountId } }
-                ]}, 
-        limit: 10, 
-        order_by: {timestamp: desc}
-    ) {
-    amount
-    success
-    token_address
-    token {
-        address
-        verified_contract {
-          contract_data
-        }
-      }
-  }
-}`;
 const CONTRACT_DATA_GQL = gql`
   query query ($addresses: [String!]!) {
             verified_contract(
@@ -147,7 +126,33 @@ export const tokenPrices$ = combineLatest([allAvailableSignerTokens$, reefPrice$
   shareReplay(1),
 );
 
-export const transferHistory$ = combineLatest([apolloClientInstance$, selectedSigner$, providerSubj]).pipe(
+const TRANSFER_HISTORY_GQL = gql`
+subscription query($accountId: String!){
+    transfer(
+        where: {_or: [
+                  { to_address: { _eq: $accountId } }
+                  { from_address: { _eq: $accountId } }
+                ]
+                _and: { success: { _eq: true }}
+                }, 
+        limit: 10, 
+        order_by: {timestamp: desc}
+    ) {
+    amount
+    success
+    token_address
+    from_address
+    to_address
+    timestamp
+    token {
+        address
+        verified_contract {
+          contract_data
+        }
+      }
+  }
+}`;
+export const transferHistory$: Observable<{ from: string, to: string, token: Token, timestamp: number, inbound: boolean }[]> = combineLatest([apolloClientInstance$, selectedSigner$, providerSubj]).pipe(
   switchMap(([apollo, signer, provider]) => (!signer ? []
     : from(apollo.subscribe({
       query: TRANSFER_HISTORY_GQL,
@@ -155,8 +160,21 @@ export const transferHistory$ = combineLatest([apolloClientInstance$, selectedSi
       fetchPolicy: 'network-only',
     })).pipe(
       map((res: any) => (res.data && res.data.transfer ? res.data.transfer : undefined)),
-    )
-  )),
+      map((res: any[]) => (res.map((transfer) => ({
+        from: transfer.from_address,
+        to: transfer.to_address,
+        inbound: transfer.to_address === signer.evmAddress || transfer.to_address === signer.address,
+        timestamp: transfer.timestamp,
+        token: {
+          address: transfer.token_address,
+          balance: BigNumber.from(toPlainString(transfer.amount)),
+          name: transfer.token.verified_contract.contract_data.name,
+          symbol: transfer.token.verified_contract.contract_data.symbol,
+          decimals: transfer.token.verified_contract.contract_data.decimals,
+          iconUrl: transfer.token.verified_contract.contract_data.icon_url,
+        },
+      })))),
+    ))),
 );
 
 transferHistory$.subscribe((val): any => {
