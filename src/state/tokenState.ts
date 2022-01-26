@@ -37,6 +37,27 @@ const SIGNER_TOKENS_GQL = gql`
             }
           }
 `;
+const TRANSFER_HISTORY_GQL = gql`
+subscription query($accountId: String!){
+    transfer(
+        where: {_or: [
+                  { to_address: { _eq: $accountId } }
+                  { from_address: { _eq: $accountId } }
+                ]}, 
+        limit: 10, 
+        order_by: {timestamp: desc}
+    ) {
+    amount
+    success
+    token_address
+    token {
+        address
+        verified_contract {
+          contract_data
+        }
+      }
+  }
+}`;
 const CONTRACT_DATA_GQL = gql`
   query query ($addresses: [String!]!) {
             verified_contract(
@@ -125,3 +146,19 @@ export const tokenPrices$ = combineLatest([allAvailableSignerTokens$, reefPrice$
   map(toTokensWithPrice),
   shareReplay(1),
 );
+
+export const transferHistory$ = combineLatest([apolloClientInstance$, selectedSigner$, providerSubj]).pipe(
+  switchMap(([apollo, signer, provider]) => (!signer ? []
+    : from(apollo.subscribe({
+      query: TRANSFER_HISTORY_GQL,
+      variables: { accountId: signer.address },
+      fetchPolicy: 'network-only',
+    })).pipe(
+      map((res: any) => (res.data && res.data.transfer ? res.data.transfer : undefined)),
+    )
+  )),
+);
+
+transferHistory$.subscribe((val): any => {
+  console.log('HISTTT=', val);
+});
