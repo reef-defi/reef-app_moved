@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { hooks } from '@reef-defi/react-lib';
 import { ApolloProvider } from '@apollo/client';
 import ContentRouter from './pages/ContentRouter';
@@ -20,7 +20,7 @@ const App = (): JSX.Element => {
     <>
       {apollo && (
         <ApolloProvider client={apollo}>
-          <div className="App d-flex w-100 h-100 ">
+          <div className="App d-flex w-100 h-100">
             <div className="w-100 main-content">
               <Nav />
               <ContentRouter />

@@ -6,6 +6,8 @@ import './Dashboard.css';
 import { useObservableState } from '../../hooks/useObservableState';
 import { tokenPrices$ } from '../../state/tokenState';
 import { TokenBalances } from './TokenBalances';
+import { TokenActivity } from './TokenActivity';
+import { selectedSigner$ } from '../../state/accountState';
 
 const {
   DataProgress, isDataSet,
@@ -13,6 +15,7 @@ const {
 
 const Dashboard = (): JSX.Element => {
   const signerTokenBalances = useObservableState(tokenPrices$);
+  const selectedSigner = useObservableState(selectedSigner$);
 
   const totalBalance: reefUtils.DataWithProgress<number> = isDataSet(signerTokenBalances) && signerTokenBalances?.length ? (signerTokenBalances).reduce((state: reefUtils.DataWithProgress<number>, curr) => {
     if (Number.isNaN(curr.balance) || Number.isNaN(curr.price) || !isDataSet(curr.balance)) {
@@ -32,7 +35,10 @@ const Dashboard = (): JSX.Element => {
         <Balance balance={totalBalance} />
         <ActionButtons />
       </div>
-      <TokenBalances tokens={signerTokenBalances as utils.DataWithProgress<TokenWithAmount[]>} />
+      <div className="row">
+        <div className="col-lg-8 col-sm-12 col-md-6"><TokenBalances tokens={signerTokenBalances as utils.DataWithProgress<TokenWithAmount[]>} /></div>
+        <div className="col-lg-4 col-sm-12 col-md-6"><TokenActivity address={selectedSigner?.evmAddress} /></div>
+      </div>
     </div>
   );
 };

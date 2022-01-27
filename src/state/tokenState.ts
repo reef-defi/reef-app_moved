@@ -1,5 +1,5 @@
 import {
-  combineLatest, from, map, mergeScan, Observable, of, shareReplay, switchMap, timer,
+  combineLatest, from, map, mergeScan, Observable, of, shareReplay, startWith, switchMap, timer,
 } from 'rxjs';
 import {
   api, Pool, reefTokenWithAmount, rpc, Token,
@@ -10,6 +10,7 @@ import { combineTokensDistinct, toTokensWithPrice } from './util';
 import { selectedSigner$ } from './accountState';
 import { providerSubj, selectedNetworkSubj } from './providerState';
 import { apolloClientInstance$ } from '../utils/apolloConfig';
+import { getIconUrl } from '../utils/utils';
 
 // TODO replace with our own from lib and remove
 const toPlainString = (num: number): string => (`${+num}`).replace(/(-?)(\d*)\.?(\d*)e([+-]\d+)/,
@@ -101,7 +102,7 @@ export const selectedSignerTokenBalancesWS$ = combineLatest([apolloClientInstanc
       }),
       // eslint-disable-next-line camelcase
       mergeScan(tokenBalancesWithContractDataCache(apollo), { tokens: [], contractData: [reefTokenWithAmount()] }),
-      map((val: {tokens: Token[]}) => val.tokens),
+      map((val: {tokens: Token[]}) => val.tokens.map((t) => ({ ...t, iconUrl: t.iconUrl || getIconUrl(t.address) }))),
     )
   )),
 );
@@ -125,3 +126,60 @@ export const tokenPrices$ = combineLatest([allAvailableSignerTokens$, reefPrice$
   map(toTokensWithPrice),
   shareReplay(1),
 );
+
+const TRANSFER_HISTORY_GQL = gql`
+subscription query($accountId: String!){
+    transfer(
+        where: {_or: [
+                  { to_address: { _eq: $accountId } }
+                  { from_address: { _eq: $accountId } }
+                ]
+                _and: { success: { _eq: true }}
+                }, 
+        limit: 10, 
+        order_by: {timestamp: desc}
+    ) {
+    amount
+    success
+    token_address
+    from_address
+    to_address
+    timestamp
+    token {
+        address
+        verified_contract {
+          contract_data
+        }
+      }
+  }
+}`;
+export const transferHistory$: Observable<null|{ from: string, to: string, token: Token, timestamp: number, inbound: boolean; }[]> = combineLatest([apolloClientInstance$, selectedSigner$, providerSubj]).pipe(
+  switchMap(([apollo, signer, provider]) => (!signer ? []
+    : from(apollo.subscribe({
+      query: TRANSFER_HISTORY_GQL,
+      variables: { accountId: signer.address },
+      fetchPolicy: 'network-only',
+    })).pipe(
+      map((res: any) => (res.data && res.data.transfer ? res.data.transfer : undefined)),
+      map((res: any[]) => (res.map((transfer) => ({
+        from: transfer.from_address,
+        to: transfer.to_address,
+        inbound: transfer.to_address === signer.evmAddress || transfer.to_address === signer.address,
+        timestamp: transfer.timestamp,
+        token: {
+          address: transfer.token_address,
+          balance: BigNumber.from(toPlainString(transfer.amount)),
+          name: transfer.token.verified_contract.contract_data.name,
+          symbol: transfer.token.verified_contract.contract_data.symbol,
+          decimals: transfer.token.verified_contract.contract_data.decimals,
+          iconUrl: transfer.token.verified_contract.contract_data.icon_url || getIconUrl(transfer.token_address),
+        },
+      })))),
+    ))),
+  startWith(null),
+  shareReplay(1),
+);
+
+transferHistory$.subscribe((val): any => {
+  console.log('HISTTT2=', val);
+});

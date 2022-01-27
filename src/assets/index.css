@@ -31,6 +31,13 @@ html, body, #root, .App {
     padding: 50px;
 }
 
+.card {
+    border-radius: 1rem;
+    background-color: #f5f3fa;
+    box-shadow: 0 0px 40px 0 rgba(40, 133, 208, 0.1);
+    border: none;
+}
+
 .w-100 {
     width: 100%;
 }
@@ -103,6 +110,10 @@ svg.fill-white {
 
 .d-flex {
     display: flex;
+}
+
+.flex-1 {
+    flex: 1;
 }
 
 .d-flex-space-between {
