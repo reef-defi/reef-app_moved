@@ -3,7 +3,7 @@ import {
   utils,
 } from '@reef-defi/react-lib';
 import React from 'react';
-import { toCurrencyFormat } from '../../utils/utils';
+import { getIconUrl, toCurrencyFormat } from '../../utils/utils';
 import './TokenPill.css';
 
 const { DataProgress, isDataSet } = reefUtils;
@@ -15,15 +15,10 @@ interface TokenPill {
     token: TokenWithAmount
 }
 
-function getIconUrl(tokenAddress: string): string {
-  const lastNr = utils.getHashSumLastNr(tokenAddress);
-  return `/img/token-icons/token-icon-${lastNr}.png`;
-}
-
 export const TokenPill = ({ token }: TokenPill): JSX.Element => {
   const balanceValue = utils.calculateBalanceValue(token);
   return (
-    <div key={token.address} className="col-12 col-md-6">
+    <div key={token.address} className="col-lg-6 col-md-12">
       <div className="token-balance-item radius-border d-flex d-flex-space-between d-flex-vert-center">
         <div className="token-balance-item_icon-text mr-1">
           <div className="token-balance-item_icon-text_w mr-1"><img src={token.iconUrl ? token.iconUrl : getIconUrl(token.address)} alt={token.name} /></div>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Components } from '@reef-defi/react-lib';
 import { useObservableState } from '../../hooks/useObservableState';
 import { transferHistory$ } from '../../state/tokenState';
 import { TokenActivityItem, TokenActivityType } from './TokenActivityItem';
@@ -19,7 +20,8 @@ export const TokenActivity = ({ address }: TokenActivity): JSX.Element => {
 
       </div>
       <div className="col-12 card">
-        {!!transfers && (
+        {!!transfers && !transfers.length && <div>Account has no activity.</div>}
+        {!!transfers && !!transfers.length && (
         <div>
             {transfers.map((t) => (
               <TokenActivityItem
@@ -31,6 +33,7 @@ export const TokenActivity = ({ address }: TokenActivity): JSX.Element => {
             ))}
         </div>
         )}
+        {!transfers && <Components.Loading.Loading />}
       </div>
     </div>
   );

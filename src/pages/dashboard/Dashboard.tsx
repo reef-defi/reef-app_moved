@@ -35,8 +35,10 @@ const Dashboard = (): JSX.Element => {
         <Balance balance={totalBalance} />
         <ActionButtons />
       </div>
-      <TokenBalances tokens={signerTokenBalances as utils.DataWithProgress<TokenWithAmount[]>} />
-      <TokenActivity address={selectedSigner?.evmAddress} />
+      <div className="row">
+        <div className="col-lg-8 col-sm-12 col-md-6"><TokenBalances tokens={signerTokenBalances as utils.DataWithProgress<TokenWithAmount[]>} /></div>
+        <div className="col-lg-4 col-sm-12 col-md-6"><TokenActivity address={selectedSigner?.evmAddress} /></div>
+      </div>
     </div>
   );
 };

@@ -19,7 +19,7 @@ export enum TokenActivityType {
 export const TokenActivityItem = ({
   token, timestamp, type,
 }: TokenActivityItem): JSX.Element => (
-  <div key={timestamp} className={`col-12 col-md-6 activity-item flex-1 ${type === TokenActivityType.RECEIVE ? 'receive-activity' : 'send-activity'} `}>
+  <div key={timestamp} className={` activity-item flex-1 ${type === TokenActivityType.RECEIVE ? 'receive-activity' : 'send-activity'} `}>
     <div className="d-flex d-flex-vert-center">
       <div className="activity-item_type-icon-w d-flex d-flex-vert-center">
         <div className="activity-item_type-icon receive m-auto">
