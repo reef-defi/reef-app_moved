@@ -19,7 +19,11 @@ const menuItems = [
   { title: 'Creator', url: CREATE_ERC20_TOKEN_URL },
 ];
 
-const Nav = (): JSX.Element => {
+export interface Nav {
+    display: boolean;
+}
+
+const Nav = ({ display }: Nav): JSX.Element => {
   const history = useHistory();
   const { pathname } = useLocation();
   const signer = useObservableState(selectedSigner$);
@@ -56,20 +60,21 @@ const Nav = (): JSX.Element => {
           </div>
         </button>
       </div>
-      <nav className="d-flex justify-content-end d-flex-vert-center">
-        <ul className="navigation_menu-items ">
-          {menuItemsView}
-        </ul>
-        {accounts && !!accounts.length && network && (
-        <Components.AccountSelector
-          accounts={accounts}
-          selectedSigner={signer}
-          selectAccount={selectAccount}
-          reefscanUrl={network.reefscanUrl}
-        />
-        )}
-
-      </nav>
+      {display && (
+        <nav className="d-flex justify-content-end d-flex-vert-center">
+          <ul className="navigation_menu-items ">
+            {menuItemsView}
+          </ul>
+          {accounts && !!accounts.length && network && (
+          <Components.AccountSelector
+            accounts={accounts}
+            selectedSigner={signer}
+            selectAccount={selectAccount}
+            reefscanUrl={network.reefscanUrl}
+          />
+          )}
+        </nav>
+      )}
     </div>
 
   );
