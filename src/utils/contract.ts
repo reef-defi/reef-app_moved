@@ -30,6 +30,8 @@ export interface ReefContract extends BaseContract {
 
 const contractVerificatorApi = axios.create();
 
+const toContractAddress = (address: string): string => utils.getAddress(address);
+
 const CONTRACT_EXISTS_GQL = gql`
   subscription query ($address: String!) {
             contract(
