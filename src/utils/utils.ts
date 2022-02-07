@@ -1,5 +1,6 @@
-import { Notify, utils } from '@reef-defi/react-lib';
+import { Notify, reefTokenWithAmount, utils } from '@reef-defi/react-lib';
 
+const reefToken = reefTokenWithAmount();
 // eslint-disable-next-line
 export const notify = (message: string, type: Notify): void => {};
 export const toCurrencyFormat = (value: number, options?: any): string => Intl.NumberFormat(navigator.language, {
@@ -11,6 +12,9 @@ export const delay = async (milliseconds: number): Promise<void> => new Promise(
 });
 
 export const getIconUrl = (tokenAddress: string): string => {
+  if (tokenAddress === reefToken.address) {
+    return reefToken.iconUrl;
+  }
   const lastNr = utils.getHashSumLastNr(tokenAddress);
   return `/img/token-icons/token-icon-${lastNr}.png`;
 };

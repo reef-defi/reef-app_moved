@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { hooks } from '@reef-defi/react-lib';
 import { ApolloProvider } from '@apollo/client';
 import ContentRouter from './pages/ContentRouter';
@@ -11,7 +11,8 @@ import { apolloClientInstance$ } from './utils/apolloConfig';
 
 const App = (): JSX.Element => {
   const provider = useObservableState(providerSubj);
-  const [signers] = hooks.useLoadSigners('Reef App', provider);
+  const [signers, loading, error] = hooks.useLoadSigners('Reef App', provider);
+
   useInitReefState(signers);
   const currentSigner = useObservableState(selectedSigner$);
   const apollo = useObservableState(apolloClientInstance$);
@@ -20,10 +21,19 @@ const App = (): JSX.Element => {
     <>
       {apollo && (
         <ApolloProvider client={apollo}>
-          <div className="App d-flex w-100 h-100 ">
+          <div className="App d-flex w-100 h-100">
             <div className="w-100 main-content">
-              <Nav />
-              <ContentRouter />
+              <Nav display={!loading && !error} />
+              {!loading && !error && (<ContentRouter />)}
+              {error && (
+              <div className="m-5">
+                <p>
+                  {error.message}
+                  {' '}
+                  {error.url && <a href={error.url} target="_blank" rel="noreferrer">Click here to continue.</a>}
+                </p>
+              </div>
+              )}
             </div>
           </div>
         </ApolloProvider>

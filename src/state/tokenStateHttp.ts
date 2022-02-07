@@ -8,7 +8,7 @@ import {
 import { BigNumber } from 'ethers';
 import { combineTokensDistinct, toTokensWithPrice } from './util';
 import { getAddressUpdateActionTypes, UpdateDataCtx, UpdateDataType } from './updateCtxUtil';
-import { selectedSigner$, selectedSignerUpdateCtx$ } from './accountState';
+import { selectedSignerHttp$, selectedSignerUpdateCtxHttp$ } from './accountStateHttp';
 import { selectedNetworkSubj } from './providerState';
 import { reefPrice$, validatedTokens$ } from './tokenState';
 
@@ -22,7 +22,7 @@ function updateReefBalance(tokens: Token[], balance: BigNumber): Promise<Token[]
   return Promise.resolve([...tokens]);
 }
 
-export const selectedSignerTokenBalancesHTTP$ = combineLatest([selectedSignerUpdateCtx$, selectedNetworkSubj, reloadSignerTokens$.pipe(startWith(null))]).pipe(
+export const selectedSignerTokenBalancesHTTP$ = combineLatest([selectedSignerUpdateCtxHttp$, selectedNetworkSubj, reloadSignerTokens$.pipe(startWith(null))]).pipe(
   mergeScan((state: { tokens: Token[], stopEmit?: boolean }, [signerCtx, network, _]: [UpdateDataCtx<ReefSigner>, Network, any]) => {
     if (!signerCtx.data) {
       return Promise.resolve({ tokens: [], stopEmit: false });
@@ -48,9 +48,9 @@ export const allAvailableSignerTokensHttp$ = combineLatest([selectedSignerTokenB
 );
 
 // TODO when network changes signer changes as well? this could make 2 requests unnecessary - check
-export const poolsHttp$: Observable<Pool[]> = combineLatest([allAvailableSignerTokensHttp$, selectedNetworkSubj, selectedSigner$]).pipe(
+export const poolsHttp$: Observable<Pool[]> = combineLatest([allAvailableSignerTokensHttp$, selectedNetworkSubj, selectedSignerHttp$]).pipe(
   switchMap(([tkns, network, signer]) => {
-    console.log('LOAD pools=', signer, tkns);
+    console.log('LOADpools =', signer, tkns);
     return signer ? rpc.loadPools(tkns, signer.signer, network.factoryAddress) : [];
   }),
   shareReplay(1),

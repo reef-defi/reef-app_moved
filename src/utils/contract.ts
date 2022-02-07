@@ -30,8 +30,6 @@ export interface ReefContract extends BaseContract {
 
 const contractVerificatorApi = axios.create();
 
-const toContractAddress = (address: string): string => utils.getAddress(address);
-
 const CONTRACT_EXISTS_GQL = gql`
   subscription query ($address: String!) {
             contract(
@@ -61,6 +59,7 @@ export const verifyContract = async (deployedContract: Contract, contract: ReefC
   if (!url) {
     return false;
   }
+
   try {
     const contractAddress = toContractAddress(deployedContract.address);
     if (!await firstValueFrom(isContractIndexed$(contractAddress))) {
@@ -78,7 +77,7 @@ export const verifyContract = async (deployedContract: Contract, contract: ReefC
       // not required - license: contract.license,
       runs: contract.runs,
     };
-    await contractVerificatorApi.post<VerificationContractReq, AxiosResponse<string>>(`${url}${CONTRACT_VERIFICATION_URL}`, body);
+    await contractVerificatorApi.post<VerificationContractReq, AxiosResponse<string>>(`${url}/${CONTRACT_VERIFICATION_URL}`, body);
     // (verification_test, body)
     return true;
   } catch (err) {
@@ -86,12 +85,3 @@ export const verifyContract = async (deployedContract: Contract, contract: ReefC
     return false;
   }
 };
-
-/* TODO remove
-export const onTxUpdate = (dispatch: Dispatch<TokensActions>, txUpdateData: utils.TxStatusUpdate): void => {
-  if (txUpdateData?.isInBlock || txUpdateData?.error) {
-    console.log('onTxUpdate RELOADDD');
-    const delayMillis = txUpdateData.txTypeEvm ? 2000 : 0;
-    setTimeout(() => dispatch(reloadTokens()), delayMillis);
-  }
-}; */

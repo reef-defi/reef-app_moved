@@ -30,8 +30,8 @@ export const reloadSignersOverHttpSubj = new Subject<UpdateDataCtx<ReefSigner[]>
 
 const signersWithUpdatedData$ = reloadSignersOverHttpSubj.pipe(
   withLatestFrom(combineLatest([signersInjected$, providerSubj])),
-  mergeScan((state: { allUpdated: ReefSigner[], lastUpdatedSigners: ReefSigner[], lastUpdateActions: UpdateAction[] }, [updateCtx, [signersInjectedCtx, provider]]): any => {
-    const allUpdatedSigners = replaceUpdatedSigners(signersInjectedCtx.data, state.allUpdated);
+  mergeScan((state: { allUpdated: ReefSigner[], lastUpdatedSigners: ReefSigner[], lastUpdateActions: UpdateAction[] }, [updateCtx, [signersInjected, provider]]): any => {
+    const allUpdatedSigners = replaceUpdatedSigners(signersInjected, state.allUpdated);
     return of(updateCtx.updateActions).pipe(
       switchMap((updateActions) => updateSignersBalances(updateActions, allUpdatedSigners, provider)
         .then((updatedSigners) => ({
@@ -59,9 +59,9 @@ const signersUpdateCtxHttp$: Observable<UpdateDataCtx<ReefSigner[]>> = combineLa
   updatedSigners: signersWithUpdatedData$.pipe(startWith(null)),
 }).pipe(
   scan((stateVal: any, currentVal) => {
-    let updatedSignersCtx: UpdateDataCtx<ReefSigner[]>;
+    let updatedSignersCtx: UpdateDataCtx<ReefSigner[]>|undefined;
     if (stateVal.lastInjectedSigners !== currentVal.injectedSigners) {
-      updatedSignersCtx = currentVal.injectedSigners;
+      // TODO add updateActions to injectedSigners and uncomment-> updatedSignersCtx = currentVal.injectedSigners;
     } else {
       const updatedSig = replaceUpdatedSigners(stateVal.currentValue.data, currentVal.updatedSigners.data);
       updatedSignersCtx = { data: updatedSig, updateActions: currentVal.updatedSigners.updateActions };

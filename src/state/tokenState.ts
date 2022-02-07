@@ -102,7 +102,7 @@ export const selectedSignerTokenBalancesWS$ = combineLatest([apolloClientInstanc
       }),
       // eslint-disable-next-line camelcase
       mergeScan(tokenBalancesWithContractDataCache(apollo), { tokens: [], contractData: [reefTokenWithAmount()] }),
-      map((val: {tokens: Token[]}) => val.tokens),
+      map((val: {tokens: Token[]}) => val.tokens.map((t) => ({ ...t, iconUrl: t.iconUrl || getIconUrl(t.address) }))),
     )
   )),
 );
