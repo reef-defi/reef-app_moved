@@ -184,18 +184,26 @@ transferHistory$.subscribe((val): any => {
   console.log('HISTTT2=', val);
 });
 
-const getGqlContractEventsQuery = (contractAddress: string, methodSignature?: string): SubscriptionOptions => {
+const getGqlContractEventsQuery = (contractAddress: string, methodSignature?: string, perPage = 10, offset = 0): SubscriptionOptions => {
   const EVM_EVENT_GQL = gql`
-    subscription evm_event($address: String!, $topic0: String){
+    subscription evmEvent($address: String!, $perPage: Int!, $offset: Int!, $topic0: String){
         evm_event(
-        limit: 10, 
+        limit: $perPage,
+        offset: $offset 
+        order_by: {block_id: desc, extrinsic_index: desc, event_index: desc},
         where: {
             contract_address: {_eq: $address}, 
             topic_0: {_eq:$topic0},
             method: {_eq: "Log"}
             }
         ) {
-        id
+        contract_address
+        data_parsed
+        data_raw
+        topic_0
+        topic_1
+        topic_2
+        topic_3
       }
     }`;
   return {
@@ -203,6 +211,8 @@ const getGqlContractEventsQuery = (contractAddress: string, methodSignature?: st
     variables: {
       address: contractAddress,
       topic0: methodSignature ? utils.keccak256(utils.toUtf8Bytes(methodSignature)) : undefined,
+      perPage,
+      offset,
     },
     fetchPolicy: 'network-only',
   };

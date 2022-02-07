@@ -6,7 +6,7 @@ import {
 } from 'rxjs';
 import { apolloClientInstance$ } from './apolloConfig';
 
-const CONTRACT_VERIFICATION_URL = 'api/verificator/submit-verification';
+const CONTRACT_VERIFICATION_URL = '/api/verificator/submit-verification';
 
 interface BaseContract {
     runs: number;
@@ -50,7 +50,10 @@ const isContractIndexed$ = (address: string): Observable<boolean> => apolloClien
   })),
   map((res:any) => res.data.contract && res.data.contract.length),
   skipWhile((v) => !v),
-  catchError(() => of(false)),
+  catchError((e) => {
+    console.log('isContractIndexed$ err=', e);
+    return of(false);
+  }),
   take(1),
 );
 
@@ -79,8 +82,7 @@ export const verifyContract = async (deployedContract: Contract, contract: ReefC
     // (verification_test, body)
     return true;
   } catch (err) {
-    console.error(err);
-    console.log('Verification err=', err);
+    console.error('Verification err=', err);
     return false;
   }
 };
