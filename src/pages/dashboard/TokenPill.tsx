@@ -3,7 +3,7 @@ import {
   utils,
 } from '@reef-defi/react-lib';
 import React from 'react';
-import { toCurrencyFormat } from '../../utils/utils';
+import { getIconUrl, toCurrencyFormat } from '../../utils/utils';
 import './TokenPill.css';
 
 const { DataProgress, isDataSet } = reefUtils;
@@ -13,11 +13,6 @@ const { Loading } = Components.Loading;
 
 interface TokenPill {
     token: TokenWithAmount
-}
-
-function getIconUrl(tokenAddress: string): string {
-  const lastNr = utils.getHashSumLastNr(tokenAddress);
-  return `/img/token-icons/token-icon-${lastNr}.png`;
 }
 
 export const TokenPill = ({ token }: TokenPill): JSX.Element => {
