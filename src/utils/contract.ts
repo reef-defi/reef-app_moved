@@ -1,13 +1,12 @@
 import axios, { AxiosResponse } from 'axios';
-import { Contract } from 'ethers';
+import { Contract, utils } from 'ethers';
 import { gql } from '@apollo/client';
 import {
   Observable, switchMap, take, timeout, catchError, of, map, tap, firstValueFrom, skipWhile,
 } from 'rxjs';
-import { filter } from 'rxjs/operators';
 import { apolloClientInstance$ } from './apolloConfig';
 
-const CONTRACT_VERIFICATION_URL = 'api/verificator/submit-verification';
+const CONTRACT_VERIFICATION_URL = '/api/verificator/submit-verification';
 
 interface BaseContract {
     runs: number;
@@ -31,6 +30,8 @@ export interface ReefContract extends BaseContract {
 
 const contractVerificatorApi = axios.create();
 
+const toContractAddress = (address: string): string => utils.getAddress(address);
+
 const CONTRACT_EXISTS_GQL = gql`
   subscription query ($address: String!) {
             contract(
@@ -49,7 +50,10 @@ const isContractIndexed$ = (address: string): Observable<boolean> => apolloClien
   })),
   map((res:any) => res.data.contract && res.data.contract.length),
   skipWhile((v) => !v),
-  catchError(() => of(false)),
+  catchError((e) => {
+    console.log('isContractIndexed$ err=', e);
+    return of(false);
+  }),
   take(1),
 );
 
@@ -59,11 +63,12 @@ export const verifyContract = async (deployedContract: Contract, contract: ReefC
   }
 
   try {
-    if (!await firstValueFrom(isContractIndexed$(deployedContract.address.toLowerCase()))) {
+    const contractAddress = toContractAddress(deployedContract.address);
+    if (!await firstValueFrom(isContractIndexed$(contractAddress))) {
       return false;
     }
     const body: VerificationContractReq = {
-      address: deployedContract.address,
+      address: contractAddress,
       arguments: JSON.stringify(arg),
       name: contract.contractName,
       filename: contract.filename,
@@ -74,12 +79,11 @@ export const verifyContract = async (deployedContract: Contract, contract: ReefC
       // not required - license: contract.license,
       runs: contract.runs,
     };
-    await contractVerificatorApi.post<VerificationContractReq, AxiosResponse<string>>(`${url}/${CONTRACT_VERIFICATION_URL}`, body);
+    await contractVerificatorApi.post<VerificationContractReq, AxiosResponse<string>>(`${url}${CONTRACT_VERIFICATION_URL}`, body);
     // (verification_test, body)
     return true;
   } catch (err) {
-    console.error(err);
-    console.log('Verification err=', err);
+    console.error('Verification err=', err);
     return false;
   }
 };

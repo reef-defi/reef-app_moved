@@ -1,14 +1,10 @@
 import React, { useEffect, useState } from 'react';
 
-import {
-  Components, TokenWithAmount, utils, rpc,
-} from '@reef-defi/react-lib';
+import { Components, rpc, TokenWithAmount } from '@reef-defi/react-lib';
 import { useHistory, useParams } from 'react-router-dom';
 import { POOLS_URL } from '../../urls';
 import { useObservableState } from '../../hooks/useObservableState';
 import { selectedSigner$ } from '../../state/accountState';
-import { createUpdateActions, UpdateAction, UpdateDataType } from '../../state/updateCtxUtil';
-import { onTxUpdateReloadSignerBalances } from '../../state/util';
 import { allAvailableSignerTokens$ } from '../../state/tokenState';
 import { selectedNetworkSubj } from '../../state/providerState';
 
@@ -53,11 +49,11 @@ const AddLiqudity = (): JSX.Element => {
   }, [address2, address1, tokensCombined]);
 
   const back = (): void => history.push(POOLS_URL);
-  const onAddLiqUpdate = (txState: utils.TxStatusUpdate): void => {
+  /* const onAddLiqUpdate = (txState: utils.TxStatusUpdate): void => {
     const updateTypes = [UpdateDataType.ACCOUNT_NATIVE_BALANCE, UpdateDataType.ACCOUNT_TOKENS];
     const updateActions: UpdateAction[] = createUpdateActions(updateTypes, txState.addresses);
-    onTxUpdateReloadSignerBalances(txState, updateActions);
-  };
+    onTxUpdateResetSigners(txState, updateActions);
+  }; */
 
   return signer && network ? (
     <Components.AddLiquidityComponent
@@ -67,7 +63,7 @@ const AddLiqudity = (): JSX.Element => {
       tokenValue1={token1}
       tokenValue2={token2}
       back={back}
-      onTxUpdate={onAddLiqUpdate}
+      /* onTxUpdate={onAddLiqUpdate} */
     />
   ) : (<div />);
 };

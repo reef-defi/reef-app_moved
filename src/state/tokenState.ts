@@ -5,7 +5,7 @@ import {
   api, Pool, reefTokenWithAmount, rpc, Token,
 } from '@reef-defi/react-lib';
 import { BigNumber, utils } from 'ethers';
-import { ApolloClient, gql } from '@apollo/client';
+import { ApolloClient, gql, SubscriptionOptions } from '@apollo/client';
 import { combineTokensDistinct, toTokensWithPrice } from './util';
 import { selectedSigner$ } from './accountState';
 import { providerSubj, selectedNetworkSubj } from './providerState';
@@ -182,4 +182,50 @@ export const transferHistory$: Observable<null|{ from: string, to: string, token
 
 transferHistory$.subscribe((val): any => {
   console.log('HISTTT2=', val);
+});
+
+const getGqlContractEventsQuery = (contractAddress: string, methodSignature?: string, perPage = 10, offset = 0): SubscriptionOptions => {
+  const EVM_EVENT_GQL = gql`
+    subscription evmEvent($address: String!, $perPage: Int!, $offset: Int!, $topic0: String){
+        evm_event(
+        limit: $perPage,
+        offset: $offset 
+        order_by: {block_id: desc, extrinsic_index: desc, event_index: desc},
+        where: {
+            contract_address: {_eq: $address}, 
+            topic_0: {_eq:$topic0},
+            method: {_eq: "Log"}
+            }
+        ) {
+        contract_address
+        data_parsed
+        data_raw
+        topic_0
+        topic_1
+        topic_2
+        topic_3
+      }
+    }`;
+  return {
+    query: EVM_EVENT_GQL,
+    variables: {
+      address: contractAddress,
+      topic0: methodSignature ? utils.keccak256(utils.toUtf8Bytes(methodSignature)) : undefined,
+      perPage,
+      offset,
+    },
+    fetchPolicy: 'network-only',
+  };
+};
+
+export const evmEvents$: Observable<any[]> = combineLatest([apolloClientInstance$, selectedSigner$, providerSubj]).pipe(
+  switchMap(([apollo, signer, provider]) => (!signer ? []
+    : from(apollo.subscribe(getGqlContractEventsQuery('0x0230135fDeD668a3F7894966b14F42E65Da322e4'))).pipe(
+      map((res: any) => (res.data && res.data.evm_event ? res.data.evm_event : undefined)),
+    )
+  )),
+);
+
+evmEvents$.subscribe((val): any => {
+  console.log('EVM EV=', val);
 });

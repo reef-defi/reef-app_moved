@@ -4,10 +4,8 @@ import {
 import React, { useEffect, useState } from 'react';
 import { useObservableState } from '../../hooks/useObservableState';
 import {
-  allAvailableSignerTokens$, providerSubj, selectedSigner$, tokenPrices$, signers$,
+  allAvailableSignerTokens$, providerSubj, selectedSigner$, signers$, tokenPrices$,
 } from '../../state/appState';
-import { createUpdateActions, UpdateAction, UpdateDataType } from '../../state/updateCtxUtil';
-import { onTxUpdateReloadSignerBalances } from '../../state/util';
 
 const {
   isDataSet,
@@ -19,14 +17,14 @@ const {
   Loading, TransferComponent,
 } = Components;
 
-const onTransferTxUpdate = (txState: reefUtils.TxStatusUpdate): void => {
+/* const onTransferTxUpdate = (txState: reefUtils.TxStatusUpdate): void => {
   const updateTypes = [UpdateDataType.ACCOUNT_NATIVE_BALANCE];
   if (txState.txTypeEvm) {
     updateTypes.push(UpdateDataType.ACCOUNT_TOKENS);
   }
   const updateActions: UpdateAction[] = createUpdateActions(updateTypes, txState.addresses);
-  onTxUpdateReloadSignerBalances(txState, updateActions);
-};
+  onTxUpdateResetSigners(txState, updateActions);
+}; */
 
 export const Transfer = (): JSX.Element => {
   const provider = useObservableState(providerSubj);
@@ -71,7 +69,7 @@ export const Transfer = (): JSX.Element => {
       {!isDataSet(token) && token === DataProgress.LOADING && <Loading.Loading />}
       {!isDataSet(token) && token === DataProgress.NO_DATA && <div>No tokens for transaction.</div>}
       { provider && isDataSet(token) && isDataSet(signerTokenBalances) && selectedSigner
-          && <TransferComponent tokens={signerTokenBalances as Token[]} from={selectedSigner} token={token as TokenWithAmount} provider={provider} accounts={accounts || []} currentAccount={selectedSigner} onTxUpdate={(val) => onTransferTxUpdate(val)} />}
+          && <TransferComponent tokens={signerTokenBalances as Token[]} from={selectedSigner} token={token as TokenWithAmount} provider={provider} accounts={accounts || []} currentAccount={selectedSigner} /* onTxUpdate={(val) => onTransferTxUpdate(val)} */ />}
     </>
   );
 };

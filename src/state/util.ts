@@ -12,7 +12,7 @@ export const combineTokensDistinct = ([tokens1, tokens2]:[Token[], Token[]]): To
 
 export const toTokensWithPrice = ([tokens, reefPrice, pools]:[Token[], number, Pool[]]): TokenWithAmount[] => tokens.map((token) => ({ ...token, price: utils.calculateTokenPrice(token, pools, reefPrice) } as TokenWithAmount));
 
-export const onTxUpdateReloadSignerBalances = (txUpdateData: utils.TxStatusUpdate, updateActions: UpdateAction[]): void => {
+export const onTxUpdateResetSigners = (txUpdateData: utils.TxStatusUpdate, updateActions: UpdateAction[]): void => {
   if (txUpdateData?.isInBlock || txUpdateData?.error) {
     const delay = txUpdateData.txTypeEvm ? 2000 : 0;
     setTimeout(() => reloadSignersSubj.next({ updateActions }), delay);
