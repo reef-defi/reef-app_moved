@@ -1,13 +1,15 @@
 import {
   combineLatest,
   distinctUntilChanged,
+  from,
   map,
-  merge,
   mergeScan,
   Observable,
   of,
   ReplaySubject,
+  scan,
   shareReplay,
+  startWith,
   Subject,
   switchMap,
   withLatestFrom,
@@ -16,10 +18,11 @@ import { ReefSigner } from '@reef-defi/react-lib';
 import { Provider } from '@reef-defi/evm-provider';
 import { BigNumber } from 'ethers';
 import { filter } from 'rxjs/operators';
-import { getUnwrappedData$, UpdateAction, UpdateDataCtx } from './updateCtxUtil';
+import { gql } from '@apollo/client';
+import { UpdateDataCtx } from './updateCtxUtil';
 import { replaceUpdatedSigners, updateSignersEvmBindings } from './accountStateUtil';
 import { providerSubj } from './providerState';
-import { selectedSignerUpdateCtxHttp$ } from './accountStateHttp';
+import { apolloClientInstance$ } from '../utils/apolloConfig';
 
 export const accountsSubj = new ReplaySubject<ReefSigner[] | null>(1);
 export const reloadSignersSubj = new Subject<UpdateDataCtx<ReefSigner[]>>();
@@ -29,7 +32,7 @@ export const signersInjected$ = accountsSubj.pipe(
   shareReplay(1),
 );
 
-const signersWithUpdatedData$: Observable<ReefSigner[]> = reloadSignersSubj.pipe(
+const signersLocallyUpdatedData$: Observable<ReefSigner[]> = reloadSignersSubj.pipe(
   filter((reloadCtx) => !!reloadCtx.updateActions.length),
   withLatestFrom(signersInjected$),
   mergeScan((state: { all: ReefSigner[], allUpdated: ReefSigner[], lastUpdated: ReefSigner[] }, [updateCtx, signersInjected]): any => {
@@ -47,10 +50,11 @@ const signersWithUpdatedData$: Observable<ReefSigner[]> = reloadSignersSubj.pipe
   }),
   filter((val: any) => !!val.lastUpdated.length),
   map((val: any): any => (val.all)),
+  startWith([]),
   shareReplay(1),
 );
 
-const signersWithUpdatedBalances$ = combineLatest([providerSubj, merge(signersInjected$, signersWithUpdatedData$)]).pipe(
+const signersWithUpdatedBalances$ = combineLatest([providerSubj, signersInjected$]).pipe(
   mergeScan((state: {unsub:any, balancesByAddressSubj: ReplaySubject<any>}, [provider, signers]: [Provider, ReefSigner[]]) => {
     if (state.unsub) {
       state.unsub();
@@ -84,7 +88,57 @@ const signersWithUpdatedBalances$ = combineLatest([providerSubj, merge(signersIn
   shareReplay(1),
 );
 
-export const signers$: Observable<ReefSigner[]> = signersWithUpdatedBalances$;
+const EVM_ADDRESS_UPDATE_GQL = gql`
+subscription query($accountIds: [String!]!){
+    account(
+        where: {address: {_in: $accountIds}}, 
+        order_by: {timestamp: asc, address: asc}
+    ) {
+    address
+    evm_address
+  }
+}`;
+// eslint-disable-next-line camelcase
+interface AccountEvmAddrData { address: string; evm_address?: string; isEvmClaimed?: boolean }
+export const indexedAccountValues$ = combineLatest([apolloClientInstance$, signersInjected$]).pipe(
+  switchMap(([apollo, signers]) => (!signers ? []
+    : from(apollo.subscribe({
+      query: EVM_ADDRESS_UPDATE_GQL,
+      variables: { accountIds: signers.map((s) => s.address) },
+      fetchPolicy: 'network-only',
+    }))
+  )),
+  map((result:any):AccountEvmAddrData[] => result.data.account),
+  filter((v) => !!v),
+  startWith([]),
+);
+
+const signersWithUpdatedData$ = combineLatest([signersWithUpdatedBalances$, signersLocallyUpdatedData$, indexedAccountValues$]).pipe(
+  scan((state:{lastlocallyUpdated:ReefSigner[], lastIndexed:AccountEvmAddrData[], lastSigners: ReefSigner[]}, [signers, locallyUpdated, indexed]) => {
+    let updateBindValues: AccountEvmAddrData[] = [];
+    if (state.lastlocallyUpdated !== locallyUpdated) {
+      updateBindValues = locallyUpdated.map((updSigner) => ({ address: updSigner.address, isEvmClaimed: updSigner.isEvmClaimed }));
+    } else if (state.lastIndexed !== indexed) {
+      updateBindValues = indexed.map((updSigner:AccountEvmAddrData) => ({ address: updSigner.address, isEvmClaimed: !!updSigner.evm_address }));
+    } else {
+      updateBindValues = state.lastSigners.map((updSigner) => ({ address: updSigner.address, isEvmClaimed: updSigner.isEvmClaimed }));
+    }
+    updateBindValues.forEach((updVal: AccountEvmAddrData) => {
+      const signer = signers.find((sig) => sig.address === updVal.address);
+      if (signer) {
+        signer.isEvmClaimed = !!updVal.isEvmClaimed;
+      }
+    });
+    return {
+      signers, lastlocallyUpdated: locallyUpdated, lastIndexed: indexed, lastSigners: signers,
+    };
+  }, {
+    signers: [], lastlocallyUpdated: [], lastIndexed: [], lastSigners: [],
+  }),
+  map(({ signers }) => signers),
+);
+
+export const signers$: Observable<ReefSigner[]> = signersWithUpdatedData$;
 
 export const selectAddressSubj = new ReplaySubject<string | undefined>(1);
 selectAddressSubj.next(localStorage.getItem('selected_address_reef') || undefined);
