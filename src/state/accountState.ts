@@ -18,7 +18,7 @@ import { ReefSigner } from '@reef-defi/react-lib';
 import { Provider } from '@reef-defi/evm-provider';
 import { BigNumber } from 'ethers';
 import { filter } from 'rxjs/operators';
-import { gql } from '@apollo/client';
+import { ApolloClient, gql } from '@apollo/client';
 import { UpdateDataCtx } from './updateCtxUtil';
 import { replaceUpdatedSigners, updateSignersEvmBindings } from './accountStateUtil';
 import { providerSubj } from './providerState';
@@ -101,7 +101,7 @@ subscription query($accountIds: [String!]!){
 // eslint-disable-next-line camelcase
 interface AccountEvmAddrData { address: string; evm_address?: string; isEvmClaimed?: boolean }
 export const indexedAccountValues$ = combineLatest([apolloClientInstance$, signersInjected$]).pipe(
-  switchMap(([apollo, signers]) => (!signers ? []
+  switchMap(([apollo, signers]:[ApolloClient<any>, ReefSigner[]]) => (!signers ? []
     : from(apollo.subscribe({
       query: EVM_ADDRESS_UPDATE_GQL,
       variables: { accountIds: signers.map((s) => s.address) },
