@@ -1,21 +1,21 @@
 import React from 'react';
-import { TokenWithAmount, utils as reefUtils, utils } from '@reef-defi/react-lib';
+import {
+  TokenWithAmount, utils as reefUtils, utils, appState,
+} from '@reef-defi/react-lib';
 import { Balance } from './Balance';
 import { ActionButtons } from './ActionButtons';
 import './Dashboard.css';
 import { useObservableState } from '../../hooks/useObservableState';
-import { tokenPrices$ } from '../../state/tokenState';
 import { TokenBalances } from './TokenBalances';
 import { TokenActivity } from './TokenActivity';
-import { selectedSigner$ } from '../../state/accountState';
 
 const {
   DataProgress, isDataSet,
 } = reefUtils;
 
 const Dashboard = (): JSX.Element => {
-  const signerTokenBalances = useObservableState(tokenPrices$);
-  const selectedSigner = useObservableState(selectedSigner$);
+  const signerTokenBalances = useObservableState(appState.tokenPrices$);
+  const selectedSigner = useObservableState(appState.selectedSigner$);
 
   const totalBalance: reefUtils.DataWithProgress<number> = isDataSet(signerTokenBalances) && signerTokenBalances?.length ? (signerTokenBalances).reduce((state: reefUtils.DataWithProgress<number>, curr) => {
     if (Number.isNaN(curr.balance) || Number.isNaN(curr.price) || !isDataSet(curr.balance)) {

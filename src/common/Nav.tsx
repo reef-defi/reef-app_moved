@@ -1,5 +1,5 @@
 import React from 'react';
-import { Components } from '@reef-defi/react-lib';
+import { Components, appState } from '@reef-defi/react-lib';
 import './Nav.css';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { saveSignerLocalPointer } from '../store/internalStore';
@@ -8,8 +8,6 @@ import {
   CREATE_ERC20_TOKEN_URL, DASHBOARD_URL, POOLS_URL, SWAP_URL, TRANSFER_TOKEN,
 } from '../urls';
 import { useObservableState } from '../hooks/useObservableState';
-import { selectAddressSubj, selectedSigner$, signers$ } from '../state/accountState';
-import { selectedNetworkSubj } from '../state/providerState';
 
 const menuItems = [
   { title: 'Dashboard', url: DASHBOARD_URL },
@@ -26,12 +24,12 @@ export interface Nav {
 const Nav = ({ display }: Nav): JSX.Element => {
   const history = useHistory();
   const { pathname } = useLocation();
-  const signer = useObservableState(selectedSigner$);
-  const accounts = useObservableState(signers$);
-  const network = useObservableState(selectedNetworkSubj);
+  const signer = useObservableState(appState.selectedSigner$);
+  const accounts = useObservableState(appState.signers$);
+  const network = useObservableState(appState.selectedNetworkSubj);
   const selectAccount = (index: number): void => {
     saveSignerLocalPointer(index);
-    selectAddressSubj.next(index != null ? accounts?.[index].address : undefined);
+    appState.selectAddressSubj.next(index != null ? accounts?.[index].address : undefined);
     // dispatch(selectSigner(index));
     // dispatch(reloadTokens());
   };

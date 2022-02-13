@@ -1,4 +1,4 @@
-import { availableNetworks, Network } from '@reef-defi/react-lib';
+import { availableNetworks, Network, appState } from '@reef-defi/react-lib';
 
 export const currentNetwork = availableNetworks.mainnet; /* || availableNetworks.testnet ||  {
   name: 'testnet',

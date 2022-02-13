@@ -1,7 +1,6 @@
 import React from 'react';
-import { Components } from '@reef-defi/react-lib';
+import { Components, appState } from '@reef-defi/react-lib';
 import { useObservableState } from '../../hooks/useObservableState';
-import { transferHistory$ } from '../../state/tokenState';
 import { TokenActivityItem, TokenActivityType } from './TokenActivityItem';
 
 interface TokenActivity {
@@ -9,7 +8,7 @@ interface TokenActivity {
 }
 
 export const TokenActivity = ({ address }: TokenActivity): JSX.Element => {
-  const transfers = useObservableState(transferHistory$);
+  const transfers = useObservableState(appState.transferHistory$);
 
   return (
     <div className="row">
