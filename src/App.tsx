@@ -9,8 +9,8 @@ import { currentNetwork } from './environment';
 const App = (): JSX.Element => {
   const provider = useObservableState(appState.providerSubj);
   const [signers, loading, error] = hooks.useLoadSigners('Reef App', provider);
-
   useInitReefState(signers, currentNetwork);
+
   const currentSigner = useObservableState(appState.selectedSigner$);
   const apollo = useObservableState(graphql.apolloClientInstance$);
   hooks.useBindEvmAddressAlert(currentSigner, provider);
