@@ -18,7 +18,6 @@ const App = (): JSX.Element => {
   return (
     <>
       {apollo && (
-      //  <ApolloProvider client={apollo }>
       <div className="App d-flex w-100 h-100">
         <div className="w-100 main-content">
           <Nav display={!loading && !error} />
@@ -34,7 +33,6 @@ const App = (): JSX.Element => {
           )}
         </div>
       </div>
-      // </ApolloProvider>
       )}
     </>
   );
