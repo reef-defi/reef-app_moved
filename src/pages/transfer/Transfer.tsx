@@ -1,5 +1,5 @@
 import {
-  Components, Token, TokenWithAmount, utils as reefUtils, appState,
+  Components, Token, TokenWithAmount, utils as reefUtils, appState, reefTokenWithAmount,
 } from '@reef-defi/react-lib';
 import React, { useEffect, useState } from 'react';
 import { useObservableState } from '../../hooks/useObservableState';
@@ -61,6 +61,15 @@ export const Transfer = (): JSX.Element => {
     // TODO set from value in signerTokenBalances- setToken(signerTokenBalances as reefUtils.DataProgress);
     setToken(DataProgress.LOADING);
   }, [signerTokenBalances, signerTokens]);
+
+  /* useEffect(() => {
+    const contractAddress = '0xa8b86cB36Da7a1A125a9096c62F406aF12E657f5'; // reefTokenWithAmount().address;
+    // const methodSignature = 'Transfer(address,address,uint256)';
+    const subs = appState.getEvmEvents$(contractAddress).subscribe((events: any[]) => {
+      console.log('new event from token contract=', events);
+    });
+    return () => (subs ? subs.unsubscribe() : null);
+  }, []); */
 
   return (
     <>
