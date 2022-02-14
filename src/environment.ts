@@ -1,6 +1,6 @@
 import { availableNetworks, Network, appState } from '@reef-defi/react-lib';
 
-export const currentNetwork = /* availableNetworks.testnet || */ /* availableNetworks.mainnet;  ||  */ {
+export const currentNetwork = availableNetworks.testnet || /* availableNetworks.mainnet;  ||  */ {
   name: 'testnet',
   rpcUrl: 'ws://localhost:9944',
   reefscanUrl: 'http://localhost:8000',
