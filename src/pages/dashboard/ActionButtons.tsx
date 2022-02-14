@@ -43,6 +43,9 @@ export const ActionButtons = (): JSX.Element => {
         <button
           type="button"
           className="button-light dashboard_actions_button dashboard_actions_button-buy radius-border"
+          onClick={() => {
+            window.open('https://www.gate.io/trade/REEF_USDT', '_blank');
+          }}
         >
           <div className="svg-w fill-white">
             <RIcon />

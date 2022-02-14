@@ -1,10 +1,10 @@
 import axios, { AxiosResponse } from 'axios';
 import { Contract, utils } from 'ethers';
 import { gql } from '@apollo/client';
+import { graphql } from '@reef-defi/react-lib';
 import {
   Observable, switchMap, take, timeout, catchError, of, map, tap, firstValueFrom, skipWhile,
 } from 'rxjs';
-import { apolloClientInstance$ } from './apolloConfig';
 
 const CONTRACT_VERIFICATION_URL = '/api/verificator/submit-verification';
 
@@ -41,7 +41,7 @@ const CONTRACT_EXISTS_GQL = gql`
             }
           }
 `;
-const isContractIndexed$ = (address: string): Observable<boolean> => apolloClientInstance$.pipe(
+const isContractIndexed$ = (address: string): Observable<boolean> => graphql.apolloClientInstance$.pipe(
   timeout(120000),
   switchMap((apollo) => apollo.subscribe({
     query: CONTRACT_EXISTS_GQL,
