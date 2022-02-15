@@ -62,15 +62,6 @@ export const Transfer = (): JSX.Element => {
     setToken(DataProgress.LOADING);
   }, [signerTokenBalances, signerTokens]);
 
-  /* useEffect(() => {
-    const contractAddress = '0xa8b86cB36Da7a1A125a9096c62F406aF12E657f5'; // reefTokenWithAmount().address;
-    // const methodSignature = 'Transfer(address,address,uint256)';
-    const subs = appState.getEvmEvents$(contractAddress).subscribe((events: any[]) => {
-      console.log('new event from token contract=', events);
-    });
-    return () => (subs ? subs.unsubscribe() : null);
-  }, []); */
-
   return (
     <>
       {!isDataSet(token) && token === DataProgress.LOADING && <Loading.Loading />}
