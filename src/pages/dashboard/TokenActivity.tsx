@@ -1,11 +1,17 @@
 import React from 'react';
-import { Components, appState } from '@reef-defi/react-lib';
+import { Components, appState, createEmptyTokenWithAmount } from '@reef-defi/react-lib';
 import { useObservableState } from '../../hooks/useObservableState';
 import { TokenActivityItem, TokenActivityType } from './TokenActivityItem';
+import { TokenPill } from './TokenPill';
 
 interface TokenActivity {
     address: string | undefined;
 }
+
+const noActivityTokenDisplay = createEmptyTokenWithAmount();
+noActivityTokenDisplay.address = '0x';
+noActivityTokenDisplay.iconUrl = '';
+noActivityTokenDisplay.name = 'No account history yet.';
 
 export const TokenActivity = ({ address }: TokenActivity): JSX.Element => {
   const transfers = useObservableState(appState.transferHistory$);
@@ -18,8 +24,9 @@ export const TokenActivity = ({ address }: TokenActivity): JSX.Element => {
         </div>
 
       </div>
-      <div className="col-12 card">
-        {!!transfers && !transfers.length && <div>Account has no activity.</div>}
+      <div className={`col-12 ${transfers?.length ? 'card' : ''}`}>
+        {!!transfers && !transfers.length && <div className="no-token-activity-pill-w"><TokenPill token={noActivityTokenDisplay} /></div>}
+        {/* {!!transfers && !transfers.length && <div>Account has no activity.</div>} */}
         {!!transfers && !!transfers.length && (
         <div>
             {transfers.map((t) => (

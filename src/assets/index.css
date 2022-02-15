@@ -149,3 +149,11 @@ svg.fill-white {
    .modal-footer.bg-white.border-0.border-rad{
     background: none !important;
    }
+
+   .no-token-activity-pill-w .token-balance-item_balances{
+        display: none;
+   }
+
+   .no-token-activity-pill-w .token-balance-item_sub-title{
+        display: none;
+   }

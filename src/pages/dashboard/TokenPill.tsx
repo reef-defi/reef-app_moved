@@ -24,10 +24,10 @@ export const TokenPill = ({ token }: TokenPill): JSX.Element => {
           <div className="token-balance-item_icon-text_w mr-1"><img src={token.iconUrl ? token.iconUrl : getIconUrl(token.address)} alt={token.name} /></div>
           <div className="">
             <div className="title-font text-bold ">{token.name}</div>
-            <div className="">{showBalance(token)}</div>
+            <div className="token-balance-item_sub-title">{showBalance(token)}</div>
           </div>
         </div>
-        <div className=" title-font text-bold text-color-dark-accent">
+        <div className="token-balance-item_balances title-font text-bold text-color-dark-accent">
           <div>
             {isDataSet(token.price) && toCurrencyFormat(token.price as number, { maximumFractionDigits: token.price < 1 ? 4 : 2 }) }
             {/* TODO {!isDataSet(token.price) && token.price === DataProgress.LOADING && <Loading />} */}
