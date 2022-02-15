@@ -2444,11 +2444,12 @@
   dependencies:
     "@babel/runtime" "^7.15.4"
 
-"@reef-defi/react-lib@^1.0.21":
-  version "1.0.21"
-  resolved "https://registry.yarnpkg.com/@reef-defi/react-lib/-/react-lib-1.0.21.tgz#0fe95f65a965ce54a7e1f0014361c7ce67f47af5"
-  integrity sha512-5QX0mbigAN54+TGIjULmMcV5qylHKCOARbeQzZFDBy2+b5l7RjmBjyXJDO7+mxkj+6w2vgrxNwvq0nDLGyys8g==
+"@reef-defi/react-lib@^1.0.27":
+  version "1.0.27"
+  resolved "https://registry.yarnpkg.com/@reef-defi/react-lib/-/react-lib-1.0.27.tgz#c4a6c7e889b33e477e7df4be24a948ca1a09e0d6"
+  integrity sha512-lSueuc2rymCT+UnKlo0Yo8XTUzpcXPZCRggF/flGFrJivJbvEn+HzadroLNM04mIg6rzeefLMV+zH4BIKRpwSA==
   dependencies:
+    "@apollo/client" "^3.5.7"
     "@polkadot/extension-dapp" "^0.40.4"
     "@polkadot/react-identicon" "^0.86.4"
     "@reef-defi/evm-provider" "^1.0.3"
@@ -2458,9 +2459,12 @@
     axios "^0.21.4"
     bootstrap "^5.1.1"
     eslint-import-resolver-typescript "^2.4.0"
+    graphql "^16.2.0"
     react-copy-to-clipboard "^5.0.4"
     react-router-dom "^5.3.0"
     react-tooltip "^4.2.21"
+    rxjs "^7.5.4"
+    subscriptions-transport-ws "^0.11.0"
 
 "@reef-defi/type-definitions@^1.0.0":
   version "1.0.3"
