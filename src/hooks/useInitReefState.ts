@@ -1,8 +1,7 @@
 import {
-  hooks, ReefSigner, appState, Network, graphql,
+  appState, graphql, hooks, Network, ReefSigner,
 } from '@reef-defi/react-lib';
 import { useEffect } from 'react';
-import { map } from 'rxjs';
 import { useObservableState } from './useObservableState';
 import { getGQLUrls } from '../environment';
 
