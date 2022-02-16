@@ -104,7 +104,7 @@ svg.fill-white {
     margin-right: 1em;
 }
 
-.pl-1rem{
+.pl-1rem {
     padding-left: 1rem;
 }
 
@@ -141,19 +141,23 @@ svg.fill-white {
     background-color: #e6ddf0;
 }
 
-.text-center{
+.text-center {
     text-align: center;
 }
 
 /* TODO remove after real fix*/
-   .modal-footer.bg-white.border-0.border-rad{
+.modal-footer.bg-white.border-0.border-rad {
     background: none !important;
-   }
+}
 
-   .no-token-activity-pill-w .token-balance-item_balances{
-        display: none;
-   }
+.no-token-activity-pill-w .token-balance-item_balances {
+    display: none;
+}
 
-   .no-token-activity-pill-w .token-balance-item_sub-title{
-        display: none;
-   }
+.no-token-activity-pill-w .token-balance-item_sub-title {
+    display: none;
+}
+
+.pools-list .list-group-item {
+    padding: 2em;
+}
