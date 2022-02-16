@@ -1,15 +1,14 @@
 import React from 'react';
 
-import { appState, Components } from '@reef-defi/react-lib';
-import { useObservableState } from '../../hooks/useObservableState';
+import { appState, Components, hooks } from '@reef-defi/react-lib';
 
 const { SwapComponent } = Components;
 
 const Swap = (): JSX.Element => {
-  const tokensCombined = useObservableState(appState.allAvailableSignerTokens$);
-  const network = useObservableState(appState.selectedNetworkSubj);
+  const tokensCombined = hooks.useObservableState(appState.allAvailableSignerTokens$);
+  const network = hooks.useObservableState(appState.selectedNetworkSubj);
 
-  const selectedAccount = useObservableState(appState.selectedSigner$);
+  const selectedAccount = hooks.useObservableState(appState.selectedSigner$);
 
   /* const onSwapTxUpdate = (txState: utils.TxStatusUpdate): void => {
     const updateTypes = [UpdateDataType.ACCOUNT_NATIVE_BALANCE, UpdateDataType.ACCOUNT_TOKENS];

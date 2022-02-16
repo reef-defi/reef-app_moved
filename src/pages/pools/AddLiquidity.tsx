@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 
 import {
-  Components, rpc, TokenWithAmount, graphql, appState,
+  Components, rpc, TokenWithAmount, hooks, appState,
 } from '@reef-defi/react-lib';
 import { useHistory, useParams } from 'react-router-dom';
 import { POOLS_URL } from '../../urls';
-import { useObservableState } from '../../hooks/useObservableState';
 
 interface UrlParams {
   address1: string;
@@ -16,9 +15,9 @@ const AddLiqudity = (): JSX.Element => {
   const { address1, address2 } = useParams<UrlParams>();
   const [token1, setToken1] = useState<TokenWithAmount>();
   const [token2, setToken2] = useState<TokenWithAmount>();
-  const signer = useObservableState(appState.selectedSigner$);
-  const tokensCombined = useObservableState(appState.allAvailableSignerTokens$);
-  const network = useObservableState(appState.selectedNetworkSubj);
+  const signer = hooks.useObservableState(appState.selectedSigner$);
+  const tokensCombined = hooks.useObservableState(appState.allAvailableSignerTokens$);
+  const network = hooks.useObservableState(appState.selectedNetworkSubj);
 
   useEffect(() => {
     const reset = async (): Promise<void> => {

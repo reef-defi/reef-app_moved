@@ -1,6 +1,5 @@
 import React from 'react';
-import { Components, appState, createEmptyTokenWithAmount } from '@reef-defi/react-lib';
-import { useObservableState } from '../../hooks/useObservableState';
+import { Components, appState, createEmptyTokenWithAmount, hooks } from '@reef-defi/react-lib';
 import { TokenActivityItem, TokenActivityType } from './TokenActivityItem';
 import { TokenPill } from './TokenPill';
 
@@ -14,7 +13,7 @@ noActivityTokenDisplay.iconUrl = '';
 noActivityTokenDisplay.name = 'No account history yet.';
 
 export const TokenActivity = ({ address }: TokenActivity): JSX.Element => {
-  const transfers = useObservableState(appState.transferHistory$);
+  const transfers = hooks.useObservableState(appState.transferHistory$);
 
   return (
     <div className="row">

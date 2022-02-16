@@ -1,8 +1,7 @@
 import React from 'react';
-import { Components, Token, appState } from '@reef-defi/react-lib';
+import { Components, Token, appState, hooks } from '@reef-defi/react-lib';
 import { Redirect, useHistory, useParams } from 'react-router-dom';
 import { POOLS_URL } from '../../urls';
-import { useObservableState } from '../../hooks/useObservableState';
 
 const { RemoveLiquidityComponent } = Components;
 
@@ -16,10 +15,10 @@ const findToken = (address: string, tokens: Token[] = []): Token|undefined => to
 const RemoveLiquidity = (): JSX.Element => {
   const history = useHistory();
   const { address1, address2 } = useParams<UrlParams>();
-  const tokens = useObservableState(appState.allAvailableSignerTokens$);
-  const network = useObservableState(appState.selectedNetworkSubj);
+  const tokens = hooks.useObservableState(appState.allAvailableSignerTokens$);
+  const network = hooks.useObservableState(appState.selectedNetworkSubj);
 
-  const signer = useObservableState(appState.selectedSigner$);
+  const signer = hooks.useObservableState(appState.selectedSigner$);
   const token1 = findToken(address1, tokens);
   const token2 = findToken(address2, tokens);
 

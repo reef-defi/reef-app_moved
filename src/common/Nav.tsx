@@ -24,9 +24,9 @@ export interface Nav {
 const Nav = ({ display }: Nav): JSX.Element => {
   const history = useHistory();
   const { pathname } = useLocation();
-  const signer = useObservableState(appState.selectedSigner$);
-  const accounts = useObservableState(appState.signers$);
-  const network = useObservableState(appState.selectedNetworkSubj);
+  const signer = hooks.useObservableState(appState.selectedSigner$);
+  const accounts = hooks.useObservableState(appState.signers$);
+  const network = hooks.useObservableState(appState.selectedNetworkSubj);
   const selectAccount = (index: number): void => {
     saveSignerLocalPointer(index);
     appState.selectAddressSubj.next(index != null ? accounts?.[index].address : undefined);

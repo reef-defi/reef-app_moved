@@ -1,8 +1,7 @@
 import {
-  Components, Token, TokenWithAmount, utils as reefUtils, appState, reefTokenWithAmount,
+  Components, Token, TokenWithAmount, utils as reefUtils, appState, reefTokenWithAmount, hooks,
 } from '@reef-defi/react-lib';
 import React, { useEffect, useState } from 'react';
-import { useObservableState } from '../../hooks/useObservableState';
 
 const {
   isDataSet,
@@ -25,11 +24,11 @@ const {
 }; */
 
 export const Transfer = (): JSX.Element => {
-  const provider = useObservableState(appState.providerSubj);
-  const accounts = useObservableState(appState.signers$);
-  const selectedSigner = useObservableState(appState.selectedSigner$);
-  const signerTokens = useObservableState(appState.allAvailableSignerTokens$);
-  const signerTokenBalances = useObservableState(appState.tokenPrices$);
+  const provider = hooks.useObservableState(appState.providerSubj);
+  const accounts = hooks.useObservableState(appState.signers$);
+  const selectedSigner = hooks.useObservableState(appState.selectedSigner$);
+  const signerTokens = hooks.useObservableState(appState.allAvailableSignerTokens$);
+  const signerTokenBalances = hooks.useObservableState(appState.tokenPrices$);
   const [token, setToken] = useState<reefUtils.DataWithProgress<TokenWithAmount>>(DataProgress.LOADING);
 
   useEffect(() => {
