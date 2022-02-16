@@ -1,32 +1,30 @@
 import React from 'react';
 
-import { availableNetworks, Components } from '@reef-defi/react-lib';
-import { reloadTokens } from '../../store/actions/tokens';
-import { useAppDispatch, useAppSelector } from '../../store';
-import { useGetSigner } from '../../hooks/useGetSigner';
-import { notify } from '../../utils/utils';
+import { appState, Components } from '@reef-defi/react-lib';
+import { useObservableState } from '../../hooks/useObservableState';
 
 const { SwapComponent } = Components;
 
 const Swap = (): JSX.Element => {
-  const dispatch = useAppDispatch();
-  const { tokens } = useAppSelector((state) => state.tokens);
+  const tokensCombined = useObservableState(appState.allAvailableSignerTokens$);
+  const network = useObservableState(appState.selectedNetworkSubj);
 
-  const selectedAccount = useGetSigner();
+  const selectedAccount = useObservableState(appState.selectedSigner$);
 
-  const reloadToggle = (): void => {
-    dispatch(reloadTokens());
-  };
+  /* const onSwapTxUpdate = (txState: utils.TxStatusUpdate): void => {
+    const updateTypes = [UpdateDataType.ACCOUNT_NATIVE_BALANCE, UpdateDataType.ACCOUNT_TOKENS];
+    const updateActions: UpdateAction[] = createUpdateActions(updateTypes, txState.addresses);
+    onTxUpdateResetSigners(txState, updateActions);
+  }; */
 
-  return (
+  return selectedAccount && network ? (
     <SwapComponent
-      tokens={tokens}
+      tokens={tokensCombined || []}
       account={selectedAccount}
-      reloadTokens={reloadToggle}
-      network={{ ...availableNetworks.mainnet }}
-      notify={notify}
+      network={{ ...network }}
+      // onTxUpdate={onSwapTxUpdate}
     />
-  );
+  ) : (<div />);
 };
 
 export default Swap;

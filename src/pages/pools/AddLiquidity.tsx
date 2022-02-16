@@ -1,34 +1,70 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { availableNetworks, Components } from '@reef-defi/react-lib';
-import { useHistory } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../../store';
-import { useGetSigner } from '../../hooks/useGetSigner';
+import {
+  Components, rpc, TokenWithAmount, graphql, appState,
+} from '@reef-defi/react-lib';
+import { useHistory, useParams } from 'react-router-dom';
 import { POOLS_URL } from '../../urls';
-import { reloadTokens } from '../../store/actions/tokens';
-import { notify } from '../../utils/utils';
+import { useObservableState } from '../../hooks/useObservableState';
 
+interface UrlParams {
+  address1: string;
+  address2: string;
+}
 const AddLiqudity = (): JSX.Element => {
   const history = useHistory();
-  const signer = useGetSigner();
-  const dispatch = useAppDispatch();
-  const { tokens } = useAppSelector((state) => state.tokens);
+  const { address1, address2 } = useParams<UrlParams>();
+  const [token1, setToken1] = useState<TokenWithAmount>();
+  const [token2, setToken2] = useState<TokenWithAmount>();
+  const signer = useObservableState(appState.selectedSigner$);
+  const tokensCombined = useObservableState(appState.allAvailableSignerTokens$);
+  const network = useObservableState(appState.selectedNetworkSubj);
+
+  useEffect(() => {
+    const reset = async (): Promise<void> => {
+      let tkn1 = tokensCombined?.find((t) => t.address === address1);
+      if (!tkn1 && signer) {
+        tkn1 = (await rpc.loadToken(address1, signer?.signer, '') || undefined);
+      }
+      setToken1(tkn1 ? {
+        ...tkn1,
+        amount: '',
+        price: 0,
+        isEmpty: false,
+      } : undefined);
+
+      let tkn2 = tokensCombined?.find((t) => t.address === address2);
+      if (!tkn2 && signer) {
+        tkn2 = (await rpc.loadToken(address2, signer?.signer, '') || undefined);
+      }
+      setToken2(tkn2 ? {
+        ...tkn2,
+        amount: '',
+        price: 0,
+        isEmpty: false,
+      } : undefined);
+    };
+    reset();
+  }, [address2, address1, tokensCombined]);
 
   const back = (): void => history.push(POOLS_URL);
-  const reload = (): void => {
-    dispatch(reloadTokens());
-  };
+  /* const onAddLiqUpdate = (txState: utils.TxStatusUpdate): void => {
+    const updateTypes = [UpdateDataType.ACCOUNT_NATIVE_BALANCE, UpdateDataType.ACCOUNT_TOKENS];
+    const updateActions: UpdateAction[] = createUpdateActions(updateTypes, txState.addresses);
+    onTxUpdateResetSigners(txState, updateActions);
+  }; */
 
-  return (
+  return signer && network ? (
     <Components.AddLiquidityComponent
-      tokens={tokens}
+      tokens={tokensCombined || []}
       signer={signer}
-      network={availableNetworks.mainnet}
+      network={network}
+      tokenValue1={token1}
+      tokenValue2={token2}
       back={back}
-      reloadTokens={reload}
-      notify={notify}
+      /* onTxUpdate={onAddLiqUpdate} */
     />
-  );
+  ) : (<div />);
 };
 
 export default AddLiqudity;

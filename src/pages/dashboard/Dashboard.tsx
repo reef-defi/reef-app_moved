@@ -1,66 +1,50 @@
-import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import { api, Components } from '@reef-defi/react-lib';
-import { useAppSelector } from '../../store';
-import { useLoadSignerTokens } from '../../hooks/useLoadSignerTokens';
-import { TokenBalances } from './TokenBalances';
+import React from 'react';
 import {
-  isValueWithStatusSet,
-  useSignerTokenBalances,
-  ValueStatus,
-  ValueWithStatus,
-} from '../../hooks/useSignerTokenBalances';
+  TokenWithAmount, utils as reefUtils, utils, appState,
+} from '@reef-defi/react-lib';
 import { Balance } from './Balance';
 import { ActionButtons } from './ActionButtons';
-import { useGetSigner } from '../../hooks/useGetSigner';
 import './Dashboard.css';
+import { useObservableState } from '../../hooks/useObservableState';
+import { TokenBalances } from './TokenBalances';
+import { TokenActivity } from './TokenActivity';
+import { Nfts } from './Nfts';
 
-const { retrieveReefCoingeckoPrice } = api;
-const { Loading } = Components.Loading;
+const {
+  DataProgress, isDataSet,
+} = reefUtils;
 
 const Dashboard = (): JSX.Element => {
-  const history = useHistory();
-  const { isLoading: tokensLoading } = useAppSelector((state) => state.tokens);
-  const { pools } = useAppSelector((state) => state.pools);
-  const selectedSigner = useGetSigner();
-  const signerTokens = useLoadSignerTokens(selectedSigner);
-  const [reefPrice, setReefPrice] = useState<number|ValueStatus>(ValueStatus.LOADING);
-  const signerTokenBalances = useSignerTokenBalances(signerTokens, pools, reefPrice);
+  const signerTokenBalances = useObservableState(appState.tokenPrices$);
+  const signerNfts = useObservableState(appState.selectedSignerNFTs$);
+  const selectedSigner = useObservableState(appState.selectedSigner$);
 
-  const totalBalance = signerTokenBalances.length ? signerTokenBalances.reduce((state: ValueWithStatus, curr) => {
-    if (Number.isNaN(curr.balanceValue) || !isValueWithStatusSet(curr.balanceValue)) {
+  const totalBalance: reefUtils.DataWithProgress<number> = isDataSet(signerTokenBalances) && signerTokenBalances?.length ? (signerTokenBalances).reduce((state: reefUtils.DataWithProgress<number>, curr) => {
+    if (Number.isNaN(curr.balance) || Number.isNaN(curr.price) || !isDataSet(curr.balance)) {
       return state;
     }
-    if (!Number.isNaN(+curr.balanceValue as number) && isValueWithStatusSet(curr.balanceValue)) {
-      const stateNr = isValueWithStatusSet(state) ? state as number : 0;
-      return stateNr + (curr.balanceValue as number);
+    const balVal = utils.calculateBalanceValue(curr);
+    if (!Number.isNaN(balVal) && isDataSet(balVal)) {
+      const stateNr = isDataSet(state) ? state as number : 0;
+      return stateNr + (balVal as number);
     }
     return state;
-  }, ValueStatus.LOADING) : ValueStatus.NO_DATA;
-
-  useEffect(() => {
-    const getPrice = async ():Promise<void> => {
-      let price: number|ValueStatus = ValueStatus.NO_DATA;
-      try {
-        price = await retrieveReefCoingeckoPrice();
-      } catch (e) {
-      }
-      setReefPrice(price);
-    };
-    const interval = setInterval(getPrice, 60000);
-    getPrice();
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
+  }, DataProgress.LOADING) : DataProgress.LOADING;
 
   return (
+
     <div className="w-100">
       <div className="mb-4 row">
         <Balance balance={totalBalance} />
         <ActionButtons />
       </div>
-      <TokenBalances tokens={signerTokenBalances} />
+      <div className="row">
+        <div className="col-lg-8 col-sm-12 col-md-6">
+          <TokenBalances tokens={signerTokenBalances as utils.DataWithProgress<TokenWithAmount[]>} />
+          {/* <Nfts tokens={signerNfts as utils.DataWithProgress<TokenWithAmount[]>} /> */}
+        </div>
+        <div className="col-lg-4 col-sm-12 col-md-6"><TokenActivity address={selectedSigner?.evmAddress} /></div>
+      </div>
     </div>
   );
 };

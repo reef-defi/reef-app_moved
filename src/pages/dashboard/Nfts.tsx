@@ -6,15 +6,15 @@ const { isDataSet, DataProgress } = utils;
 
 const { Loading } = Components.Loading;
 
-interface TokenBalances {
+interface Nfts {
     tokens: utils.DataWithProgress<TokenWithAmount[]>;
     onRefresh?: any;
 }
-export const TokenBalances = ({ tokens, onRefresh }: TokenBalances): JSX.Element => (
+export const Nfts = ({ tokens, onRefresh }: Nfts): JSX.Element => (
   <div className="row">
     <div className="mb-4 col-12 d-flex d-flex-space-between d-flex-vert-base">
       <div>
-        <h5 className="my-auto title-color text-semi-bold">Tokens</h5>
+        <h5 className="my-auto title-color text-semi-bold">NFTs</h5>
       </div>
       <div>
         { onRefresh && (
