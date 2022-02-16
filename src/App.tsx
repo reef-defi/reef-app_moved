@@ -1,28 +1,40 @@
 import React from 'react';
-import { availableNetworks, hooks } from '@reef-defi/react-lib';
-import Sidebar from './common/Sidebar';
-import Nav from './common/Nav';
+import { hooks, graphql, appState } from '@reef-defi/react-lib';
 import ContentRouter from './pages/ContentRouter';
-import { useLoadSigners } from './hooks/useLoadSigners';
-import { useLoadTokens } from './hooks/useLoadTokens';
-import { useLoadPools } from './hooks/useLoadPools';
-
-const { useProvider } = hooks;
+import Nav from './common/Nav';
+import { useInitReefState } from './hooks/useInitReefState';
+import { useObservableState } from './hooks/useObservableState';
+import { currentNetwork } from './environment';
 
 const App = (): JSX.Element => {
-  const [provider, isProviderLoading, providerError] = useProvider(availableNetworks.mainnet.rpcUrl);
-  useLoadSigners(provider);
-  useLoadTokens();
-  useLoadPools();
+  const provider = useObservableState(appState.providerSubj);
+  const [signers, loading, error] = hooks.useLoadSigners('Reef App', provider);
+  useInitReefState(signers, currentNetwork);
+
+  const currentSigner = useObservableState(appState.selectedSigner$);
+  const apollo = useObservableState(graphql.apolloClientInstance$);
+  hooks.useBindEvmAddressAlert(currentSigner, provider);
 
   return (
-    <div className="App d-flex w-100 h-100">
-      {/* <Sidebar /> */}
-      <div className="w-100 main-content">
-        <Nav />
-        <ContentRouter />
+    <>
+      {apollo && (
+      <div className="App d-flex w-100 h-100">
+        <div className="w-100 main-content">
+          <Nav display={!loading && !error} />
+          {!loading && !error && (<ContentRouter />)}
+          {error && (
+          <div className="m-5">
+            <p>
+              {error.message}
+              {' '}
+              {error.url && <a href={error.url} target="_blank" rel="noreferrer">Click here to continue.</a>}
+            </p>
+          </div>
+          )}
+        </div>
       </div>
-    </div>
+      )}
+    </>
   );
 };
 
