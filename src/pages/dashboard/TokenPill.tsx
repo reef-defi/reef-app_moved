@@ -18,7 +18,7 @@ interface TokenPill {
 export const TokenPill = ({ token }: TokenPill): JSX.Element => {
   const balanceValue = utils.calculateBalanceValue(token);
   return (
-    <div key={token.address} className="col-12">
+    <div key={token.address} className="col-md-12 col-lg-6">
       <div className="token-balance-item radius-border d-flex d-flex-space-between d-flex-vert-center">
         <div className="token-balance-item_icon-text mr-1">
           <div className="token-balance-item_icon-text_w mr-1"><img src={token.iconUrl ? token.iconUrl : getIconUrl(token.address)} alt={token.name} /></div>
@@ -30,6 +30,7 @@ export const TokenPill = ({ token }: TokenPill): JSX.Element => {
         <div className="token-balance-item_balances title-font text-bold text-color-dark-accent">
           <div>
             {isDataSet(token.price) && toCurrencyFormat(token.price as number, { maximumFractionDigits: token.price < 1 ? 4 : 2 }) }
+            {!isDataSet(token.price) && <span>No pool data</span> }
             {/* TODO {!isDataSet(token.price) && token.price === DataProgress.LOADING && <Loading />} */}
             {/* TODO {!isDataSet(token.price) && token.price === DataProgress.NO_DATA && ' - '} */}
           </div>
