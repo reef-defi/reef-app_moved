@@ -1,5 +1,7 @@
 import React from 'react';
-import { Components, appState } from '@reef-defi/react-lib';
+import {
+  Components, appState, hooks, ReefSigner, Network,
+} from '@reef-defi/react-lib';
 import './Nav.css';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { saveSignerLocalPointer } from '../store/internalStore';
@@ -7,7 +9,6 @@ import { ReefLogo } from './Icons';
 import {
   CREATE_ERC20_TOKEN_URL, DASHBOARD_URL, POOLS_URL, SWAP_URL, TRANSFER_TOKEN,
 } from '../urls';
-import { useObservableState } from '../hooks/useObservableState';
 
 const menuItems = [
   { title: 'Dashboard', url: DASHBOARD_URL },
@@ -24,9 +25,9 @@ export interface Nav {
 const Nav = ({ display }: Nav): JSX.Element => {
   const history = useHistory();
   const { pathname } = useLocation();
-  const signer = useObservableState(appState.selectedSigner$);
-  const accounts = useObservableState(appState.signers$);
-  const network = useObservableState(appState.selectedNetworkSubj);
+  const signer: ReefSigner|undefined = hooks.useObservableState(appState.selectedSigner$);
+  const accounts: ReefSigner[]|undefined = hooks.useObservableState(appState.signers$);
+  const network: Network|undefined = hooks.useObservableState(appState.selectedNetworkSubj);
   const selectAccount = (index: number): void => {
     saveSignerLocalPointer(index);
     appState.selectAddressSubj.next(index != null ? accounts?.[index].address : undefined);
@@ -76,7 +77,6 @@ const Nav = ({ display }: Nav): JSX.Element => {
         </nav>
       )}
     </div>
-
   );
 };
 
