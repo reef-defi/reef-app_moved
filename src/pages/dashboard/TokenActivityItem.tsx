@@ -55,15 +55,16 @@ export const TokenActivityItem = ({
       <div className="activity-item_body radius-border d-flex d-flex-space-between d-flex-vert-center">
         <div className="token-balance-item_icon-text mr-1">
           <div>
-            <div className="title-font text-bold ">{type === TokenActivityType.RECEIVE ? 'Received' : 'Sent'}</div>
+            <div className="title-font text-bold">{type === TokenActivityType.RECEIVE ? 'Received' : 'Sent'}</div>
             <div className="">{(new Date(timestamp)).toLocaleDateString()}</div>
           </div>
         </div>
         <div className=" d-flex d-flex-vert-center">
           <div className="amount-text text-m title-font text-bold text-color-dark-accent mr-1 d-flex">
-            <span className="receive">+</span>
-            <span className="send">-</span>
-            {showBalance(token)}
+            <span className="activity-item__amount">
+              {type === TokenActivityType.RECEIVE ? '+' : '-'}
+              {showBalance(token)}
+            </span>
           </div>
           <div className="activity-item_icon-w"><img src={token.iconUrl} alt="" className="activity-item_icon" /></div>
         </div>
