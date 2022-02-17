@@ -38,7 +38,7 @@ const Nav = ({ display }: Nav): JSX.Element => {
     .map((item) => {
       let classes = 'navigation_menu-items_menu-item';
       if (pathname === item.url) {
-        classes += ' text-color-dark-accent';
+        classes += ' navigation_menu-items_menu-item--active';
       }
       return (
         <li key={item.title} className={classes}>
@@ -58,12 +58,14 @@ const Nav = ({ display }: Nav): JSX.Element => {
           </div>
         </button>
       </div>
+
       {display && (
         <nav className="d-flex justify-content-end d-flex-vert-center">
           <ul className="navigation_menu-items ">
             {menuItemsView}
           </ul>
           {accounts && !!accounts.length && network && (
+
           <Components.AccountSelector
             accounts={accounts}
             selectedSigner={signer}
