@@ -56,3 +56,11 @@
 .dashboard_actions_button-buy .svg-w svg path {
     fill: white;
 }
+
+.dashboard_balance-txt {
+    color: var(--primary);
+    font-weight: 900;
+    background: -webkit-linear-gradient(0deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
