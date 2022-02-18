@@ -158,3 +158,22 @@ svg.fill-white {
    .no-token-activity-pill-w .token-balance-item_sub-title{
         display: none;
    }
+
+
+.btn-select {
+    background-color: transparent !important;
+    border-radius: 13px !important;
+    padding: .375rem .75rem !important;
+    box-shadow: none !important;
+    border: solid 1px #bfbfbf !important;
+}
+
+.btn-select > * {
+    color: #212529 !important;
+    font-weight: 400 !important;
+    line-height: 1.5 !important;
+}
+
+.btn-select::after {
+    display: none;
+}
