@@ -7,7 +7,7 @@ import { ActionButtons } from './ActionButtons';
 import './Dashboard.css';
 import { TokenBalances } from './TokenBalances';
 import { TokenActivity } from './TokenActivity';
-// import { Nfts } from './Nfts';
+import { Nfts } from './Nfts';
 
 const {
   DataProgress, isDataSet,
@@ -40,7 +40,7 @@ const Dashboard = (): JSX.Element => {
       <div className="row">
         <div className="col-lg-8 col-sm-12 col-md-6">
           <TokenBalances tokens={signerTokenBalances as utils.DataWithProgress<TokenWithAmount[]>} />
-          {/* <Nfts tokens={signerNfts as utils.DataWithProgress<TokenWithAmount[]>} /> */}
+          {/* <Nfts /> */}
         </div>
         <div className="col-lg-4 col-sm-12 col-md-6"><TokenActivity address={selectedSigner?.evmAddress} /></div>
       </div>
