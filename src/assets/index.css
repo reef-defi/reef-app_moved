@@ -208,3 +208,11 @@ input.form-control:focus {
     box-shadow: 0 10px 15px -8px rgb(191 55 167 / 50%);
     transition: all 0.25s;
 }
+
+.list-group-item {
+    border-radius: 0 !important;
+}
+
+.list-group-flush > .list-group-item:hover {
+    border-radius: 13px !important;
+}
