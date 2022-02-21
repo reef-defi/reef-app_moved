@@ -7,6 +7,7 @@ import { Link, useHistory, useLocation } from 'react-router-dom';
 import { saveSignerLocalPointer } from '../store/internalStore';
 import { ReefLogo } from './Icons';
 import {
+  BONDS_URL,
   CREATE_ERC20_TOKEN_URL, DASHBOARD_URL, POOLS_URL, SWAP_URL, TRANSFER_TOKEN,
 } from '../urls';
 
@@ -16,6 +17,7 @@ const menuItems = [
   { title: 'Swap', url: SWAP_URL },
   { title: 'Pools', url: POOLS_URL },
   { title: 'Creator', url: CREATE_ERC20_TOKEN_URL },
+  { title: 'Bonds', url: BONDS_URL}
 ];
 
 export interface Nav {
