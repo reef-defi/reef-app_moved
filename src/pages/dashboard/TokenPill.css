@@ -3,6 +3,10 @@
 }
 
 .token-balance-item {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    align-items: center;
     background-color: #f8f7fc;
     padding: 1em;
     padding-right: 1.4em;
@@ -10,6 +14,7 @@
     border-radius: 15px;
     box-shadow: 0 3px 30px 0 rgba(0, 0, 0, 0.07);
     border: 1px solid rgba(0,0,0,.1);
+    overflow: hidden;
 }
 
 .token-balance-item__balance {
@@ -40,7 +45,6 @@
     margin-right: 1em;
     display: flex;
     align-items: center;
-
 }
 
 .token-balance-item_icon-text img {
@@ -66,4 +70,28 @@
 .tokens-container > * {
     width: 100%;
     padding: 0;
+}
+
+@media only screen and (max-width: 1300px) {
+    .token-balance-item,
+    .token-balance-item_icon-text {
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        margin: 0;
+    }
+
+    .token-balance-item .mr-1 {
+        margin: 0;
+    }
+
+    .token-balance-item_icon-text_w {
+        margin: 8px 0 12px 0 !important;
+    }
+
+    .token-balance-item__balance {
+        margin: 8px 0;
+    }
 }
