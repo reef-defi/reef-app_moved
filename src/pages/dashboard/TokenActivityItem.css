@@ -78,3 +78,21 @@
     color: #b2b0c8;
 }
 
+.activity-item__amount {
+    color: var(--primary);
+    font-weight: 900;
+    background: -webkit-linear-gradient(0deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1.3;
+    /* font-size: 1.25rem; */
+    margin-right: 5px;
+}
+
+.send-activity .activity-item__amount {
+    color: var(--text-light);
+    background: transparent;
+    -webkit-background-clip: unset;
+    -webkit-text-fill-color: unset;
+}
+

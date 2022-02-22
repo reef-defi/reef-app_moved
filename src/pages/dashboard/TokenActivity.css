@@ -1,0 +1,22 @@
+.token-activity {
+  margin-left: 20px;
+}
+
+.token-activity .card {
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 3px 30px 0 rgba(0, 0, 0, 0.07);
+  width: 100%;
+  border: 1px solid rgba(0,0,0,.1);
+}
+
+.token-activity__title {
+  padding-left: 0;
+}
+
+.no-token-activity {
+  padding: 1.75rem 1rem;
+  text-align: center;
+  width: 100%;
+  color: var(--text-light);
+}

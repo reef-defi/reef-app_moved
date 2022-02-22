@@ -1,18 +1,18 @@
 import React from 'react';
-import { hooks, graphql, appState } from '@reef-defi/react-lib';
+import {
+  appState, graphql, hooks, ReefSigner,
+} from '@reef-defi/react-lib';
+import { Provider } from '@reef-defi/evm-provider';
 import ContentRouter from './pages/ContentRouter';
 import Nav from './common/Nav';
-import { useInitReefState } from './hooks/useInitReefState';
-import { useObservableState } from './hooks/useObservableState';
-import { currentNetwork } from './environment';
+import { innitialNetwork } from './environment';
 
 const App = (): JSX.Element => {
-  const provider = useObservableState(appState.providerSubj);
+  const provider: Provider|undefined = hooks.useObservableState(appState.providerSubj);
   const [signers, loading, error] = hooks.useLoadSigners('Reef App', provider);
-  useInitReefState(signers, currentNetwork);
-
-  const currentSigner = useObservableState(appState.selectedSigner$);
-  const apollo = useObservableState(graphql.apolloClientInstance$);
+  hooks.useInitReefState(signers, innitialNetwork);
+  const currentSigner: ReefSigner|undefined = hooks.useObservableState(appState.selectedSigner$);
+  const apollo = hooks.useObservableState(graphql.apolloClientInstance$);
   hooks.useBindEvmAddressAlert(currentSigner, provider);
 
   return (
