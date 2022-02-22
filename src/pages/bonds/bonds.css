@@ -1,0 +1,173 @@
+.bond-card {
+  --text: #19233c;
+  --text-light: #898e9c;
+  --primary-text: #a53187;
+  --primary: #a93185;
+  --secondary: #5531a9;
+  --gradient: linear-gradient(to right, var(--primary), var(--secondary));
+  --danger: #d93636;
+  --success: #47cc8a;
+  --border-color: #EAEDF3;
+  --border-color-lighter: #eff2f6;
+  --border-color-darker: #D8DCE6;
+  --shadow: 0 3px 30px 0 rgba(0, 0, 0, 0.07);
+
+  width: 100%;
+  position: relative;
+}
+
+.bond-card__wrapper {
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 3px 30px 0 rgba(0, 0, 0, 0.07);
+  padding: 35px 40px;
+  width: 100%;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  text-align: center;
+}
+
+.bond-card::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  width: calc(100% - 26px);
+  bottom: -6px;
+  height: 20px;
+  left: 13px;
+  background-color: white;
+  border-radius: 0 0 10px 10px;
+}
+
+.bond-card__token-image {
+  width: 60px;
+}
+
+.bond-card__title {
+  margin-top: 18px;
+  font-size: 1.25rem;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.bond-card__subtitle {
+  margin-top: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.bond-card__description {
+  margin-top: 15px;
+  font-size: 0.938rem;
+  font-weight: 600;
+  color: var(--primary);
+  background: -webkit-linear-gradient(0deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.bond-card__stats {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 30px;
+  margin-top: 20px;
+}
+
+.bond-card__stat {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  border-radius: 10px;
+  position: relative;
+  border: dashed 1px #b9bfcf;
+  padding: 25px 15px;
+}
+
+.bond-card__stat-label {
+  position: absolute;
+  top: -9px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  background-color: white;
+  font-weight: 600;
+  color: var(--text-light);
+  padding: 0 5px;
+}
+
+.bond-card__stat-value {
+  font-size: 30px;
+  line-height: 1;
+  font-weight: 900;
+  max-width: 100%;
+  overflow: hidden;
+  word-break: break-all;
+}
+
+.bond-card__stat:first-child .bond-card__stat-value {
+  color: var(--primary);
+  background: -webkit-linear-gradient(0deg, var(--primary-text), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.bond-card__stat:last-child .bond-card__stat-value {
+  color: #26b686;
+}
+
+.bond-card__info {
+  width: 100%;
+  margin-top: 35px;
+}
+
+.bond-card__info-item {
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  font-size: 0.875rem;
+  line-height: 1.1;
+}
+
+.bond-card__info-item:nth-child(odd) {
+  background-color: #f5f7fa;
+}
+
+.bond-card__info-label {
+  font-weight: 500;
+  color: var(--text);
+}
+
+.bond-card__info-value {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.bond-card__bottom {
+  margin-top: 25px;
+  width: 100%;
+}
+
+.bond-card__bottom > * + * {
+  margin-top: 13px;
+}
+
+.bond-card__expired {
+  width: 100%;
+  border: dashed 1px #b9bfcf;
+  border-radius: 10px;
+  color: var(--text-light);
+  font-weight: 600;
+  font-size: 0.938rem;
+  line-height: 1.3;
+  padding: 13px;
+}
