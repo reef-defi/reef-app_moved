@@ -14,15 +14,30 @@
     width: 5em;
     height: 5em;
     color: white;
+    transition: all 0.1s;
+}
+
+.dashboard_actions_button:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+}
+
+.dashboard_actions_button:active {
+    transform: scale(0.95);
+    filter: brightness(1.1);
 }
 
 .dashboard_actions_button_text {
-    font-size: 0.8em;
+    font-size: 0.813em;
+    font-weight: 600;
+    margin-top: 4px;
+    display: block;
 }
 
 .dashboard_actions_button-swap {
     background-color: #38a777;
     background: linear-gradient(90deg, rgba(60, 199, 139, 1) 0%, rgb(73, 179, 128) 100%);
+    box-shadow: 0 10px 15px -8px rgb(56 167 119 / 50%);
 }
 
 .dashboard_actions_button-swap .svg-w {
@@ -34,6 +49,7 @@
 .dashboard_actions_button-send {
     background-color: #00a6f5;
     background: linear-gradient(90deg, rgb(0, 166, 245) 0%, rgb(2, 153, 224) 100%);
+    box-shadow: 0 10px 15px -8px rgb(0 170 255 / 50%);
 }
 
 .dashboard_actions_button-send .svg-w {
@@ -44,7 +60,8 @@
 
 .dashboard_actions_button-buy {
     background-color: #bf37a7;
-    background: linear-gradient(90deg, rgb(191, 55, 167) 0%, rgb(173, 51, 153) 100%);
+    background: linear-gradient(90deg, rgb(191, 55, 167) 0%, rgb(149, 51, 173) 100%);
+    box-shadow: 0 10px 15px -8px rgb(191 55 167 / 50%);
 }
 
 .dashboard_actions_button-buy .svg-w {
@@ -55,4 +72,12 @@
 
 .dashboard_actions_button-buy .svg-w svg path {
     fill: white;
+}
+
+.dashboard_balance-txt {
+    color: var(--primary);
+    font-weight: 900;
+    background: -webkit-linear-gradient(0deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
