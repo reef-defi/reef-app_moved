@@ -9,16 +9,27 @@
   align-items: center;
   list-style: none;
   font-size: small;
+  padding-right: 40px;
 }
-.navigation_menu-items_menu-item{
-  margin-right: 2.5em;
+.navigation_menu-items_menu-item {
   color: #8d8995;
   font-weight: 700;
 }
 
-.navigation_menu-items_menu-item_link{
-  color: inherit;
+.navigation_menu-items_menu-item + .navigation_menu-items_menu-item {
+  margin-left: 30px;
+}
+
+.navigation_menu-items_menu-item_link {
   text-decoration: none;
+  font-size: 0.938rem;
+  font-weight: 600;
+  color: var(--text-light);
+}
+
+.navigation_menu-items_menu-item_link:hover,
+.navigation_menu-items_menu-item--active .navigation_menu-items_menu-item_link {
+  color: var(--primary);
 }
 
 .nav-account {
@@ -30,6 +41,40 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+  border-radius: 99px;
+}
+
+.nav-account > div:first-child {
+  margin: 0 !important;
+  padding: 0 11px 0 19px;
+  font-size: 1rem !important;
+  line-height: 1.1;
+  font-weight: 900;
+  color: #a93185;
+  background: linear-gradient(to right, #a93185, #5531a9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.nav-account > div:first-child::before {
+  content: "";
+  height: 19px;
+  min-height: 19px;
+  min-width: 19px;
+  width: 19px;
+  display: block;
+  background-image: url('https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png');
+  background-size: contain;
+  margin: 0 8px 0 -7px;
+}
+
+.nav-account > .btn {
+  background: var(--gradient);
+  font-size: 0.938rem;
 }
 
 .logo-btn {
@@ -49,3 +94,4 @@
   white-space: nowrap;
   overflow: hidden;
 }
+
