@@ -105,7 +105,7 @@ svg.fill-white {
     margin-right: 1em;
 }
 
-.pl-1rem{
+.pl-1rem {
     padding-left: 1rem;
 }
 
@@ -142,23 +142,26 @@ svg.fill-white {
     background-color: #e6ddf0;
 }
 
-.text-center{
+.text-center {
     text-align: center;
 }
 
 /* TODO remove after real fix*/
-   .modal-footer.bg-white.border-0.border-rad{
+.modal-footer.bg-white.border-0.border-rad {
     background: none !important;
-   }
+}
 
-   .no-token-activity-pill-w .token-balance-item_balances{
-        display: none;
-   }
+.no-token-activity-pill-w .token-balance-item_balances {
+    display: none;
+}
 
-   .no-token-activity-pill-w .token-balance-item_sub-title{
-        display: none;
-   }
+.no-token-activity-pill-w .token-balance-item_sub-title {
+    display: none;
+}
 
+.pools-list .list-group-item {
+    padding: 2em;
+}
 
 .btn-select {
     background-color: transparent !important;
@@ -178,6 +181,10 @@ svg.fill-white {
     display: none;
 }
 
+.pools-list .list-group-item {
+    padding: 2em;
+}
+
 input.form-control {
     width: 100%;
     font-size: 15px;
@@ -189,7 +196,7 @@ input.form-control {
     border-radius: 10px;
     padding: 15px;
     transition: all 0.15s;
-} 
+}
 
 input.form-control::placeholder {
     font-weight: 500;
