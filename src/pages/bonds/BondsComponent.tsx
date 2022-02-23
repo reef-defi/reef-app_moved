@@ -215,7 +215,7 @@ export const BondsComponent = ({
 
             <div className='bond-card__stats'>
               <div className='bond-card__stat'>
-                <div className='bond-card__stat-label'>Invested</div>
+                <div className='bond-card__stat-label'>Staked</div>
                 <div className='bond-card__stat-value'>{lockedAmount}</div>
               </div>
 
@@ -236,8 +236,13 @@ export const BondsComponent = ({
               : ""}
 
               <div className='bond-card__info-item'>
-                <div className='bond-card__info-label'>APY</div>
-                <div className='bond-card__info-value'>{bond.apy}%</div>
+                <div className='bond-card__info-label'>Current daily rewards</div>
+                <div className='bond-card__info-value'>...</div>
+              </div>
+
+              <div className='bond-card__info-item'>
+                <div className='bond-card__info-label'>Estimated yearly rewards</div>
+                <div className='bond-card__info-value'>...</div>
               </div>
 
               <div className='bond-card__info-item'>
@@ -251,43 +256,30 @@ export const BondsComponent = ({
               </div>
 
               <div className='bond-card__info-item'>
-                <div className='bond-card__info-label'>
-                  {bondTimes?.opportunity.ended ? "Investment opportunity ended on" : "Investment ends on"}
-                </div>
-                <div className='bond-card__info-value'>{bondTimes?.opportunity.opportunityDate}</div>
-              </div>
-
-              <div className='bond-card__info-item'>
                 <div className='bond-card__info-label'>Funds unlock on</div>
                 <div className='bond-card__info-value'>{bondTimes?.ending.ended ? "Bond funds are unlocked!" : bondTimes?.ending.endDate}</div>
               </div>
             </div>
 
-            <div className='bond-card__bottom'>
-               {
-                 !bondTimes?.opportunity.ended ? <>
-                  <NumberInput
-                    className="form-control form-control-lg border-rad"
-                    value={bondAmount}
-                    min={1}
-                    onChange={setBondAmount}
-                    disableDecimals
-                    placeholder="Enter amount to invest"
-                  />
-                  <OpenModalButton
-                    disabled={!bondAmount || bondTimes?.opportunity.ended || bondTimes?.ending.ended}
-                    id={'bondConfirmation' + bond.id}>
-                    {'Continue'}
-                  </OpenModalButton>
-                 </> :
-                 <>
-                  <div className='bond-card__expired'>
-                    {disabledText}
-                  </div>
-                 </>
-               }
+            
+            {
+              !bondTimes?.opportunity.ended ? <div className='bond-card__bottom'>
+              <NumberInput
+                className="form-control form-control-lg border-rad"
+                value={bondAmount}
+                min={1}
+                onChange={setBondAmount}
+                disableDecimals
+                placeholder="Enter amount to invest"
+              />
+              <OpenModalButton
+                disabled={!bondAmount || bondTimes?.opportunity.ended || bondTimes?.ending.ended}
+                id={'bondConfirmation' + bond.id}>
+                {'Continue'}
+              </OpenModalButton>
+              </div> : ""
+            }
               
-            </div>
           </div>
         </div>
 
