@@ -5,7 +5,7 @@ import { IBond } from './utils/bonds';
 import { BigNumber, Contract, Signer } from 'ethers';
 import { secondsToMilliseconds, format, compareAsc, intervalToDuration, formatDistance } from 'date-fns';
 import { ethers } from 'ethers';
-import "./bonds.css"
+import './bonds.css';
 
 export const getReefBondContract = (bond: IBond, signer: Signer): Contract => new Contract(bond.bondContractAddress, BondData.abi, signer);
 
@@ -97,7 +97,7 @@ async function checkIfBondStakingOpen(contract: Contract, bondTimes?: IBondTimes
   return '';
 }
 
-async function bondFunds(erc20Address: string, contract: Contract, signer: ReefSigner, amount: string, status: (status:{message: string})=>void) {
+async function bondFunds(erc20Address: string, contract: Contract, signer: ReefSigner, amount: string, status: (status: { message: string }) => void) {
   const isNotValid = await checkIfBondStakingOpen(contract);
   if (isNotValid) return;
   const bondAmount = utils.transformAmount(18, amount);
@@ -105,15 +105,15 @@ async function bondFunds(erc20Address: string, contract: Contract, signer: ReefS
   console.log(bondAmount, 'amount');
   const erc20 = await rpc.getREEF20Contract(erc20Address, signer.signer);
   try {
-    status({message: 'Approving contract'});
+    status({ message: 'Approving contract' });
     const tx = await erc20?.contract.approve(contract.address, bondAmount);
     const receipt = await tx.wait();
-    status({message: 'Staking'});
+    status({ message: 'Staking' });
     const bonded = await contract.stake(bondAmount);
     const bondedR = await bonded.wait();
   } catch (e) {
     console.log('Something went wrong', e);
-    status({message: ''});
+    status({ message: '' });
   }
 }
 
@@ -153,11 +153,11 @@ async function calcuateBondTimes(contract: Contract | undefined): Promise<IBondT
   const ends = (await contract?.releaseTime())?.toNumber();
   let opportunity = ends;
   try {
-     opportunity = (await contract?.windowOfOpportunity())?.toNumber();
-  }catch (e){
+    opportunity = (await contract?.windowOfOpportunity())?.toNumber();
+  } catch (e) {
   }
   const lockTime = formatDistance(new Date(secondsToMilliseconds(ends)), new Date(secondsToMilliseconds(starts)));
-  const availableLockTime = opportunity===ends ? formatDistance(new Date(secondsToMilliseconds(ends)), new Date()) : lockTime;
+  const availableLockTime = opportunity === ends ? formatDistance(new Date(secondsToMilliseconds(ends)), new Date()) : lockTime;
   const totalSupply = await contract?.totalSupply();
   const timeLeft = formatTimeLeftObj(intervalToDuration({
     start: new Date(),
@@ -198,7 +198,7 @@ export const BondsComponent = ({
 
   async function updateLockedAmt(contract: Contract) {
     let lockedAmount = (await contract.balanceOf(account?.evmAddress)).toString();
-    lockedAmount = ethers.utils.formatEther(lockedAmount)
+    lockedAmount = ethers.utils.formatEther(lockedAmount);
     setLockedAmount(lockedAmount);
   }
 
@@ -230,9 +230,9 @@ export const BondsComponent = ({
   return <>
     {!bondTimes?.lockTime || loadingValues ?
 
-        <ComponentCenter>
-          <LoadingWithText text='Loading bond'/>
-        </ComponentCenter> :
+      <ComponentCenter>
+        <LoadingWithText text='Loading bond'/>
+      </ComponentCenter> :
 
       <ComponentCenter>
         <div className='bond-card'>
@@ -262,7 +262,7 @@ export const BondsComponent = ({
                     <div className='bond-card__info-value'>{bondTimes?.opportunity.timeLeft}</div>
                   </div>
                 </>
-              : ""}
+                : ''}
 
               {/*<div className='bond-card__info-item'>
                 <div className='bond-card__info-label'>Current daily rewards</div>
@@ -283,46 +283,50 @@ export const BondsComponent = ({
               }
 
               <div className='bond-card__info-item'>
-                <div className='bond-card__info-label'>{bondTimes?.starting.started ? 'Bond started on' : 'Bond starts on'}</div>
+                <div
+                  className='bond-card__info-label'>{bondTimes?.starting.started ? 'Bond started on' : 'Bond starts on'}</div>
                 <div className='bond-card__info-value'>{bondTimes?.starting?.startDate}</div>
               </div>
 
               <div className='bond-card__info-item'>
                 <div className='bond-card__info-label'>Funds unlock on</div>
-                <div className='bond-card__info-value'>{bondTimes?.ending.ended ? "Bond funds are unlocked!" : bondTimes?.ending.endDate}</div>
+                <div
+                  className='bond-card__info-value'>{bondTimes?.ending.ended ? 'Bond funds are unlocked!' : bondTimes?.ending.endDate}</div>
               </div>
             </div>
 
 
             {
               !stakingClosedText && !loadingText ? <div className='bond-card__bottom'>
-              <NumberInput
-                className="form-control form-control-lg border-rad"
-                value={stakeAmount}
-                min={1}
-                onChange={setBondAmount}
-                disableDecimals
-                placeholder="Enter amount to bond"
-              />
-                  {
-                    bondTimes?.ending.ended && lockedAmount ?
-                      <Button
-                        disabled={!earned}
-                        onClick={() => exit(contract!)}>
-                        Claim rewards
-                      </Button> :
-                      <OpenModalButton
-                        disabled={!stakeAmount || bondTimes?.opportunity.ended || bondTimes?.ending.ended}
-                        id={'bondConfirmation' + bond.id}>
-                        {'Continue'}
-                      </OpenModalButton>
-                  }
-              </div> :
-                  <>{loadingText &&
-                    <Components.Loading.LoadingWithText text={loadingText}/>
-                  }</>
+                  <NumberInput
+                    className="form-control form-control-lg border-rad"
+                    value={stakeAmount}
+                    min={1}
+                    onChange={setBondAmount}
+                    disableDecimals
+                    placeholder="Enter amount to bond"
+                  />
+                  <OpenModalButton
+                    disabled={!stakeAmount || bondTimes?.opportunity.ended || bondTimes?.ending.ended}
+                    id={'bondConfirmation' + bond.id}>
+                    {'Continue'}
+                  </OpenModalButton>
+                </div> :
+                <>{loadingText &&
+                <Components.Loading.LoadingWithText text={loadingText}/>
+                }</>
             }
             <div>{stakingClosedText}</div>
+            <div className='mt-2'>
+              {
+                !loadingText && bondTimes.ending.ended &&
+                <Button
+                  disabled={!(+lockedAmount > 0)}
+                  onClick={() => exit(contract!)}>
+                  Claim rewards
+                </Button>
+              }
+            </div>
           </div>
         </div>
 
@@ -331,7 +335,7 @@ export const BondsComponent = ({
           title="Confirm Staking"
           confirmBtnLabel="Stake"
           confirmFun={async () => {
-            await bondFunds(bond.farmTokenAddress, contract!, account!, stakeAmount, ({message})=>setLoadingText(message));
+            await bondFunds(bond.farmTokenAddress, contract!, account!, stakeAmount, ({ message }) => setLoadingText(message));
             await updateLockedAmt(contract!);
             setLoadingText('');
           }}
