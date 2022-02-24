@@ -197,12 +197,14 @@ export const BondsComponent = ({
   const [loadingValues, setLoadingValues] = useState(false);
 
   async function updateLockedAmt(contract: Contract) {
-    const lockedAmount = (await contract.balanceOf(account?.evmAddress)).toString();
+    let lockedAmount = (await contract.balanceOf(account?.evmAddress)).toString();
+    lockedAmount = ethers.utils.formatEther(lockedAmount)
     setLockedAmount(lockedAmount);
   }
 
   async function updateEarnedAmt(contract: Contract) {
-    const earned = (await contract.earned(account?.evmAddress)).toString();
+    let earned = (await contract.earned(account?.evmAddress)).toString();
+    earned = ethers.utils.formatEther(earned);
     setEarned(earned);
   }
 
@@ -272,10 +274,13 @@ export const BondsComponent = ({
                 <div className='bond-card__info-value'>...</div>
               </div>*/}
 
-              <div className='bond-card__info-item'>
-                <div className='bond-card__info-label'>Lock duration</div>
-                <div className='bond-card__info-value'>{bondTimes?.availableLockTime}</div>
-              </div>
+              {
+                !bondTimes.ending.ended &&
+                <div className='bond-card__info-item'>
+                  <div className='bond-card__info-label'>Lock duration</div>
+                  <div className='bond-card__info-value'>{bondTimes?.availableLockTime}</div>
+                </div>
+              }
 
               <div className='bond-card__info-item'>
                 <div className='bond-card__info-label'>{bondTimes?.starting.started ? 'Bond started on' : 'Bond starts on'}</div>
@@ -300,8 +305,10 @@ export const BondsComponent = ({
                 placeholder="Enter amount to bond"
               />
                   {
-                    bondTimes?.ending.ended && lockedAmount && earned ?
-                      <Button onClick={() => exit(contract)}>
+                    bondTimes?.ending.ended && lockedAmount ?
+                      <Button
+                        disabled={!earned}
+                        onClick={() => exit(contract)}>
                         Claim rewards
                       </Button> :
                       <OpenModalButton
