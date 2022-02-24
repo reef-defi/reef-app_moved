@@ -99,24 +99,19 @@ async function checkIfBondStakingOpen(contract: Contract, bondTimes?: IBondTimes
 
 async function bondFunds(erc20Address: string, contract: Contract, signer: ReefSigner, amount: string, status: (status:{message: string})=>void) {
   const isNotValid = await checkIfBondStakingOpen(contract);
-  console.log("valid=",isNotValid);
   if (isNotValid) return;
   const bondAmount = BigNumber.from(amount);
-  console.log('Bond', bondAmount);
   const erc20 = await rpc.getREEF20Contract(erc20Address, signer.signer);
-  // console.log(erc20, 'contract');
   try {
     status({message: 'Approving contract'});
     const tx = await erc20?.contract.approve(contract.address, bondAmount);
     const receipt = await tx.wait();
-    console.log('Approved', receipt);
     status({message: 'Staking'});
     const bonded = await contract.stake(bondAmount);
     const bondedR = await bonded.wait();
-    console.log(bondedR, 'Bonded');
   } catch (e) {
     console.log('Something went wrong', e);
-    status({message: ''})
+    status({message: ''});
   }
 }
 
@@ -199,6 +194,7 @@ export const BondsComponent = ({
   const [earned, setEarned] = useState('');
   const [lockedAmount, setLockedAmount] = useState('');
   const [loadingText, setLoadingText] = useState('');
+  const [loadingValues, setLoadingValues] = useState(false);
 
   async function updateLockedAmt(contract: Contract) {
     const lockedAmount = (await contract.balanceOf(account?.evmAddress)).toString();
@@ -219,19 +215,21 @@ export const BondsComponent = ({
     const contract = getReefBondContract(bond!, account!.signer);
     setContract(contract);
     (async function setVars() {
+      setLoadingValues(true);
       const bondTimes = await calcuateBondTimes(contract);
       await updateBondStakingClosedText(contract, bondTimes);
       await updateEarnedAmt(contract);
       await updateLockedAmt(contract);
       setBondTimes(bondTimes as IBondTimes);
+      setLoadingValues(false)
     })();
-  }, []);
+  }, [account]);
 
   return <>
-    {!bondTimes?.lockTime ?
+    {!bondTimes?.lockTime || loadingValues ?
 
         <ComponentCenter>
-          <LoadingWithText text='Loading'/>
+          <LoadingWithText text='Loading bond'/>
         </ComponentCenter> :
 
       <ComponentCenter>
