@@ -309,7 +309,7 @@ export const BondsComponent = ({
                     placeholder="Enter amount to bond"
                   />
                   <OpenModalButton
-                    disabled={!stakeAmount || bondTimes?.opportunity.ended || bondTimes?.ending.ended || stakeAmount < account.balance.toString()}
+                    disabled={!stakeAmount || bondTimes?.opportunity.ended || bondTimes?.ending.ended || +stakeAmount > +ethers.utils.formatEther(account.balance)}
                     id={'bondConfirmation' + bond.id}>
                     {'Continue'}
                   </OpenModalButton>
