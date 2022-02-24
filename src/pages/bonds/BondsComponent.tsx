@@ -238,7 +238,7 @@ export const BondsComponent = ({
             <img className='bond-card__token-image' src="/img/reef.png" alt="Reef"/>
             <div className='bond-card__title'>{bond.bondName}</div>
             <div className='bond-card__subtitle'>{bond.bondDescription}</div>
-            <div className='bond-card__description'>Stake {bond.stake} to earn {bond.farm}</div>
+            <div className='bond-card__description'>Stake {bond.stake} to earn {bond.farm} validator rewards</div>
 
             <div className='bond-card__stats'>
               <div className='bond-card__stat'>
@@ -301,7 +301,7 @@ export const BondsComponent = ({
               />
                   {
                     bondTimes?.ending.ended && lockedAmount && earned ?
-                      <Button onClick={() => exit(contract)}>
+                      <Button onClick={() => exit(contract!)}>
                         Claim rewards
                       </Button> :
                       <OpenModalButton
