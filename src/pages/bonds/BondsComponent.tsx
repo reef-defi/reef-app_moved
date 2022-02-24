@@ -100,7 +100,9 @@ async function checkIfBondStakingOpen(contract: Contract, bondTimes?: IBondTimes
 async function bondFunds(erc20Address: string, contract: Contract, signer: ReefSigner, amount: string, status: (status:{message: string})=>void) {
   const isNotValid = await checkIfBondStakingOpen(contract);
   if (isNotValid) return;
-  const bondAmount = BigNumber.from(amount);
+  const bondAmount = utils.transformAmount(18, amount);
+  // const bondAmount = BigNumber.from(amount);
+  console.log(bondAmount, 'amount');
   const erc20 = await rpc.getREEF20Contract(erc20Address, signer.signer);
   try {
     status({message: 'Approving contract'});
@@ -141,7 +143,7 @@ function formatTimeLeftObj(obj: Duration) {
     })
     .filter(val => !!val)
     .join(', ');
-  return `${str} left`;
+  return `${str}`;
 }
 
 async function calcuateBondTimes(contract: Contract | undefined): Promise<IBondTimes> {
@@ -297,11 +299,17 @@ export const BondsComponent = ({
                 disableDecimals
                 placeholder="Enter amount to bond"
               />
-              <OpenModalButton
-                disabled={!stakeAmount || bondTimes?.opportunity.ended || bondTimes?.ending.ended}
-                id={'bondConfirmation' + bond.id}>
-                {'Continue'}
-              </OpenModalButton>
+                  {
+                    bondTimes?.ending.ended && lockedAmount && earned ?
+                      <Button onClick={() => exit(contract)}>
+                        Claim rewards
+                      </Button> :
+                      <OpenModalButton
+                        disabled={!stakeAmount || bondTimes?.opportunity.ended || bondTimes?.ending.ended}
+                        id={'bondConfirmation' + bond.id}>
+                        {'Continue'}
+                      </OpenModalButton>
+                  }
               </div> :
                   <>{loadingText &&
                     <Components.Loading.LoadingWithText text={loadingText}/>
