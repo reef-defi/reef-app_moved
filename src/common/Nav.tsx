@@ -16,8 +16,8 @@ const menuItems = [
   { title: 'Send', url: TRANSFER_TOKEN },
   { title: 'Swap', url: SWAP_URL },
   { title: 'Pools', url: POOLS_URL },
-  { title: 'Creator', url: CREATE_ERC20_TOKEN_URL },
-  { title: 'Bonds', url: BONDS_URL}
+  { title: 'Bond', url: BONDS_URL},
+  { title: 'Creator', url: CREATE_ERC20_TOKEN_URL }
 ];
 
 export interface Nav {
@@ -33,8 +33,6 @@ const Nav = ({ display }: Nav): JSX.Element => {
   const selectAccount = (index: number): void => {
     saveSignerLocalPointer(index);
     appState.selectAddressSubj.next(index != null ? accounts?.[index].address : undefined);
-    // dispatch(selectSigner(index));
-    // dispatch(reloadTokens());
   };
 
   const menuItemsView = menuItems

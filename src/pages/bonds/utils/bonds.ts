@@ -19,7 +19,8 @@ export const bonds: IBond[] = [{
   'id': 1,
   'bondName': 'Reef for All',
   'bondDescription': 'An initiation',
-  'bondContractAddress': '0x6b7F37fcEe320a089cdde3eB61cEc89f6A6591eD',
+  'bondContractAddress': '0xB4537c819D7aA60029641859E6029617D5ad0c10',
+  // 'bondContractAddress': '0x6b7F37fcEe320a089cdde3eB61cEc89f6A6591eD',
   'stake': 'REEF',
   'stakeTokenAddress': '0x0000000000000000000000000000000001000000',
   'stakeTokenLogo': 'https://stake.reef.finance/assets/images/reef/reef-token.svg',
@@ -31,23 +32,8 @@ export const bonds: IBond[] = [{
   'entryStartTime': '',
   'apy': '32'
   },
-  {
-    'id': 2,
-    'bondName': 'Reef / rUSD',
-    'bondDescription': 'Reef for Stablecoins',
-    'bondContractAddress': '0x1508355C637C595A505Ac29D13Aa5dff2aA9b855',
-    'stake': 'REEF',
-    'stakeTokenAddress': '0x0000000000000000000000000000000001000000',
-    'stakeTokenLogo': 'https://stake.reef.finance/assets/images/reef/reef-token.svg',
-    'stakeDecimals': 0,
-    'farm': 'rUSD',
-    'farmTokenAddress': '0x0000000000000000000000000000000001000001',
-    'farmTokenLogo': 'https://stake.reef.finance/assets/images/reef/reef-token.svg',
-    'farmDecimals': 0,
-    'entryStartTime': '',
-    'apy': '32'
-  }
 ];
+/*
 
 export const bond =
   {
@@ -66,3 +52,4 @@ export const bond =
     'entryStartTime': '',
     'apy': '32'
   };
+*/

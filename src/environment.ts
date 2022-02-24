@@ -1,6 +1,6 @@
 import { availableNetworks, Network } from '@reef-defi/react-lib';
 
-export const innitialNetwork = availableNetworks.mainnet;
+export const innitialNetwork = availableNetworks.testnet;
 /* || availableNetworks.testnet || {
   name: 'testnet',
   rpcUrl: 'ws://localhost:9944',
