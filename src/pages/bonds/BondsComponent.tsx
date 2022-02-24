@@ -117,12 +117,14 @@ async function bondFunds(erc20Address: string, contract: Contract, signer: ReefS
   }
 }
 
-async function exit(contract: Contract) {
+async function exit(contract: Contract, status: (status: { message: string}) => void) {
   try {
+    status({message: 'Claiming funds'})
     const tx = await contract.exit();
     const receipt = await tx.wait();
     console.log(receipt);
   } catch (e) {
+    status({ message: ''})
     console.log('Something went wrong', e);
   }
 }
@@ -307,7 +309,7 @@ export const BondsComponent = ({
                     placeholder="Enter amount to bond"
                   />
                   <OpenModalButton
-                    disabled={!stakeAmount || bondTimes?.opportunity.ended || bondTimes?.ending.ended}
+                    disabled={!stakeAmount || bondTimes?.opportunity.ended || bondTimes?.ending.ended || stakeAmount < account.balance.toString()}
                     id={'bondConfirmation' + bond.id}>
                     {'Continue'}
                   </OpenModalButton>
@@ -322,7 +324,7 @@ export const BondsComponent = ({
                 !loadingText && bondTimes.ending.ended &&
                 <Button
                   disabled={!(+lockedAmount > 0)}
-                  onClick={() => exit(contract!)}>
+                  onClick={() => exit(contract!, ({ message }) => setLoadingText(message))}>
                   Claim rewards
                 </Button>
               }
