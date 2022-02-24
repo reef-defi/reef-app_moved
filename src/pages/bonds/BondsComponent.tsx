@@ -150,10 +150,10 @@ function formatTimeLeftObj(obj: Duration) {
 }
 
 async function calcuateBondTimes(contract: Contract | undefined): Promise<IBondTimes> {
-  const stSec = (new Date('2022-2-22')).getTime() / 1000;
-  const endSec = (new Date('2022-3-25 8:33')).getTime() / 1000;
-  const starts = stSec// (await contract?.startTime())?.toNumber();
-  const ends = endSec// (await contract?.releaseTime())?.toNumber();
+  // const starts = (new Date('2022-2-22')).getTime() / 1000;
+  // const ends = (new Date('2022-3-25 8:33')).getTime() / 1000;
+  const starts = (await contract?.startTime())?.toNumber();
+  const ends = (await contract?.releaseTime())?.toNumber();
   let opportunity = ends;
   try {
      opportunity = (await contract?.windowOfOpportunity())?.toNumber();
