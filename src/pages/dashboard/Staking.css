@@ -6,8 +6,14 @@
 .staking__bonds {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-gap: 24px;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 20px;
+}
+
+@media only screen and (max-width: 1900px) {
+  .staking__bonds {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .staking__bonds > .mx-auto {
@@ -30,6 +36,7 @@
   .staking__bonds .bond-card__info-value {
     text-align: left;
     margin-top: 5px;
+    margin-left: 0;
   }
 }
 

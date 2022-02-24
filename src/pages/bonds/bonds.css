@@ -146,12 +146,14 @@
   font-weight: 500;
   color: var(--text);
   text-align: left;
+  white-space: nowrap;
 }
 
 .bond-card__info-value {
   font-weight: 600;
   color: var(--text);
   text-align: right;
+  margin-left: 10px;
 }
 
 .bond-card__bottom {
