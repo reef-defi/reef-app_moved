@@ -16,7 +16,6 @@ export const Bonds = (): JSX.Element => {
           <BondsComponent
             key={bond.id}
             account={selectedSigner}
-            network={{ ...network }}
             bond={bond}
           />)
 

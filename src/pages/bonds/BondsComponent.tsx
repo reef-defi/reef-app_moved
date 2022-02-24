@@ -157,7 +157,6 @@ async function calcuateBondTimes(contract: Contract | undefined): Promise<IBondT
   const lockTime = formatDistance(new Date(secondsToMilliseconds(ends)), new Date(secondsToMilliseconds(starts)));
   const availableLockTime = opportunity===ends ? formatDistance(new Date(secondsToMilliseconds(ends)), new Date()) : lockTime;
   const totalSupply = await contract?.totalSupply();
-  console.log(totalSupply.toString(), 'total');
   const timeLeft = formatTimeLeftObj(intervalToDuration({
     start: new Date(),
     end: new Date(secondsToMilliseconds(ends))
@@ -184,9 +183,8 @@ async function calcuateBondTimes(contract: Contract | undefined): Promise<IBondT
 
 export const BondsComponent = ({
   account,
-  network,
   bond
-}: { account?: ReefSigner, network?: Network, bond: IBond }) => {
+}: { account?: ReefSigner, bond: IBond }) => {
   const [contract, setContract] = useState<Contract | undefined>(undefined);
   const [stakeAmount, setBondAmount] = useState('');
   const [bondTimes, setBondTimes] = useState<IBondTimes>();
@@ -221,9 +219,9 @@ export const BondsComponent = ({
       await updateEarnedAmt(contract);
       await updateLockedAmt(contract);
       setBondTimes(bondTimes as IBondTimes);
-      setLoadingValues(false)
+      setLoadingValues(false);
     })();
-  }, [account]);
+  }, [account?.address]);
 
   return <>
     {!bondTimes?.lockTime || loadingValues ?
