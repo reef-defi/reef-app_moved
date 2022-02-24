@@ -145,11 +145,13 @@
 .bond-card__info-label {
   font-weight: 500;
   color: var(--text);
+  text-align: left;
 }
 
 .bond-card__info-value {
   font-weight: 600;
   color: var(--text);
+  text-align: right;
 }
 
 .bond-card__bottom {
