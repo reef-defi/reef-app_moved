@@ -163,6 +163,11 @@ svg.fill-white {
     padding: 2em;
 }
 
+.no-token-activity-pill-w .token-balance-item_sub-title{
+    display: none;
+}
+
+
 .btn-select {
     background-color: transparent !important;
     border-radius: 13px !important;
@@ -181,10 +186,6 @@ svg.fill-white {
     display: none;
 }
 
-.pools-list .list-group-item {
-    padding: 2em;
-}
-
 input.form-control {
     width: 100%;
     font-size: 15px;
@@ -196,7 +197,7 @@ input.form-control {
     border-radius: 10px;
     padding: 15px;
     transition: all 0.15s;
-}
+} 
 
 input.form-control::placeholder {
     font-weight: 500;
