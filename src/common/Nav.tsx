@@ -7,6 +7,7 @@ import { Link, useHistory, useLocation } from 'react-router-dom';
 import { saveSignerLocalPointer } from '../store/internalStore';
 import { ReefLogo } from './Icons';
 import {
+  BONDS_URL,
   CREATE_ERC20_TOKEN_URL, DASHBOARD_URL, POOLS_URL, SWAP_URL, TRANSFER_TOKEN,
 } from '../urls';
 
@@ -15,7 +16,8 @@ const menuItems = [
   { title: 'Send', url: TRANSFER_TOKEN },
   { title: 'Swap', url: SWAP_URL },
   { title: 'Pools', url: POOLS_URL },
-  { title: 'Creator', url: CREATE_ERC20_TOKEN_URL },
+  { title: 'Staking', url: BONDS_URL},
+  { title: 'Creator', url: CREATE_ERC20_TOKEN_URL }
 ];
 
 export interface Nav {
@@ -31,8 +33,6 @@ const Nav = ({ display }: Nav): JSX.Element => {
   const selectAccount = (index: number): void => {
     saveSignerLocalPointer(index);
     appState.selectAddressSubj.next(index != null ? accounts?.[index].address : undefined);
-    // dispatch(selectSigner(index));
-    // dispatch(reloadTokens());
   };
 
   const menuItemsView = menuItems
