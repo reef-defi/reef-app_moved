@@ -4,6 +4,7 @@ import {Provider} from '@reef-defi/evm-provider';
 import ContentRouter from './pages/ContentRouter';
 import Nav from './common/Nav';
 import NoExtension from "./pages/error/NoExtension"
+import NoAccount from "./pages/error/NoAccount"
 import {innitialNetwork} from './environment';
 
 const App = (): JSX.Element => {
@@ -13,7 +14,6 @@ const App = (): JSX.Element => {
   const currentSigner: ReefSigner|undefined = hooks.useObservableState(appState.selectedSigner$);
   const apollo = hooks.useObservableState(graphql.apolloClientInstance$);
   hooks.useBindEvmAddressAlert(currentSigner, provider);
-
 
   return (
     <>
@@ -27,7 +27,8 @@ const App = (): JSX.Element => {
             </>
           )}
 
-          {error && <NoExtension />}
+          {error?.code === 1 && <NoExtension />}
+          {error?.code === 2 && <NoAccount />}
         </div>
       </div>
       )}
