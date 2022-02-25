@@ -15,11 +15,12 @@ export interface IBond {
   apy: string;
 }
 
-export const bonds: IBond[] = [{
+export const bonds: IBond[] = [
+  {
   'id': 1,
-  'bondName': 'Reef for All',
-  'bondDescription': 'An initiation',
-  'bondContractAddress': '0xB4537c819D7aA60029641859E6029617D5ad0c10',
+  'bondName': 'Reef community staking bond',
+  'bondDescription': '',
+  'bondContractAddress': '0x7D3596b724cEB02f2669b902E4F1EEDeEfad3be6',
   'stake': 'REEF',
   'stakeTokenAddress': '0x0000000000000000000000000000000001000000',
   'stakeTokenLogo': 'https://stake.reef.finance/assets/images/reef/reef-token.svg',
@@ -31,7 +32,7 @@ export const bonds: IBond[] = [{
   'entryStartTime': '',
   'apy': '32'
   },
-  {
+  /*{
   'id': 2,
   'bondName': 'Reef community staking bond',
   'bondDescription': '',
@@ -46,5 +47,5 @@ export const bonds: IBond[] = [{
   'farmDecimals': 0,
   'entryStartTime': '',
   'apy': '32'
-  },
+  },*/
 ];
