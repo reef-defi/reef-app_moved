@@ -149,8 +149,6 @@ function formatTimeLeftObj(obj: Duration) {
 }
 
 async function calcuateBondTimes(contract: Contract | undefined): Promise<IBondTimes> {
-  // const starts = (new Date('2022-2-22')).getTime() / 1000;
-  // const ends = (new Date('2022-3-25 8:33')).getTime() / 1000;
   const starts = (await contract?.startTime())?.toNumber();
   const ends = (await contract?.releaseTime())?.toNumber();
   let opportunity = ends;
@@ -218,15 +216,11 @@ export const BondsComponent = ({
 
   async function updateLockedAmt(contract: Contract) {
     let lockedAmount = (await contract.balanceOf(account?.evmAddress)).toString();
-    // lockedAmount = ethers.utils.formatEther(lockedAmount);
-    // setLockedAmount(lockedAmount);
     setLockedAmount(formatAmountNearZero(lockedAmount));
   }
 
   async function updateEarnedAmt(contract: Contract) {
     let earned = (await contract.earned(account?.evmAddress)).toString();
-    // earned = ethers.utils.formatEther(earned);
-    // setEarned(earned);
     setEarned(formatAmountNearZero(earned));
   }
 
