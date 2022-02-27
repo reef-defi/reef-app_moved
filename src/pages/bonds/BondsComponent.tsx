@@ -149,8 +149,6 @@ function formatTimeLeftObj(obj: Duration) {
 }
 
 async function calcuateBondTimes(contract: Contract | undefined): Promise<IBondTimes> {
-  // const starts = (new Date('2022-2-22')).getTime() / 1000;
-  // const ends = (new Date('2022-3-25 8:33')).getTime() / 1000;
   const starts = (await contract?.startTime())?.toNumber();
   const ends = (await contract?.releaseTime())?.toNumber();
   let opportunity = ends;
@@ -185,6 +183,24 @@ async function calcuateBondTimes(contract: Contract | undefined): Promise<IBondT
   };
 }
 
+const formatAmountNearZero = (amount: string, symbol = ''): string => {
+  let prefix = '';
+  const decimalPlaces = 2
+  let weiAmt = ethers.utils.formatEther(amount);
+  let fixedVal = (+weiAmt).toFixed(decimalPlaces);
+  let amountBN = ethers.utils.parseEther(weiAmt);
+  let isPositive = amountBN.gt('0');
+  if ( isPositive
+      && amountBN.lt( ethers.utils.parseEther('0.01'))
+  ) {
+    prefix = '~';
+  }
+  if(amountBN.gte(ethers.utils.parseEther('1'))){
+    fixedVal = (+weiAmt).toFixed(0);
+  }
+  return symbol ? `${prefix}${fixedVal} ${symbol}` : `${prefix}${fixedVal}`;
+};
+
 export const BondsComponent = ({
   account,
   bond
@@ -200,14 +216,12 @@ export const BondsComponent = ({
 
   async function updateLockedAmt(contract: Contract) {
     let lockedAmount = (await contract.balanceOf(account?.evmAddress)).toString();
-    lockedAmount = ethers.utils.formatEther(lockedAmount);
-    setLockedAmount(lockedAmount);
+    setLockedAmount(formatAmountNearZero(lockedAmount));
   }
 
   async function updateEarnedAmt(contract: Contract) {
     let earned = (await contract.earned(account?.evmAddress)).toString();
-    earned = ethers.utils.formatEther(earned);
-    setEarned(earned);
+    setEarned(formatAmountNearZero(earned));
   }
 
   async function updateBondStakingClosedText(contract: Contract, bondTimes?: IBondTimes) {
@@ -299,7 +313,7 @@ export const BondsComponent = ({
 
 
             {
-              !stakingClosedText && !loadingText ? <div className='bond-card__bottom'>
+              account && !stakingClosedText && !loadingText ? <div className='bond-card__bottom'>
                   <NumberInput
                     className="form-control form-control-lg border-rad"
                     value={stakeAmount}
