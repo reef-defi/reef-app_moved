@@ -29,7 +29,7 @@ export const TokenActivity = ({ address }: TokenActivity): JSX.Element => {
       <div className="col-12 card">
         {!!transfers && !transfers.length && <div className="no-token-activity">No recent activity.</div>}
         {/* {!!transfers && !transfers.length && <div>Account has no activity.</div>} */}
-        {!!transfers && transfers.length && (
+        {!!transfers && !!transfers.length && (
         <div>
             {transfers.map((t) => (
               <TokenActivityItem
