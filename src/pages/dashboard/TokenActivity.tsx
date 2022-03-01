@@ -1,6 +1,5 @@
 import React from 'react';
-import {
-  Components, appState, createEmptyTokenWithAmount, hooks,
+import { appState, createEmptyTokenWithAmount, hooks,
 } from '@reef-defi/react-lib';
 import { TokenActivityItem, TokenActivityType } from './TokenActivityItem';
 import { TokenPill } from './TokenPill';
@@ -15,6 +14,17 @@ noActivityTokenDisplay.address = '0x';
 noActivityTokenDisplay.iconUrl = '';
 noActivityTokenDisplay.name = 'No account history yet.';
 
+export const Skeleton = (): JSX.Element => (
+  <div className='token-activity-skeleton'>
+    <div className='token-activity-skeleton__icon'/>
+    <div className='token-activity-skeleton__info'>
+      <div className='token-activity-skeleton__title'/>
+      <div className='token-activity-skeleton__subtitle'/>
+    </div>
+
+    <div className='token-activity-skeleton__amount'/>
+  </div>
+);
 export const TokenActivity = ({ address }: TokenActivity): JSX.Element => {
   const transfers: any[]|undefined = hooks.useObservableState(appState.transferHistory$);
 
@@ -41,7 +51,13 @@ export const TokenActivity = ({ address }: TokenActivity): JSX.Element => {
             ))}
         </div>
         )}
-        {!transfers && <Components.Loading.Loading />}
+        {!transfers && <>
+          <Skeleton/>
+          <Skeleton/>
+          <Skeleton/>
+          <Skeleton/>
+          <Skeleton/>
+        </> }
       </div>
     </div>
   );
