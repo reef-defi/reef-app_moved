@@ -116,8 +116,22 @@
   background: -webkit-linear-gradient(0deg, var(--primary-text), var(--secondary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  transition: 1s linear all;
 }
 
+.bond-card__stat-value--animate {
+  animation: bounce 1s ease;
+}
+
+@keyframes bounce {
+  0%   { transform: scale(1,1) translateY(0); }
+  10%  { transform: scale(1.1,.9) translateY(0); }
+  30%  { transform: scale(.9,1.1)   translateY(-30px);}
+  50%  { transform: scale(1.05,.95) translateY(0); }
+  58%  { transform: scale(1,1) translateY(-7px); }
+  65%  { transform: scale(1,1) translateY(0);}
+  100% { transform: scale(1,1) translateY(0);}
+}
 .bond-card__stat:last-child .bond-card__stat-value {
   color: #26b686;
 }
