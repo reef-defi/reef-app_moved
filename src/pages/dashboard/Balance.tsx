@@ -4,11 +4,20 @@ import { toCurrencyFormat } from '../../utils/utils';
 
 const { isDataSet, DataProgress } = utils;
 
-const { Loading } = Components.Loading;
-
 interface Balance {
     balance: utils.DataWithProgress<number>;
 }
+
+export const Loading = (): JSX.Element => (
+  <span className="dashboard-balance-loading dashboard_balance-txt title-font text-bold text-color-dark-accent">
+    <div className='dashboard-balance-loading__container'>
+      <span>$</span>
+      <span>.</span>
+      <span>.</span>
+      <span>.</span>
+    </div>
+  </span>
+);
 
 export const Balance = ({ balance }:Balance): JSX.Element => (
   <div className="dashboard_balance col-12 col-md-6">
