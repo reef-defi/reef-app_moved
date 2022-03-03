@@ -1,25 +1,28 @@
 import React from 'react';
-import { ApolloClient } from '@apollo/client';
 import {appState, graphql, hooks, ReefSigner,} from '@reef-defi/react-lib';
+import { ApolloProvider, ApolloClient } from '@apollo/client';
 import ContentRouter from './pages/ContentRouter';
 import Nav from './common/Nav';
 import NoExtension from "./pages/error/NoExtension"
 import NoAccount from "./pages/error/NoAccount"
 import {innitialNetwork} from './environment';
 
-const App = ({apollo}: {apollo: ApolloClient<any>}): JSX.Element => {
+const App = (): JSX.Element => {
   const [signers, provider, _, loading, error] = hooks.useInitReefState(
     'Reef Wallet App',
     {
       selectNetwork: innitialNetwork,
-      apolloClient: apollo
-    });
-    
+    }
+  );
+
   const currentSigner: ReefSigner|undefined = hooks.useObservableState(appState.selectedSigner$);
+  const apollo: ApolloClient<any> = hooks.useObservableState(graphql.apolloClientInstance$);
   hooks.useBindEvmAddressAlert(currentSigner, provider);
 
   return (
     <>
+    {apollo &&
+    <ApolloProvider client={apollo}>
       <div className="App d-flex w-100 h-100">
         <div className="w-100 main-content">
           {!loading && !error && (
@@ -34,6 +37,8 @@ const App = ({apollo}: {apollo: ApolloClient<any>}): JSX.Element => {
           {error?.code === 2 && <NoAccount />}
         </div>
       </div>
+    </ApolloProvider>
+    }
     </>
   );
 };

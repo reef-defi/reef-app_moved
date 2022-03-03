@@ -7,24 +7,21 @@ import {
 } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
 import App from './App';
+import {graphql} from "@reef-defi/react-lib"
 
-import {ApolloClient, InMemoryCache, ApolloProvider, ApolloConsumer} from "@apollo/client"
+import {ApolloProvider, ApolloConsumer} from "@apollo/client"
 import { innitialNetwork } from './environment';
 
-const client = new ApolloClient({
-  cache: new InMemoryCache(),
-  uri: innitialNetwork.graphqlUrl
-});
+// const client = new ApolloClient({
+//   cache: new InMemoryCache(),
+//   uri: innitialNetwork.graphqlUrl
+// });
 
 ReactDOM.render(
   <React.StrictMode>
-    <ApolloProvider client={client}>
-      <Router>
-        <ApolloConsumer>
-          { client => <App apollo={client} /> }
-        </ApolloConsumer>
-      </Router>
-    </ApolloProvider>
+    <Router>
+      <App />
+    </Router>
   </React.StrictMode>,
   document.getElementById('root'),
 );
