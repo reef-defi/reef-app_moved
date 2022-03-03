@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import { useParams } from "react-router-dom";
 import {useSubscription, useQuery, gql} from "@apollo/client"
 import {Components} from "@reef-defi/react-lib"
@@ -12,6 +12,29 @@ interface PoolPage {
 interface UrlParam {
   address: string;
 }
+
+const POOL_GQL = gql`
+query pool($address: String!) {
+  pool(
+    where: { address: { _ilike: $address } }
+  ) {
+    id
+    address
+    token_contract_1 {
+      verified_contract {
+        contract_data
+      }
+      address
+    }
+    token_contract_2 {
+      verified_contract {
+        contract_data
+      }
+      address
+    }
+  }
+}
+`
 
 const MINUTE_CANDLESTICK_GQL = gql`
 subscription candlestick($address: String!) {
@@ -53,6 +76,9 @@ subscription transactions($address: String!, $type: String_comparison_exp!) {
 }
 `
 
+
+
+
 interface CandlestickData {
   pool_id: number,
   timeframe: string;
@@ -70,25 +96,26 @@ interface CandlestickData {
   }
 }
 
-
+type Transaction = "Swap" | "Mint" | "Burn" | "All"
 
 const PoolPage = ({} : PoolPage): JSX.Element => {
+  const [type, setType] = useState<Transaction>("All");
   const {address} = useParams<UrlParam>();
   const token1Icon = getIconUrl(address);
   const {loading: candlestickLoading, data: candlestickData, error: candlestickError} = useSubscription<CandlestickData[]>(
     MINUTE_CANDLESTICK_GQL, 
     { variables: { address } }
   );
-  const {loading, data, error} = useQuery(
-    gql`
-      query pool($address: String!) {
-        pool (
-          where: { address: { _ilike: $address } }
-        ) {
-          token_1_address
-        }
-      }
-    `
+  const {loading: loadingPool, data: poolData, error: poolError} = useQuery(
+    POOL_GQL,
+    {variables: { address }}
+  )
+  const {loading: loadingTransaction, data: transactionData, error: transactionError} = useSubscription(
+    POOL_TRANSACTIONS_GQL,
+    {variables: {
+      address,
+      type: { _in: type === "All" ? ["Swap", "Mint", "Burn"] : [type] }
+    }}
   )
 
   // useEffect(async () => {
