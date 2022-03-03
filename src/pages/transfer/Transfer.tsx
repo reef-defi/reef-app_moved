@@ -1,14 +1,19 @@
 import {
   appState,
   Components,
+  graphql,
   hooks,
   ReefSigner,
+  reefTokenWithAmount,
   Token,
   TokenWithAmount,
   utils as reefUtils,
 } from '@reef-defi/react-lib';
-import React, { useEffect, useState } from 'react';
-import { Provider } from '@reef-defi/evm-provider';
+import React, {useEffect, useState} from 'react';
+import {Provider} from '@reef-defi/evm-provider';
+import {ApolloClient, gql, SubscriptionOptions} from "@apollo/client";
+import {ethers} from 'ethers';
+
 
 const {
   isDataSet,
@@ -19,16 +24,6 @@ const {
 const {
   Loading, TransferComponent,
 } = Components;
-
-/* const onTransferTxUpdate = (txState: reefUtils.TxStatusUpdate): void => {
-
-  const updateTypes = [UpdateDataType.ACCOUNT_NATIVE_BALANCE];
-  if (txState.txTypeEvm) {
-    updateTypes.push(UpdateDataType.ACCOUNT_TOKENS);
-  }
-  const updateActions: UpdateAction[] = createUpdateActions(updateTypes, txState.addresses);
-  onTxUpdateResetSigners(txState, updateActions);
-}; */
 
 export const Transfer = (): JSX.Element => {
   const provider: Provider|undefined = hooks.useObservableState(appState.providerSubj);
@@ -41,6 +36,10 @@ export const Transfer = (): JSX.Element => {
   useEffect(() => {
     if (isDataSet(signerTokenBalances)) {
       const sigTokens = getData(signerTokenBalances);
+      if (sigTokens===undefined) {
+        setToken(DataProgress.LOADING);
+        return;
+      }
       if (!sigTokens?.length) {
         setToken(DataProgress.NO_DATA);
         return;
