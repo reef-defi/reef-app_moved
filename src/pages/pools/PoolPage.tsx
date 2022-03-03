@@ -3,6 +3,9 @@ import { useParams } from "react-router-dom";
 import {useSubscription, useQuery, gql} from "@apollo/client"
 import {Components} from "@reef-defi/react-lib"
 import { getIconUrl } from "../../utils/utils";
+
+const {Text, ColorText, BoldText, LeadText} = Components.Text;
+
 interface PoolPage {
 }
 
@@ -67,6 +70,8 @@ interface CandlestickData {
   }
 }
 
+
+
 const PoolPage = ({} : PoolPage): JSX.Element => {
   const {address} = useParams<UrlParam>();
   const token1Icon = getIconUrl(address);
@@ -94,16 +99,14 @@ const PoolPage = ({} : PoolPage): JSX.Element => {
   return (
     <div className="w-100 row justify-content-center">
       <div className="col-xl-8 col-lg-10 col-md-12">
-          <Components.Card.CardHeader>
-            <div className="d-flex">
-              <Components.Icons.TokenIcon src=""/>
-              <Components.Icons.TokenIcon src=""/>
+        <div className="d-flex ms-1 mb-1">
+          <Components.Icons.TokenIcon src=""/>
+          <Components.Icons.TokenIcon src=""/>
 
-              <Components.Text.LeadText>
-                Token1 / Token2
-              </Components.Text.LeadText>
-            </div>
-          </Components.Card.CardHeader>
+          <LeadText>
+            Token1 / Token2
+          </LeadText>
+        </div>
 
         <Components.Display.FullRow>
           <Components.Display.ContentBetween>
@@ -113,9 +116,7 @@ const PoolPage = ({} : PoolPage): JSX.Element => {
                   <div className="d-flex">
                     <Components.Icons.TokenIcon src=""/>
                     <Components.Display.ME size="1" />
-                    <Components.Text.LeadText>
-                      1 Token1 = n Token2
-                    </Components.Text.LeadText>
+                    <LeadText>1 Token1 = n Token2</LeadText>
                   </div>
                 </div>
               </div>
@@ -126,9 +127,7 @@ const PoolPage = ({} : PoolPage): JSX.Element => {
                   <div className="d-flex">
                     <Components.Icons.TokenIcon src=""/>
                     <Components.Display.ME size="1" />
-                    <Components.Text.LeadText>
-                      1 Token1 = n Token2
-                    </Components.Text.LeadText>
+                    <LeadText>1 Token1 = n Token2</LeadText>
                   </div>
                 </div>
               </div>
@@ -147,22 +146,17 @@ const PoolPage = ({} : PoolPage): JSX.Element => {
           <div className="col-sm-12 col-md-6 col-lg-4">
             <div className="border-rad bg-grey p-3">
               <Components.Card.Card>
-                <div className="d-flex mb-2">
-                  <Components.Card.CardTitle title="Total Tokens Locked" />
-                </div>
+                <BoldText size={1.2}>Total Tokens Locked</BoldText>
+                <Components.Display.MB size="2" />
                 <Components.Display.FullRow>
                   <Components.Display.ContentBetween>
                     <div className="d-flex">
                       <Components.Icons.TokenIcon src=""/>
                       <Components.Display.ME size="1" />
-                      <Components.Text.LeadText>
-                        Token1
-                      </Components.Text.LeadText>
+                      <LeadText>Token1</LeadText>
                     </div>
                     <div className="">
-                      <Components.Text.LeadText>
-                        155.79m
-                      </Components.Text.LeadText>
+                      <LeadText>155.79m</LeadText>
                     </div>
                   </Components.Display.ContentBetween>
                 </Components.Display.FullRow>
@@ -173,14 +167,10 @@ const PoolPage = ({} : PoolPage): JSX.Element => {
                     <div className="d-flex">
                       <Components.Icons.TokenIcon src=""/>
                       <Components.Display.ME size="1" />
-                      <Components.Text.LeadText>
-                        Token2
-                      </Components.Text.LeadText>
+                      <LeadText>Token2</LeadText>
                     </div>
                     <div className="">
-                      <Components.Text.LeadText>
-                        1123.79m
-                      </Components.Text.LeadText>
+                      <LeadText>1123.79m</LeadText>
                     </div>
                   </Components.Display.ContentBetween>
                 </Components.Display.FullRow>
@@ -189,19 +179,19 @@ const PoolPage = ({} : PoolPage): JSX.Element => {
               <Components.Display.MT size="2" />
 
               <div className="d-flex flex-column mt-3 ms-1">
-                <Components.Text.LeadText>TVL</Components.Text.LeadText>
-                <Components.Text.BoldText>$371.41m</Components.Text.BoldText>
-                <Components.Text.ColorText color="success">2.14 %</Components.Text.ColorText>
+                <Text size={1.3}>TVL</Text>
+                <Components.Text.BoldText size={1.6}>$371.41m</Components.Text.BoldText>
+                <Components.Text.ColorText color="success" size={1}>2.14 %</Components.Text.ColorText>
               </div>
 
               <div className="d-flex flex-column mt-3 ms-1">
-                <Components.Text.LeadText>Colume 24h</Components.Text.LeadText>
-                <Components.Text.BoldText>$71.41m</Components.Text.BoldText>
-                <Components.Text.ColorText color="danger">38.2 %</Components.Text.ColorText>
+                <Text size={1.3}>Colume 24h</Text>
+                <Components.Text.BoldText size={1.6}>$71.41m</Components.Text.BoldText>
+                <Components.Text.ColorText color="danger" size={1}>38.2 %</Components.Text.ColorText>
               </div>
               <div className="d-flex flex-column mt-3 ms-1">
-                <Components.Text.LeadText>24h Fees</Components.Text.LeadText>
-                <Components.Text.BoldText>$100k</Components.Text.BoldText>
+                <Text size={1.3}>24h Fees</Text>
+                <Components.Text.BoldText size={1.6}>$100k</Components.Text.BoldText>
               </div>
             </div>
           </div>
