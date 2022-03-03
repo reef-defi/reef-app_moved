@@ -41,6 +41,11 @@ export const Transfer = (): JSX.Element => {
   useEffect(() => {
     if (isDataSet(signerTokenBalances)) {
       const sigTokens = getData(signerTokenBalances);
+
+      if (sigTokens===undefined) {
+        setToken(DataProgress.LOADING);
+        return;
+      }
       if (!sigTokens?.length) {
         setToken(DataProgress.NO_DATA);
         return;
