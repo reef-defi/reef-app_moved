@@ -8,11 +8,27 @@ import {
 import reportWebVitals from './reportWebVitals';
 import App from './App';
 
+import {ApolloClient, InMemoryCache, ApolloProvider} from "@apollo/client"
+import { innitialNetwork } from './environment';
+
+const client = new ApolloClient({
+  cache: new InMemoryCache(),
+  uri: innitialNetwork.graphqlUrl
+});
+
+// ReactDOM.render(
+
+//   document.getElementById('root'),
+// );
+
+
 ReactDOM.render(
   <React.StrictMode>
-    <Router>
-      <App />
-    </Router>
+    <ApolloProvider client={client}>
+      <Router>
+        <App />
+      </Router>
+    </ApolloProvider>
   </React.StrictMode>,
   document.getElementById('root'),
 );
