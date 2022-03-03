@@ -270,9 +270,7 @@ export const BondsComponent = ({
   return <>
     {!bondTimes?.lockTime || loadingValues ?
 
-      <ComponentCenter>
-        <LoadingWithText text='Loading bond'/>
-      </ComponentCenter> :
+      <Skeleton /> :
 
       <ComponentCenter>
         <div className='bond-card'>
@@ -418,3 +416,26 @@ export const BondsComponent = ({
     }
   </>;
 };
+
+
+export const Skeleton = (): JSX.Element => (
+  <div className='bond-skeleton'>
+    <div className='bond-skeleton__wrapper'>
+      <div className='bond-skeleton__image'/>
+      <div className='bond-skeleton__title'/>
+      <div className='bond-skeleton__subtitle'/>
+      <div className='bond-skeleton__stats'>
+        <div className='bond-skeleton__stat'/>
+        <div className='bond-skeleton__stat'/>
+      </div>
+      <div className='bond-skeleton__info'>
+        <div/>
+        <div/>
+        <div/>
+        <div/>
+        <div/>
+      </div>
+      <div className='bond-skeleton__cta'/>
+    </div>
+  </div>
+);
