@@ -8,7 +8,7 @@ import {
 import reportWebVitals from './reportWebVitals';
 import App from './App';
 
-import {ApolloClient, InMemoryCache, ApolloProvider} from "@apollo/client"
+import {ApolloClient, InMemoryCache, ApolloProvider, ApolloConsumer} from "@apollo/client"
 import { innitialNetwork } from './environment';
 
 const client = new ApolloClient({
@@ -16,17 +16,13 @@ const client = new ApolloClient({
   uri: innitialNetwork.graphqlUrl
 });
 
-// ReactDOM.render(
-
-//   document.getElementById('root'),
-// );
-
-
 ReactDOM.render(
   <React.StrictMode>
     <ApolloProvider client={client}>
       <Router>
-        <App />
+        <ApolloConsumer>
+          { client => <App apollo={client} /> }
+        </ApolloConsumer>
       </Router>
     </ApolloProvider>
   </React.StrictMode>,

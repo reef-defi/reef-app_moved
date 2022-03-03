@@ -7,8 +7,14 @@ import NoExtension from "./pages/error/NoExtension"
 import NoAccount from "./pages/error/NoAccount"
 import {innitialNetwork} from './environment';
 
-const App = (): JSX.Element => {
-  const [signers, provider, selectedNetwork, loading, error]=hooks.useInitReefState( 'Reef Wallet App', innitialNetwork);
+const App = ({apollo}: {apollo: ApolloClient<any>}): JSX.Element => {
+  const [signers, provider, _, loading, error] = hooks.useInitReefState(
+    'Reef Wallet App',
+    {
+      selectNetwork: innitialNetwork,
+      apolloClient: apollo
+    });
+    
   const currentSigner: ReefSigner|undefined = hooks.useObservableState(appState.selectedSigner$);
   hooks.useBindEvmAddressAlert(currentSigner, provider);
 
@@ -22,6 +28,7 @@ const App = (): JSX.Element => {
               <ContentRouter />
             </>
           )}
+
 
           {error?.code === 1 && <NoExtension />}
           {error?.code === 2 && <NoAccount />}
