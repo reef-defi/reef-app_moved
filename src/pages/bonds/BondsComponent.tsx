@@ -78,6 +78,11 @@ interface IBondTimes {
   },
 }
 
+interface ITxStatus {
+  state: 'ERROR' | 'DONE';
+  text: string;
+}
+
 async function checkIfBondStakingOpen(contract: Contract, bondTimes?: IBondTimes): Promise<string> {
   const {
     starting,
@@ -100,31 +105,25 @@ async function checkIfBondStakingOpen(contract: Contract, bondTimes?: IBondTimes
 async function bondFunds(erc20Address: string, contract: Contract, signer: ReefSigner, amount: string, status: (status: { message: string }) => void) {
   const isNotValid = await checkIfBondStakingOpen(contract);
   if (isNotValid) return;
+  status({ message: 'Approving contract' });
   const bondAmount = utils.transformAmount(18, amount);
   // const bondAmount = BigNumber.from(amount);
-  console.log(bondAmount, 'amount');
   const erc20 = await rpc.getREEF20Contract(erc20Address, signer.signer);
-  try {
-    status({ message: 'Approving contract' });
-    const tx = await erc20?.contract.approve(contract.address, bondAmount);
-    const receipt = await tx.wait();
-    status({ message: 'Staking' });
-    const bonded = await contract.stake(bondAmount);
-    const bondedR = await bonded.wait();
-  } catch (e) {
-    console.log('Something went wrong', e);
-    status({ message: '' });
-  }
+  const tx = await erc20?.contract.approve(contract.address, bondAmount);
+  const receipt = await tx.wait();
+  status({ message: 'Staking' });
+  const bonded = await contract.stake(bondAmount);
+  const bondedR = await bonded.wait();
 }
 
-async function exit(contract: Contract, status: (status: { message: string}) => void) {
+async function exit(contract: Contract, status: (status: { message: string }) => void) {
   try {
-    status({message: 'Claiming funds'})
+    status({ message: 'Claiming funds' });
     const tx = await contract.exit();
     const receipt = await tx.wait();
     console.log(receipt);
   } catch (e) {
-    status({ message: ''})
+    status({ message: '' });
     console.log('Something went wrong', e);
   }
 }
@@ -185,17 +184,17 @@ async function calcuateBondTimes(contract: Contract | undefined): Promise<IBondT
 
 const formatAmountNearZero = (amount: string, symbol = ''): string => {
   let prefix = '';
-  const decimalPlaces = 2
+  const decimalPlaces = 2;
   let weiAmt = ethers.utils.formatEther(amount);
   let fixedVal = (+weiAmt).toFixed(decimalPlaces);
   let amountBN = ethers.utils.parseEther(weiAmt);
   let isPositive = amountBN.gt('0');
-  if ( isPositive
-      && amountBN.lt( ethers.utils.parseEther('0.01'))
+  if (isPositive
+    && amountBN.lt(ethers.utils.parseEther('0.01'))
   ) {
     prefix = '~';
   }
-  if(amountBN.gte(ethers.utils.parseEther('1'))){
+  if (amountBN.gte(ethers.utils.parseEther('1'))) {
     fixedVal = (+weiAmt).toFixed(0);
   }
   return symbol ? `${prefix}${fixedVal} ${symbol}` : `${prefix}${fixedVal}`;
@@ -213,10 +212,31 @@ export const BondsComponent = ({
   const [lockedAmount, setLockedAmount] = useState('');
   const [loadingText, setLoadingText] = useState('');
   const [loadingValues, setLoadingValues] = useState(false);
+  const [buttonText, setButtonText] = useState('');
+  const [txStatus, setTxStatus] = useState<ITxStatus | undefined>(undefined);
 
   async function updateLockedAmt(contract: Contract) {
     let lockedAmount = (await contract.balanceOf(account?.evmAddress)).toString();
     setLockedAmount(formatAmountNearZero(lockedAmount));
+    const lockedElem = document.querySelector('.bond-card__stat-value');
+    if (lockedElem) {
+      lockedElem.classList.add('bond-card__stat-value--animate');
+      setTimeout(() => {
+        lockedElem.classList.remove('bond-card__stat-value--animate');
+      }, 1000)
+    }
+  }
+
+  function updateButtonText() {
+    if (!stakeAmount) {
+      setButtonText('Enter amount to stake');
+    } else {
+      if (+stakeAmount > +ethers.utils.formatEther(account.balance)) {
+        setButtonText('Amount entered exceeds your balance');
+      } else {
+        setButtonText('Continue');
+      }
+    }
   }
 
   async function updateEarnedAmt(contract: Contract) {
@@ -228,6 +248,10 @@ export const BondsComponent = ({
     const isNotValid = await checkIfBondStakingOpen(contract, bondTimes);
     setStakingClosedText(isNotValid);
   }
+
+  useEffect(() => {
+    updateButtonText();
+  }, [stakeAmount]);
 
   useEffect(() => {
     const contract = getReefBondContract(bond!, account!.signer);
@@ -323,7 +347,7 @@ export const BondsComponent = ({
                   <OpenModalButton
                     disabled={!stakeAmount || bondTimes?.opportunity.ended || bondTimes?.ending.ended || +stakeAmount > +ethers.utils.formatEther(account.balance)}
                     id={'bondConfirmation' + bond.id}>
-                    {'Continue'}
+                    {buttonText}
                   </OpenModalButton>
                 </div> :
                 <>{loadingText &&
@@ -331,6 +355,11 @@ export const BondsComponent = ({
                 }</>
             }
             <div>{stakingClosedText}</div>
+            {txStatus && txStatus.state &&
+            <strong className={`mt-3 ${txStatus.state === 'ERROR' ? 'text-danger' : 'text-success'}`}>
+              {txStatus.text}
+            </strong>
+            }
             <div className='mt-2'>
               {
                 !loadingText && bondTimes.ending.ended &&
@@ -349,9 +378,25 @@ export const BondsComponent = ({
           title="Confirm Staking"
           confirmBtnLabel="Stake"
           confirmFun={async () => {
-            await bondFunds(bond.farmTokenAddress, contract!, account!, stakeAmount, ({ message }) => setLoadingText(message));
+            setLoadingText('Processing...');
+            try {
+              await bondFunds(bond.farmTokenAddress, contract!, account!, stakeAmount, ({ message }) => setLoadingText(message));
+              setTxStatus({
+                state: 'DONE',
+                text: 'Transaction Successful!'
+              });
+            } catch (e) {
+              setTxStatus({
+                state: 'ERROR',
+                text: 'Transaction Failed.'
+              });
+            }
             await updateLockedAmt(contract!);
+            setBondAmount('');
             setLoadingText('');
+            setTimeout(() => {
+              setTxStatus(undefined);
+            }, 5000);
           }}
         >
           <Margin size="3">
