@@ -1,10 +1,9 @@
-import React, { useEffect } from "react"
+import React from "react"
 import { useParams } from "react-router-dom";
-import {useSubscription, gql, ApolloClient, ApolloConsumer} from "@apollo/client"
-import {appState, graphql, hooks, ReefSigner,} from '@reef-defi/react-lib';
-
+import {useSubscription, useQuery, gql} from "@apollo/client"
+import {Components} from "@reef-defi/react-lib"
+import { getIconUrl } from "../../utils/utils";
 interface PoolPage {
-  apollo: ApolloClient<object>
 }
 
 interface UrlParam {
@@ -68,36 +67,167 @@ interface CandlestickData {
   }
 }
 
-const PoolPage = ({apollo} : PoolPage): JSX.Element => {
+const PoolPage = ({} : PoolPage): JSX.Element => {
   const {address} = useParams<UrlParam>();
-
-  const {loading, data, error} = useSubscription<CandlestickData[]>(
+  const token1Icon = getIconUrl(address);
+  const {loading: candlestickLoading, data: candlestickData, error: candlestickError} = useSubscription<CandlestickData[]>(
     MINUTE_CANDLESTICK_GQL, 
-    {
-      client: apollo,
-      variables: {address}
-    }
+    { variables: { address } }
   );
-  console.log(loading);  
-  console.log(data);  
-  console.log(error);  
-  console.log("-------------");  
+  const {loading, data, error} = useQuery(
+    gql`
+      query pool($address: String!) {
+        pool (
+          where: { address: { _ilike: $address } }
+        ) {
+          token_1_address
+        }
+      }
+    `
+  )
+
   // useEffect(async () => {
+
 
   // }, [address])
 
   return (
-    <div>
+    <div className="w-100 row justify-content-center">
+      <div className="col-xl-8 col-lg-10 col-md-12">
+          <Components.Card.CardHeader>
+            <div className="d-flex">
+              <Components.Icons.TokenIcon src=""/>
+              <Components.Icons.TokenIcon src=""/>
 
+              <Components.Text.LeadText>
+                Token1 / Token2
+              </Components.Text.LeadText>
+            </div>
+          </Components.Card.CardHeader>
+
+        <Components.Display.FullRow>
+          <Components.Display.ContentBetween>
+            <div className="d-flex my-2">
+              <div className="card border-rad">
+                <div className="card-body py-1">
+                  <div className="d-flex">
+                    <Components.Icons.TokenIcon src=""/>
+                    <Components.Display.ME size="1" />
+                    <Components.Text.LeadText>
+                      1 Token1 = n Token2
+                    </Components.Text.LeadText>
+                  </div>
+                </div>
+              </div>
+              <Components.Display.ME size="1" />
+
+              <div className="card border-rad">
+                <div className="card-body py-1">
+                  <div className="d-flex">
+                    <Components.Icons.TokenIcon src=""/>
+                    <Components.Display.ME size="1" />
+                    <Components.Text.LeadText>
+                      1 Token1 = n Token2
+                    </Components.Text.LeadText>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="d-flex">
+              {/* <button className="btn">Add liquidity</button> */}
+              <Components.Button.Button >AddLiqudity</Components.Button.Button>
+              <Components.Display.ME size="1" />
+              <Components.Button.Button>Trade</Components.Button.Button>
+            </div>
+          </Components.Display.ContentBetween>
+        </Components.Display.FullRow>
+
+        <div className="row mt-2">
+          <div className="col-sm-12 col-md-6 col-lg-4">
+            <div className="border-rad bg-grey p-3">
+              <Components.Card.Card>
+                <div className="d-flex mb-2">
+                  <Components.Card.CardTitle title="Total Tokens Locked" />
+                </div>
+                <Components.Display.FullRow>
+                  <Components.Display.ContentBetween>
+                    <div className="d-flex">
+                      <Components.Icons.TokenIcon src=""/>
+                      <Components.Display.ME size="1" />
+                      <Components.Text.LeadText>
+                        Token1
+                      </Components.Text.LeadText>
+                    </div>
+                    <div className="">
+                      <Components.Text.LeadText>
+                        155.79m
+                      </Components.Text.LeadText>
+                    </div>
+                  </Components.Display.ContentBetween>
+                </Components.Display.FullRow>
+                
+                <Components.Display.MT size="1" />
+                <Components.Display.FullRow>
+                  <Components.Display.ContentBetween>
+                    <div className="d-flex">
+                      <Components.Icons.TokenIcon src=""/>
+                      <Components.Display.ME size="1" />
+                      <Components.Text.LeadText>
+                        Token2
+                      </Components.Text.LeadText>
+                    </div>
+                    <div className="">
+                      <Components.Text.LeadText>
+                        1123.79m
+                      </Components.Text.LeadText>
+                    </div>
+                  </Components.Display.ContentBetween>
+                </Components.Display.FullRow>
+              </Components.Card.Card>
+            
+              <Components.Display.MT size="2" />
+
+              <div className="d-flex flex-column mt-3 ms-1">
+                <Components.Text.LeadText>TVL</Components.Text.LeadText>
+                <Components.Text.BoldText>$371.41m</Components.Text.BoldText>
+                <Components.Text.ColorText color="success">2.14 %</Components.Text.ColorText>
+              </div>
+
+              <div className="d-flex flex-column mt-3 ms-1">
+                <Components.Text.LeadText>Colume 24h</Components.Text.LeadText>
+                <Components.Text.BoldText>$71.41m</Components.Text.BoldText>
+                <Components.Text.ColorText color="danger">38.2 %</Components.Text.ColorText>
+              </div>
+              <div className="d-flex flex-column mt-3 ms-1">
+                <Components.Text.LeadText>24h Fees</Components.Text.LeadText>
+                <Components.Text.BoldText>$100k</Components.Text.BoldText>
+              </div>
+            </div>
+          </div>
+
+          <div className="col-sm-12 col-md-6 col-lg-8">
+            <div className="border-rad bg-grey p-1 h-100">
+              Chart
+            </div>
+          </div>
+        </div>
+        <Components.Display.MT size="3" />
+
+        <Components.Card.CardHeader>
+          <Components.Card.CardTitle title="Transactions" />
+        </Components.Card.CardHeader>
+
+        <Components.Card.Card>
+
+          <div>
+            Transactions
+          </div>
+        </Components.Card.Card>
+      </div>
     </div>
   );
 }
 
 // These needs to be removed
-export default  (): JSX.Element => {
-  const apollo: ApolloClient<object> = hooks.useObservableState(graphql.apolloClientInstance$);
-
-  return apollo 
-    ? (<PoolPage apollo={apollo} /> )
-    : (<div />)
-}
+export default PoolPage;
