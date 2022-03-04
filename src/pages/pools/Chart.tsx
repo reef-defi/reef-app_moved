@@ -61,7 +61,7 @@ const MyChart = ({data, width, ratio, type="svg"} : MyChart): JSX.Element => {
     <ChartCanvas
       ratio={ratio}
       width={width}
-      height={500}
+      height={600}
       margin={{ left: 50, right: 50, top: 30, bottom: 30 }}
       type={type}
       seriesName="MSFT"
@@ -71,7 +71,7 @@ const MyChart = ({data, width, ratio, type="svg"} : MyChart): JSX.Element => {
       xExtents={xExtents}
     >
 
-      <Chart id={1} yExtents={d => [d.high, d.low]}>
+      <Chart id={1} yExtents={d => [d.high + d.high * .1, d.low - d.low * .1]}>
         <XAxis axisAt="bottom" orient="bottom" ticks={6}/>
         <YAxis axisAt="left" orient="left" ticks={5} />
         <CandlestickSeries width={timeIntervalBarWidth(utcMinute)}/>
