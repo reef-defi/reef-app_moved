@@ -27,20 +27,17 @@ const {
 
 const getGqlContractEventsQuery = (
     contractAddress: string,
+    atBlockId: number,
     methodSignature?: string,
-    perPage = 1,
-    offset = 0,
+    toBlockId?: number,
 ): SubscriptionOptions => {
   const EVM_EVENT_GQL = gql`
     subscription evmEvent(
       $address: String_comparison_exp!
-      $perPage: Int!
-      $offset: Int!
+      $blockId: Int_comparison_exp!
       $topic0: String_comparison_exp
     ) {
       evm_event(
-        limit: $perPage
-        offset: $offset
         order_by: [
           { block_id: desc }
           { extrinsic_index: desc }
@@ -51,6 +48,7 @@ const getGqlContractEventsQuery = (
             { contract_address: $address }
             { topic_0: $topic0 }
             { method: { _eq: "Log" } }
+            { block_id: $blockId }
           ]
         }
       ) {
@@ -74,8 +72,7 @@ const getGqlContractEventsQuery = (
       topic0: methodSignature
           ? { _eq: ethers.utils.keccak256(ethers.utils.toUtf8Bytes(methodSignature)) }
           : {},
-      perPage,
-      offset,
+      blockId: toBlockId?{ _gte: atBlockId, _lt: toBlockId }:{ _eq: atBlockId },
     },
     fetchPolicy: 'network-only',
   };
@@ -95,8 +92,9 @@ export const EvmEvents = (): JSX.Element => {
     // custom graphQL example
     const methodSignature = 'Transfer(address,address,uint256)'
     customEventSubs.current?.unsubscribe();
+    let atBlockId = 111;
     customEventSubs.current = apolloClient?.subscribe(
-        getGqlContractEventsQuery(contractAddress, methodSignature),
+        getGqlContractEventsQuery(contractAddress, atBlockId, methodSignature),
     ).subscribe(({data:{evm_event}}) => console.log('EVM EVENT=', evm_event));
 
     return ()=>{
@@ -123,9 +121,13 @@ export const EvmEvents = (): JSX.Element => {
     <>
       <h5>Evm Events</h5>
       <div>
-        contract address:<input value={contractAddress} onChange={({value})=>setContractAddress(value)}/>
+        contract address:<input value={contractAddress} onChange={({target:{value}})=>setContractAddress(value)}/>
       </div>
-      <p>last event block: {lastEvent?.block_id}</p>
+      {!lastEvent && <p>No event to display</p> }
+      {lastEvent && <>
+        <p>event in block: {lastEvent?.block_id}</p>
+        <p>event json: {JSON.stringify(lastEvent?.data_raw)}</p>
+      </>}
       <div>
 
       </div>

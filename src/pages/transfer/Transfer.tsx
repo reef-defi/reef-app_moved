@@ -1,18 +1,15 @@
 import {
   appState,
   Components,
-  graphql,
   hooks,
   ReefSigner,
-  reefTokenWithAmount,
   Token,
   TokenWithAmount,
   utils as reefUtils,
 } from '@reef-defi/react-lib';
 import React, {useEffect, useState} from 'react';
 import {Provider} from '@reef-defi/evm-provider';
-import {ApolloClient, gql, SubscriptionOptions} from "@apollo/client";
-import {ethers} from 'ethers';
+import {EvmEvents} from "../../components/EvmEvents";
 
 
 const {
@@ -72,7 +69,11 @@ export const Transfer = (): JSX.Element => {
       {!isDataSet(token) && token === DataProgress.LOADING && <Loading.Loading />}
       {!isDataSet(token) && token === DataProgress.NO_DATA && <div>No tokens for transaction.</div>}
       { provider && isDataSet(token) && isDataSet(signerTokenBalances) && selectedSigner
-          && <TransferComponent tokens={signerTokenBalances as Token[]} from={selectedSigner} token={token as TokenWithAmount} provider={provider} accounts={accounts || []} currentAccount={selectedSigner} /* onTxUpdate={(val) => onTransferTxUpdate(val)} */ />}
+      && <div>
+        <TransferComponent tokens={signerTokenBalances as Token[]} from={selectedSigner} token={token as TokenWithAmount} provider={provider} accounts={accounts || []} currentAccount={selectedSigner} /* onTxUpdate={(val) => onTransferTxUpdate(val)} */ />
+        <div><EvmEvents></EvmEvents></div>
+      </div>}
+
     </>
   );
 };
