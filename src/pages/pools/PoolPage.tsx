@@ -1,10 +1,16 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useParams } from "react-router-dom";
 import {useSubscription, useQuery, gql} from "@apollo/client"
 import {Components} from "@reef-defi/react-lib"
 import { getIconUrl } from "../../utils/utils";
 import { Skeleton } from "../dashboard/TokenBalances";
 import { BigNumber, utils } from "ethers";
+import Chart, { getData } from "./Chart";
+import { TypeChooser } from "react-stockcharts/lib/helper";
+import { timeParse } from "d3-time-format";
+
+
+const parseDate = timeParse("%Y-%m-%d");
 const {Text, ColorText, BoldText, LeadText} = Components.Text;
 
 interface PoolPage {
@@ -40,6 +46,7 @@ query pool($address: String!) {
 const MINUTE_CANDLESTICK_GQL = gql`
 subscription candlestick($address: String!) {
   pool_minute_candlestick(
+    order_by: { timeframe: asc }
     where: { pool: { address: { _ilike: $address } } }
   ) {
     pool_id
@@ -52,6 +59,7 @@ subscription candlestick($address: String!) {
     low_2
     open_1
     open_2
+    which_token
     pool {
       token_1
       token_2
@@ -135,6 +143,7 @@ interface CandlestickData {
   open_2: number;
   low_1: number;
   low_2: number;
+  which_token: number;
   pool: {
     token_1: string;
     token_2: string;
@@ -223,18 +232,14 @@ const formatAmount = (amount: number, decimals: number): string => toHumanAmount
     decimals
   )
 )
-const percentageDifference = (prev: number, next: number): number => {
-  // const a1 = BigNumber.from(prev.toLocaleString('fullwide', {useGrouping:false}))
-  // const a2 = BigNumber.from(next.toLocaleString('fullwide', {useGrouping:false}))
-  // console.log(a1)
-  // console.log(a2)
-  // const diff = a2.sub(a1).mul(1000).div(a1)
-  return (next - prev)/prev * 100//diff.toNumber() / 10;
-}
 
+const candlestickTestData = [
+  {open: 1, high: 2, low: 1, close: 3, date: new Date(2020, 1, 1, 10, )}
+]
 
 const PoolPage = ({} : PoolPage): JSX.Element => {
   const [type, setType] = useState<Transaction>("All");
+  const [data, setData] = useState<any[]>([]);
   const {address} = useParams<UrlParam>();
   const {loading: candlestickLoading, data: candlestickData, error: candlestickError} = useSubscription<CandlestickQuery, AddressVar>(
     MINUTE_CANDLESTICK_GQL, 
@@ -263,6 +268,14 @@ const PoolPage = ({} : PoolPage): JSX.Element => {
     POOL_VOLUME_GQL,
     { variables: { address } }
   )
+
+  useEffect(() => {
+    const load = async () => {
+      const d = await getData();
+      setData(d);
+    };
+    load();
+  }, [])
 
   // Token info
   const poolExists = poolData && poolData.pool.length > 0;
@@ -338,7 +351,27 @@ const PoolPage = ({} : PoolPage): JSX.Element => {
         volumeData.pool_day_volume[0].amount_2
       ) / volumeData.pool_day_volume[0].amount_2 * 100
     : 0;
-  
+
+  const candlestick = candlestickData 
+    ? candlestickData.pool_minute_candlestick
+        .filter(({which_token}) => which_token === 1)
+        .map(({close_1, open_1, high_1, low_1, timeframe}) => ({
+          close: close_1,
+          high: high_1,
+          date: new Date(timeframe),
+          low: low_1,
+          open: open_1,
+
+          absoluteChange: "",
+          dividend: "",
+          percentChange: "",
+          split: "",
+          volume: 38409100
+        }))
+    : [];
+
+  console.log(candlestick)
+
   return (
     <div className="w-100 row justify-content-center">
       <div className="col-xl-8 col-lg-10 col-md-12">
@@ -463,8 +496,13 @@ const PoolPage = ({} : PoolPage): JSX.Element => {
           </div>
 
           <div className="col-sm-12 col-md-6 col-lg-8">
-            <div className="border-rad bg-grey p-1 h-100">
-              Chart
+            <div className="border-rad bg-grey p-1 h-100 m-auto">
+              { candlestick.length > 0 &&
+                <Chart 
+                  type={'hybrid'}
+                  data={candlestick} 
+                />
+              }
             </div>
           </div>
         </div>
