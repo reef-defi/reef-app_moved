@@ -6,6 +6,7 @@ import { BigNumber, Contract, Signer } from 'ethers';
 import { secondsToMilliseconds, format, compareAsc, intervalToDuration, formatDistance } from 'date-fns';
 import { ethers } from 'ethers';
 import './bonds.css';
+import {toUnits} from "../../../../reef-react-lib/src/utils";
 
 export const getReefBondContract = (bond: IBond, signer: Signer): Contract => new Contract(bond.bondContractAddress, BondData.abi, signer);
 
@@ -78,6 +79,11 @@ interface IBondTimes {
   },
 }
 
+interface ITxStatus {
+  state: 'ERROR' | 'DONE';
+  text: string;
+}
+
 async function checkIfBondStakingOpen(contract: Contract, bondTimes?: IBondTimes): Promise<string> {
   const {
     starting,
@@ -100,31 +106,25 @@ async function checkIfBondStakingOpen(contract: Contract, bondTimes?: IBondTimes
 async function bondFunds(erc20Address: string, contract: Contract, signer: ReefSigner, amount: string, status: (status: { message: string }) => void) {
   const isNotValid = await checkIfBondStakingOpen(contract);
   if (isNotValid) return;
+  status({ message: 'Approving contract' });
   const bondAmount = utils.transformAmount(18, amount);
   // const bondAmount = BigNumber.from(amount);
-  console.log(bondAmount, 'amount');
   const erc20 = await rpc.getREEF20Contract(erc20Address, signer.signer);
-  try {
-    status({ message: 'Approving contract' });
-    const tx = await erc20?.contract.approve(contract.address, bondAmount);
-    const receipt = await tx.wait();
-    status({ message: 'Staking' });
-    const bonded = await contract.stake(bondAmount);
-    const bondedR = await bonded.wait();
-  } catch (e) {
-    console.log('Something went wrong', e);
-    status({ message: '' });
-  }
+  const tx = await erc20?.contract.approve(contract.address, bondAmount);
+  const receipt = await tx.wait();
+  status({ message: 'Staking' });
+  const bonded = await contract.stake(bondAmount);
+  const bondedR = await bonded.wait();
 }
 
-async function exit(contract: Contract, status: (status: { message: string}) => void) {
+async function exit(contract: Contract, status: (status: { message: string }) => void) {
   try {
-    status({message: 'Claiming funds'})
+    status({ message: 'Claiming funds' });
     const tx = await contract.exit();
     const receipt = await tx.wait();
     console.log(receipt);
   } catch (e) {
-    status({ message: ''})
+    status({ message: '' });
     console.log('Something went wrong', e);
   }
 }
@@ -185,17 +185,17 @@ async function calcuateBondTimes(contract: Contract | undefined): Promise<IBondT
 
 const formatAmountNearZero = (amount: string, symbol = ''): string => {
   let prefix = '';
-  const decimalPlaces = 2
+  const decimalPlaces = 2;
   let weiAmt = ethers.utils.formatEther(amount);
   let fixedVal = (+weiAmt).toFixed(decimalPlaces);
   let amountBN = ethers.utils.parseEther(weiAmt);
   let isPositive = amountBN.gt('0');
-  if ( isPositive
-      && amountBN.lt( ethers.utils.parseEther('0.01'))
+  if (isPositive
+    && amountBN.lt(ethers.utils.parseEther('0.01'))
   ) {
     prefix = '~';
   }
-  if(amountBN.gte(ethers.utils.parseEther('1'))){
+  if (amountBN.gte(ethers.utils.parseEther('1'))) {
     fixedVal = (+weiAmt).toFixed(0);
   }
   return symbol ? `${prefix}${fixedVal} ${symbol}` : `${prefix}${fixedVal}`;
@@ -206,18 +206,64 @@ export const BondsComponent = ({
   bond
 }: { account?: ReefSigner, bond: IBond }) => {
   const [contract, setContract] = useState<Contract | undefined>(undefined);
-  const [stakeAmount, setBondAmount] = useState('');
+  const [bondAmount, setBondAmount] = useState('');
+  const [bondAmountMax, setBondAmountMax] = useState(0);
   const [bondTimes, setBondTimes] = useState<IBondTimes>();
   const [stakingClosedText, setStakingClosedText] = useState('');
   const [earned, setEarned] = useState('');
   const [lockedAmount, setLockedAmount] = useState('');
   const [loadingText, setLoadingText] = useState('');
   const [loadingValues, setLoadingValues] = useState(false);
+  const [txStatus, setTxStatus] = useState<ITxStatus | undefined>(undefined);
+  const [validationText, setValidationText] = useState('');
 
   async function updateLockedAmt(contract: Contract) {
     let lockedAmount = (await contract.balanceOf(account?.evmAddress)).toString();
     setLockedAmount(formatAmountNearZero(lockedAmount));
+    const lockedElem = document.querySelector('.bond-card__stat-value');
+    if (lockedElem) {
+      lockedElem.classList.add('bond-card__stat-value--animate');
+      setTimeout(() => {
+        lockedElem.classList.remove('bond-card__stat-value--animate');
+      }, 1000)
+    }
   }
+
+  function updateButtonText() {
+    if(bondTimes?.opportunity.ended){
+      setValidationText('Staking closed');
+      return
+    }
+    if(bondTimes?.ending.ended){
+      setValidationText('Bond expired');
+      return;
+    }
+    if (!bondAmount) {
+      setValidationText('Enter amount to stake');
+    } else {
+      if (+bondAmount > bondAmountMax) {
+        if(bondAmountMax>0) {
+          setValidationText('Amount exceeds max ' + bondAmountMax + ' available');
+        }else {
+          setValidationText('Minimum bonding balance is 100');
+        }
+      }  else {
+        setValidationText('');
+      }
+    }
+  }
+
+  useEffect(() => {
+    updateButtonText();
+  }, []);
+
+
+  useEffect(() => {
+    const balanceFixedAmt = +ethers.utils.formatEther(account?.balance||'0');
+    setBondAmountMax(+(balanceFixedAmt - 101).toFixed(0));
+  }, [account?.balance]);
+
+
 
   async function updateEarnedAmt(contract: Contract) {
     let earned = (await contract.earned(account?.evmAddress)).toString();
@@ -228,6 +274,10 @@ export const BondsComponent = ({
     const isNotValid = await checkIfBondStakingOpen(contract, bondTimes);
     setStakingClosedText(isNotValid);
   }
+
+  useEffect(() => {
+    updateButtonText();
+  }, [bondAmount]);
 
   useEffect(() => {
     const contract = getReefBondContract(bond!, account!.signer);
@@ -246,9 +296,7 @@ export const BondsComponent = ({
   return <>
     {!bondTimes?.lockTime || loadingValues ?
 
-      <ComponentCenter>
-        <LoadingWithText text='Loading bond'/>
-      </ComponentCenter> :
+      <Skeleton /> :
 
       <ComponentCenter>
         <div className='bond-card'>
@@ -316,16 +364,25 @@ export const BondsComponent = ({
               account && !stakingClosedText && !loadingText ? <div className='bond-card__bottom'>
                   <NumberInput
                     className="form-control form-control-lg border-rad"
-                    value={stakeAmount}
-                    min={1}
+                    value={bondAmount}
+                    min={0}
                     onChange={setBondAmount}
                     disableDecimals
                     placeholder="Enter amount to bond"
                   />
+                <div className="max-btn-w">
+                  <span
+                      className="text-primary text-decoration-none"
+                      role="button"
+                      onClick={() => setBondAmount(bondAmountMax.toString(10))}
+                  >
+                    <small>(Max)</small>
+                  </span>
+                </div>
                   <OpenModalButton
-                    disabled={!stakeAmount || bondTimes?.opportunity.ended || bondTimes?.ending.ended || +stakeAmount > +ethers.utils.formatEther(account.balance)}
+                    disabled={!!validationText || bondTimes?.opportunity.ended || bondTimes?.ending.ended }
                     id={'bondConfirmation' + bond.id}>
-                    {'Continue'}
+                    {validationText || 'Continue'}
                   </OpenModalButton>
                 </div> :
                 <>{loadingText &&
@@ -333,6 +390,11 @@ export const BondsComponent = ({
                 }</>
             }
             <div>{stakingClosedText}</div>
+            {txStatus && txStatus.state &&
+            <strong className={`mt-3 ${txStatus.state === 'ERROR' ? 'text-danger' : 'text-success'}`}>
+              {txStatus.text}
+            </strong>
+            }
             <div className='mt-2'>
               {
                 !loadingText && bondTimes.ending.ended &&
@@ -351,16 +413,32 @@ export const BondsComponent = ({
           title="Confirm Staking"
           confirmBtnLabel="Stake"
           confirmFun={async () => {
-            await bondFunds(bond.farmTokenAddress, contract!, account!, stakeAmount, ({ message }) => setLoadingText(message));
+            setLoadingText('Processing...');
+            try {
+              await bondFunds(bond.farmTokenAddress, contract!, account!, bondAmount, ({ message }) => setLoadingText(message));
+              setTxStatus({
+                state: 'DONE',
+                text: 'Transaction Successful!'
+              });
+            } catch (e) {
+              setTxStatus({
+                state: 'ERROR',
+                text: 'Transaction Failed.'
+              });
+            }
             await updateLockedAmt(contract!);
+            setBondAmount('');
             setLoadingText('');
+            setTimeout(() => {
+              setTxStatus(undefined);
+            }, 5000);
           }}
         >
           <Margin size="3">
             <ConfirmLabel title="Bond Name" value={bond.bondName}/>
           </Margin>
           <Margin size="3">
-            <ConfirmLabel title="Stake Amount" value={stakeAmount}/>
+            <ConfirmLabel title="Stake Amount" value={bondAmount}/>
           </Margin>
           <Margin size="3">
             <ConfirmLabel title="Contract" value={utils.toAddressShortDisplay(bond.bondContractAddress)}/>
@@ -373,3 +451,26 @@ export const BondsComponent = ({
     }
   </>;
 };
+
+
+export const Skeleton = (): JSX.Element => (
+  <div className='bond-skeleton'>
+    <div className='bond-skeleton__wrapper'>
+      <div className='bond-skeleton__image'/>
+      <div className='bond-skeleton__title'/>
+      <div className='bond-skeleton__subtitle'/>
+      <div className='bond-skeleton__stats'>
+        <div className='bond-skeleton__stat'/>
+        <div className='bond-skeleton__stat'/>
+      </div>
+      <div className='bond-skeleton__info'>
+        <div/>
+        <div/>
+        <div/>
+        <div/>
+        <div/>
+      </div>
+      <div className='bond-skeleton__cta'/>
+    </div>
+  </div>
+);

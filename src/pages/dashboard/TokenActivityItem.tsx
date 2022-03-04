@@ -16,6 +16,14 @@ export enum TokenActivityType {
   RECEIVE = 'RECEIVE'
 }
 
+const formatDate = timestamp => {
+  let date = new Date(timestamp)
+  const offset = date.getTimezoneOffset()
+  date = new Date(date.getTime() - (offset*60*1000))
+  const formatted = date.toISOString().split('T')[0]
+  return formatted.split("-").reverse().join("-")
+}
+
 export const TokenActivityItem = ({
   token, timestamp, type,
 }: TokenActivityItem): JSX.Element => (
@@ -56,7 +64,7 @@ export const TokenActivityItem = ({
         <div className="token-balance-item_icon-text mr-1">
           <div>
             <div className="title-font text-bold">{type === TokenActivityType.RECEIVE ? 'Received' : 'Sent'}</div>
-            <div className="">{(new Date(timestamp)).toLocaleDateString()}</div>
+            <div className="">{formatDate(timestamp)}</div>
           </div>
         </div>
         <div className=" d-flex d-flex-vert-center">

@@ -81,3 +81,40 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
+
+.dashboard-balance-loading {
+    display: inline-flex;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.dashboard-balance-loading span {
+    animation: dashboard-balance-loading 1.5s infinite both;
+    display: inline-block;
+    background: -webkit-linear-gradient(-90deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.dashboard-balance-loading span:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.dashboard-balance-loading span:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+.dashboard-balance-loading span:nth-child(4) {
+    animation-delay: 0.3s;
+}
+
+@keyframes dashboard-balance-loading {
+    0%, 10%, 90%, 100% {
+        transform: none;
+    }
+
+    50% {
+        transform: scale(0);
+    }
+}

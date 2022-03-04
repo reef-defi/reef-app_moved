@@ -32,7 +32,6 @@ const Dashboard = (): JSX.Element => {
   }, DataProgress.LOADING) : DataProgress.LOADING;
 
   return (
-
     <div className="w-100">
       <div className="mb-4 row">
         <Balance balance={totalBalance} />
@@ -41,7 +40,7 @@ const Dashboard = (): JSX.Element => {
       <div className="row">
         <div className="col-lg-8 col-sm-12 col-md-6">
           <TokenBalances tokens={signerTokenBalances as utils.DataWithProgress<TokenWithAmount[]>} />
-          {/* <Nfts /> */}
+          {/*<Nfts />*/}
           <Staking />
         </div>
         <div className="col-lg-4 col-sm-12 col-md-6"><TokenActivity address={selectedSigner?.evmAddress} /></div>
