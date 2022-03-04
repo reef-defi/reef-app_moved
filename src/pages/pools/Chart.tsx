@@ -30,7 +30,6 @@ export function getData() {
 	const promiseMSFT = fetch("https://cdn.rawgit.com/rrag/react-stockcharts/master/docs/data/MSFT.tsv")
 		.then(response => response.text())
 		.then(data => {
-      console.log('Loading: ', data)
       return tsvParse(data, parseData(parseDate))
     })
 	return promiseMSFT;
@@ -53,17 +52,17 @@ interface MyChart {
 
 const MyChart = ({data, width, ratio, type="svg"} : MyChart): JSX.Element => {
 
-  console.log(data)
   const xAccessor = d => d.date;
   const xExtents = [
-    xAccessor(first(data)),
     xAccessor(last(data)),
+    xAccessor(first(data)),
   ];
   return (
-    <ChartCanvas height={400}
+    <ChartCanvas
       ratio={ratio}
       width={width}
-      margin={{ left: 50, right: 50, top: 10, bottom: 30 }}
+      height={500}
+      margin={{ left: 50, right: 50, top: 30, bottom: 30 }}
       type={type}
       seriesName="MSFT"
       data={data}

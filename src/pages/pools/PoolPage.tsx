@@ -2,11 +2,10 @@ import React, { useEffect, useState } from "react"
 import { useParams } from "react-router-dom";
 import {useSubscription, useQuery, gql} from "@apollo/client"
 import {Components} from "@reef-defi/react-lib"
-import { getIconUrl } from "../../utils/utils";
+import { formatDate, getIconUrl, shortAddress } from "../../utils/utils";
 import { Skeleton } from "../dashboard/TokenBalances";
 import { BigNumber, utils } from "ethers";
 import Chart, { getData } from "./Chart";
-import { TypeChooser } from "react-stockcharts/lib/helper";
 import { timeParse } from "d3-time-format";
 
 
@@ -69,19 +68,22 @@ subscription candlestick($address: String!) {
 `
 
 const POOL_TRANSACTIONS_GQL = gql`
-subscription transactions($address: String!, $type: String_comparison_exp!) {
+subscription transactions($address: String!, $type: [pooltype!]) {
   pool_event(
+    order_by: { timestamp: desc }
     where: {
       pool: { address: { _ilike: $address } }
-      type: $type
+      type: { _in: $type }
     }
+    limit: 10
   ) {
     amount_1
     amount_2
     amount_in_1
     amount_in_2
-    total_supply
+    sender_address
     timestamp
+    type
   }
 }
 `
@@ -188,6 +190,18 @@ interface Volume {
   amount_2: number;
 }
 
+type BasePoolTransactionTypes = "Swap" | "Mint" | "Burn"
+interface PoolTransaction {
+  amount_1: number;
+  amount_2: number;
+  amount_in_1: number;
+  amount_in_2: number;
+  sender_address: string;
+  timestamp: string;
+  type: BasePoolTransactionTypes
+};
+
+type PoolTransactionQuery = { pool_event: PoolTransaction[] };
 type VolumeQuery = { pool_day_volume: Volume[] };
 
 interface SupplyQuery {
@@ -206,8 +220,10 @@ interface AddressVar {
   address: string;
 }
 
-type Transaction = "Swap" | "Mint" | "Burn" | "All"
-
+type TransactionTypes =  BasePoolTransactionTypes | "All"
+interface TransactionVar extends AddressVar {
+  type: BasePoolTransactionTypes[]
+}
 const toHumanAmount = (amount: string): string => {
   const head = amount.slice(0, amount.indexOf("."));
   const amo = amount.replace(".", "");
@@ -221,7 +237,7 @@ const toHumanAmount = (amount: string): string => {
   if (head.length > 3) {
     return `${amo.slice(0, head.length-3)}.${amo.slice(head.length-3, head.length-3+2)} k`
   }
-  return amount;
+  return amount.slice(0, head.length + 4);
 }
 
 const formatAmount = (amount: number, decimals: number): string => toHumanAmount(
@@ -238,7 +254,7 @@ const candlestickTestData = [
 ]
 
 const PoolPage = ({} : PoolPage): JSX.Element => {
-  const [type, setType] = useState<Transaction>("All");
+  const [type, setType] = useState<TransactionTypes>("All");
   const [data, setData] = useState<any[]>([]);
   const {address} = useParams<UrlParam>();
   const {loading: candlestickLoading, data: candlestickData, error: candlestickError} = useSubscription<CandlestickQuery, AddressVar>(
@@ -249,11 +265,11 @@ const PoolPage = ({} : PoolPage): JSX.Element => {
     POOL_GQL,
     {variables: { address } }
   )
-  const {loading: loadingTransaction, data: transactionData, error: transactionError} = useSubscription(
+  const {loading: loadingTransaction, data: transactionData, error: transactionError} = useSubscription<PoolTransactionQuery, TransactionVar>(
     POOL_TRANSACTIONS_GQL,
     {variables: {
       address,
-      type: { _in: type === "All" ? ["Swap", "Mint", "Burn"] : [type] }
+      type: (type === "All" ? ["Swap", "Mint", "Burn"] : [type])
     }}
   );
   const {loading: loadingReserves, data: reservesData, error: reservesError} = useQuery<ReservesQuery, AddressVar>(
@@ -370,7 +386,27 @@ const PoolPage = ({} : PoolPage): JSX.Element => {
         }))
     : [];
 
-  console.log(candlestick)
+
+  const description = (type: BasePoolTransactionTypes, amount_1: number) => {
+    switch (type) {
+      case "Swap": return `${type} ${amount_1 > 0 ? tokenSymbol1 : tokenSymbol2} for ${amount_1 > 0 ? tokenSymbol2 : tokenSymbol1}`
+      case "Burn": return `Remove ${tokenSymbol1} and ${tokenSymbol2}`;
+      case "Mint": return `Add ${tokenSymbol1} and ${tokenSymbol2}`;
+    }
+  }
+
+  const transactionView = poolData && transactionData
+    ? transactionData.pool_event
+    .map(({amount_1, amount_2, sender_address, timestamp, type, amount_in_1, amount_in_2}, index) => (
+      <tr key={`transaction-${index}`}>
+        <td>{description(type, amount_1)}</td>
+        <td>{formatAmount(amount_1 > 0 ? amount_1 : amount_in_1, decimal1)}</td>
+        <td>{formatAmount(amount_2 > 0 ? amount_2 : amount_in_2, decimal2)}</td>
+        <td>{shortAddress(sender_address)}</td>
+        <td>{formatDate(timestamp)}</td>
+      </tr>
+    ))
+    : []
 
   return (
     <div className="w-100 row justify-content-center">
@@ -513,10 +549,25 @@ const PoolPage = ({} : PoolPage): JSX.Element => {
         </Components.Card.CardHeader>
 
         <Components.Card.Card>
-
-          <div>
-            Transactions
-          </div>
+          <table className="table">
+            <thead>
+              <tr>
+                <th scope="col">
+                  <button>All</button>
+                  <button>Swap</button>
+                  <button>Adds</button>
+                  <button>Removes</button>
+                </th>
+                <th scope="col">Token Amount</th>
+                <th scope="col">Token Amount</th>
+                <th scope="col">Account</th>
+                <th scope="col">Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              { transactionView }
+            </tbody>
+          </table>
         </Components.Card.Card>
       </div>
     </div>
