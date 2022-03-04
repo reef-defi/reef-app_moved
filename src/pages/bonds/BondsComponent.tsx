@@ -6,6 +6,7 @@ import { BigNumber, Contract, Signer } from 'ethers';
 import { secondsToMilliseconds, format, compareAsc, intervalToDuration, formatDistance } from 'date-fns';
 import { ethers } from 'ethers';
 import './bonds.css';
+import {toUnits} from "../../../../reef-react-lib/src/utils";
 
 export const getReefBondContract = (bond: IBond, signer: Signer): Contract => new Contract(bond.bondContractAddress, BondData.abi, signer);
 
@@ -205,15 +206,16 @@ export const BondsComponent = ({
   bond
 }: { account?: ReefSigner, bond: IBond }) => {
   const [contract, setContract] = useState<Contract | undefined>(undefined);
-  const [stakeAmount, setBondAmount] = useState('');
+  const [bondAmount, setBondAmount] = useState('');
+  const [bondAmountMax, setBondAmountMax] = useState(0);
   const [bondTimes, setBondTimes] = useState<IBondTimes>();
   const [stakingClosedText, setStakingClosedText] = useState('');
   const [earned, setEarned] = useState('');
   const [lockedAmount, setLockedAmount] = useState('');
   const [loadingText, setLoadingText] = useState('');
   const [loadingValues, setLoadingValues] = useState(false);
-  const [buttonText, setButtonText] = useState('');
   const [txStatus, setTxStatus] = useState<ITxStatus | undefined>(undefined);
+  const [validationText, setValidationText] = useState('');
 
   async function updateLockedAmt(contract: Contract) {
     let lockedAmount = (await contract.balanceOf(account?.evmAddress)).toString();
@@ -228,16 +230,40 @@ export const BondsComponent = ({
   }
 
   function updateButtonText() {
-    if (!stakeAmount) {
-      setButtonText('Enter amount to stake');
+    if(bondTimes?.opportunity.ended){
+      setValidationText('Staking closed');
+      return
+    }
+    if(bondTimes?.ending.ended){
+      setValidationText('Bond expired');
+      return;
+    }
+    if (!bondAmount) {
+      setValidationText('Enter amount to stake');
     } else {
-      if (+stakeAmount > +ethers.utils.formatEther(account.balance)) {
-        setButtonText('Amount entered exceeds your balance');
-      } else {
-        setButtonText('Continue');
+      if (+bondAmount > bondAmountMax) {
+        if(bondAmountMax>0) {
+          setValidationText('Amount exceeds max ' + bondAmountMax + ' available');
+        }else {
+          setValidationText('Minimum bonding balance is 100');
+        }
+      }  else {
+        setValidationText('');
       }
     }
   }
+
+  useEffect(() => {
+    updateButtonText();
+  }, []);
+
+
+  useEffect(() => {
+    const balanceFixedAmt = +ethers.utils.formatEther(account?.balance||'0');
+    setBondAmountMax(+(balanceFixedAmt - 101).toFixed(0));
+  }, [account?.balance]);
+
+
 
   async function updateEarnedAmt(contract: Contract) {
     let earned = (await contract.earned(account?.evmAddress)).toString();
@@ -251,7 +277,7 @@ export const BondsComponent = ({
 
   useEffect(() => {
     updateButtonText();
-  }, [stakeAmount]);
+  }, [bondAmount]);
 
   useEffect(() => {
     const contract = getReefBondContract(bond!, account!.signer);
@@ -338,16 +364,25 @@ export const BondsComponent = ({
               account && !stakingClosedText && !loadingText ? <div className='bond-card__bottom'>
                   <NumberInput
                     className="form-control form-control-lg border-rad"
-                    value={stakeAmount}
-                    min={1}
+                    value={bondAmount}
+                    min={0}
                     onChange={setBondAmount}
                     disableDecimals
                     placeholder="Enter amount to bond"
                   />
+                <div className="max-btn-w">
+                  <span
+                      className="text-primary text-decoration-none"
+                      role="button"
+                      onClick={() => setBondAmount(bondAmountMax.toString(10))}
+                  >
+                    <small>(Max)</small>
+                  </span>
+                </div>
                   <OpenModalButton
-                    disabled={!stakeAmount || bondTimes?.opportunity.ended || bondTimes?.ending.ended || +stakeAmount > +ethers.utils.formatEther(account.balance)}
+                    disabled={!!validationText || bondTimes?.opportunity.ended || bondTimes?.ending.ended }
                     id={'bondConfirmation' + bond.id}>
-                    {buttonText}
+                    {validationText || 'Continue'}
                   </OpenModalButton>
                 </div> :
                 <>{loadingText &&
@@ -380,7 +415,7 @@ export const BondsComponent = ({
           confirmFun={async () => {
             setLoadingText('Processing...');
             try {
-              await bondFunds(bond.farmTokenAddress, contract!, account!, stakeAmount, ({ message }) => setLoadingText(message));
+              await bondFunds(bond.farmTokenAddress, contract!, account!, bondAmount, ({ message }) => setLoadingText(message));
               setTxStatus({
                 state: 'DONE',
                 text: 'Transaction Successful!'
@@ -403,7 +438,7 @@ export const BondsComponent = ({
             <ConfirmLabel title="Bond Name" value={bond.bondName}/>
           </Margin>
           <Margin size="3">
-            <ConfirmLabel title="Stake Amount" value={stakeAmount}/>
+            <ConfirmLabel title="Stake Amount" value={bondAmount}/>
           </Margin>
           <Margin size="3">
             <ConfirmLabel title="Contract" value={utils.toAddressShortDisplay(bond.bondContractAddress)}/>

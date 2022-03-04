@@ -1,3 +1,10 @@
+.max-btn-w{
+  text-align: left;
+  font-size: 0.7em;
+  margin-top: 0 !important;
+  margin-left: 1em;
+}
+
 .bond-card,
 .bond-skeleton {
   --text: #19233c;
