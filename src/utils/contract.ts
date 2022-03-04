@@ -1,10 +1,8 @@
-import axios, { AxiosResponse } from 'axios';
-import { Contract, utils } from 'ethers';
-import { gql } from '@apollo/client';
-import { graphql } from '@reef-defi/react-lib';
-import {
-  Observable, switchMap, take, timeout, catchError, of, map, tap, firstValueFrom, skipWhile,
-} from 'rxjs';
+import axios, {AxiosResponse} from 'axios';
+import {Contract, utils} from 'ethers';
+import {gql} from '@apollo/client';
+import {firstValueFrom,} from 'rxjs';
+import {graphql} from '@reef-defi/react-lib';
 
 const CONTRACT_VERIFICATION_URL = '/api/verificator/submit-verification';
 
@@ -41,13 +39,22 @@ const CONTRACT_EXISTS_GQL = gql`
             }
           }
 `;
-const isContractIndexed$ = (address: string): Observable<boolean> => graphql.apolloClientInstance$.pipe(
+/*const isContractIndexed$ = (address: string): Observable<boolean> => graphql.apolloClientInstance$.pipe(
   timeout(120000),
-  switchMap((apollo) => apollo.subscribe({
-    query: CONTRACT_EXISTS_GQL,
-    variables: { address },
-    fetchPolicy: 'network-only',
-  })),
+  switchMap((apollo) => {
+      const rxjsSubj = new Subject();
+      // apollo does not use rxjs and switchMap has issues
+      apollo.subscribe({
+          query: CONTRACT_EXISTS_GQL,
+          variables: {address},
+          fetchPolicy: 'network-only',
+      }).subscribe({
+          next(x) { rxjsSubj.next(x) },
+          error(err) { rxjsSubj.error(err) },
+          complete() { rxjsSubj.complete() }
+      });
+      return rxjsSubj;
+  }),
   map((res:any) => res.data.contract && res.data.contract.length),
   skipWhile((v) => !v),
   catchError((e) => {
@@ -55,7 +62,36 @@ const isContractIndexed$ = (address: string): Observable<boolean> => graphql.apo
     return of(false);
   }),
   take(1),
-);
+);*/
+
+const isContrIndexed = async (address: string): Promise<boolean> =>{
+    return new Promise(async (resolve,reject)=>{
+        const tmt = setTimeout(() => {
+            resolve(false);
+        }, 120000);
+        const apollo = await firstValueFrom(graphql.apolloClientInstance$);
+        apollo.subscribe({
+            query: CONTRACT_EXISTS_GQL,
+            variables: {address},
+            fetchPolicy: 'network-only',
+        }).subscribe({
+            next(result) {
+                if(result.data.contract && result.data.contract.length){
+                    clearTimeout(tmt);
+                    resolve(true);
+                }
+                },
+            error(err) {
+                clearTimeout(tmt);
+                console.log("isContrIndexed error=",err);
+                resolve(false);
+                },
+            complete() {
+                clearTimeout(tmt); }
+
+        });
+    })
+}
 
 export const verifyContract = async (deployedContract: Contract, contract: ReefContract, arg: string[], url?: string): Promise<boolean> => {
   if (!url) {
@@ -64,7 +100,8 @@ export const verifyContract = async (deployedContract: Contract, contract: ReefC
 
   try {
     const contractAddress = toContractAddress(deployedContract.address);
-    if (!await firstValueFrom(isContractIndexed$(contractAddress))) {
+    if (!await isContrIndexed(contractAddress)) {
+    // if (!await firstValueFrom(isContractIndexed$(contractAddress))) {
       return false;
     }
     const body: VerificationContractReq = {
