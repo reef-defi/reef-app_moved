@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react"
 import { useParams } from "react-router-dom";
 import {useSubscription, useQuery, gql} from "@apollo/client"
 import {Components} from "@reef-defi/react-lib"
-import { formatDate, getIconUrl, shortAddress } from "../../utils/utils";
+import { getIconUrl, shortAddress } from "../../utils/utils";
 import { Skeleton } from "../dashboard/TokenBalances";
 import { BigNumber, utils } from "ethers";
 import Chart, { getData } from "./Chart";
 import { timeParse } from "d3-time-format";
-
+import "./PoolPage.css";
 
 const parseDate = timeParse("%Y-%m-%d");
 const {Text, ColorText, BoldText, LeadText} = Components.Text;
@@ -45,8 +45,11 @@ query pool($address: String!) {
 const MINUTE_CANDLESTICK_GQL = gql`
 subscription candlestick($address: String!) {
   pool_minute_candlestick(
-    order_by: { timeframe: asc }
-    where: { pool: { address: { _ilike: $address } } }
+    order_by: { timeframe: desc }
+    where: { 
+      pool: { address: { _ilike: $address } } 
+    }
+    limit: 200
   ) {
     pool_id
     timeframe
@@ -224,6 +227,10 @@ type TransactionTypes =  BasePoolTransactionTypes | "All"
 interface TransactionVar extends AddressVar {
   type: BasePoolTransactionTypes[]
 }
+interface CandlestickVar extends AddressVar {
+  timestamp: string;
+}
+
 const toHumanAmount = (amount: string): string => {
   const head = amount.slice(0, amount.indexOf("."));
   const amo = amount.replace(".", "");
@@ -240,6 +247,23 @@ const toHumanAmount = (amount: string): string => {
   return amount.slice(0, head.length + 4);
 }
 
+const formatDate = (timestamp: number|string): string => {
+  const now = new Date(Date.now());
+  const date = new Date(timestamp);
+
+  const difference = now.getTime() - date.getTime();
+  if (difference < 1000 * 60) {
+    return `${Math.round(difference / 1000)}sec ago`
+  }
+  if (difference < 1000 * 60 * 60) {
+    return `${Math.round(difference / 60000)}min ago`
+  } 
+  if (difference < 1000 * 60 * 60 * 24) {
+    return `${Math.round(difference / 3600000)}h ago`
+  }
+  return `${date.getFullYear()}-${date.getMonth()}-${date.getDay()}`;
+}
+
 const formatAmount = (amount: number, decimals: number): string => toHumanAmount(
   utils.formatUnits(
     BigNumber.from(
@@ -249,9 +273,8 @@ const formatAmount = (amount: number, decimals: number): string => toHumanAmount
   )
 )
 
-const candlestickTestData = [
-  {open: 1, high: 2, low: 1, close: 3, date: new Date(2020, 1, 1, 10, )}
-]
+const toTimestamp = (d: Date): string => 
+  `${d.getFullYear()}-${d.getMonth() > 9 ? d.getMonth() : "0" + d.getMonth()}-${d.getUTCDay() > 9 ? d.getUTCDay() : "0" + d.getUTCDay()}T${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}+00:00`;
 
 const PoolPage = ({} : PoolPage): JSX.Element => {
   const [type, setType] = useState<TransactionTypes>("All");
@@ -259,7 +282,9 @@ const PoolPage = ({} : PoolPage): JSX.Element => {
   const {address} = useParams<UrlParam>();
   const {loading: candlestickLoading, data: candlestickData, error: candlestickError} = useSubscription<CandlestickQuery, AddressVar>(
     MINUTE_CANDLESTICK_GQL, 
-    { variables: { address } }
+    { 
+      variables: { address } 
+    }
   );
   const {loading: loadingPool, data: poolData, error: poolError} = useQuery<PoolQuery, AddressVar>(
     POOL_GQL,
@@ -284,14 +309,6 @@ const PoolPage = ({} : PoolPage): JSX.Element => {
     POOL_VOLUME_GQL,
     { variables: { address } }
   )
-
-  useEffect(() => {
-    const load = async () => {
-      const d = await getData();
-      setData(d);
-    };
-    load();
-  }, [])
 
   // Token info
   const poolExists = poolData && poolData.pool.length > 0;
@@ -330,7 +347,24 @@ const PoolPage = ({} : PoolPage): JSX.Element => {
     reservesData && reservesData.pool_event.length > 0
       ? formatAmount(reservesData.pool_event[0].reserved_2, decimal2) 
       : "-"
-      
+
+  const ratio1 =
+    reservesData && reservesData.pool_event.length > 0
+      ? BigNumber
+        .from(reservesData.pool_event[0].reserved_2.toLocaleString('fullwide', {useGrouping:false}))
+        .mul(1000)
+        .div(BigNumber.from(BigNumber.from(reservesData.pool_event[0].reserved_1.toLocaleString('fullwide', {useGrouping:false}))))
+        .toNumber()/1000
+      : -1;
+
+  const ratio2 =
+    reservesData && reservesData.pool_event.length > 0
+      ? BigNumber
+        .from(reservesData.pool_event[0].reserved_1.toLocaleString('fullwide', {useGrouping:false}))
+        .mul(1000)
+        .div(BigNumber.from(BigNumber.from(reservesData.pool_event[0].reserved_2.toLocaleString('fullwide', {useGrouping:false}))))
+        .toNumber()/1000
+      : -1;
 
   // Supply
   const totalSupply = 
@@ -384,8 +418,13 @@ const PoolPage = ({} : PoolPage): JSX.Element => {
           split: "",
           volume: 38409100
         }))
+        .filter(({date}) => date.getTime() > Date.now() - 60 * 60 * 1000)
+        .sort((a, b) => a.date.getTime() - b.date.getTime())
     : [];
 
+  console.log(candlestick)
+  console.log(candlestickData)
+  console.log(candlestickError)
 
   const description = (type: BasePoolTransactionTypes, amount_1: number) => {
     switch (type) {
@@ -399,14 +438,14 @@ const PoolPage = ({} : PoolPage): JSX.Element => {
     ? transactionData.pool_event
     .map(({amount_1, amount_2, sender_address, timestamp, type, amount_in_1, amount_in_2}, index) => (
       <tr key={`transaction-${index}`}>
-        <td>{description(type, amount_1)}</td>
-        <td>{formatAmount(amount_1 > 0 ? amount_1 : amount_in_1, decimal1)}</td>
-        <td>{formatAmount(amount_2 > 0 ? amount_2 : amount_in_2, decimal2)}</td>
-        <td>{shortAddress(sender_address)}</td>
-        <td>{formatDate(timestamp)}</td>
+        <td className="fs-5">{description(type, amount_1)}</td>
+        <td className="text-end fs-5 d-none d-md-table-cell d-lg-table-cell d-xl-table-cell">{formatAmount(amount_1 > 0 ? amount_1 : amount_in_1, decimal1)} {tokenSymbol1}</td>
+        <td className="text-end fs-5 d-none d-lg-table-cell d-xl-table-cell">{formatAmount(amount_2 > 0 ? amount_2 : amount_in_2, decimal2)} {tokenSymbol2}</td>
+        <td className="text-end fs-5 d-none d-xl-table-cell">{shortAddress(sender_address)}</td>
+        <td className="text-end pe-4 fs-5">{formatDate(timestamp)}</td>
       </tr>
     ))
-    : []
+    : [];
 
   return (
     <div className="w-100 row justify-content-center">
@@ -434,7 +473,7 @@ const PoolPage = ({} : PoolPage): JSX.Element => {
                     : <div className="d-flex">
                         <Components.Icons.TokenIcon src={tokenIcon1}/>
                         <Components.Display.ME size="1" />
-                        <LeadText>1 {tokenSymbol1} = n {tokenSymbol2} </LeadText>
+                        <LeadText>1 {tokenSymbol1} = {ratio1 !== -1 ? ratio1 : "-"} {tokenSymbol2} </LeadText>
                       </div>
                   }
                 </div>
@@ -449,7 +488,7 @@ const PoolPage = ({} : PoolPage): JSX.Element => {
                     : <div className="d-flex">
                         <Components.Icons.TokenIcon src={tokenIcon2}/>
                         <Components.Display.ME size="1" />
-                        <LeadText>1 {tokenSymbol2} = n {tokenSymbol1}</LeadText>
+                        <LeadText>1 {tokenSymbol2} = {ratio2 !== -1 ? ratio2 : "-"} {tokenSymbol1}</LeadText>
                       </div>
                   }
                 </div>
@@ -466,7 +505,8 @@ const PoolPage = ({} : PoolPage): JSX.Element => {
 
         <div className="row mt-2">
           <div className="col-sm-12 col-md-6 col-lg-4">
-            <div className="border-rad bg-grey p-3">
+            <div className="border-rad bg-grey p-3 pt-2">
+              <Components.Display.MT size="2" />
               <Components.Card.Card>
                 <BoldText size={1.2}>Total Tokens Locked</BoldText>
                 <Components.Display.MB size="2" />
@@ -499,40 +539,48 @@ const PoolPage = ({} : PoolPage): JSX.Element => {
               </Components.Card.Card>
             
               <Components.Display.MT size="2" />
+              <Components.Card.Card>
+                <div className="d-flex flex-column">
+                  <BoldText size={1.2}>Total Value Locked</BoldText>
+                  <Components.Text.BoldText size={1.6}>{totalSupply}</Components.Text.BoldText>
+                  <Components.Text.ColorText color={totalSupplyPercentage < 0 ? "danger" : "success"} size={1}>{totalSupplyPercentage.toFixed(3)} %</Components.Text.ColorText>
+                </div>
+              </Components.Card.Card>
 
-              <div className="d-flex flex-column mt-3 ms-1">
-                <Text size={1.3}>TVL</Text>
-                <Components.Text.BoldText size={1.6}>{totalSupply}</Components.Text.BoldText>
-                <Components.Text.ColorText color={totalSupplyPercentage < 0 ? "danger" : "success"} size={1}>{totalSupplyPercentage.toFixed(3) + "1"} %</Components.Text.ColorText>
-              </div>
-
-              <div className="d-flex flex-column mt-3 ms-1">
-                <Text size={1.3}>Volume (24h)</Text>
-                <div className="d-flex">
+              <Components.Display.MT size="2" />
+              <Components.Card.Card>
+                <BoldText size={1.2}>Volume 24h</BoldText>
+                {/* <Text size={1.3}>Volume (24h)</Text> */}
+                <div className="d-flex ms-1">
                   <Components.Icons.TokenIcon src={tokenIcon1}/>
                   <Components.Text.BoldText size={1.6}> 
                     {volume1}
                   </Components.Text.BoldText>
                 </div>
-                <Components.Text.ColorText color={volumeDifference1 < 0 ? "danger" : "success"} size={1}>{volumeDifference1.toFixed(3) + "1"} %</Components.Text.ColorText>
+                <Components.Text.ColorText color={volumeDifference1 < 0 ? "danger" : "success"} size={1}>{volumeDifference1.toFixed(3)} %</Components.Text.ColorText>
 
-                <div className="d-flex">
+                <div className="d-flex ms-1">
                   <Components.Icons.TokenIcon src={tokenIcon2}/>
                   <Components.Text.BoldText size={1.6}>
                     {volume2}
                   </Components.Text.BoldText>
                 </div>
-                <Components.Text.ColorText color={volumeDifference2 < 0 ? "danger" : "success"} size={1}>{volumeDifference2.toFixed(3) + "1"} %</Components.Text.ColorText>
-              </div>
-              <div className="d-flex flex-column mt-3 ms-1">
-                <Text size={1.3}>24h Fees</Text>
-                <Components.Text.BoldText size={1.6}>$100k</Components.Text.BoldText>
-              </div>
+                <Components.Text.ColorText color={volumeDifference2 < 0 ? "danger" : "success"} size={1}>{volumeDifference2.toFixed(3)} %</Components.Text.ColorText>
+              </Components.Card.Card>
+
+
+              <Components.Display.MT size="2" />
+              <Components.Card.Card>
+                <div className="d-flex flex-column ms-1">
+                  <BoldText size={1.2}>Fees 24h</BoldText>
+                  <Components.Text.BoldText size={1.6}>$103k</Components.Text.BoldText>
+                </div>
+              </Components.Card.Card>
             </div>
           </div>
 
           <div className="col-sm-12 col-md-6 col-lg-8">
-            <div className="border-rad bg-grey p-1 h-100 m-auto">
+            <div className="border-rad bg-grey p-1 h-100 m-auto mt-xs-3">
               { candlestick.length > 0 &&
                 <Chart 
                   type={'hybrid'}
@@ -542,32 +590,38 @@ const PoolPage = ({} : PoolPage): JSX.Element => {
             </div>
           </div>
         </div>
-        <Components.Display.MT size="3" />
 
-        <Components.Card.CardHeader>
-          <Components.Card.CardTitle title="Transactions" />
-        </Components.Card.CardHeader>
-
+        <Components.Display.MT size="4" />
+        <BoldText size={1.6}>Transactions</BoldText>
+        <Components.Display.MT size="4" />
+        
         <Components.Card.Card>
           <table className="table">
             <thead>
               <tr>
                 <th scope="col">
-                  <button>All</button>
-                  <button>Swap</button>
-                  <button>Adds</button>
-                  <button>Removes</button>
+                  <a className={`fs-5 mx-1 text-decoration-none ${type === "All" ? "selected-topic" : "unselected-topic"}`} type="button" onClick={() => setType("All")}>All</a>
+                  <a className={`fs-5 mx-1 text-decoration-none ${type === "Swap" ? "selected-topic" : "unselected-topic"}`} type="button" onClick={() => setType("Swap")}>Swaps</a>
+                  <a className={`fs-5 mx-1 text-decoration-none ${type === "Mint" ? "selected-topic" : "unselected-topic"}`} type="button" onClick={() => setType("Mint")}>Adds</a>
+                  <a className={`fs-5 mx-1 text-decoration-none ${type === "Burn" ? "selected-topic" : "unselected-topic"}`} type="button" onClick={() => setType("Burn")}>Removes</a>
                 </th>
-                <th scope="col">Token Amount</th>
-                <th scope="col">Token Amount</th>
-                <th scope="col">Account</th>
-                <th scope="col">Time</th>
+                <th scope="col" className="text-end fs-5 d-none d-md-table-cell d-lg-table-cell d-xl-table-cell">Token Amount</th>
+                <th scope="col" className="text-end fs-5 d-none d-lg-table-cell d-xl-table-cell">Token Amount</th>
+                <th scope="col" className="text-end fs-5 d-none d-xl-table-cell">Account</th>
+                <th scope="col" className="text-end pe-4 fs-5">Time</th>
               </tr>
             </thead>
             <tbody>
               { transactionView }
             </tbody>
           </table>
+          <div className="d-flex justify-content-center">
+            <div>
+              <button>{"<-"}</button>
+              Page 1 of 30
+              <button>{"->"}</button>
+            </div>
+          </div>
         </Components.Card.Card>
       </div>
     </div>
