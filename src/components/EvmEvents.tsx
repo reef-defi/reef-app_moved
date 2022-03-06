@@ -1,4 +1,4 @@
-import {Components, graphql, hooks, utils as reefUtils,} from '@reef-defi/react-lib';
+import {Components, graphql, hooks, utils as reefUtils, appState,} from '@reef-defi/react-lib';
 import React, {useEffect, useRef, useState} from 'react';
 import {ApolloClient, gql, SubscriptionOptions} from "@apollo/client";
 import {ethers} from 'ethers';
@@ -122,7 +122,7 @@ function getEvmEvents$(apolloClient: ApolloClient<any>, contractAddress: string,
 
 export const EvmEvents = (): JSX.Element => {
     const apolloClient: ApolloClient<any> | undefined = hooks.useObservableState(graphql.apolloClientInstance$);
-    const [lastEvent, setLastEvent] = useState<any>();
+    const [lastEvents, setLastEvents] = useState<any>();
     const [contractAddress, setContractAddress] = useState('');
     const customEventSubs = useRef<any>();
     const libEventSubs = useRef<any>();
@@ -138,6 +138,7 @@ export const EvmEvents = (): JSX.Element => {
             let fromBlockId = 0;
             customEventSubs.current = getEvmEvents$(apolloClient, contractAddress, methodSignature, fromBlockId).subscribe((val: any) => {
                 console.log("EVM EVENTS=", val);
+                setLastEvents(val)
             });
         };
         fn();
@@ -146,6 +147,19 @@ export const EvmEvents = (): JSX.Element => {
         }
     }, [apolloClient, contractAddress]);
 
+    useEffect(() => {
+          // reef library example
+          // const methodSignature = 'Transfer(address,address,uint256)'
+          libEventSubs.current?.unsubscribe();
+          libEventSubs.current = appState.getEvmEvents$(contractAddress).subscribe((evmEvents: any) => {
+            console.log("OBS EVM EV=", evmEvents);
+          });
+
+          return ()=>{
+            libEventSubs.current?.unsubscribe();
+          }
+        }, [contractAddress]);
+
     return (
         <>
             <h5>Evm Events</h5>
@@ -153,12 +167,13 @@ export const EvmEvents = (): JSX.Element => {
                 contract address:<input value={contractAddress}
                                         onChange={({target: {value}}) => setContractAddress(value)}/>
             </div>
-            {!lastEvent && <p>No event to display</p>}
-            {lastEvent && <>
-                <p>event in block: {lastEvent?.block_id}</p>
-                <p>event json: {JSON.stringify(lastEvent?.data_raw)}</p>
-            </>}
+
             <div>
+            {!lastEvents && <span>No event to display</span>}
+            {lastEvents && <>
+                <div>block id: {lastEvents.fromBlockId}</div>
+                <div>events len: {lastEvents.evmEvents.length}</div>
+            </>}
 
             </div>
         </>
