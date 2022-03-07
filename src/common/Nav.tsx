@@ -1,11 +1,13 @@
-import React from 'react';
 import {appState, Components, hooks, Network, ReefSigner,} from '@reef-defi/react-lib';
 import './Nav.css';
 import {Link, useHistory, useLocation} from 'react-router-dom';
 import {saveSignerLocalPointer} from '../store/internalStore';
 import {ReefLogo} from './Icons';
 
-const menuItems: any[] = [];
+const menuItems: any[] = [
+    {title:'token', url:'/create-token'},
+    {title:'transfer event', url:'/send'},
+];
 
 export interface Nav {
     display: boolean;

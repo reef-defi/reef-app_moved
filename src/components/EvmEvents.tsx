@@ -1,8 +1,8 @@
-import {Components, graphql, hooks, utils as reefUtils, appState,} from '@reef-defi/react-lib';
-import React, {useEffect, useRef, useState} from 'react';
+import {Components, graphql, hooks, utils as reefUtils,} from '@reef-defi/react-lib';
 import {ApolloClient, gql, SubscriptionOptions} from "@apollo/client";
 import {ethers} from 'ethers';
 import {from, map, Observable, scan, switchMap} from "rxjs";
+import {useEffect, useRef, useState} from "react";
 
 
 const {
@@ -129,6 +129,7 @@ export const EvmEvents = (): JSX.Element => {
 
     useEffect(() => {
         // custom graphQL example
+
         async function fn() {
             if (!apolloClient) {
                 return;
@@ -151,7 +152,7 @@ export const EvmEvents = (): JSX.Element => {
           // reef library example
           // const methodSignature = 'Transfer(address,address,uint256)'
           libEventSubs.current?.unsubscribe();
-          libEventSubs.current = appState.getEvmEvents$(contractAddress).subscribe((evmEvents: any) => {
+          libEventSubs.current = graphql.getEvmEvents$(contractAddress).subscribe((evmEvents: any) => {
             console.log("OBS EVM EV=", evmEvents);
           });
 
@@ -162,7 +163,7 @@ export const EvmEvents = (): JSX.Element => {
 
     return (
         <>
-            <h5>Evm Events</h5>
+            <h5>EvmEvents.tsx component</h5>
             <div>
                 contract address:<input value={contractAddress}
                                         onChange={({target: {value}}) => setContractAddress(value)}/>
