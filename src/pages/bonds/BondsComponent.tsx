@@ -203,8 +203,9 @@ const formatAmountNearZero = (amount: string, symbol = ''): string => {
 
 export const BondsComponent = ({
   account,
-  bond
-}: { account?: ReefSigner, bond: IBond }) => {
+  bond,
+  validatorRewards
+}: { account?: ReefSigner; bond: IBond; validatorRewards?: { total: number, average: number, days: number }; }) => {
   const [contract, setContract] = useState<Contract | undefined>(undefined);
   const [bondAmount, setBondAmount] = useState('');
   const [bondAmountMax, setBondAmountMax] = useState(0);
@@ -216,6 +217,19 @@ export const BondsComponent = ({
   const [loadingValues, setLoadingValues] = useState(false);
   const [txStatus, setTxStatus] = useState<ITxStatus | undefined>(undefined);
   const [validationText, setValidationText] = useState('');
+  const [stakedRewards, setStakedRewards] = useState<{ totalEarned: number; averageEarned: number; yearlyEstimate:number; }>();
+
+  useEffect(() => {
+    if (validatorRewards && earned) {
+      let totalEarned = parseFloat(earned);
+      const earnedRel = totalEarned / validatorRewards.total;
+      const averageEarned = earnedRel * (validatorRewards.average);
+      const yearlyEstimate = averageEarned*365;
+      setStakedRewards({totalEarned, averageEarned, yearlyEstimate})
+    }
+  }, [validatorRewards, earned]);
+
+
 
   async function updateLockedAmt(contract: Contract) {
     let lockedAmount = (await contract.balanceOf(account?.evmAddress)).toString();
@@ -328,15 +342,17 @@ export const BondsComponent = ({
                 </>
                 : ''}
 
-              {/*<div className='bond-card__info-item'>
-                <div className='bond-card__info-label'>Current daily rewards</div>
-                <div className='bond-card__info-value'>...</div>
+              {stakedRewards &&<>
+                <div className='bond-card__info-item'>
+                <div className='bond-card__info-label'>Average daily reward</div>
+                <div className='bond-card__info-value'>~ {stakedRewards.averageEarned.toFixed(stakedRewards.averageEarned>5?0:3)}</div>
               </div>
 
               <div className='bond-card__info-item'>
                 <div className='bond-card__info-label'>Estimated yearly rewards</div>
-                <div className='bond-card__info-value'>...</div>
-              </div>*/}
+                <div className='bond-card__info-value'>~ {stakedRewards.yearlyEstimate.toFixed(stakedRewards.yearlyEstimate>10?0:2)}</div>
+              </div>
+              </>}
 
               {
                 !bondTimes.ending.ended &&
