@@ -7,6 +7,10 @@ import { secondsToMilliseconds, format, compareAsc, intervalToDuration, formatDi
 import { ethers } from 'ethers';
 import './bonds.css';
 import {toUnits} from "../../../../reef-react-lib/src/utils";
+import BN from "bn.js";
+import {BN_THOUSAND, BN_ZERO, isBn, isFunction} from "@polkadot/util";
+import {DeriveEraRewards, DeriveOwnSlashes, DeriveStakerPoints} from "@polkadot/api-derive/types";
+import {Provider} from "@reef-defi/evm-provider";
 
 export const getReefBondContract = (bond: IBond, signer: Signer): Contract => new Contract(bond.bondContractAddress, BondData.abi, signer);
 
@@ -201,10 +205,65 @@ const formatAmountNearZero = (amount: string, symbol = ''): string => {
   return symbol ? `${prefix}${fixedVal} ${symbol}` : `${prefix}${fixedVal}`;
 };
 
+interface ToBN {
+  toBn: () => BN;
+}
+
+export function balanceToNumber (amount: BN | ToBN = BN_ZERO, divisor: BN): number {
+  const value = isBn(amount)
+      ? amount
+      : isFunction(amount.toBn)
+          ? amount.toBn()
+          : BN_ZERO;
+
+  return value.mul(BN_THOUSAND).div(divisor).toNumber() / 1000;
+}
+
+interface ValidatorEra { era: string; slash: number; reward: number };
+
+function extractRewards (erasRewards: DeriveEraRewards[] = [], ownSlashes: DeriveOwnSlashes[] = [], allPoints: DeriveStakerPoints[] = [], divisor: BN): ValidatorEra[] {
+  const eraValues: ValidatorEra[] = [];
+
+  erasRewards.forEach(({ era, eraReward }): void => {
+    const points = allPoints.find((points) => points.era.eq(era));
+    const slashed = ownSlashes.find((slash) => slash.era.eq(era));
+    const reward = points?.eraPoints.gtn(0)
+        ? balanceToNumber(points.points.mul(eraReward).div(points.eraPoints), divisor)
+        : 0;
+    const slash = slashed
+        ? balanceToNumber(slashed.total, divisor)
+        : 0;
+
+    if(reward>0||eraValues.length>0){
+      eraValues.push({era:era.toHuman(), reward, slash})
+    }
+  });
+
+  return eraValues;
+}
+
+const calcReturn = async (provider: Provider, validatorId: string): Promise< {rewards: ValidatorEra[]; total:number; average:number} >=> {
+  const {api} = provider;
+  const eraRewards = await api.derive.staking.erasRewards();
+
+  const points = await api.derive.staking.stakerPoints(validatorId, false);
+  const slashes = await api.derive.staking.ownSlashes(validatorId, false);
+  let decimals = provider.api.registry.chainDecimals[0];
+
+  const divisor = new BN('1'.padEnd(decimals + 1, '0'));
+  // @ts-ignore
+  const rewards = extractRewards(eraRewards, slashes, points, divisor);
+  const total = rewards.reduce((state: number, era: ValidatorEra) => {
+    return state + era.reward - era.slash;
+  }, 0);
+  const average = total/rewards.length;
+  return {rewards, total, average}
+}
+
 export const BondsComponent = ({
   account,
-  bond
-}: { account?: ReefSigner, bond: IBond }) => {
+  bond,
+}: { account?: ReefSigner; bond: IBond;}) => {
   const [contract, setContract] = useState<Contract | undefined>(undefined);
   const [bondAmount, setBondAmount] = useState('');
   const [bondAmountMax, setBondAmountMax] = useState(0);
@@ -216,6 +275,32 @@ export const BondsComponent = ({
   const [loadingValues, setLoadingValues] = useState(false);
   const [txStatus, setTxStatus] = useState<ITxStatus | undefined>(undefined);
   const [validationText, setValidationText] = useState('');
+  const [validatorRewards, setValidatorRewards] = useState<{total:number, average:number, days:number}>();
+  const [stakedRewards, setStakedRewards] = useState<{ totalEarned: number; averageEarned: number; yearlyEstimate:number; apy:string }>();
+
+  useEffect(() => {
+    if (validatorRewards && earned && lockedAmount) {
+      let totalEarned = parseFloat(earned);
+      const earnedRel = totalEarned / validatorRewards.total;
+      const averageEarned = earnedRel * (validatorRewards.average);
+      let daysInYear = 365;
+      const yearlyEstimate = averageEarned*daysInYear;
+      const apy = ((yearlyEstimate/parseFloat(lockedAmount))*100).toFixed(2);
+      setStakedRewards({totalEarned, averageEarned, yearlyEstimate, apy})
+    }
+  }, [validatorRewards, earned, lockedAmount]);
+
+
+  useEffect(() => {
+    const setVals = async ()=> {
+      if (!account || !bond.bondValidatorAddress) {
+        return;
+      }
+      const {rewards, total, average} = await calcReturn(account.signer.provider, bond.bondValidatorAddress);
+      setValidatorRewards({total, average, days: rewards.length});
+    };
+    setVals();
+  }, [account, bond.bondValidatorAddress]);
 
   async function updateLockedAmt(contract: Contract) {
     let lockedAmount = (await contract.balanceOf(account?.evmAddress)).toString();
@@ -257,13 +342,10 @@ export const BondsComponent = ({
     updateButtonText();
   }, []);
 
-
   useEffect(() => {
     const balanceFixedAmt = +ethers.utils.formatEther(account?.balance||'0');
     setBondAmountMax(+(balanceFixedAmt - 101).toFixed(0));
   }, [account?.balance]);
-
-
 
   async function updateEarnedAmt(contract: Contract) {
     let earned = (await contract.earned(account?.evmAddress)).toString();
@@ -328,15 +410,17 @@ export const BondsComponent = ({
                 </>
                 : ''}
 
-              {/*<div className='bond-card__info-item'>
-                <div className='bond-card__info-label'>Current daily rewards</div>
-                <div className='bond-card__info-value'>...</div>
+              {stakedRewards &&<>
+                <div className='bond-card__info-item'>
+                <div className='bond-card__info-label'>Average daily reward</div>
+                <div className='bond-card__info-value'>~ {stakedRewards.averageEarned.toFixed(stakedRewards.averageEarned>5?0:3)}</div>
               </div>
 
               <div className='bond-card__info-item'>
                 <div className='bond-card__info-label'>Estimated yearly rewards</div>
-                <div className='bond-card__info-value'>...</div>
-              </div>*/}
+                <div className='bond-card__info-value'>~ {stakedRewards.yearlyEstimate.toFixed(stakedRewards.yearlyEstimate>10?0:2)} <small>({stakedRewards.apy}%)</small></div>
+              </div>
+              </>}
 
               {
                 !bondTimes.ending.ended &&
