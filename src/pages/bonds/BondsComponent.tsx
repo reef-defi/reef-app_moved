@@ -276,17 +276,19 @@ export const BondsComponent = ({
   const [txStatus, setTxStatus] = useState<ITxStatus | undefined>(undefined);
   const [validationText, setValidationText] = useState('');
   const [validatorRewards, setValidatorRewards] = useState<{total:number, average:number, days:number}>();
-  const [stakedRewards, setStakedRewards] = useState<{ totalEarned: number; averageEarned: number; yearlyEstimate:number; }>();
+  const [stakedRewards, setStakedRewards] = useState<{ totalEarned: number; averageEarned: number; yearlyEstimate:number; apy:string }>();
 
   useEffect(() => {
-    if (validatorRewards && earned) {
+    if (validatorRewards && earned && lockedAmount) {
       let totalEarned = parseFloat(earned);
       const earnedRel = totalEarned / validatorRewards.total;
       const averageEarned = earnedRel * (validatorRewards.average);
-      const yearlyEstimate = averageEarned*365;
-      setStakedRewards({totalEarned, averageEarned, yearlyEstimate})
+      let daysInYear = 365;
+      const yearlyEstimate = averageEarned*daysInYear;
+      const apy = ((yearlyEstimate/parseFloat(lockedAmount))*100).toFixed(2);
+      setStakedRewards({totalEarned, averageEarned, yearlyEstimate, apy})
     }
-  }, [validatorRewards, earned]);
+  }, [validatorRewards, earned, lockedAmount]);
 
 
   useEffect(() => {
@@ -340,13 +342,10 @@ export const BondsComponent = ({
     updateButtonText();
   }, []);
 
-
   useEffect(() => {
     const balanceFixedAmt = +ethers.utils.formatEther(account?.balance||'0');
     setBondAmountMax(+(balanceFixedAmt - 101).toFixed(0));
   }, [account?.balance]);
-
-
 
   async function updateEarnedAmt(contract: Contract) {
     let earned = (await contract.earned(account?.evmAddress)).toString();
@@ -419,7 +418,7 @@ export const BondsComponent = ({
 
               <div className='bond-card__info-item'>
                 <div className='bond-card__info-label'>Estimated yearly rewards</div>
-                <div className='bond-card__info-value'>~ {stakedRewards.yearlyEstimate.toFixed(stakedRewards.yearlyEstimate>10?0:2)}</div>
+                <div className='bond-card__info-value'>~ {stakedRewards.yearlyEstimate.toFixed(stakedRewards.yearlyEstimate>10?0:2)} <small>({stakedRewards.apy}%)</small></div>
               </div>
               </>}
 
