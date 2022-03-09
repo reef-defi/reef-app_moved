@@ -7,6 +7,10 @@ import { secondsToMilliseconds, format, compareAsc, intervalToDuration, formatDi
 import { ethers } from 'ethers';
 import './bonds.css';
 import {toUnits} from "../../../../reef-react-lib/src/utils";
+import BN from "bn.js";
+import {BN_THOUSAND, BN_ZERO, isBn, isFunction} from "@polkadot/util";
+import {DeriveEraRewards, DeriveOwnSlashes, DeriveStakerPoints} from "@polkadot/api-derive/types";
+import {Provider} from "@reef-defi/evm-provider";
 
 export const getReefBondContract = (bond: IBond, signer: Signer): Contract => new Contract(bond.bondContractAddress, BondData.abi, signer);
 
@@ -201,11 +205,65 @@ const formatAmountNearZero = (amount: string, symbol = ''): string => {
   return symbol ? `${prefix}${fixedVal} ${symbol}` : `${prefix}${fixedVal}`;
 };
 
+interface ToBN {
+  toBn: () => BN;
+}
+
+export function balanceToNumber (amount: BN | ToBN = BN_ZERO, divisor: BN): number {
+  const value = isBn(amount)
+      ? amount
+      : isFunction(amount.toBn)
+          ? amount.toBn()
+          : BN_ZERO;
+
+  return value.mul(BN_THOUSAND).div(divisor).toNumber() / 1000;
+}
+
+interface ValidatorEra { era: string; slash: number; reward: number };
+
+function extractRewards (erasRewards: DeriveEraRewards[] = [], ownSlashes: DeriveOwnSlashes[] = [], allPoints: DeriveStakerPoints[] = [], divisor: BN): ValidatorEra[] {
+  const eraValues: ValidatorEra[] = [];
+
+  erasRewards.forEach(({ era, eraReward }): void => {
+    const points = allPoints.find((points) => points.era.eq(era));
+    const slashed = ownSlashes.find((slash) => slash.era.eq(era));
+    const reward = points?.eraPoints.gtn(0)
+        ? balanceToNumber(points.points.mul(eraReward).div(points.eraPoints), divisor)
+        : 0;
+    const slash = slashed
+        ? balanceToNumber(slashed.total, divisor)
+        : 0;
+
+    if(reward>0||eraValues.length>0){
+      eraValues.push({era:era.toHuman(), reward, slash})
+    }
+  });
+
+  return eraValues;
+}
+
+const calcReturn = async (provider: Provider, validatorId: string): Promise< {rewards: ValidatorEra[]; total:number; average:number} >=> {
+  const {api} = provider;
+  const eraRewards = await api.derive.staking.erasRewards();
+
+  const points = await api.derive.staking.stakerPoints(validatorId, false);
+  const slashes = await api.derive.staking.ownSlashes(validatorId, false);
+  let decimals = provider.api.registry.chainDecimals[0];
+
+  const divisor = new BN('1'.padEnd(decimals + 1, '0'));
+  // @ts-ignore
+  const rewards = extractRewards(eraRewards, slashes, points, divisor);
+  const total = rewards.reduce((state: number, era: ValidatorEra) => {
+    return state + era.reward - era.slash;
+  }, 0);
+  const average = total/rewards.length;
+  return {rewards, total, average}
+}
+
 export const BondsComponent = ({
   account,
   bond,
-  validatorRewards
-}: { account?: ReefSigner; bond: IBond; validatorRewards?: { total: number, average: number, days: number }; }) => {
+}: { account?: ReefSigner; bond: IBond;}) => {
   const [contract, setContract] = useState<Contract | undefined>(undefined);
   const [bondAmount, setBondAmount] = useState('');
   const [bondAmountMax, setBondAmountMax] = useState(0);
@@ -217,6 +275,7 @@ export const BondsComponent = ({
   const [loadingValues, setLoadingValues] = useState(false);
   const [txStatus, setTxStatus] = useState<ITxStatus | undefined>(undefined);
   const [validationText, setValidationText] = useState('');
+  const [validatorRewards, setValidatorRewards] = useState<{total:number, average:number, days:number}>();
   const [stakedRewards, setStakedRewards] = useState<{ totalEarned: number; averageEarned: number; yearlyEstimate:number; }>();
 
   useEffect(() => {
@@ -230,6 +289,16 @@ export const BondsComponent = ({
   }, [validatorRewards, earned]);
 
 
+  useEffect(() => {
+    const setVals = async ()=> {
+      if (!account || !bond.bondValidatorAddress) {
+        return;
+      }
+      const {rewards, total, average} = await calcReturn(account.signer.provider, bond.bondValidatorAddress);
+      setValidatorRewards({total, average, days: rewards.length});
+    };
+    setVals();
+  }, [account, bond.bondValidatorAddress]);
 
   async function updateLockedAmt(contract: Contract) {
     let lockedAmount = (await contract.balanceOf(account?.evmAddress)).toString();

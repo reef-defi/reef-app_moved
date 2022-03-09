@@ -3,6 +3,7 @@ export interface IBond {
   bondName: string;
   bondDescription: string;
   bondContractAddress: string;
+  bondValidatorAddress?: string;
   stake: string;
   stakeTokenAddress: string;
   stakeTokenLogo: string;
@@ -21,6 +22,7 @@ export const bonds: IBond[] = [
   'bondName': 'Reef community staking bond',
   'bondDescription': '',
   'bondContractAddress': '0x7D3596b724cEB02f2669b902E4F1EEDeEfad3be6',
+  'bondValidatorAddress': '5Hax9GZjpurht2RpDr5eNLKvEApECuNxUpmRbYs5iNh7LpHa',
   'stake': 'REEF',
   'stakeTokenAddress': '0x0000000000000000000000000000000001000000',
   'stakeTokenLogo': 'https://stake.reef.finance/assets/images/reef/reef-token.svg',
