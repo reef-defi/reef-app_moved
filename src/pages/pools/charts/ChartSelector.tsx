@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import CandlestickChart from "./CandlestickChart";
+import TokenCandlestickChart from "./TokenCandlestickChart";
 
 interface ChartSelector {
   address: string;
@@ -22,11 +22,11 @@ const ChartSelector = ({address} : ChartSelector): JSX.Element => {
         </div>
       </div>
       <div className="d-flex h-100">
-        { chart === 'Token 1' && <CandlestickChart address={address} whichToken={1} /> } 
-        { chart === 'Token 2' && <CandlestickChart address={address} whichToken={1} /> } 
-        { chart === 'TVL' && <CandlestickChart address={address} whichToken={1} /> } 
-        { chart === 'Volume' && <CandlestickChart address={address} whichToken={1} /> } 
-        { chart === 'Fee' && <CandlestickChart address={address} whichToken={1} /> } 
+        { chart === 'Token 1' && <TokenCandlestickChart address={address} whichToken={2} /> } 
+        { chart === 'Token 2' && <TokenCandlestickChart address={address} whichToken={1} /> } 
+        { chart === 'TVL' && <TokenCandlestickChart address={address} whichToken={1} /> } 
+        { chart === 'Volume' && <TokenCandlestickChart address={address} whichToken={1} /> } 
+        { chart === 'Fee' && <TokenCandlestickChart address={address} whichToken={1} /> } 
       </div>
     </>
   );

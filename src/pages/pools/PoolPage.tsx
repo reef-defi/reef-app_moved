@@ -7,7 +7,7 @@ import { Skeleton } from "../dashboard/TokenBalances";
 import { BigNumber, utils } from "ethers";
 
 import "./PoolPage.css";
-import CandlestickChart from "./charts/CandlestickChart";
+import TokenCandlestickChart from "./charts/TokenCandlestickChart";
 import PoolTransactions from "./PoolTransactions";
 import { AddressVar, PoolData } from "./poolTypes";
 import PoolInfo from "./PoolInfo";
