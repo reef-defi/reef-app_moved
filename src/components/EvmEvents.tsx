@@ -20,9 +20,11 @@ interface EvmFilter {
     topics?: any[]
 }
 
-function toGQLAddressTopicsObj(filter: EvmFilter) {
-    let topics: any = filter.topics ? filter.topics : [];
-    topics.fill(null, topics.length, 4);
+function toGQLAddressTopicsObj(filter: EvmFilter): {address: string, topic0:any,topic1:any,topic2:any,topic3:any} {
+    let topics: any = [null,null,null,null];
+    if (filter.topics) {
+        topics.splice(0, filter.topics.length, ...filter.topics);
+    }
     topics = topics.map((filterTopic: any, index:number) => {
         if (!filterTopic) {
             return {};
@@ -35,7 +37,8 @@ function toGQLAddressTopicsObj(filter: EvmFilter) {
         state['topic' + i] = curr;
         return state;
     }, {});
-    return {address: {_eq:filter.address}, ...topics}
+    console.log("oooo=",topics);
+    return {address: filter.address?{_eq:filter.address}:{}, ...topics}
 }
 
 const getGqlContractEventsQuery = (
@@ -48,6 +51,9 @@ const getGqlContractEventsQuery = (
       $address: String_comparison_exp!
       $blockId: bigint_comparison_exp!
       $topic0: String_comparison_exp
+      $topic1: String_comparison_exp
+      $topic2: String_comparison_exp
+      $topic3: String_comparison_exp
     ) {
       evm_event(
         order_by: [
@@ -59,6 +65,9 @@ const getGqlContractEventsQuery = (
           _and: [
             { contract_address: $address }
             { topic_0: $topic0 }
+            { topic_1: {_or: ["okVall", "second"]} }
+            { topic_2: $topic2 }
+            { topic_3: $topic3 }
             { method: { _eq: "Log" } }
             { block_id: $blockId }
           ]
@@ -77,14 +86,11 @@ const getGqlContractEventsQuery = (
       }
     }
   `;
-    toGQLAddressTopicsObj(filter)
+    console.log("TTTTT=",toGQLAddressTopicsObj(filter));
     return {
         query: EVM_EVENT_GQL,
         variables: {
-            address: {_eq: contractAddress},
-            topic0: methodSignature
-                ? {_eq: ethers.utils.keccak256(ethers.utils.toUtf8Bytes(methodSignature))}
-                : {},
+            ...toGQLAddressTopicsObj(filter),
             blockId: toBlockId ? {_gte: fromBlockId, _lte: toBlockId} : {_eq: fromBlockId},
         },
         fetchPolicy: 'network-only',
@@ -103,7 +109,7 @@ const getGqlContractEventsQuery = (
 };
 
 const toEvmEventFilter = (contractAddress: string, methodSignature?: string): EvmFilter=>{
-    return {address: contractAddress, topics: [methodSignature || null]}
+    return {address: contractAddress, topics: [methodSignature?ethers.utils.keccak256(ethers.utils.toUtf8Bytes(methodSignature)) : null,[ 'okVall', 'second']]}
 }
 const getGqlLastFinalizedBlock = (): SubscriptionOptions => {
     const FINALISED_BLOCK_GQL = gql`
