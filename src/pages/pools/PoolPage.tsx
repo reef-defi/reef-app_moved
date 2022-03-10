@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
+import { useHistory, useParams } from "react-router-dom"
 import {useSubscription, useQuery, gql} from "@apollo/client"
 import {Components, Pool} from "@reef-defi/react-lib"
 import { formatAmount, getIconUrl, shortAddress } from "../../utils/utils";
@@ -11,6 +11,8 @@ import CandlestickChart from "./charts/CandlestickChart";
 import PoolTransactions from "./PoolTransactions";
 import { AddressVar, PoolData } from "./poolTypes";
 import PoolInfo from "./PoolInfo";
+import { ADD_LIQUIDITY_URL, SWAP_URL } from "../../urls";
+import ChartSelector from "./charts/ChartSelector";
 
 const { BoldText, LeadText} = Components.Text;
 
@@ -68,6 +70,7 @@ query pool_event($address: String!) {
 `
 
 const PoolPage = (): JSX.Element => {
+  const history = useHistory();
   const {address} = useParams<UrlParam>();
 
   const {loading: loadingPool, data: poolData} = useQuery<PoolQuery, AddressVar>(
@@ -135,6 +138,9 @@ const PoolPage = (): JSX.Element => {
         .toNumber()/1000
       : -1;
 
+  const openTrade = (): void => history.push(SWAP_URL);
+  const openAddLiquidity = (): void => history.push(ADD_LIQUIDITY_URL);
+
   return (
     <div className="w-100 row justify-content-center">
       <div className="col-xl-8 col-lg-10 col-md-12">
@@ -181,9 +187,9 @@ const PoolPage = (): JSX.Element => {
             </div>
 
             <div className="d-flex">
-              <Components.Button.Button >AddLiqudity</Components.Button.Button>
+              <Components.Button.Button onClick={openAddLiquidity}>AddLiqudity</Components.Button.Button>
               <Components.Display.ME size="1" />
-              <Components.Button.Button>Trade</Components.Button.Button>
+              <Components.Button.Button onClick={openTrade}>Trade</Components.Button.Button>
             </div>
           </Components.Display.ContentBetween>
         </Components.Display.FullRow>
@@ -208,7 +214,7 @@ const PoolPage = (): JSX.Element => {
 
           <div className="col-sm-12 col-md-6 col-lg-8">
             <div className="border-rad bg-grey p-1 h-100 m-auto mt-xs-3">
-              <CandlestickChart address={address} whichToken={1} /> 
+              <ChartSelector address={address} />
             </div>
           </div>
         </div>

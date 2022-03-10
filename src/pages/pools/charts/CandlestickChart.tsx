@@ -85,12 +85,6 @@ const CandlestickChart = ({whichToken, address} : CandlestickChart): JSX.Element
         date: new Date(timeframe),
         low: low_1,
         open: open_1,
-
-        absoluteChange: "",
-        dividend: "",
-        percentChange: "",
-        split: "",
-        volume: 38409100
       }))
       .filter(({date}) => date.getTime() > Date.now() - 60 * 60 * 1000)
       .sort((a, b) => a.date.getTime() - b.date.getTime())

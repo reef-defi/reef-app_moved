@@ -61,7 +61,7 @@ const MyChart = ({data, width, ratio, type="svg"} : MyChart): JSX.Element => {
     <ChartCanvas
       ratio={ratio}
       width={width}
-      height={585}
+      height={565}
       margin={{ left: 30, right: 10, top: 10, bottom: 30 }}
       type={type}
       seriesName="MSFT"
