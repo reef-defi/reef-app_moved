@@ -30,14 +30,13 @@ function toGQLAddressTopicsObj(filter: EvmFilter): {address: string, topic0:any,
             return {};
         }
         if (Array.isArray(filterTopic)) {
-            return {_or: filterTopic};
+            return {_in: filterTopic};
         }
         return {_eq: filterTopic};
     }).reduce((state:any, curr:any, i:number) => {
         state['topic' + i] = curr;
         return state;
     }, {});
-    console.log("oooo=",topics);
     return {address: filter.address?{_eq:filter.address}:{}, ...topics}
 }
 
@@ -65,7 +64,7 @@ const getGqlContractEventsQuery = (
           _and: [
             { contract_address: $address }
             { topic_0: $topic0 }
-            { topic_1: {_or: ["okVall", "second"]} }
+            { topic_1: $topic1 }
             { topic_2: $topic2 }
             { topic_3: $topic3 }
             { method: { _eq: "Log" } }
@@ -86,7 +85,6 @@ const getGqlContractEventsQuery = (
       }
     }
   `;
-    console.log("TTTTT=",toGQLAddressTopicsObj(filter));
     return {
         query: EVM_EVENT_GQL,
         variables: {
@@ -95,22 +93,12 @@ const getGqlContractEventsQuery = (
         },
         fetchPolicy: 'network-only',
     };
-    /*return {
-        query: EVM_EVENT_GQL,
-        variables: {
-            address: {_eq: contractAddress},
-            topic0: methodSignature
-                ? {_eq: ethers.utils.keccak256(ethers.utils.toUtf8Bytes(methodSignature))}
-                : {},
-            blockId: toBlockId ? {_gte: fromBlockId, _lte: toBlockId} : {_eq: fromBlockId},
-        },
-        fetchPolicy: 'network-only',
-    };*/
 };
 
 const toEvmEventFilter = (contractAddress: string, methodSignature?: string): EvmFilter=>{
-    return {address: contractAddress, topics: [methodSignature?ethers.utils.keccak256(ethers.utils.toUtf8Bytes(methodSignature)) : null,[ 'okVall', 'second']]}
+    return {address: contractAddress, topics: [methodSignature?ethers.utils.keccak256(ethers.utils.toUtf8Bytes(methodSignature)) : null]}
 }
+
 const getGqlLastFinalizedBlock = (): SubscriptionOptions => {
     const FINALISED_BLOCK_GQL = gql`
     subscription finalisedBlock {
