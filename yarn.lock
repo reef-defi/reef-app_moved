@@ -2444,10 +2444,10 @@
   dependencies:
     "@babel/runtime" "^7.15.4"
 
-"@reef-defi/react-lib@^1.0.29":
-  version "1.0.28"
-  resolved "https://registry.yarnpkg.com/@reef-defi/react-lib/-/react-lib-1.0.28.tgz#a30dde1338be928b8d6e30e89df471df5320c802"
-  integrity sha512-sb2eM39Smmq5DhECnEcoAk2427RtIh/Xuh5BPqPYBkgG3sqd8P0EJe5mZCHqijpIKFtjxNg0E6WG4nitPN04Qg==
+"@reef-defi/react-lib@^1.0.33":
+  version "1.0.34"
+  resolved "https://registry.yarnpkg.com/@reef-defi/react-lib/-/react-lib-1.0.34.tgz#e6d667026bdb407fe2f1f62303343c183e4ae27d"
+  integrity sha512-N527k5YSHWpO+8h5PcdGIIWd61XBZwsOk7Ciugkg2xvWu7bjCRDYlEE2tw1bvQMy16nIpsrwIS/F0gu+b/JsjA==
   dependencies:
     "@apollo/client" "^3.5.7"
     "@polkadot/extension-dapp" "^0.40.4"
@@ -2465,6 +2465,7 @@
     react-tooltip "^4.2.21"
     rxjs "^7.5.4"
     subscriptions-transport-ws "^0.11.0"
+    zen-observable-ts "^1.1.0"
 
 "@reef-defi/type-definitions@^1.0.0":
   version "1.0.3"
@@ -3012,6 +3013,11 @@
   integrity sha512-T8Yc9wt/5LbJyCaLiHPReJa0kApcIgJ7Bn735GjItUfh08Z1pJvu8QZqb9s+mMvKV6WUQRV7K2R46YbjMXTTJw==
   dependencies:
     "@types/yargs-parser" "*"
+
+"@types/zen-observable@0.8.3":
+  version "0.8.3"
+  resolved "https://registry.yarnpkg.com/@types/zen-observable/-/zen-observable-0.8.3.tgz#781d360c282436494b32fe7d9f7f8e64b3118aa3"
+  integrity sha512-fbF6oTd4sGGy0xjHPKAt+eS2CrxJ3+6gQ3FGcBoIJR2TLAyCkCyI8JqZNy+FeON0AhVgNJoUumVoZQjBFUqHkw==
 
 "@typescript-eslint/eslint-plugin@4.8.1":
   version "4.8.1"
@@ -10072,9 +10078,9 @@ no-case@^3.0.4:
     tslib "^2.0.3"
 
 node-fetch@^2.6.0, node-fetch@^2.6.6:
-  version "2.6.6"
-  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.6.tgz#1751a7c01834e8e1697758732e9efb6eeadfaf89"
-  integrity sha512-Z8/6vRlTUChSdIgMa51jxQ4lrw/Jy5SOW10ObaA47/RElsAN2c5Pn8bTgFGWn/ibwzXTE8qwr1Yzx28vsecXEA==
+  version "2.6.7"
+  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.7.tgz#24de9fba827e3b4ae44dc8b20256a379160052ad"
+  integrity sha512-ZjMPFEfVx5j+y2yF35Kzx5sF7kDzxuDj6ziH4FFbOp87zKDZNx8yExJIb05OGF4Nlt9IHFIMBkRl41VdvcNdbQ==
   dependencies:
     whatwg-url "^5.0.0"
 
@@ -15013,6 +15019,14 @@ yocto-queue@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/yocto-queue/-/yocto-queue-0.1.0.tgz#0294eb3dee05028d31ee1a5fa2c556a6aaf10a1b"
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
+
+zen-observable-ts@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/zen-observable-ts/-/zen-observable-ts-1.1.0.tgz#2d1aa9d79b87058e9b75698b92791c1838551f83"
+  integrity sha512-1h4zlLSqI2cRLPJUHJFL8bCWHhkpuXkF+dbGkRaWjgDIG26DmzyshUMrdV/rL3UnR+mhaX4fRq8LPouq0MYYIA==
+  dependencies:
+    "@types/zen-observable" "0.8.3"
+    zen-observable "0.8.15"
 
 zen-observable-ts@^1.2.0:
   version "1.2.3"
