@@ -66,5 +66,8 @@
     "eslint-plugin-react": "^7.24.0",
     "eslint-plugin-react-hooks": "^4.2.0",
     "react-icons": "^4.2.0"
+  },
+  "resolutions": {
+    "url-parse": "^1.5.10"
   }
 }

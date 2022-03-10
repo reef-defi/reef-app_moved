@@ -15,9 +15,31 @@ const {
     Loading, TransferComponent,
 } = Components;
 
+interface EvmFilter {
+    address: string;
+    topics?: any[]
+}
+
+function toGQLAddressTopicsObj(filter: EvmFilter) {
+    let topics: any = filter.topics ? filter.topics : [];
+    topics.fill(null, topics.length, 4);
+    topics = topics.map((filterTopic: any, index:number) => {
+        if (!filterTopic) {
+            return {};
+        }
+        if (Array.isArray(filterTopic)) {
+            return {_or: filterTopic};
+        }
+        return {_eq: filterTopic};
+    }).reduce((state:any, curr:any, i:number) => {
+        state['topic' + i] = curr;
+        return state;
+    }, {});
+    return {address: {_eq:filter.address}, ...topics}
+}
+
 const getGqlContractEventsQuery = (
-    contractAddress: string,
-    methodSignature?: string | null,
+    filter: EvmFilter,
     fromBlockId?: number,
     toBlockId?: number,
 ): SubscriptionOptions => {
@@ -55,6 +77,7 @@ const getGqlContractEventsQuery = (
       }
     }
   `;
+    toGQLAddressTopicsObj(filter)
     return {
         query: EVM_EVENT_GQL,
         variables: {
@@ -66,8 +89,22 @@ const getGqlContractEventsQuery = (
         },
         fetchPolicy: 'network-only',
     };
+    /*return {
+        query: EVM_EVENT_GQL,
+        variables: {
+            address: {_eq: contractAddress},
+            topic0: methodSignature
+                ? {_eq: ethers.utils.keccak256(ethers.utils.toUtf8Bytes(methodSignature))}
+                : {},
+            blockId: toBlockId ? {_gte: fromBlockId, _lte: toBlockId} : {_eq: fromBlockId},
+        },
+        fetchPolicy: 'network-only',
+    };*/
 };
 
+const toEvmEventFilter = (contractAddress: string, methodSignature?: string): EvmFilter=>{
+    return {address: contractAddress, topics: [methodSignature || null]}
+}
 const getGqlLastFinalizedBlock = (): SubscriptionOptions => {
     const FINALISED_BLOCK_GQL = gql`
     subscription finalisedBlock {
@@ -104,7 +141,7 @@ function getEvmEvents$(apolloClient: ApolloClient<any>, contractAddress: string,
             }, {prevBlockId: undefined, fromBlockId: undefined, toBlockId: undefined}),
             switchMap((res: { fromBlockId: number, toBlockId: number | undefined }) => {
                 return from(apolloClient?.query(
-                    getGqlContractEventsQuery(contractAddress, methodSignature, res.fromBlockId, res.toBlockId),
+                    getGqlContractEventsQuery(toEvmEventFilter(contractAddress, methodSignature), res.fromBlockId, res.toBlockId),
                 )).pipe(
                     map((events) => ({
                         fromBlockId: res.fromBlockId,
@@ -116,7 +153,7 @@ function getEvmEvents$(apolloClient: ApolloClient<any>, contractAddress: string,
         ) as Observable<any>;
     }
     return from(apolloClient?.query(
-        getGqlContractEventsQuery(contractAddress, methodSignature, fromBlockId, toBlockId),
+        getGqlContractEventsQuery(toEvmEventFilter(contractAddress, methodSignature), fromBlockId, toBlockId),
     ))
 }
 
