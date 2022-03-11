@@ -1,11 +1,12 @@
 
 
-export interface DefaultChart {
+export interface DefaultChartType {
   width: number;
   ratio: number;
   fromDate: Date;
   toDate: Date;
-  type?: "svg" | "hybrid"
+  type?: "svg" | "hybrid";
+  data: any[];
 }
 
 

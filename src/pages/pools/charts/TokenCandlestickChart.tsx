@@ -1,7 +1,18 @@
 import React from "react"
 import {useSubscription, gql} from "@apollo/client"
-import CandlestickChart, { OHLC } from "./CandlestickChart";
 import { Components } from "@reef-defi/react-lib/";
+import DefaultChart from "./DefaultChart";
+
+import { utcDay, utcMinute } from "d3-time";
+import { timeFormat } from "d3-time-format";
+import { format } from "d3-format";
+
+import { Chart } from "react-stockcharts";
+import { CandlestickSeries } from "react-stockcharts/lib/series";
+import {MouseCoordinateX, CrossHairCursor, CurrentCoordinate} from "react-stockcharts/lib/coordinates"
+import { XAxis, YAxis } from "react-stockcharts/lib/axes";
+import { SingleValueTooltip} from "react-stockcharts/lib/tooltip"
+import { timeIntervalBarWidth } from "react-stockcharts/lib/utils";
 const { Loading } = Components.Loading;
 
 interface CandlestickData {
@@ -29,6 +40,14 @@ interface CandlestickQuery {
 interface CandlestickVar {
   address: string;
   whereToken: number;
+}
+
+interface OHLC {
+  date: Date;
+  open: number;
+  close: number;
+  high: number;
+  low: number;
 }
 
 const MINUTE_CANDLESTICK_GQL = gql`
@@ -99,15 +118,45 @@ const TokenCandlestickChart = ({whichToken, address} : TokenCandlestickChart): J
       .sort((a, b) => a.date.getTime() - b.date.getTime())
   : [];
   
+  
+  if (loading || candlestick.length === 0) {
+    return (<Loading />);
+  }
+
   return (
-    loading || candlestick.length === 0
-      ? <Loading />
-      : <CandlestickChart 
-        type={'svg'}
-        data={candlestick}
-        toDate={new Date(toDate)}
-        fromDate={new Date(fromDate)}
-      />
+    <DefaultChart 
+      data={candlestick}
+      fromDate={new Date(fromDate)}
+      toDate={new Date(toDate)}
+      type="svg"
+    >
+      <Chart id={1} yExtents={d => [d.high + d.high * .1, d.low - d.low * .1]}>
+        <XAxis axisAt="bottom" orient="bottom" ticks={8} />
+        <YAxis axisAt="left" orient="left" ticks={6} />
+
+        <MouseCoordinateX
+            at="bottom"
+            orient="bottom"
+            displayFormat={timeFormat("%Y-%m-%d %H:%M:%S")} />
+
+        <CandlestickSeries width={timeIntervalBarWidth(utcMinute)}/>
+
+        <CurrentCoordinate yAccessor={d => d.close} fill={d => d.close} />
+        
+        <SingleValueTooltip
+          yAccessor={(d) => d.close}
+          yDisplayFormat={(d) => "$ " + format('.4f')(d)}
+          fontSize={21}
+          origin={[20, 10]}/>
+        <SingleValueTooltip
+          yAccessor={(d) => d.date}
+          fontSize={14}
+          yDisplayFormat={timeFormat("%Y-%m-%d %H:%M:%S")}
+          origin={[20, 30]}/>
+      </Chart>
+      
+      <CrossHairCursor />
+    </DefaultChart>
   );
 }
 

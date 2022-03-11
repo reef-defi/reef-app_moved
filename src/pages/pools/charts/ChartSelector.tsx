@@ -1,6 +1,8 @@
 import React, { useState } from "react"
+import FeeChart from "./FeeChart";
 import TokenCandlestickChart from "./TokenCandlestickChart";
 import TVLChart from "./TVLChart";
+import VolumeChart from "./VolumeChart";
 
 interface ChartSelector {
   address: string;
@@ -26,8 +28,8 @@ const ChartSelector = ({address} : ChartSelector): JSX.Element => {
         { chart === 'Token 1' && <TokenCandlestickChart address={address} whichToken={1} /> } 
         { chart === 'Token 2' && <TokenCandlestickChart address={address} whichToken={2} /> } 
         { chart === 'TVL' && <TVLChart address={address} /> } 
-        { chart === 'Volume' && <TokenCandlestickChart address={address} whichToken={1} /> } 
-        { chart === 'Fee' && <TokenCandlestickChart address={address} whichToken={1} /> } 
+        { chart === 'Volume' && <VolumeChart address={address} /> } 
+        { chart === 'Fee' && <FeeChart address={address} /> } 
       </div>
     </>
   );

@@ -1,9 +1,22 @@
 import React from "react"
-import {useSubscription, useQuery, gql} from "@apollo/client"
-import { toTimestamp } from "../../../utils/utils";
+import { useQuery, gql } from "@apollo/client"
 import { AddressVar } from "../poolTypes";
 import { Components } from "@reef-defi/react-lib";
-import LineChart from "./LineChart";
+import { timeFormat } from "d3-time-format";
+
+import { Chart } from "react-stockcharts";
+import {MouseCoordinateX, CrossHairCursor, CurrentCoordinate} from "react-stockcharts/lib/coordinates"
+import { XAxis, YAxis } from "react-stockcharts/lib/axes";
+import {SingleValueTooltip} from "react-stockcharts/lib/tooltip"
+import "./Chart.css";
+import {
+	ScatterSeries,
+	SquareMarker,
+	LineSeries,
+} from "react-stockcharts/lib/series";
+import { formatAmount } from "../../../utils/utils";
+import DefaultChart from "./DefaultChart";
+
 const { Loading } = Components.Loading;
 
 interface TVLChart {
@@ -57,15 +70,53 @@ const TVLChart = ({address} : TVLChart): JSX.Element => {
     tvl.push({...tvl[tvl.length-1], date: new Date(toDate)});
   }
 
+  if (loading || tvl.length === 0) {
+    return (<Loading />);
+  }
   return (
-    loading || tvl.length === 0
-    ? <Loading />
-    : <LineChart 
-        data={tvl}
-        type='svg'
-        toDate={new Date(toDate)}
-        fromDate={new Date(fromDate)}
-      />
+    <DefaultChart
+      data={tvl}
+      fromDate={new Date(fromDate)}
+      toDate={new Date(toDate)}
+      type="svg"
+    >
+      <Chart id={1} yExtents={d => [d.amount + d.amount * .1, d.amount - d.amount * .1]}>
+        <XAxis axisAt="bottom" orient="bottom" ticks={8} />
+        <YAxis 
+          axisAt="left" 
+          orient="left"
+          ticks={6} 
+          displayFormat={(d) => formatAmount(d, 18)}
+        />
+
+        <MouseCoordinateX
+            at="bottom"
+            orient="bottom"
+            displayFormat={timeFormat("%Y-%m-%d %H:%M:%S")} />
+        <LineSeries
+          yAccessor={d => d.amount}
+          stroke="#ff7f0e"
+          strokeDasharray="Solid" /> 
+        <ScatterSeries
+          yAccessor={d => d.amount}
+          marker={SquareMarker}
+          markerProps={{ width: 6, stroke: "#ff7f0e", fill: "#ff7f0e" }} />
+        <CurrentCoordinate yAccessor={d => d.amount} fill={d => d.amount} />
+
+        <SingleValueTooltip
+          yAccessor={(d) => d.amount}
+          yDisplayFormat={(d) => formatAmount(d, 18)}
+          fontSize={21}
+          origin={[20, 10]}/>
+        <SingleValueTooltip
+          yAccessor={(d) => d.date}
+          fontSize={14}
+          yDisplayFormat={timeFormat("%Y-%m-%d %H:%M:%S")}
+          origin={[20, 30]}/>
+      </Chart>
+
+      <CrossHairCursor />
+    </DefaultChart>
   );
 }
 
