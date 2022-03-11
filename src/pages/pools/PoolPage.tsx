@@ -164,7 +164,7 @@ const PoolPage = (): JSX.Element => {
                     : <div className="d-flex">
                         <Components.Icons.TokenIcon src={tokenIcon1}/>
                         <Components.Display.ME size="1" />
-                        <LeadText>1 {tokenSymbol1} = {ratio1 !== -1 ? ratio1 : "-"} {tokenSymbol2} </LeadText>
+                        <LeadText>1 {tokenSymbol1} = {ratio1 !== -1 ? ratio1.toFixed(3) : "-"} {tokenSymbol2} </LeadText>
                       </div>
                   }
                 </div>
@@ -179,7 +179,7 @@ const PoolPage = (): JSX.Element => {
                     : <div className="d-flex">
                         <Components.Icons.TokenIcon src={tokenIcon2}/>
                         <Components.Display.ME size="1" />
-                        <LeadText>1 {tokenSymbol2} = {ratio2 !== -1 ? ratio2 : "-"} {tokenSymbol1}</LeadText>
+                        <LeadText>1 {tokenSymbol2} = {ratio2 !== -1 ? ratio2.toFixed(3) : "-"} {tokenSymbol1}</LeadText>
                       </div>
                   }
                 </div>

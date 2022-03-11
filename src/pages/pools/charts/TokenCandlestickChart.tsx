@@ -87,12 +87,15 @@ const TokenCandlestickChart = ({whichToken, address} : TokenCandlestickChart): J
       variables: { address, whereToken: whichToken } 
     }
   );
+
+  const toDate = Date.now();
+  const fromDate = toDate - 60 * 60 * 1000; // last hour
   
   const candlestick = data 
   ? data.pool_minute_candlestick
       .filter(({which_token}) => which_token === whichToken)
       .map((token) => whichToken === 1 ? token1Values(token) : token2Values(token))
-      .filter(({date}) => date.getTime() > Date.now() - 60 * 60 * 1000)
+      .filter(({date}) => date.getTime() > fromDate)
       .sort((a, b) => a.date.getTime() - b.date.getTime())
   : [];
   
@@ -100,8 +103,10 @@ const TokenCandlestickChart = ({whichToken, address} : TokenCandlestickChart): J
     loading || candlestick.length === 0
       ? <Loading />
       : <CandlestickChart 
-        type={'hybrid'}
-        data={candlestick} 
+        type={'svg'}
+        data={candlestick}
+        toDate={new Date(toDate)}
+        fromDate={new Date(fromDate)}
       />
   );
 }
