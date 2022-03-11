@@ -13,6 +13,7 @@ import { AddressVar, PoolData } from "./poolTypes";
 import PoolInfo from "./PoolInfo";
 import { ADD_LIQUIDITY_URL, SWAP_URL } from "../../urls";
 import ChartSelector from "./charts/ChartSelector";
+import { BasicPoolInfo } from "./charts/types";
 
 const { BoldText, LeadText} = Components.Text;
 
@@ -109,6 +110,16 @@ const PoolPage = (): JSX.Element => {
   const decimal2 = poolExists
     ? poolData.pool[0].token_contract_2.verified_contract.contract_data.decimals
     : 1;
+
+  const poolInfo: BasicPoolInfo = {
+    address,
+    decimal1,
+    decimal2,
+    symbol1: tokenSymbol1,
+    symbol2: tokenSymbol2,
+    address1: tokenAddress1,
+    address2: tokenAddress2,
+  }
 
   // Reserves
   const reserved1 = 
@@ -214,7 +225,7 @@ const PoolPage = (): JSX.Element => {
 
           <div className="col-sm-12 col-md-6 col-lg-8">
             <div className="border-rad bg-grey p-1 h-100 m-auto mt-xs-3">
-              <ChartSelector address={address} />
+              <ChartSelector {...poolInfo} />
             </div>
           </div>
         </div>

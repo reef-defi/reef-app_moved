@@ -2,15 +2,12 @@ import React, { useState } from "react"
 import FeeChart from "./FeeChart";
 import TokenCandlestickChart from "./TokenCandlestickChart";
 import TVLChart from "./TVLChart";
+import { BasicPoolInfo } from "./types";
 import VolumeChart from "./VolumeChart";
-
-interface ChartSelector {
-  address: string;
-}
 
 type ChartSwitch = "Token 1" | "Token 2" | "Volume" | "TVL" | "Fee";
 
-const ChartSelector = ({address} : ChartSelector): JSX.Element => {
+const ChartSelector = (pool : BasicPoolInfo): JSX.Element => {
   const [chart, setChart] = useState<ChartSwitch>('Token 1');
 
   return (
@@ -25,11 +22,11 @@ const ChartSelector = ({address} : ChartSelector): JSX.Element => {
         </div>
       </div>
       <div className="d-flex h-100">
-        { chart === 'Token 1' && <TokenCandlestickChart address={address} whichToken={1} /> } 
-        { chart === 'Token 2' && <TokenCandlestickChart address={address} whichToken={2} /> } 
-        { chart === 'TVL' && <TVLChart address={address} /> } 
-        { chart === 'Volume' && <VolumeChart address={address} /> } 
-        { chart === 'Fee' && <FeeChart address={address} /> } 
+        { chart === 'Token 1' && <TokenCandlestickChart address={pool.address} whichToken={1} /> } 
+        { chart === 'Token 2' && <TokenCandlestickChart address={pool.address} whichToken={2} /> } 
+        { chart === 'TVL' && <TVLChart address={pool.address} /> } 
+        { chart === 'Volume' && <VolumeChart address={pool.address} /> } 
+        { chart === 'Fee' && <FeeChart {...pool} /> } 
       </div>
     </>
   );

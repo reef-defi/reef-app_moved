@@ -3,7 +3,6 @@ import { useQuery, gql } from "@apollo/client"
 import { AddressVar } from "../poolTypes";
 import { Components } from "@reef-defi/react-lib";
 import { timeFormat } from "d3-time-format";
-
 import { Chart } from "react-stockcharts";
 import {MouseCoordinateX, CrossHairCursor, CurrentCoordinate} from "react-stockcharts/lib/coordinates"
 import { XAxis, YAxis } from "react-stockcharts/lib/axes";
