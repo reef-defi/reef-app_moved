@@ -15,12 +15,17 @@ const {
     Loading, TransferComponent,
 } = Components;
 
-interface EvmFilter {
+interface EventFilter {
     address: string;
     topics?: any[]
 }
 
-function toGQLAddressTopicsObj(filter: EvmFilter): {address: string, topic0:any,topic1:any,topic2:any,topic3:any} {
+interface Filter extends EventFilter{
+    fromBlock: number;
+    toBlock: number;
+}
+
+function toGQLAddressTopicsObj(filter: EventFilter): {address: string, topic0:any,topic1:any,topic2:any,topic3:any} {
     let topics: any = [null,null,null,null];
     if (filter.topics) {
         topics.splice(0, filter.topics.length, ...filter.topics);
@@ -41,7 +46,7 @@ function toGQLAddressTopicsObj(filter: EvmFilter): {address: string, topic0:any,
 }
 
 const getGqlContractEventsQuery = (
-    filter: EvmFilter,
+    filter: EventFilter,
     fromBlockId?: number,
     toBlockId?: number,
 ): SubscriptionOptions => {
@@ -95,7 +100,7 @@ const getGqlContractEventsQuery = (
     };
 };
 
-const toEvmEventFilter = (contractAddress: string, methodSignature?: string, topicsFilter: any[] = []): EvmFilter=>{
+const toEvmEventFilter = (contractAddress: string, methodSignature?: string, topicsFilter: any[] = []): EventFilter=>{
     if (topicsFilter && topicsFilter.length > 3) {
         console.warn('toEvmEventFilter too many topics =',topicsFilter)
     }
@@ -155,6 +160,11 @@ function getEvmEvents$(apolloClient: ApolloClient<any>, contractAddress: string,
 }
 
 interface EvmEventDefinition { eventName: string; paramNames: string[]; topic0Unencoded: string; paramsIndexed: boolean[]; };
+
+function toSanitizedEvmParamType(evmParamType: string) {
+    return evmParamType==='uint'?'uint256':evmParamType;
+}
+
 const toEvmEventMemberDefinition = (eventAbiDef:string): EvmEventDefinition | null => {
     let startDefStr = 'event ';
     if(!eventAbiDef.startsWith(startDefStr)){
@@ -162,23 +172,29 @@ const toEvmEventMemberDefinition = (eventAbiDef:string): EvmEventDefinition | nu
     }
     let strippedDef = eventAbiDef
         .trim()
-        .substring(0, startDefStr.length);
+        .substring(startDefStr.length);
     let paramsStart = strippedDef.indexOf('(')+1;
     let paramsEnd = strippedDef.indexOf(')', paramsStart);
     const eventName = strippedDef.substring(0, paramsStart-1);
     const paramsRaw = strippedDef.substring(paramsStart, paramsEnd);
     const paramsSplit = paramsRaw.split(',')
-    const paramNames = paramsSplit.map(param => param.split(' ')[0]);
+    const paramNames = paramsSplit.map(param => toSanitizedEvmParamType(param.trim().split(' ')[0]));
     const paramsIndexed = paramsSplit.map(param => param.indexOf('indexed') > -1);
     const topic0Unencoded = eventName + '(' + paramNames.join(',') + ')';
-    // const topic0Encoded = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(topic0Unencoded));
     return {eventName, paramNames, topic0Unencoded, paramsIndexed}
 }
 
-type EventFilterGeneratorFn = (...topicFilters: any[])=>EvmFilter;
+type EventFilterGeneratorFn = (...topicFilters: any[])=>EventFilter;
 
 const createEventDefFilterGenerator=(contractAddress: string, evDefinition: EvmEventDefinition): EventFilterGeneratorFn =>{
-    return (...topicFilters: any[]): EvmFilter => toEvmEventFilter(contractAddress, evDefinition.topic0Unencoded, topicFilters);
+    return (...topicFilters: any[]): EventFilter => {
+        const isParamIndexedOrNullArr = topicFilters.map((topicFilter, i)=> !topicFilter || !!evDefinition.paramsIndexed[i])
+        if(isParamIndexedOrNullArr.some(isIndexed => !isIndexed)){
+            const unindexedAndFilteredParamNames = isParamIndexedOrNullArr.map((isIdx, i)=>!isIdx?evDefinition.paramNames[i]:null).filter(v=>!!v);
+            console.warn('evm event filter on unindexed params contract=',contractAddress, ' event=', evDefinition.eventName, ' params=', unindexedAndFilteredParamNames )
+        }
+        return toEvmEventFilter(contractAddress, evDefinition.topic0Unencoded, topicFilters)
+    };
 }
 
 const createContractFiltersInstance = (contractAddress: string, abi:string[]): any =>{
@@ -203,7 +219,6 @@ export const EvmEvents = (): JSX.Element => {
 
     useEffect(() => {
         // custom graphQL example
-
         async function fn() {
             if (!apolloClient) {
                 return;
@@ -215,6 +230,11 @@ export const EvmEvents = (): JSX.Element => {
                 console.log("EVM EVENTS=", val);
                 setLastEvents(val)
             });
+            const testAbi = [
+                "event Transfer(address indexed src, address indexed dst, uint256 val)"
+            ];
+            let filters = createContractFiltersInstance('0xccccc', testAbi);
+            console.log('FFFFFEEEE', filters.Transfer('0x1111'))
         };
         fn();
         return () => {
@@ -223,6 +243,9 @@ export const EvmEvents = (): JSX.Element => {
     }, [apolloClient, contractAddress]);
 
     useEffect(() => {
+        if (!contractAddress) {
+            return;
+        }
           // reef library example
           // const methodSignature = 'Transfer(address,address,uint256)'
           libEventSubs.current?.unsubscribe();
