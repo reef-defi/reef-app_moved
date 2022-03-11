@@ -8,7 +8,7 @@ import VolumeChart from "./VolumeChart";
 type ChartSwitch = "Token 1" | "Token 2" | "Volume" | "TVL" | "Fee";
 
 const ChartSelector = (pool : BasicPoolInfo): JSX.Element => {
-  const [chart, setChart] = useState<ChartSwitch>('Token 1');
+  const [chart, setChart] = useState<ChartSwitch>('Fee');
 
   return (
     <>
@@ -25,7 +25,7 @@ const ChartSelector = (pool : BasicPoolInfo): JSX.Element => {
         { chart === 'Token 1' && <TokenCandlestickChart address={pool.address} whichToken={1} /> } 
         { chart === 'Token 2' && <TokenCandlestickChart address={pool.address} whichToken={2} /> } 
         { chart === 'TVL' && <TVLChart address={pool.address} /> } 
-        { chart === 'Volume' && <VolumeChart address={pool.address} /> } 
+        { chart === 'Volume' && <VolumeChart {...pool} /> } 
         { chart === 'Fee' && <FeeChart {...pool} /> } 
       </div>
     </>

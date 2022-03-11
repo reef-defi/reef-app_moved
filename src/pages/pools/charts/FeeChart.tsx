@@ -45,10 +45,8 @@ const FeeChart = ({address, symbol1, symbol2, decimal1, decimal2} : BasicPoolInf
     FEE_GQL,
     {variables: { address } }
   )
-
-  console.log(GroupedBarSeries)
   const toDate = Date.now();
-  const fromDate = toDate - 60 * 60 * 1000; // last hour
+  const fromDate = toDate - 60 * 24 * 1000; // last hour
 
   if (loading || data.pool_minute_fee.length === 0) {
     return <Loading />
@@ -69,7 +67,7 @@ const FeeChart = ({address, symbol1, symbol2, decimal1, decimal2} : BasicPoolInf
       toDate={new Date(toDate)}
       type="svg"
     >
-      <Chart id={1} yExtents={d => [d.fee_1 * 1.1, d.fee_2 * 1.1, 0]}>
+      <Chart id={1} yExtents={d => [d.fee_1 * 1.2, d.fee_2 * 1.2, 0]}>
         <XAxis axisAt="bottom" orient="bottom" ticks={8} />
         <YAxis 
           axisAt="left" 
@@ -81,7 +79,7 @@ const FeeChart = ({address, symbol1, symbol2, decimal1, decimal2} : BasicPoolInf
         <MouseCoordinateX
             at="bottom"
             orient="bottom"
-            displayFormat={timeFormat("%Y-%m-%d %H:%M:%S")} />
+            displayFormat={timeFormat("%Y-%m-%d")} />
 
         <CurrentCoordinate yAccessor={d => d.fee_1} fill={d => d.fee_1} />
         <CurrentCoordinate yAccessor={d => d.fee_2} fill={d => d.fee_2} />
@@ -90,11 +88,12 @@ const FeeChart = ({address, symbol1, symbol2, decimal1, decimal2} : BasicPoolInf
           yAccessor={[d => d.fee_1, d => d.fee_2]}
           fill={fill}
           spaceBetweenBar={3}
+          width={20}
         />
 
         <SingleValueTooltip
           yAccessor={(d) => d.fee_1}
-          yDisplayFormat={(d) => formatAmount(d, decimal2) + ` ${symbol2}`}
+          yDisplayFormat={(d) => formatAmount(d, decimal1) + ` ${symbol1}`}
           fontSize={21}
           origin={[20, 10]}/>
         <SingleValueTooltip
