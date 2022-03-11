@@ -25,6 +25,10 @@ interface Filter extends EventFilter{
     toBlock: number;
 }
 
+interface FilterByBlockHash extends EventFilter{
+    blockHash: number;
+}
+
 function toGQLAddressTopicsObj(filter: EventFilter): {address: string, topic0:any,topic1:any,topic2:any,topic3:any} {
     let topics: any = [null,null,null,null];
     if (filter.topics) {
