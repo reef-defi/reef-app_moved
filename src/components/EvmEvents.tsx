@@ -95,8 +95,11 @@ const getGqlContractEventsQuery = (
     };
 };
 
-const toEvmEventFilter = (contractAddress: string, methodSignature?: string): EvmFilter=>{
-    return {address: contractAddress, topics: [methodSignature?ethers.utils.keccak256(ethers.utils.toUtf8Bytes(methodSignature)) : null]}
+const toEvmEventFilter = (contractAddress: string, methodSignature?: string, topicsFilter: any[] = []): EvmFilter=>{
+    if (topicsFilter && topicsFilter.length > 3) {
+        console.warn('toEvmEventFilter too many topics =',topicsFilter)
+    }
+    return {address: contractAddress, topics: [methodSignature?ethers.utils.keccak256(ethers.utils.toUtf8Bytes(methodSignature)) : null, ...topicsFilter]};
 }
 
 const getGqlLastFinalizedBlock = (): SubscriptionOptions => {
@@ -149,6 +152,46 @@ function getEvmEvents$(apolloClient: ApolloClient<any>, contractAddress: string,
     return from(apolloClient?.query(
         getGqlContractEventsQuery(toEvmEventFilter(contractAddress, methodSignature), fromBlockId, toBlockId),
     ))
+}
+
+interface EvmEventDefinition { eventName: string; paramNames: string[]; topic0Unencoded: string; paramsIndexed: boolean[]; };
+const toEvmEventMemberDefinition = (eventAbiDef:string): EvmEventDefinition | null => {
+    let startDefStr = 'event ';
+    if(!eventAbiDef.startsWith(startDefStr)){
+        return null;
+    }
+    let strippedDef = eventAbiDef
+        .trim()
+        .substring(0, startDefStr.length);
+    let paramsStart = strippedDef.indexOf('(')+1;
+    let paramsEnd = strippedDef.indexOf(')', paramsStart);
+    const eventName = strippedDef.substring(0, paramsStart-1);
+    const paramsRaw = strippedDef.substring(paramsStart, paramsEnd);
+    const paramsSplit = paramsRaw.split(',')
+    const paramNames = paramsSplit.map(param => param.split(' ')[0]);
+    const paramsIndexed = paramsSplit.map(param => param.indexOf('indexed') > -1);
+    const topic0Unencoded = eventName + '(' + paramNames.join(',') + ')';
+    // const topic0Encoded = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(topic0Unencoded));
+    return {eventName, paramNames, topic0Unencoded, paramsIndexed}
+}
+
+type EventFilterGeneratorFn = (...topicFilters: any[])=>EvmFilter;
+
+const createEventDefFilterGenerator=(contractAddress: string, evDefinition: EvmEventDefinition): EventFilterGeneratorFn =>{
+    return (...topicFilters: any[]): EvmFilter => toEvmEventFilter(contractAddress, evDefinition.topic0Unencoded, topicFilters);
+}
+
+const createContractFiltersInstance = (contractAddress: string, abi:string[]): any =>{
+    const eventDefs: (EvmEventDefinition|null)[] = abi.filter(abiEl => abiEl.trim().startsWith('event'))
+        .map(toEvmEventMemberDefinition);
+    const filters: any = {}
+    eventDefs.forEach((evDef: EvmEventDefinition|null) => {
+        if(!evDef){
+            return;
+        }
+        filters[evDef.eventName] = createEventDefFilterGenerator(contractAddress, evDef);
+    });
+    return filters;
 }
 
 export const EvmEvents = (): JSX.Element => {
