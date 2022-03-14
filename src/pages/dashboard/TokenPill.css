@@ -1,3 +1,7 @@
+.token-balances {
+    width: 100%;
+}
+
 .token-balance-item_icon-text_w {
     height: 3em;
 }
@@ -70,7 +74,6 @@
 }
 
 .tokens-container {
-    padding: 0 15px;
     display: grid;
     grid-template-columns: calc(50% - 12px) calc(50% - 12px);
     grid-gap: 24px;

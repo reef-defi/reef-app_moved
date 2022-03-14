@@ -16,12 +16,6 @@ export const Skeleton = (): JSX.Element => (
 
 export const Nfts = (): JSX.Element => (
   <div className="nfts">
-    <div className="mb-4 col-12 d-flex d-flex-space-between d-flex-vert-base">
-      <div>
-        <h5 className="my-auto title-color text-semi-bold">NFTs</h5>
-      </div>
-    </div>
-
     <div className="col-12">
       <div className="nfts__container">
 

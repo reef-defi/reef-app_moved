@@ -63,8 +63,8 @@
 
 .tabs__tab-notification {
   position: absolute;
-  right: 0px;
-  top: 0;
+  right: -1px;
+  top: -1px;
   border-radius: 99px;
   font-size: 0.688rem;
   padding: 2px 5px;

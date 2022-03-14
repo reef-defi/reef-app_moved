@@ -29,7 +29,7 @@ export const TokenActivity = ({ address }: TokenActivity): JSX.Element => {
   const transfers: any[]|undefined = hooks.useObservableState(appState.transferHistory$);
 
   return (
-    <div className="row token-activity">
+    <div className="token-activity">
       <div className="mb-4 col-12 d-flex d-flex-space-between d-flex-vert-base token-activity__title">
         <div>
           <h5 className="my-auto title-color text-semi-bold">Activity</h5>
