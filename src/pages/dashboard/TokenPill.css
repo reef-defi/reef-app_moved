@@ -79,6 +79,10 @@
     grid-gap: 24px;
 }
 
+.tokens-container--single {
+    grid-template-columns: 1fr;
+}
+
 .tokens-container > * {
     width: 100%;
     padding: 0;

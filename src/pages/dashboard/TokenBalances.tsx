@@ -49,7 +49,13 @@ export const TokenBalances = ({ tokens, onRefresh }: TokenBalances): JSX.Element
             </div>
         )}
       { tokens && !!isDataSet(tokens) && (
-      <div className="tokens-container" style={{ maxHeight: 'auto' }}>
+      <div
+        className={`
+          tokens-container
+          ${tokens?.length === 1 ? 'tokens-container--single' : ''}
+        `}
+        style={{ maxHeight: 'auto' }}
+      >
         {(tokens as TokenWithAmount[]).map((token: TokenWithAmount) => (<TokenPill token={token} key={token.address} />
         ))}
       </div>
