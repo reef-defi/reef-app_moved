@@ -118,7 +118,11 @@
     margin-right: 5px;
 }
 
-@media only screen and (max-width: 1300px) {
+@media only screen and (max-width: 1200px) {
+    .tokens-container {
+        grid-template-columns: 1fr;
+    }
+
     .token-balance-item,
     .token-balance-item_icon-text {
         display: flex;

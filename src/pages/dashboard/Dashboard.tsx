@@ -47,10 +47,12 @@ const Dashboard = (): JSX.Element => {
     {
       key: "nfts",
       title: "NFTs"
+    },
+    {
+      key: 'activity',
+      title: 'Activity'
     }
   ]
-
-  console.log(tabs)
 
   const [tab, setTab] = useState(tabs[0].key)
 
@@ -68,6 +70,7 @@ const Dashboard = (): JSX.Element => {
           { tab === 'tokens' ? <TokenBalances tokens={signerTokenBalances as utils.DataWithProgress<TokenWithAmount[]>} /> : '' }
           { tab === 'staking' ? <Staking /> : '' }
           { tab === 'nfts' ? <Nfts /> : '' }
+          { tab === 'activity' ? <TokenActivity address={selectedSigner?.evmAddress} /> : '' }
         </div>
 
         <div className='dashboard__right'>
