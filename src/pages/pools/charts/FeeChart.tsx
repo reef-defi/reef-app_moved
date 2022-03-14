@@ -48,7 +48,7 @@ const FeeChart = ({address, symbol1, symbol2, decimal1, decimal2} : BasicPoolInf
   const toDate = Date.now();
   const fromDate = toDate - 60 * 24 * 1000; // last hour
 
-  if (loading || data.pool_minute_fee.length === 0) {
+  if (loading || !data) {
     return <Loading />
   }
 
@@ -56,6 +56,9 @@ const FeeChart = ({address, symbol1, symbol2, decimal1, decimal2} : BasicPoolInf
     .filter((d) => new Date(d.timeframe).getTime() > fromDate)
     .map((d) => ({...d, date: new Date(d.timeframe)}))
 
+  if (feeData.length === 0) {
+    return <Loading />
+  }
   const f = scaleOrdinal(schemeCategory10)
     .domain(set(feeData.map(d => d.timeframe)));
 
