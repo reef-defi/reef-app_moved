@@ -3,7 +3,7 @@ import {useSubscription, gql} from "@apollo/client"
 import { Components } from "@reef-defi/react-lib/";
 import DefaultChart from "./DefaultChart";
 
-import { utcDay, utcMinute } from "d3-time";
+import { utcDay, utcMinute, utcHour } from "d3-time";
 import { timeFormat } from "d3-time-format";
 import { format } from "d3-format";
 
@@ -13,6 +13,7 @@ import {MouseCoordinateX, CrossHairCursor, CurrentCoordinate} from "react-stockc
 import { XAxis, YAxis } from "react-stockcharts/lib/axes";
 import { SingleValueTooltip} from "react-stockcharts/lib/tooltip"
 import { timeIntervalBarWidth } from "react-stockcharts/lib/utils";
+import { dropDuplicatesMultiKey } from "../../../utils/utils";
 const { Loading } = Components.Loading;
 
 interface CandlestickData {
@@ -34,7 +35,7 @@ interface CandlestickData {
 }
 
 interface CandlestickQuery {
-  pool_minute_candlestick: CandlestickData[];
+  pool_hour_candlestick: CandlestickData[];
 }
 
 interface CandlestickVar {
@@ -50,15 +51,14 @@ interface OHLC {
   low: number;
 }
 
-const MINUTE_CANDLESTICK_GQL = gql`
+const DAY_CANDLESTICK_GQL = gql`
 subscription candlestick($address: String!, $whereToken: Int!) {
-  pool_minute_candlestick(
-    order_by: { timeframe: desc }
+  pool_hour_candlestick(
+    order_by: { timeframe: asc }
     where: { 
       pool: { address: { _ilike: $address } } 
       which_token: { _eq: $whereToken }
     }
-    limit: 60
   ) {
     pool_id
     timeframe
@@ -101,21 +101,20 @@ interface TokenCandlestickChart {
 
 const TokenCandlestickChart = ({whichToken, address} : TokenCandlestickChart): JSX.Element => {
   const {loading, data} = useSubscription<CandlestickQuery, CandlestickVar>(
-    MINUTE_CANDLESTICK_GQL, 
+    DAY_CANDLESTICK_GQL, 
     { 
       variables: { address, whereToken: whichToken } 
     }
   );
 
   const toDate = Date.now();
-  const fromDate = toDate - 60 * 60 * 1000; // last hour
+  const fromDate = toDate - 50 * 60 * 60 * 1000; // last hour
   
   const candlestick = data 
-  ? data.pool_minute_candlestick
+  ? data.pool_hour_candlestick
       .filter(({which_token}) => which_token === whichToken)
       .map((token) => whichToken === 1 ? token1Values(token) : token2Values(token))
       .filter(({date}) => date.getTime() > fromDate)
-      .sort((a, b) => a.date.getTime() - b.date.getTime())
   : [];
   
   
@@ -123,9 +122,13 @@ const TokenCandlestickChart = ({whichToken, address} : TokenCandlestickChart): J
     return (<Loading />);
   }
 
+  const r = dropDuplicatesMultiKey(candlestick, ["date"])
+    .sort((a, b) => a.date.getTime() - b.date.getTime()); 
+  console.log(r)
+
   return (
     <DefaultChart 
-      data={candlestick}
+      data={r}
       fromDate={new Date(fromDate)}
       toDate={new Date(toDate)}
       type="svg"
@@ -137,21 +140,21 @@ const TokenCandlestickChart = ({whichToken, address} : TokenCandlestickChart): J
         <MouseCoordinateX
             at="bottom"
             orient="bottom"
-            displayFormat={timeFormat("%Y-%m-%d %H:%M:%S")} />
+            displayFormat={timeFormat("%Y-%m-%d")} />
 
-        <CandlestickSeries width={timeIntervalBarWidth(utcMinute)}/>
+        <CandlestickSeries width={timeIntervalBarWidth(utcHour)}/>
 
         <CurrentCoordinate yAccessor={d => d.close} fill={d => d.close} />
         
         <SingleValueTooltip
           yAccessor={(d) => d.close}
-          yDisplayFormat={(d) => "$ " + format('.4f')(d)}
+          yDisplayFormat={(d) => "" + format('.4f')(d)}
           fontSize={21}
           origin={[20, 10]}/>
         <SingleValueTooltip
           yAccessor={(d) => d.date}
           fontSize={14}
-          yDisplayFormat={timeFormat("%Y-%m-%d %H:%M:%S")}
+          yDisplayFormat={timeFormat("%Y-%m-%d")}
           origin={[20, 30]}/>
       </Chart>
       

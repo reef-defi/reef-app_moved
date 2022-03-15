@@ -75,3 +75,23 @@ export const formatAmount = (amount: number, decimals: number): string => toHuma
 
 export const toTimestamp = (d: Date): string => 
   `${d.getFullYear()}-${d.getMonth() > 9 ? d.getMonth() : "0" + d.getMonth()}-${d.getUTCDay() > 9 ? d.getUTCDay() : "0" + d.getUTCDay()}T${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}+00:00`;
+
+
+export const dropDuplicatesMultiKey = <Object, Key extends keyof Object>(
+  objects: Object[],
+  keys: Key[],
+): Object[] => {
+  const existingKeys = new Set<string>();
+  const filtered: Object[] = [];
+
+  for (let index = objects.length - 1; index >= 0; index -= 1) {
+    const obj = objects[index];
+    const ids = keys.map((key) => obj[key]).join(', ');
+    if (!existingKeys.has(ids)) {
+      filtered.push(obj);
+      existingKeys.add(ids);
+    }
+  }
+
+  return filtered;
+};
