@@ -1,3 +1,7 @@
+.token-balances {
+    width: 100%;
+}
+
 .token-balance-item_icon-text_w {
     height: 3em;
 }
@@ -70,10 +74,13 @@
 }
 
 .tokens-container {
-    padding: 0 15px;
     display: grid;
     grid-template-columns: calc(50% - 12px) calc(50% - 12px);
     grid-gap: 24px;
+}
+
+.tokens-container--single {
+    grid-template-columns: 1fr;
 }
 
 .tokens-container > * {
@@ -115,7 +122,11 @@
     margin-right: 5px;
 }
 
-@media only screen and (max-width: 1300px) {
+@media only screen and (max-width: 1200px) {
+    .tokens-container {
+        grid-template-columns: 1fr;
+    }
+
     .token-balance-item,
     .token-balance-item_icon-text {
         display: flex;

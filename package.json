@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@apollo/client": "^3.5.7",
     "@polkadot/extension-dapp": "^0.40.3",
     "@reef-defi/extension-dapp": "^0.41.2",
     "@reef-defi/react-lib": "link:./../reef-react-lib/",

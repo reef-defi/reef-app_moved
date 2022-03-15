@@ -1,0 +1,75 @@
+.tabs {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  background-color: #e5e1f0;
+  border-radius: 10px;
+  padding: 7px;
+  margin-left: -2px;
+}
+
+.tabs__tab {
+  margin: 0 5px;
+  padding: 9px 13px;
+  background: transparent;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 1.063rem;
+  line-height: 1.2;
+  font-weight: 700;
+  color: #313a52;
+  transition: all 0.15s;
+  position: relative;
+  z-index: 1;
+  border: none;
+  border-radius: 7px;
+}
+
+.tabs__tab span {
+  transition: all 0.15s;
+  opacity: 0.5;
+}
+
+.tabs__tab--notification span {
+  opacity: 0.95;
+}
+
+.tabs__tab:first-child {
+  margin-left: 0;
+}
+
+.tabs__tab:last-child {
+  margin-right: 0;
+}
+
+.tabs__tab:hover {
+  cursor: pointer;
+}
+
+.tabs__tab:hover span,
+.tabs__tab--selected span {
+  opacity: 1;
+}
+
+.tabs__tab--selected {
+  background-color: white;
+  box-shadow: 0 0 10px -10px rgb(15 35 63 / 50%), 0 5px 10px -5px rgb(15 35 63 / 25%);
+}
+
+.tabs__tab-notification {
+  position: absolute;
+  right: -1px;
+  top: -1px;
+  border-radius: 99px;
+  font-size: 0.688rem;
+  padding: 2px 5px;
+  line-height: 1.1;
+  background-color: #a93185;
+  color: white;
+  font-weight: 600;
+}

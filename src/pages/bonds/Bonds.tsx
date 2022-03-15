@@ -1,9 +1,7 @@
 import React from 'react';
-import {
-  appState, hooks, Network, ReefSigner,
-} from '@reef-defi/react-lib';
-import { BondsComponent } from './BondsComponent';
-import { bonds, IBond } from '../bonds/utils/bonds';
+import {appState, hooks, Network, ReefSigner,} from '@reef-defi/react-lib';
+import {BondsComponent} from './BondsComponent';
+import {bonds, IBond} from '../bonds/utils/bonds';
 
 export const Bonds = (): JSX.Element => {
   const selectedSigner: ReefSigner | undefined = hooks.useObservableState(appState.selectedSigner$);
