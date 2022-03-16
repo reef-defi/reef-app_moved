@@ -2,7 +2,7 @@ export interface AddressVar {
   address: string;
 }
 
-interface ContractData {
+export interface ContractData {
   symbol: string;
   name: string;
   decimals: number
@@ -13,13 +13,13 @@ export interface PoolData {
   address: string;
   token_contract_1: {
     address: string;
-    verified_contract: {
+    verified_contract: null | {
       contract_data: ContractData;
     };
   };
   token_contract_2: {
     address: string;
-    verified_contract: {
+    verified_contract: null | {
       contract_data: ContractData;
     };
   };
