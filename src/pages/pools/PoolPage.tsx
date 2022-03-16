@@ -8,7 +8,7 @@ import { BigNumber, utils } from "ethers";
 import PoolTransactions from "./PoolTransactions";
 import { AddressVar, PoolData } from "./poolTypes";
 import PoolInfo from "./PoolInfo";
-import { ADD_LIQUIDITY_URL, SWAP_URL } from "../../urls";
+import { ADD_LIQUIDITY_URL, REMOVE_LIQUIDITY_URL, SWAP_URL } from "../../urls";
 import ChartSelector from "./charts/ChartSelector";
 import { BasicPoolInfo } from "./charts/types";
 import "./Pool.css";
@@ -149,56 +149,56 @@ const PoolPage = (): JSX.Element => {
 
   const openTrade = (): void => history.push(SWAP_URL);
   const openAddLiquidity = (): void => history.push(ADD_LIQUIDITY_URL);
+  const openRemoveLiquidity = (): void => {
+    if (!loadingPool && poolData) {
+      history.push(
+        REMOVE_LIQUIDITY_URL
+          .replace(":address1", tokenAddress1)
+          .replace(":address2", tokenAddress2)
+      );
+    }
+  }
 
   return (
     <div className="w-100 row justify-content-center">
       <div className="col-xl-10 col-lg-10 col-md-12">
-        {
-          loadingPool || !poolData
-            ? <Skeleton />
-            : <div className="d-flex ms-1 mb-1">
-                <Components.Icons.TokenIcon src={tokenIcon1}/>
-                <Components.Icons.TokenIcon src={tokenIcon2}/>
-                <BoldText size={1.6}> {tokenSymbol1} / {tokenSymbol2}</BoldText>
-              </div>
-          }
+        <div className="d-flex ms-1 mb-1">
+          <Components.Icons.TokenIcon src={tokenIcon1}/>
+          <Components.Icons.TokenIcon src={tokenIcon2}/>
+          <BoldText size={1.6}> {tokenSymbol1} / {tokenSymbol2}</BoldText>
+        </div>
 
         <Components.Display.FullRow>
           <Components.Display.ContentBetween>
             <div className="d-flex my-2">
               <div className="card border-rad">
                 <div className="card-body py-1">
-                  { loadingPool  || !poolData
-                    ? <Skeleton />
-                    : <div className="d-flex">
-                        <Components.Icons.TokenIcon src={tokenIcon1}/>
-                        <Components.Display.ME size="1" />
-                        <LeadText>1 {tokenSymbol1} = {ratio1 !== -1 ? ratio1.toFixed(3) : "-"} {tokenSymbol2} </LeadText>
-                      </div>
-                  }
+                  <div className="d-flex">
+                    <Components.Icons.TokenIcon src={tokenIcon1}/>
+                    <Components.Display.ME size="1" />
+                    <LeadText>1 {tokenSymbol1} = {ratio1 !== -1 ? ratio1.toFixed(3) : "-"} {tokenSymbol2} </LeadText>
+                  </div>
                 </div>
               </div>
               <Components.Display.ME size="1" />
 
               <div className="card border-rad">
                 <div className="card-body py-1">
-                  {
-                    loadingPool || !poolData
-                    ? <Skeleton />
-                    : <div className="d-flex">
-                        <Components.Icons.TokenIcon src={tokenIcon2}/>
-                        <Components.Display.ME size="1" />
-                        <LeadText>1 {tokenSymbol2} = {ratio2 !== -1 ? ratio2.toFixed(3) : "-"} {tokenSymbol1}</LeadText>
-                      </div>
-                  }
+                  <div className="d-flex">
+                    <Components.Icons.TokenIcon src={tokenIcon2}/>
+                    <Components.Display.ME size="1" />
+                    <LeadText>1 {tokenSymbol2} = {ratio2 !== -1 ? ratio2.toFixed(3) : "-"} {tokenSymbol1}</LeadText>
+                  </div>
                 </div>
               </div>
             </div>
 
             <div className="d-flex">
-              <Components.Button.Button onClick={openAddLiquidity}>AddLiqudity</Components.Button.Button>
-              <Components.Display.ME size="1" />
               <Components.Button.Button onClick={openTrade}>Trade</Components.Button.Button>
+              <Components.Display.ME size="1" />
+              <Components.Button.Button onClick={openAddLiquidity}>Add Liqudity</Components.Button.Button>
+              <Components.Display.ME size="1" />
+              <Components.Button.Button onClick={openRemoveLiquidity}>Remove Liqudity</Components.Button.Button>
             </div>
           </Components.Display.ContentBetween>
         </Components.Display.FullRow>

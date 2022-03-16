@@ -5,7 +5,6 @@ import { useHistory } from 'react-router-dom';
 import { ADD_LIQUIDITY_URL, POOL_CHART_URL } from '../../urls';
 import { useQuery, gql } from '@apollo/client';
 import { formatAmount } from '../../utils/utils';
-import {utils} from "ethers";
 
 const {BoldText} = Components.Text;
 const {Loading} = Components.Loading;
