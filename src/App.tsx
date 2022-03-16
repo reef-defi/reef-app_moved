@@ -5,15 +5,16 @@ import ContentRouter from './pages/ContentRouter';
 import Nav from './common/Nav';
 import NoExtension from "./pages/error/NoExtension"
 import NoAccount from "./pages/error/NoAccount"
-import {innitialNetwork} from './environment';
-
+// import {innitialNetwork} from './environment';
+import { availableNetworks } from '@reef-defi/react-lib';
 const App = (): JSX.Element => {
-  const [signers, provider, _, loading, error] = hooks.useInitReefState(
+  const {provider, loading, error} = hooks.useInitReefState(
     'Reef Wallet App',
     {
-      selectNetwork: innitialNetwork,
+      network: availableNetworks.localhost
     }
   );
+
 
   const currentSigner: ReefSigner|undefined = hooks.useObservableState(appState.selectedSigner$);
   const apollo: ApolloClient<any> = hooks.useObservableState(graphql.apolloClientInstance$);
