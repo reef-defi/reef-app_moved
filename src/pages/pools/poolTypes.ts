@@ -1,6 +1,9 @@
 export interface AddressVar {
   address: string;
 }
+export interface BasicVar extends AddressVar {
+  fromTime: string;
+}
 
 export interface ContractData {
   symbol: string;

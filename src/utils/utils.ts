@@ -61,7 +61,7 @@ export const formatAgoDate = (timestamp: number|string): string => {
   if (difference < 1000 * 60 * 60 * 24) {
     return `${Math.round(difference / 3600000)}h ago`
   }
-  return `${date.getFullYear()}-${date.getMonth()}-${date.getDay()}`;
+  return date.toDateString();
 }
 
 export const formatAmount = (amount: number, decimals: number): string => toHumanAmount(
@@ -95,3 +95,16 @@ export const dropDuplicatesMultiKey = <Object, Key extends keyof Object>(
 
   return filtered;
 };
+
+
+
+export const mean = (arr: number[]): number => arr.reduce((acc, v) => acc + v) / arr.length;
+export const variance = (arr: number[]): number => {
+  const avg = mean(arr);
+  const squareDiffs = arr.map((v) => {
+    const diff = avg - v;
+    return diff * diff;
+  });
+  return mean(squareDiffs);
+}
+export const std = (arr: number[]): number => Math.sqrt(variance(arr));

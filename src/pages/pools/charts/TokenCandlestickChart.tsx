@@ -13,7 +13,7 @@ import {MouseCoordinateX, CrossHairCursor, CurrentCoordinate} from "react-stockc
 import { XAxis, YAxis } from "react-stockcharts/lib/axes";
 import { SingleValueTooltip} from "react-stockcharts/lib/tooltip"
 import { timeIntervalBarWidth } from "react-stockcharts/lib/utils";
-import { dropDuplicatesMultiKey } from "../../../utils/utils";
+import { dropDuplicatesMultiKey, std } from "../../../utils/utils";
 const { Loading } = Components.Loading;
 
 interface CandlestickData {
@@ -100,15 +100,15 @@ interface TokenCandlestickChart {
 }
 
 const TokenCandlestickChart = ({whichToken, address} : TokenCandlestickChart): JSX.Element => {
+  const toDate = Date.now();
+  const fromDate = toDate - 50 * 60 * 60 * 1000; // last hour
+
   const {loading, data} = useSubscription<CandlestickQuery, CandlestickVar>(
     DAY_CANDLESTICK_GQL, 
     { 
       variables: { address, whereToken: whichToken } 
     }
   );
-
-  const toDate = Date.now();
-  const fromDate = toDate - 50 * 60 * 60 * 1000; // last hour
   
   const candlestick = data 
   ? data.pool_hour_candlestick
@@ -124,7 +124,9 @@ const TokenCandlestickChart = ({whichToken, address} : TokenCandlestickChart): J
 
   const r = dropDuplicatesMultiKey(candlestick, ["date"])
     .sort((a, b) => a.date.getTime() - b.date.getTime()); 
-  console.log(r)
+
+  const values: number[] = r.reduce((acc, {high, low}) => [...acc, high, low], []);
+  const adjust = std(values);
 
   return (
     <DefaultChart 
@@ -133,14 +135,14 @@ const TokenCandlestickChart = ({whichToken, address} : TokenCandlestickChart): J
       toDate={new Date(toDate)}
       type="svg"
     >
-      <Chart id={1} yExtents={d => [d.high + d.high * .1, d.low - d.low * .1]}>
+      <Chart id={1} yExtents={d => [d.high + adjust, d.low - adjust]}>
         <XAxis axisAt="bottom" orient="bottom" ticks={8} />
         <YAxis axisAt="left" orient="left" ticks={6} />
 
         <MouseCoordinateX
             at="bottom"
             orient="bottom"
-            displayFormat={timeFormat("%Y-%m-%d")} />
+            displayFormat={timeFormat("%Y-%m-%d %H:%M:%S")} />
 
         <CandlestickSeries width={timeIntervalBarWidth(utcHour)}/>
 

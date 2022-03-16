@@ -1,6 +1,6 @@
 import React from "react"
 import { useQuery, useSubscription, gql } from "@apollo/client"
-import { AddressVar } from "../poolTypes";
+import { AddressVar, BasicVar } from "../poolTypes";
 import { Components } from "@reef-defi/react-lib";
 import { timeFormat } from "d3-time-format";
 import { Chart } from "react-stockcharts";
@@ -13,15 +13,18 @@ import { scaleOrdinal, schemeCategory10, scalePoint } from  "d3-scale";
 import { set } from "d3-collection";
 import { XAxis, YAxis } from "react-stockcharts/lib/axes";
 import {SingleValueTooltip} from "react-stockcharts/lib/tooltip"
-import { formatAmount } from "../../../utils/utils";
+import { formatAmount, std, toTimestamp } from "../../../utils/utils";
 import DefaultChart from "./DefaultChart";
 import { BasicPoolInfo } from "./types";
 const { Loading } = Components.Loading;
 
 const FEE_GQL = gql`
-subscription fee($address: String!) {
-  pool_minute_fee(
-    where: { pool: { address: { _ilike: $address } } }
+subscription fee($address: String!, $fromTime: timestamptz!) {
+  pool_hour_fee(
+    where: { 
+      timeframe: { _gte: $fromTime }
+      pool: { address: { _ilike: $address } } 
+    }
     order_by: { timeframe: asc }
   ) {
     fee_1
@@ -37,28 +40,37 @@ interface Fee {
   timeframe: string;
 }
 
-type FeeQuery = { pool_minute_fee: Fee[] };
+type FeeQuery = { pool_hour_fee: Fee[] };
 
 
 const FeeChart = ({address, symbol1, symbol2, decimal1, decimal2} : BasicPoolInfo): JSX.Element => {
-  const { data, loading } = useSubscription<FeeQuery, AddressVar>(
-    FEE_GQL,
-    {variables: { address } }
-  )
   const toDate = Date.now();
-  const fromDate = toDate - 60 * 24 * 1000; // last hour
+  const fromDate = toDate - 50 * 60 * 60 * 1000; // last 50 hour
+  
+  const { data, loading } = useSubscription<FeeQuery, BasicVar>(
+    FEE_GQL,
+    {
+      variables: {
+        address,
+        fromTime: toTimestamp(new Date(fromDate))         
+      }
+    }
+  )
 
   if (loading || !data) {
     return <Loading />
   }
 
-  const feeData = data.pool_minute_fee
-    .filter((d) => new Date(d.timeframe).getTime() > fromDate)
+  const feeData = data.pool_hour_fee
     .map((d) => ({...d, date: new Date(d.timeframe)}))
 
   if (feeData.length === 0) {
-    return <Loading />
+    return <span>No data found</span>
   }
+
+  const values: number[] = feeData.reduce((acc, {fee_1, fee_2}) => [...acc, fee_1, fee_2], []);
+  const adjust = std(values);
+
   const f = scaleOrdinal(schemeCategory10)
     .domain(set(feeData.map(d => d.timeframe)));
 
@@ -70,7 +82,7 @@ const FeeChart = ({address, symbol1, symbol2, decimal1, decimal2} : BasicPoolInf
       toDate={new Date(toDate)}
       type="svg"
     >
-      <Chart id={1} yExtents={d => [d.fee_1 * 1.2, d.fee_2 * 1.2, 0]}>
+      <Chart id={1} yExtents={d => [d.fee_1 + adjust, d.fee_2 + adjust, 0]}>
         <XAxis axisAt="bottom" orient="bottom" ticks={8} />
         <YAxis 
           axisAt="left" 

@@ -1,6 +1,6 @@
 import React from "react"
 import { useQuery, useSubscription, gql } from "@apollo/client"
-import { AddressVar } from "../poolTypes";
+import { AddressVar, BasicVar } from "../poolTypes";
 import { Components } from "@reef-defi/react-lib";
 import { timeFormat } from "d3-time-format";
 import { Chart } from "react-stockcharts";
@@ -9,20 +9,23 @@ import {
 	GroupedBarSeries,
 } from "react-stockcharts/lib/series";
 
-import { scaleOrdinal, schemeCategory10, scalePoint } from  "d3-scale";
+import { scaleOrdinal, schemeCategory10 } from  "d3-scale";
 import { set } from "d3-collection";
 import { XAxis, YAxis } from "react-stockcharts/lib/axes";
 import {SingleValueTooltip} from "react-stockcharts/lib/tooltip"
-import { formatAmount } from "../../../utils/utils";
+import { dropDuplicatesMultiKey, formatAmount, formatBasicAmount, std, toTimestamp } from "../../../utils/utils";
 import DefaultChart from "./DefaultChart";
 import { BasicPoolInfo } from "./types";
 
 const { Loading } = Components.Loading;
 
 const VOLUME_GQL = gql`
-subscription volume($address: String!) {
-  pool_minute_volume(
-    where: { pool: { address: { _ilike: $address } } }
+subscription volume($address: String!, $fromTime: timestamptz!) {
+  pool_hour_volume(
+    where: { 
+      timeframe: { _gte: $fromTime }
+      pool: { address: { _ilike: $address } }
+    }
     order_by: { timeframe: asc }
   ) {
     amount_1
@@ -38,30 +41,43 @@ interface Volume {
   timeframe: string;
 }
 
-type VolumeQuery = { pool_minute_volume: Volume[] };
+type VolumeQuery = { pool_hour_volume: Volume[] };
 
 const VolumeChart = ({address, symbol1, symbol2, decimal1, decimal2} : BasicPoolInfo): JSX.Element => {
-  const { data, loading } = useSubscription<VolumeQuery, AddressVar>(
-    VOLUME_GQL,
-    {variables: { address } }
-  )
   const toDate = Date.now();
-  const fromDate = toDate - 60 * 24 * 1000; // last hour
+  const fromDate = toDate - 50 * 60 * 60 * 1000; // last 50 hour
 
-  if (loading || data.pool_minute_volume.length === 0) {
+  const { data, loading } = useSubscription<VolumeQuery, BasicVar>(
+    VOLUME_GQL,
+    {
+      variables: {
+        address,
+        fromTime: toTimestamp(new Date(fromDate))         
+      }
+    }
+  )
+
+  if (loading || !data) {
     return <Loading />
   }
 
-  const volumeData = data.pool_minute_volume
-    .filter((d) => new Date(d.timeframe).getTime() > fromDate)
-    .map((d) => ({...d, date: new Date(d.timeframe)}))
-
+  const volumeData = dropDuplicatesMultiKey(data.pool_hour_volume, ["timeframe"])
+    .map((d) => ({...d,
+      // amount_1: formatBasicAmount(d.amount_1, decimal1),  
+      // amount_2: formatBasicAmount(d.amount_2, decimal2),  
+      date: new Date(d.timeframe)
+    }))
+    .sort((a, b) => a.date.getTime() - b.date.getTime()); 
   if (volumeData.length === 0) {
-    return <Loading />;
+    return <span>No data found</span>;
   }
 
+  const values: number[] = volumeData.reduce((acc, {amount_1, amount_2}) => [...acc, amount_1, amount_2], []);
+  const adjust = std(values);
+
+  // console.log(values)
   const f = scaleOrdinal(schemeCategory10)
-    .domain(set(volumeData.map(d => d.timeframe)));
+    .domain(set(volumeData.map(d => d.date)));
 
   const fill = (d, i) => f(i);
   return (
@@ -72,7 +88,7 @@ const VolumeChart = ({address, symbol1, symbol2, decimal1, decimal2} : BasicPool
       toDate={new Date(toDate)}
       type="svg"
     >
-      <Chart id={1} yExtents={d => [d.amount_1 * 1.2, d.amount_2 * 1.2, 0]}>
+      <Chart id={1} yExtents={d => [d.amount_1 + adjust, d.amount_2 + adjust, 0]}>
         <XAxis axisAt="bottom" orient="bottom" ticks={8} />
         <YAxis 
           axisAt="left" 

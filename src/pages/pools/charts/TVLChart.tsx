@@ -13,7 +13,7 @@ import {
 	SquareMarker,
 	LineSeries,
 } from "react-stockcharts/lib/series";
-import { formatAmount } from "../../../utils/utils";
+import { dropDuplicatesMultiKey, formatAmount, std, toTimestamp } from "../../../utils/utils";
 import DefaultChart from "./DefaultChart";
 
 const { Loading } = Components.Loading;
@@ -23,10 +23,11 @@ interface TVLChart {
 }
 
 const TVL_GQL = gql`
-query pool_supply($address: String!) {
-  pool_minute_supply(
+query pool_supply($address: String!, $fromTime: timestamptz!) {
+  pool_hour_supply(
     where: { 
-      pool: { address: { _ilike: $address } } 
+      pool: { address: { _ilike: $address } }
+      timeframe: { _gte: $fromTime }
     }
     order_by: { timeframe: asc }
   ) {
@@ -40,25 +41,28 @@ interface TVLData {
   timeframe: string;
 }
 
-type TVLQuery = { pool_minute_supply: TVLData[] }
+type TVLQuery = { pool_hour_supply: TVLData[] }
 interface TVlVar extends AddressVar {
-  // fromTime: string;
+  fromTime: string;
 }
 
 const TVLChart = ({address} : TVLChart): JSX.Element => {
+  const toDate = Date.now();
+  const fromDate = toDate - 50 * 60 * 60 * 1000; // last 50 hour
+
   const {loading, data} = useQuery<TVLQuery, TVlVar>(
     TVL_GQL,
-    { variables: {
-      address,
-      // fromTime: toTimestamp(new Date(Date.now() - 1000 * 60 * 60 * 24))         
-    }}
+    {
+      variables: {
+        address,
+        fromTime: toTimestamp(new Date(fromDate))         
+      }
+    }
   );
 
-  const toDate = Date.now();
-  const fromDate = toDate - 60 * 60 * 1000; // last hour
 
   let tvl = data
-    ? data.pool_minute_supply
+    ? data.pool_hour_supply
         .map(({timeframe, total_supply}) => ({
           date: new Date(timeframe),
           amount: total_supply
@@ -68,18 +72,24 @@ const TVLChart = ({address} : TVLChart): JSX.Element => {
   if (tvl.length > 0 && toDate - tvl[tvl.length-1].date.getTime() > 1000 * 60) {
     tvl.push({...tvl[tvl.length-1], date: new Date(toDate)});
   }
+  const filteredData = dropDuplicatesMultiKey(tvl, ["date"])
+    .sort((a, b) => a.date.getTime() - b.date.getTime()); 
 
   if (loading || tvl.length === 0) {
     return (<Loading />);
   }
+
+  const values: number[] = tvl.map(({amount}) => amount);
+  const adjust = std(values);
+
   return (
     <DefaultChart
-      data={tvl}
+      data={filteredData}
       fromDate={new Date(fromDate)}
       toDate={new Date(toDate)}
       type="svg"
     >
-      <Chart id={1} yExtents={d => [d.amount + d.amount * .1, d.amount - d.amount * .1]}>
+      <Chart id={1} yExtents={d => [d.amount + adjust, d.amount - adjust]}>
         <XAxis axisAt="bottom" orient="bottom" ticks={8} />
         <YAxis 
           axisAt="left" 
