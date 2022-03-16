@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom';
 import { ADD_LIQUIDITY_URL, POOL_CHART_URL } from '../../urls';
 import { useQuery, gql } from '@apollo/client';
 import { formatAmount } from '../../utils/utils';
+import {utils} from "ethers";
 
 const {BoldText} = Components.Text;
 const {Loading} = Components.Loading;
@@ -19,33 +20,23 @@ interface Volume {
   amount_2: number;
 }
 
-interface TokenContract {
-  address: string;
-  verified_contract: {
-    contract_data: {
-      name: string;
-      symbol: string;
-      decimal: number;
-    }
-  } | null;
-}
-
 interface Pool {
   address: string;
   supply: Supply[];
   volume: Volume[];
-  token_contract_1: TokenContract;
-  token_contract_2: TokenContract;
+  symbol_1: string;
+  symbol_2: string;
 }
 
-type PoolQuery = { pool: Pool[] };
+type PoolQuery = { verified_pool: Pool[] };
 
 interface PoolVar {
   offset: number;
+  search: { _ilike: string; } | {};
 }
 
 interface PoolCount {
-  pool_aggregate: {
+  verified_pool_aggregate: {
     aggregate: {
       count: number;
     }
@@ -53,8 +44,17 @@ interface PoolCount {
 }
 
 const POOLS_GQL = gql`
-query pool($offset: Int!) {
-  pool(
+query pool($offset: Int!, $search: String_comparison_exp!) {
+  verified_pool(
+    where: {
+      _or: [
+        { name_1: $search }
+        { name_2: $search }
+        { address: $search }
+        { symbol_1: $search }
+        { symbol_2: $search }
+      ]
+    }
     order_by: {supply_aggregate: {sum: {supply: desc}}}
     limit: 10
     offset: $offset
@@ -68,25 +68,25 @@ query pool($offset: Int!) {
       amount_1
       amount_2
     }
-    token_contract_1 {
-      address
-      verified_contract {
-        contract_data
-      }
-    }
-    token_contract_2 {
-      address
-      verified_contract {
-        contract_data
-      }
-    }
+    symbol_1
+    symbol_2
   }
 }
 `;
 
 const POOL_COUNT_GQL = gql`
-query pool_count {
-  pool_aggregate {
+query pool_count($search: String_comparison_exp!) {
+  verified_pool_aggregate(
+    where: {
+      _or: [
+        { name_1: $search }
+        { name_2: $search }
+        { address: $search }
+        { symbol_1: $search }
+        { symbol_2: $search }
+      ]
+    }
+  ) {
     aggregate {
       count
     }
@@ -96,19 +96,26 @@ query pool_count {
 
 const PoolList = (): JSX.Element => {
   const history = useHistory();
-  const [pageIndex, setPageIndex] = useState(0);
   const [search, setSearch] = useState("");
+  const [pageIndex, setPageIndex] = useState(0);
 
   const offset = pageIndex * 10;
-  // const pools: Pool[]|undefined = hooks.useObservableState(appState.pools$);
-  const {data, loading, error} = useQuery<PoolQuery, PoolVar>(
-    POOLS_GQL,
-    { variables: { offset } }
-  );
-  const {data: d1, loading: l1, error: e1} = useQuery<PoolCount, {}>(POOL_COUNT_GQL);
   
-  const maxPage = d1
-    ? Math.ceil(d1.pool_aggregate.aggregate.count/10)
+  const {data, loading} = useQuery<PoolQuery, PoolVar>(
+    POOLS_GQL,
+    { 
+      variables: {  
+        offset, 
+        search: search ? {_ilike: `${search}%`} : {}
+      }
+    }
+  );
+
+  console.log(data);
+  const {data: poolAggregationData} = useQuery<PoolCount, {}>(POOL_COUNT_GQL);
+  
+  const maxPage = poolAggregationData
+    ? Math.ceil(poolAggregationData.verified_pool_aggregate.aggregate.count/10)
     : 1;
 
   const openAddLiquidity = (): void => history.push(ADD_LIQUIDITY_URL);
@@ -119,10 +126,10 @@ const PoolList = (): JSX.Element => {
 
 
   const pools = data
-    ? data.pool.map(({address, supply, token_contract_1, token_contract_2, volume}, index) => (
+    ? data.verified_pool.map(({address, supply, symbol_1, symbol_2, volume}, index) => (
       <tr key={address} onClick={openPool(address)} className="cursor-pointer">
         <td scope="row" className='fs-5'>{offset + index + 1}</td>
-        <td className='fs-5'>{token_contract_1.verified_contract ? token_contract_1.verified_contract.contract_data.symbol : "?"}/{token_contract_2.verified_contract ? token_contract_2.verified_contract.contract_data.symbol : "?"}</td>
+        <td className='fs-5'>{symbol_1}/{symbol_2}</td>
         <td className='fs-5 text-end'>{supply.length > 0 ? formatAmount(supply[0].total_supply, 18) : 0}</td>
         <td className='fs-5 text-end'>{volume.length > 0 ? formatAmount(volume[0].amount_1, 18) : 0}</td>
         <td className='fs-5 text-end'>{volume.length > 0 ? formatAmount(volume[0].amount_2, 18) : 0}</td>
@@ -135,8 +142,10 @@ const PoolList = (): JSX.Element => {
       <Components.Display.ContentBetween>
         <BoldText size={1.6}>Pools</BoldText>
         <Components.Input.Input 
-          className="w-50" 
-          placeholder=''
+          value={search}
+          onChange={setSearch}
+          className="w-50 fs-5" 
+          placeholder='Search pool by address or token name'
         />
         <Components.Button.Button onClick={openAddLiquidity}>Add liquidity</Components.Button.Button>
       </Components.Display.ContentBetween>

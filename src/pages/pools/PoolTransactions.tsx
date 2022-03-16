@@ -50,14 +50,14 @@ interface PoolTransaction {
   };
 };
 interface PoolTransactionCount {
-  pool_event_aggregate: {
+  verified_pool_event_aggregate: {
     aggregate: {
       count: number;
     }
   }
 }
 
-type PoolTransactionQuery = { pool_event: PoolTransaction[] };
+type PoolTransactionQuery = { verified_pool_event: PoolTransaction[] };
 
 interface BasicTransactionVar {
   address: { _ilike?: string };
@@ -69,7 +69,7 @@ interface TransactionVar extends BasicTransactionVar {
 
 const POOL_TRANSACTIONS_GQL = gql`
 subscription transactions($address: String_comparison_exp!, $type: [pooltype!], $offset: Int!) {
-  pool_event(
+  verified_pool_event(
     order_by: { timestamp: desc }
     where: {
       pool: { address: $address }
@@ -112,7 +112,7 @@ subscription transactions($address: String_comparison_exp!, $type: [pooltype!], 
 
 const POOL_TRANSACTION_COUNT_GQL = gql`
 subscription transaction_count($address: String_comparison_exp!, $type: [pooltype]!) {
-  pool_event_aggregate( 
+  verified_pool_event_aggregate( 
     where: {
       pool: { address: $address }
       type: { _in: $type }
@@ -145,7 +145,7 @@ const PoolTransactions = ({address} : PoolTransactions): JSX.Element => {
   );
   
   const maxPage = data 
-    ? Math.round(data.pool_event_aggregate.aggregate.count / 10)
+    ? Math.round(data.verified_pool_event_aggregate.aggregate.count / 10)
     : 1;
 
   const nextPage = () => setPageIndex(Math.min(maxPage, pageIndex + 1))
@@ -160,7 +160,7 @@ const PoolTransactions = ({address} : PoolTransactions): JSX.Element => {
   }
 
   const transactionView = !loadingTransactions && transactionData
-    ? transactionData.pool_event
+    ? transactionData.verified_pool_event
     .map(({amount_1, amount_2, timestamp, to_address, type, amount_in_1, amount_in_2, evm_event: {event: {extrinsic: {hash, signer}}}, pool: {token_contract_1, token_contract_2}}, index) => {
       const symbol1 = token_contract_1.verified_contract?.contract_data.symbol || "?";
       const decimal1 =token_contract_1.verified_contract?.contract_data.decimals || 18; 
