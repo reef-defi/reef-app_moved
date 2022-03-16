@@ -5,15 +5,13 @@ import {Components, Pool} from "@reef-defi/react-lib"
 import { formatAmount, getIconUrl, shortAddress } from "../../utils/utils";
 import { Skeleton } from "../dashboard/TokenBalances";
 import { BigNumber, utils } from "ethers";
-
-import "./PoolPage.css";
-import TokenCandlestickChart from "./charts/TokenCandlestickChart";
 import PoolTransactions from "./PoolTransactions";
 import { AddressVar, PoolData } from "./poolTypes";
 import PoolInfo from "./PoolInfo";
 import { ADD_LIQUIDITY_URL, SWAP_URL } from "../../urls";
 import ChartSelector from "./charts/ChartSelector";
 import { BasicPoolInfo } from "./charts/types";
+import "./Pool.css";
 
 const { BoldText, LeadText} = Components.Text;
 
@@ -91,12 +89,12 @@ const PoolPage = (): JSX.Element => {
   const tokenAddress2 = poolExists
     ? poolData.pool[0].token_contract_2.address
     : "0x";
-  const tokenSymbol1 = poolExists
+  const tokenSymbol1 = poolExists && poolData.pool[0].token_contract_1.verified_contract
     ? poolData.pool[0].token_contract_1.verified_contract.contract_data.symbol
-    : "-";
-  const tokenSymbol2 = poolExists
+    : "?";
+  const tokenSymbol2 = poolExists && poolData.pool[0].token_contract_2.verified_contract
     ? poolData.pool[0].token_contract_2.verified_contract.contract_data.symbol
-    : "-";
+    : "?";
   const tokenIcon1 = poolExists
     ? getIconUrl(tokenAddress1)
     : "";
@@ -104,12 +102,12 @@ const PoolPage = (): JSX.Element => {
     ? getIconUrl(tokenAddress2)
     : "";
   
-  const decimal1 = poolExists
+  const decimal1 = poolExists && poolData.pool[0].token_contract_1.verified_contract
     ? poolData.pool[0].token_contract_1.verified_contract.contract_data.decimals
-    : 1;
-  const decimal2 = poolExists
+    : 18;
+  const decimal2 = poolExists && poolData.pool[0].token_contract_2.verified_contract
     ? poolData.pool[0].token_contract_2.verified_contract.contract_data.decimals
-    : 1;
+    : 18;
 
   const poolInfo: BasicPoolInfo = {
     address,
@@ -154,7 +152,7 @@ const PoolPage = (): JSX.Element => {
 
   return (
     <div className="w-100 row justify-content-center">
-      <div className="col-xl-8 col-lg-10 col-md-12">
+      <div className="col-xl-10 col-lg-10 col-md-12">
         {
           loadingPool || !poolData
             ? <Skeleton />
@@ -230,13 +228,7 @@ const PoolPage = (): JSX.Element => {
           </div>
         </div>
         
-        <PoolTransactions
-          address={address}
-          tokenSymbol1={tokenSymbol1}
-          tokenSymbol2={tokenSymbol2}
-          decimal1={decimal1}
-          decimal2={decimal2}
-        />
+        <PoolTransactions address={address} />
       </div>
     </div>
   );
