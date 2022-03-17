@@ -30,7 +30,7 @@ export const formatDate = (timestamp: string|number) => {
   return formatted.split("-").reverse().join("-")
 }
 
-const toHumanAmount = (amount: string): string => {
+export const toHumanAmount = (amount: string): string => {
   const head = amount.slice(0, amount.indexOf("."));
   const amo = amount.replace(".", "");
   

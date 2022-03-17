@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useMemo } from "react"
 import { useQuery, gql} from "@apollo/client"
 import { dropDuplicatesMultiKey, formatAmount, toDecimal, toTimestamp } from "../../utils/utils";
 import { Components } from "@reef-defi/react-lib";
@@ -25,14 +25,13 @@ interface Supply {
 interface Volume {
   amount_1: number;
   amount_2: number;
-  timeframe: string;
 }
 interface Fee {
   fee_1: number;
   fee_2: number;
 }
 
-type VolumeQuery = { pool_hour_volume: Volume[] };
+type VolumeQuery = { pool_hour_volume_aggregate: { aggregate: { sum: Volume } } };
 type SupplyQuery = {pool_minute_supply: Supply[] };
 
 interface FeeSubscrition {
@@ -60,17 +59,20 @@ query pool_supply($address: String!) {
 `
 
 const POOL_VOLUME_GQL = gql`
-query pool_volume($address: String!, $fromTime: timestamptz) {
-  pool_hour_volume(
-    where: {
-      pool: { address: {_ilike: $address } }
-      timeframe: { _gte: $fromTime }
-    }
-    order_by: { timeframe: desc }
+query pool_volume($address: String!, $fromTime: timestamptz!, $toTime: timestamptz!) {
+  pool_hour_volume_aggregate(
+    where: {_and: [
+      { pool: { address: { _ilike: $address} } }
+      { timeframe: { _gte: $fromTime } }
+      { timeframe: { _lt: $toTime } }
+    ]}
   ) {
-    amount_1
-    amount_2
-    timeframe
+    aggregate {
+      sum {
+        amount_1
+        amount_2
+      }
+    }
   }
 }
 `
@@ -103,8 +105,8 @@ interface InfoPercentageLine extends InfoLine {
   percentage: number;
 }
 
-interface FeeVar extends AddressVar {
-  fromTime: string;
+interface VolumeVar extends BasicVar {
+  toTime: string;
 }
 
 const InfoLine: React.FC<InfoLine> = ({icon, symbol, amount, children}): JSX.Element => (
@@ -134,20 +136,37 @@ const InfoPercentageLine = ({amount, icon, symbol, percentage}: InfoPercentageLi
 )
 
 const PoolInfo = ({address, decimal1, decimal2, symbol1, symbol2, reserved1, reserved2, icon1, icon2} : PoolInfo): JSX.Element => {
+  const currentTime = useMemo(() => new Date(Date.now()).toISOString(), []);
+  const oneDayAgo = useMemo(() => new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), []);
+  const twoDaysAgo = useMemo(() => new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(), []);
+
   const {data: supplyData} = useQuery<SupplyQuery, AddressVar>(
     POOL_SUPPLY_GQL,
     { variables: { address } }
   );
-  const {data: volumeGqlData} = useQuery<VolumeQuery, BasicVar>(
+  const {data: yesterdayVolume} = useQuery<VolumeQuery, VolumeVar>(
     POOL_VOLUME_GQL,
     { 
       variables: { 
         address,
-        fromTime: toTimestamp(new Date(Date.now() - 1000 * 60 * 60 * 48))
+        fromTime: twoDaysAgo,
+        toTime: oneDayAgo
       }
     }
   );
-  const {data: feesData } = useQuery<FeeSubscrition, FeeVar>(
+  const {data: todayVolume} = useQuery<VolumeQuery, VolumeVar>(
+    POOL_VOLUME_GQL,
+    { 
+      variables: { 
+        address,
+        fromTime: oneDayAgo,
+        toTime: currentTime
+      }
+    }
+  );
+
+  console.log(todayVolume)
+  const {data: feesData } = useQuery<FeeSubscrition, BasicVar>(
     POOL_FEES_GQL,
     { variables: { address, fromTime: toTimestamp(new Date(Date.now() - 1000 * 60 * 60 * 24)) } }
   );
@@ -163,46 +182,16 @@ const PoolInfo = ({address, decimal1, decimal2, symbol1, symbol2, reserved1, res
     ? supplyData.pool_minute_supply[0].supply / supplyData.pool_minute_supply[0].total_supply * 100 // this 1 is a hack
     : 0;
 
-  const oneDayAgo = Date.now() - 1000 * 60 * 60 * 24;
   // Volume
-  const volume = volumeGqlData && volumeGqlData.pool_hour_volume.length > 0 && decimal1 !== 1
-    ? dropDuplicatesMultiKey( 
-        volumeGqlData.pool_hour_volume.map(({amount_1, amount_2, timeframe}) => ({
-          amount_1: toDecimal(amount_1, decimal1),
-          amount_2: toDecimal(amount_2, decimal2),
-          date: new Date(timeframe)
-        })),
-        ["date"]
-      )
-    : [];
+  const todayVolume1 = todayVolume ? todayVolume.pool_hour_volume_aggregate.aggregate.sum.amount_1 : 0;
+  const todayVolume2 = todayVolume ? todayVolume.pool_hour_volume_aggregate.aggregate.sum.amount_2 : 0;
+  const yesterdayVolume1 = yesterdayVolume ? yesterdayVolume.pool_hour_volume_aggregate.aggregate.sum.amount_1 : 0;
+  const yesterdayVolume2 = yesterdayVolume ? yesterdayVolume.pool_hour_volume_aggregate.aggregate.sum.amount_2 : 0;
 
-  const yesterdayVolume = volume
-    .filter(({date}) => date.getTime() > oneDayAgo)
+  const volumeDifference1 = todayVolume1 > 0 ? (todayVolume1 - yesterdayVolume1) / todayVolume1 * 100 : 100;
+  const volumeDifference2 = todayVolume2 > 0 ? (todayVolume2 - yesterdayVolume2) / todayVolume2 * 100 : 100;
 
-  const todayVolume = volume
-    .filter(({date}) => date.getTime() <= oneDayAgo);
-    
-  console.log('today: ', todayVolume)
-  console.log('yestedray: ', yesterdayVolume)
-  const yesterdayVolume1 = yesterdayVolume
-    .map(({amount_1}) => amount_1)
-    .reduce((acc, amo) => acc + amo, 0);
-
-  const yesterdayVolume2 = yesterdayVolume
-    .map(({amount_2}) => amount_2)
-    .reduce((acc, amo) => acc + amo, 0);
-    
-  const todayVolume1 = todayVolume
-    .map(({amount_1}) => amount_1)
-    .reduce((acc, amo) => acc + amo, 0);
-
-  const todayVolume2 = todayVolume
-    .map(({amount_2}) => amount_2)
-    .reduce((acc, amo) => acc + amo, 0);
-
-  const volumeDifference1 = (todayVolume1 - yesterdayVolume1) / todayVolume1;
-  const volumeDifference2 = (todayVolume2 - yesterdayVolume2) / todayVolume2;
-
+  // Fee
   const fee1 =
     feesData && decimal1 != 1
       ? formatAmount(feesData.pool_hour_fee_aggregate.aggregate.sum.fee_1, decimal1)
@@ -247,7 +236,7 @@ const PoolInfo = ({address, decimal1, decimal2, symbol1, symbol2, reserved1, res
         <InfoPercentageLine 
           icon={icon1}
           symbol={symbol1}
-          amount={todayVolume1.toFixed(4)}
+          amount={formatAmount(todayVolume1, decimal1)}
           percentage={volumeDifference1}
         />
 
@@ -255,7 +244,7 @@ const PoolInfo = ({address, decimal1, decimal2, symbol1, symbol2, reserved1, res
         <InfoPercentageLine 
           icon={icon2}
           symbol={symbol2}
-          amount={todayVolume2.toFixed(4)}
+          amount={formatAmount(todayVolume2, decimal2)}
           percentage={volumeDifference2}
         />
       </Components.Card.Card>

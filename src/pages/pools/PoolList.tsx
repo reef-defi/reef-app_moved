@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import {Components} from '@reef-defi/react-lib';
 import { useHistory } from 'react-router-dom';
 import { ADD_LIQUIDITY_URL, POOL_CHART_URL } from '../../urls';
 import { useQuery, gql } from '@apollo/client';
-import { formatAmount } from '../../utils/utils';
+import { formatAmount, toDecimal, toHumanAmount, toTimestamp } from '../../utils/utils';
 
 const {BoldText} = Components.Text;
 const {Loading} = Components.Loading;
@@ -22,15 +22,18 @@ interface Volume {
 interface Pool {
   address: string;
   supply: Supply[];
-  volume: Volume[];
   symbol_1: string;
   symbol_2: string;
+  decimal_1: number;
+  decimal_2: number;
+  volume_aggregate: { aggregate: { sum: Volume } };
 }
 
 type PoolQuery = { verified_pool: Pool[] };
 
 interface PoolVar {
   offset: number;
+  fromTime: string;
   search: { _ilike: string; } | {};
 }
 
@@ -43,7 +46,7 @@ interface PoolCount {
 }
 
 const POOLS_GQL = gql`
-query pool($offset: Int!, $search: String_comparison_exp!) {
+query pool($offset: Int!, $search: String_comparison_exp!, $fromTime: timestamptz!) {
   verified_pool(
     where: {
       _or: [
@@ -63,12 +66,22 @@ query pool($offset: Int!, $search: String_comparison_exp!) {
       total_supply
       supply
     }
-    volume(limit: 1, order_by: {timeframe: desc}) {
-      amount_1
-      amount_2
+    volume_aggregate(
+      where: {
+        timeframe: { _gte: $fromTime }
+      }
+    ) {
+      aggregate {
+        sum {
+          amount_1
+          amount_2
+        }
+      }
     }
     symbol_1
     symbol_2
+    decimal_1
+    decimal_2
   }
 }
 `;
@@ -99,20 +112,19 @@ const PoolList = (): JSX.Element => {
   const [pageIndex, setPageIndex] = useState(0);
 
   const offset = pageIndex * 10;
-  
-  const {data, loading} = useQuery<PoolQuery, PoolVar>(
+  const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000;
+  const oda = useMemo(() => new Date(oneDayAgo).toISOString(), []);
+  const {data, loading, error} = useQuery<PoolQuery, PoolVar>(
     POOLS_GQL,
     { 
       variables: {  
         offset, 
-        search: search ? {_ilike: `${search}%`} : {}
+        search: search ? {_ilike: `${search}%`} : {},
+        fromTime: oda
       }
     }
   );
-
-  console.log(data);
   const {data: poolAggregationData} = useQuery<PoolCount, {}>(POOL_COUNT_GQL);
-  
   const maxPage = poolAggregationData
     ? Math.ceil(poolAggregationData.verified_pool_aggregate.aggregate.count/10)
     : 1;
@@ -122,18 +134,33 @@ const PoolList = (): JSX.Element => {
 
   const nextPage = () => setPageIndex(Math.min(maxPage-1, pageIndex + 1));
   const prevPage = () => setPageIndex(Math.max(0, pageIndex - 1));
-
-
+  
   const pools = data
-    ? data.verified_pool.map(({address, supply, symbol_1, symbol_2, volume}, index) => (
-      <tr key={address} onClick={openPool(address)} className="cursor-pointer">
-        <td scope="row" className='fs-5'>{offset + index + 1}</td>
-        <td className='fs-5'>{symbol_1}/{symbol_2}</td>
-        <td className='fs-5 text-end'>{supply.length > 0 ? formatAmount(supply[0].total_supply, 18) : 0}</td>
-        <td className='fs-5 text-end'>{volume.length > 0 ? formatAmount(volume[0].amount_1, 18) : 0}</td>
-        <td className='fs-5 text-end'>{volume.length > 0 ? formatAmount(volume[0].amount_2, 18) : 0}</td>
-      </tr>
-    ))
+    ? data.verified_pool.map(({address, supply, symbol_1, decimal_1, decimal_2, symbol_2, volume_aggregate: {aggregate: {sum: {amount_1, amount_2}}}}, index) => {
+        // const v = volume.map(({amount_1, amount_2, timeframe, pool_id}) => ({
+        //   pool_id,
+        //     date: new Date(timeframe),
+        //     amount_1: toDecimal(amount_1, decimal_1),
+        //     amount_2: toDecimal(amount_2, decimal_2),
+        //   }))
+        //   // .filter(({date}) => date.getTime() >= oneDayAgo)
+        // console.log(v);
+        // const v1 = v.reduce((acc, {amount_1}) => acc + amount_1, 0);
+        // const v2 = v.reduce((acc, {amount_2}) => acc + amount_2, 0);
+        console.log(amount_1)
+        console.log(amount_2)
+        const v1 = formatAmount(amount_1, decimal_1);
+        const v2 = formatAmount(amount_2, decimal_2);
+        return (
+          <tr key={address} onClick={openPool(address)} className="cursor-pointer">
+            <td scope="row" className='fs-5'>{offset + index + 1}</td>
+            <td className='fs-5'>{symbol_1}/{symbol_2}</td>
+            <td className='fs-5 text-end'>{supply.length > 0 ? formatAmount(supply[0].total_supply, 18) : 0}</td>
+            <td className='fs-5 text-end'>{formatAmount(amount_1, decimal_1)}</td>
+            <td className='fs-5 text-end'>{formatAmount(amount_2, decimal_2)}</td>
+          </tr>
+        )
+      })
     : [];
 
   return (
