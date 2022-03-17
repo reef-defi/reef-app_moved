@@ -11,13 +11,7 @@ export const Staking = (): JSX.Element => {
   const network: Network | undefined = hooks.useObservableState(appState.selectedNetworkSubj);
 
   return (
-    <div className="staking row">
-      <div className="mb-4 col-12 d-flex d-flex-space-between d-flex-vert-base">
-        <div>
-          <h5 className="my-auto title-color text-semi-bold">Staking</h5>
-        </div>
-      </div>
-
+    <div className="staking">
       {
         bonds?.length ?
         <div className="col-12 staking__bonds">

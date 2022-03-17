@@ -22,6 +22,7 @@
 
   width: 100%;
   position: relative;
+  padding-bottom: 6px;
 }
 
 .bond-card__wrapper,
@@ -47,7 +48,7 @@
   position: absolute;
   z-index: 1;
   width: calc(100% - 26px);
-  bottom: -6px;
+  bottom: 0;
   height: 20px;
   left: 13px;
   background-color: white;

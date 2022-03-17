@@ -1,5 +1,4 @@
 .nfts {
-  margin-top: 50px;
   width: 100%;
 }
 
@@ -52,4 +51,16 @@
   background-color: var(--border-color);
   margin: 15px;
   border-radius: 99px;
+}
+
+@media only screen and (max-width: 1300px) {
+  .nfts__container {
+      grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media only screen and (max-width: 1200px) {
+  .nfts__container {
+      grid-template-columns: 1fr;
+  }
 }

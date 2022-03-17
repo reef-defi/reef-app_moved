@@ -9,6 +9,9 @@ import { TokenBalances } from './TokenBalances';
 import { TokenActivity } from './TokenActivity';
 import { Nfts } from './Nfts';
 import { Staking } from './Staking';
+import Tabs from "./../../common/Tabs"
+import { useState } from 'react';
+import { bonds } from './../bonds/utils/bonds';
 
 const {
   DataProgress, isDataSet,
@@ -31,19 +34,48 @@ const Dashboard = (): JSX.Element => {
     return state;
   }, DataProgress.LOADING) : DataProgress.LOADING;
 
+  const tabs = [
+    {
+      key: "tokens",
+      title: "Tokens"
+    },
+    {
+      key: "staking",
+      title: "Staking",
+      notification: bonds?.length
+    },
+    {
+      key: "nfts",
+      title: "NFTs"
+    },
+    {
+      key: 'activity',
+      title: 'Activity'
+    }
+  ]
+
+  const [tab, setTab] = useState(tabs[0].key)
+
   return (
-    <div className="w-100">
-      <div className="mb-4 row">
+    <div className='dashboard'>
+      <div className='dashboard__top'>
         <Balance balance={totalBalance} />
         <ActionButtons />
       </div>
-      <div className="row">
-        <div className="col-lg-8 col-sm-12 col-md-6">
-          <TokenBalances tokens={signerTokenBalances as utils.DataWithProgress<TokenWithAmount[]>} />
-          {/*<Nfts />*/}
-          <Staking />
+
+      <div className='dashboard__main'>
+        <div className='dashboard__left'>
+          <Tabs tabs={tabs} selected={tab} onChange={e => setTab(e)}/>
+
+          { tab === 'tokens' ? <TokenBalances tokens={signerTokenBalances as utils.DataWithProgress<TokenWithAmount[]>} /> : '' }
+          { tab === 'staking' ? <Staking /> : '' }
+          { tab === 'nfts' ? <Nfts /> : '' }
+          { tab === 'activity' ? <TokenActivity address={selectedSigner?.evmAddress} /> : '' }
         </div>
-        <div className="col-lg-4 col-sm-12 col-md-6"><TokenActivity address={selectedSigner?.evmAddress} /></div>
+
+        <div className='dashboard__right'>
+          <TokenActivity address={selectedSigner?.evmAddress} />
+        </div>
       </div>
     </div>
   );

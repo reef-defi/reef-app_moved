@@ -52,30 +52,32 @@ const Nav = ({ display }: Nav): JSX.Element => {
 
   return (
     <div className="nav-content navigation d-flex d-flex-space-between">
-      <div className="logo-w">
-        <button type="button" className="logo-btn" onClick={() => { history.push('/'); }}>
-          <div className="svg-w h-100 w-100">
-            <ReefLogo />
-          </div>
-        </button>
+      <div className="navigation__wrapper">
+        <div className="logo-w">
+          <button type="button" className="logo-btn" onClick={() => { history.push('/'); }}>
+            <div className="svg-w h-100 w-100">
+              <ReefLogo />
+            </div>
+          </button>
+        </div>
+
+        {display && (
+          <nav className="d-flex justify-content-end d-flex-vert-center">
+            <ul className="navigation_menu-items ">
+              {menuItemsView}
+            </ul>
+            {accounts && !!accounts.length && network && (
+
+            <Components.AccountSelector
+              accounts={accounts}
+              selectedSigner={signer}
+              selectAccount={selectAccount}
+              reefscanUrl={network.reefscanUrl}
+            />
+            )}
+          </nav>
+        )}
       </div>
-
-      {display && (
-        <nav className="d-flex justify-content-end d-flex-vert-center">
-          <ul className="navigation_menu-items ">
-            {menuItemsView}
-          </ul>
-          {accounts && !!accounts.length && network && (
-
-          <Components.AccountSelector
-            accounts={accounts}
-            selectedSigner={signer}
-            selectAccount={selectAccount}
-            reefscanUrl={network.reefscanUrl}
-          />
-          )}
-        </nav>
-      )}
     </div>
   );
 };
