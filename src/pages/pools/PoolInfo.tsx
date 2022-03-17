@@ -1,11 +1,10 @@
 import React from "react"
-import {useSubscription, useQuery, gql} from "@apollo/client"
-import { formatAmount, toTimestamp } from "../../utils/utils";
+import { useQuery, gql} from "@apollo/client"
+import { dropDuplicatesMultiKey, formatAmount, toDecimal, toTimestamp } from "../../utils/utils";
 import { Components } from "@reef-defi/react-lib";
-import {AddressVar, PoolData} from "./poolTypes";
-import { JsxEmit } from "typescript";
+import { AddressVar, BasicVar } from "./poolTypes";
 
-const {BoldText, LeadText, Text} = Components.Text;
+const {BoldText, Text} = Components.Text;
 interface PoolInfo {
   icon1: string;
   icon2: string;
@@ -26,6 +25,7 @@ interface Supply {
 interface Volume {
   amount_1: number;
   amount_2: number;
+  timeframe: string;
 }
 interface Fee {
   fee_1: number;
@@ -33,10 +33,10 @@ interface Fee {
 }
 
 type VolumeQuery = { pool_hour_volume: Volume[] };
-type SupplyQuery = { pool_day_supply: Supply[] };
+type SupplyQuery = {pool_minute_supply: Supply[] };
 
 interface FeeSubscrition {
-  pool_minute_fee_aggregate: {
+  pool_hour_fee_aggregate: {
     aggregate: {
       sum: Fee;
     }
@@ -45,7 +45,7 @@ interface FeeSubscrition {
 
 const POOL_SUPPLY_GQL = gql`
 query pool_supply($address: String!) {
-  pool_day_supply(
+  pool_minute_supply(
     where: {
       pool: { address: {_ilike: $address } }
     }
@@ -54,28 +54,30 @@ query pool_supply($address: String!) {
   ) {
     total_supply
     supply
+    timeframe
   }
 }
 `
 
 const POOL_VOLUME_GQL = gql`
-query pool_volume($address: String!) {
+query pool_volume($address: String!, $fromTime: timestamptz) {
   pool_hour_volume(
     where: {
       pool: { address: {_ilike: $address } }
+      timeframe: { _gte: $fromTime }
     }
     order_by: { timeframe: desc }
-    limit: 3
   ) {
     amount_1
     amount_2
+    timeframe
   }
 }
 `
 
 const POOL_FEES_GQL = gql`
 query pool_fee($address: String!, $fromTime: timestamptz!) {
-  pool_minute_fee_aggregate(
+  pool_hour_fee_aggregate(
     where: {
       pool: { address: { _ilike: $address } }
       timeframe: { _gte: $fromTime }
@@ -131,68 +133,87 @@ const InfoPercentageLine = ({amount, icon, symbol, percentage}: InfoPercentageLi
   </InfoLine>
 )
 
-const PoolInfo = ({address, isPoolLoading, decimal1, decimal2, symbol1, symbol2, reserved1, reserved2, icon1, icon2} : PoolInfo): JSX.Element => {
-  const {loading: loadingSupply, data: supplyData, error: supplyError} = useQuery<SupplyQuery, AddressVar>(
+const PoolInfo = ({address, decimal1, decimal2, symbol1, symbol2, reserved1, reserved2, icon1, icon2} : PoolInfo): JSX.Element => {
+  const {data: supplyData} = useQuery<SupplyQuery, AddressVar>(
     POOL_SUPPLY_GQL,
     { variables: { address } }
   );
-  const {loading: loadingVolume, data: volumeData, error: volumeError} = useQuery<VolumeQuery, AddressVar>(
+  const {data: volumeGqlData} = useQuery<VolumeQuery, BasicVar>(
     POOL_VOLUME_GQL,
-    { variables: { address } }
+    { 
+      variables: { 
+        address,
+        fromTime: toTimestamp(new Date(Date.now() - 1000 * 60 * 60 * 48))
+      }
+    }
   );
-  const {loading: loadingFees, data: feesData, error: feeError} = useQuery<FeeSubscrition, FeeVar>(
+  const {data: feesData } = useQuery<FeeSubscrition, FeeVar>(
     POOL_FEES_GQL,
     { variables: { address, fromTime: toTimestamp(new Date(Date.now() - 1000 * 60 * 60 * 24)) } }
   );
-  
+
   // Supply
   const totalSupply = 
-    supplyData && supplyData.pool_day_supply.length > 0
-      ? formatAmount(supplyData.pool_day_supply[0].total_supply, 18) 
+    supplyData && supplyData.pool_minute_supply.length > 0
+      ? formatAmount(supplyData.pool_minute_supply[0].total_supply, 18) 
       : "-"
 
   const totalSupplyPercentage = 
-    supplyData && supplyData.pool_day_supply.length > 0
-    ? supplyData.pool_day_supply[0].supply / supplyData.pool_day_supply[0].total_supply * 100 // this 1 is a hack
+    supplyData && supplyData.pool_minute_supply.length > 0
+    ? supplyData.pool_minute_supply[0].supply / supplyData.pool_minute_supply[0].total_supply * 100 // this 1 is a hack
     : 0;
 
+  const oneDayAgo = Date.now() - 1000 * 60 * 60 * 24;
   // Volume
-  const volume1 =
-    volumeData && volumeData.pool_hour_volume.length > 0 && decimal1 != 1
-      ? formatAmount(volumeData.pool_hour_volume[0].amount_1, decimal1)
-      : "-";
+  const volume = volumeGqlData && volumeGqlData.pool_hour_volume.length > 0 && decimal1 !== 1
+    ? dropDuplicatesMultiKey( 
+        volumeGqlData.pool_hour_volume.map(({amount_1, amount_2, timeframe}) => ({
+          amount_1: toDecimal(amount_1, decimal1),
+          amount_2: toDecimal(amount_2, decimal2),
+          date: new Date(timeframe)
+        })),
+        ["date"]
+      )
+    : [];
 
-  const volume2 =
-    volumeData && volumeData.pool_hour_volume.length > 0 && decimal2 != 1
-      ? formatAmount(volumeData.pool_hour_volume[0].amount_2, decimal2)
-      : "-";
-  const volumeDifference1 =
-    volumeData && volumeData.pool_hour_volume.length > 2
-    ? (
-        volumeData.pool_hour_volume[0].amount_1 - 
-        volumeData.pool_hour_volume[1].amount_1
-      ) / volumeData.pool_hour_volume[1].amount_1 * 100
-    : 0;
-  const volumeDifference2 =
-    volumeData && volumeData.pool_hour_volume.length > 2
-    ? (
-        volumeData.pool_hour_volume[0].amount_2 - 
-        volumeData.pool_hour_volume[1].amount_2
-      ) / volumeData.pool_hour_volume[1].amount_2 * 100
-    : 0;
+  const yesterdayVolume = volume
+    .filter(({date}) => date.getTime() > oneDayAgo)
+
+  const todayVolume = volume
+    .filter(({date}) => date.getTime() <= oneDayAgo);
+    
+  console.log('today: ', todayVolume)
+  console.log('yestedray: ', yesterdayVolume)
+  const yesterdayVolume1 = yesterdayVolume
+    .map(({amount_1}) => amount_1)
+    .reduce((acc, amo) => acc + amo, 0);
+
+  const yesterdayVolume2 = yesterdayVolume
+    .map(({amount_2}) => amount_2)
+    .reduce((acc, amo) => acc + amo, 0);
+    
+  const todayVolume1 = todayVolume
+    .map(({amount_1}) => amount_1)
+    .reduce((acc, amo) => acc + amo, 0);
+
+  const todayVolume2 = todayVolume
+    .map(({amount_2}) => amount_2)
+    .reduce((acc, amo) => acc + amo, 0);
+
+  const volumeDifference1 = (todayVolume1 - yesterdayVolume1) / todayVolume1;
+  const volumeDifference2 = (todayVolume2 - yesterdayVolume2) / todayVolume2;
 
   const fee1 =
     feesData && decimal1 != 1
-      ? formatAmount(feesData.pool_minute_fee_aggregate.aggregate.sum.fee_1, decimal1)
+      ? formatAmount(feesData.pool_hour_fee_aggregate.aggregate.sum.fee_1, decimal1)
       : "-";
   const fee2 =
     feesData && decimal1 != 1
-      ? formatAmount(feesData.pool_minute_fee_aggregate.aggregate.sum.fee_2, decimal2)
+      ? formatAmount(feesData.pool_hour_fee_aggregate.aggregate.sum.fee_2, decimal2)
       : "-";
 
   return (
     <>
-     
      <Components.Display.MT size="2" />
       <Components.Card.Card>
         <div className="d-flex flex-column">
@@ -226,7 +247,7 @@ const PoolInfo = ({address, isPoolLoading, decimal1, decimal2, symbol1, symbol2,
         <InfoPercentageLine 
           icon={icon1}
           symbol={symbol1}
-          amount={volume1}
+          amount={todayVolume1.toFixed(4)}
           percentage={volumeDifference1}
         />
 
@@ -234,27 +255,10 @@ const PoolInfo = ({address, isPoolLoading, decimal1, decimal2, symbol1, symbol2,
         <InfoPercentageLine 
           icon={icon2}
           symbol={symbol2}
-          amount={volume2}
+          amount={todayVolume2.toFixed(4)}
           percentage={volumeDifference2}
         />
-
-        {/* <div className="d-flex ms-1">
-          <Components.Icons.TokenIcon src={icon1}/>
-          <Components.Text.BoldText size={1.6}> 
-            {volume1}
-          </Components.Text.BoldText>
-        </div>
-        <Components.Text.ColorText color={volumeDifference1 < 0 ? "danger" : "success"} size={1}>{volumeDifference1.toFixed(3)} %</Components.Text.ColorText>
-
-        <div className="d-flex ms-1">
-          <Components.Icons.TokenIcon src={icon2}/>
-          <Components.Text.BoldText size={1.6}>
-            {volume2}
-          </Components.Text.BoldText>
-        </div>
-        <Components.Text.ColorText color={volumeDifference2 < 0 ? "danger" : "success"} size={1}>{volumeDifference2.toFixed(3)} %</Components.Text.ColorText> */}
       </Components.Card.Card>
-
 
       <Components.Display.MT size="2" />
       <Components.Card.Card>
@@ -270,9 +274,6 @@ const PoolInfo = ({address, isPoolLoading, decimal1, decimal2, symbol1, symbol2,
           symbol={symbol2}
           amount={fee2}
         />
-        {/* <div className="d-flex flex-column ms-1">
-          <Components.Text.BoldText size={1.6}>$103k</Components.Text.BoldText>
-        </div> */}
       </Components.Card.Card>
     </>
   );

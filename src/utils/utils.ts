@@ -108,3 +108,13 @@ export const variance = (arr: number[]): number => {
   return mean(squareDiffs);
 }
 export const std = (arr: number[]): number => Math.sqrt(variance(arr));
+
+export const toDecimal = (num: string|number, decimals: number): number => {
+  const n = `${num}`;
+  if (n.length > decimals) {
+    const val = `${n.slice(0, n.length-decimals)}.${n.slice(n.length-decimals, n.length)}`;
+    return parseFloat(val)
+  }
+  const val = Array(decimals).fill("0").join("") + "." + n;
+  return parseFloat(val);
+}
