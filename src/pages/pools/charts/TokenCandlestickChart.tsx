@@ -118,8 +118,11 @@ const TokenCandlestickChart = ({whichToken, address} : TokenCandlestickChart): J
   : [];
   
   
-  if (loading || candlestick.length === 0) {
+  if (loading) {
     return (<Loading />);
+  }
+  if (candlestick.length === 0) {
+    return <span>No data found</span>
   }
 
   const r = dropDuplicatesMultiKey(candlestick, ["date"])

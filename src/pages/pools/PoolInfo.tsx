@@ -179,7 +179,7 @@ const PoolInfo = ({address, decimal1, decimal2, symbol1, symbol2, reserved1, res
 
   const totalSupplyPercentage = 
     supplyData && supplyData.pool_minute_supply.length > 0
-    ? supplyData.pool_minute_supply[0].supply / supplyData.pool_minute_supply[0].total_supply * 100 // this 1 is a hack
+    ? supplyData.pool_minute_supply[0].supply / supplyData.pool_minute_supply[0].total_supply * 100
     : 0;
 
   // Volume
@@ -188,8 +188,8 @@ const PoolInfo = ({address, decimal1, decimal2, symbol1, symbol2, reserved1, res
   const yesterdayVolume1 = yesterdayVolume ? yesterdayVolume.pool_hour_volume_aggregate.aggregate.sum.amount_1 : 0;
   const yesterdayVolume2 = yesterdayVolume ? yesterdayVolume.pool_hour_volume_aggregate.aggregate.sum.amount_2 : 0;
 
-  const volumeDifference1 = todayVolume1 > 0 ? (todayVolume1 - yesterdayVolume1) / todayVolume1 * 100 : 100;
-  const volumeDifference2 = todayVolume2 > 0 ? (todayVolume2 - yesterdayVolume2) / todayVolume2 * 100 : 100;
+  const volumeDifference1 = todayVolume1 > 0 ? (todayVolume1 - yesterdayVolume1) / yesterdayVolume1 * 100 : 100;
+  const volumeDifference2 = todayVolume2 > 0 ? (todayVolume2 - yesterdayVolume2) / yesterdayVolume2 * 100 : 100;
 
   // Fee
   const fee1 =

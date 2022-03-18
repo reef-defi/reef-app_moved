@@ -148,7 +148,7 @@ const PoolTransactions = ({address} : PoolTransactions): JSX.Element => {
     ? Math.round(data.verified_pool_event_aggregate.aggregate.count / 10)
     : 1;
 
-  const nextPage = () => setPageIndex(Math.min(maxPage, pageIndex + 1))
+  const nextPage = () => setPageIndex(Math.min(maxPage-1, pageIndex + 1))
   const prevPage = () => setPageIndex(Math.max(0, pageIndex - 1))
 
   const description = (type: BasePoolTransactionTypes, amount_1: number, tokenSymbol1: string, tokenSymbol2: string) => {

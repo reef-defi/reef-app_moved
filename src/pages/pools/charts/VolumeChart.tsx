@@ -62,12 +62,9 @@ const VolumeChart = ({address, symbol1, symbol2, decimal1, decimal2} : BasicPool
   }
 
   const volumeData = dropDuplicatesMultiKey(data.pool_hour_volume, ["timeframe"])
-    .map((d) => ({...d,
-      // amount_1: formatBasicAmount(d.amount_1, decimal1),  
-      // amount_2: formatBasicAmount(d.amount_2, decimal2),  
-      date: new Date(d.timeframe)
-    }))
-    .sort((a, b) => a.date.getTime() - b.date.getTime()); 
+    .map((d) => ({...d, date: new Date(d.timeframe)}))
+    .sort((a, b) => a.date.getTime() - b.date.getTime());
+
   if (volumeData.length === 0) {
     return <span>No data found</span>;
   }
