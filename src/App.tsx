@@ -7,11 +7,12 @@ import NoExtension from "./pages/error/NoExtension"
 import NoAccount from "./pages/error/NoAccount"
 // import {innitialNetwork} from './environment';
 import { availableNetworks } from '@reef-defi/react-lib';
+import { innitialNetwork } from './environment';
 const App = (): JSX.Element => {
   const {provider, loading, error} = hooks.useInitReefState(
     'Reef Wallet App',
     {
-      network: availableNetworks.localhost
+      network: innitialNetwork
     }
   );
 

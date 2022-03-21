@@ -136,31 +136,15 @@ const PoolList = (): JSX.Element => {
   const prevPage = () => setPageIndex(Math.max(0, pageIndex - 1));
   
   const pools = data
-    ? data.verified_pool.map(({address, supply, symbol_1, decimal_1, decimal_2, symbol_2, volume_aggregate: {aggregate: {sum: {amount_1, amount_2}}}}, index) => {
-        // const v = volume.map(({amount_1, amount_2, timeframe, pool_id}) => ({
-        //   pool_id,
-        //     date: new Date(timeframe),
-        //     amount_1: toDecimal(amount_1, decimal_1),
-        //     amount_2: toDecimal(amount_2, decimal_2),
-        //   }))
-        //   // .filter(({date}) => date.getTime() >= oneDayAgo)
-        // console.log(v);
-        // const v1 = v.reduce((acc, {amount_1}) => acc + amount_1, 0);
-        // const v2 = v.reduce((acc, {amount_2}) => acc + amount_2, 0);
-        console.log(amount_1)
-        console.log(amount_2)
-        const v1 = formatAmount(amount_1, decimal_1);
-        const v2 = formatAmount(amount_2, decimal_2);
-        return (
-          <tr key={address} onClick={openPool(address)} className="cursor-pointer">
-            <td scope="row" className='fs-5'>{offset + index + 1}</td>
-            <td className='fs-5'>{symbol_1}/{symbol_2}</td>
-            <td className='fs-5 text-end'>{supply.length > 0 ? formatAmount(supply[0].total_supply, 18) : 0}</td>
-            <td className='fs-5 text-end'>{formatAmount(amount_1, decimal_1)}</td>
-            <td className='fs-5 text-end'>{formatAmount(amount_2, decimal_2)}</td>
-          </tr>
-        )
-      })
+    ? data.verified_pool.map(({address, supply, symbol_1, decimal_1, decimal_2, symbol_2, volume_aggregate: {aggregate: {sum: {amount_1, amount_2}}}}, index) => (
+        <tr key={address} onClick={openPool(address)} className="cursor-pointer">
+          <td scope="row" className='fs-5'>{offset + index + 1}</td>
+          <td className='fs-5'>{symbol_1}/{symbol_2}</td>
+          <td className='fs-5 text-end'>{supply.length > 0 ? formatAmount(supply[0].total_supply, 18) : 0}</td>
+          <td className='fs-5 text-end'>{formatAmount(amount_1 || 0, decimal_1)}</td>
+          <td className='fs-5 text-end'>{formatAmount(amount_2 || 0, decimal_2)}</td>
+        </tr>
+      ))
     : [];
 
   return (

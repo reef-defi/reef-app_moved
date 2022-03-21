@@ -168,7 +168,7 @@ const PoolInfo = ({address, decimal1, decimal2, symbol1, symbol2, reserved1, res
   console.log(todayVolume)
   const {data: feesData } = useQuery<FeeSubscrition, BasicVar>(
     POOL_FEES_GQL,
-    { variables: { address, fromTime: toTimestamp(new Date(Date.now() - 1000 * 60 * 60 * 24)) } }
+    { variables: { address, fromTime: oneDayAgo } }
   );
 
   // Supply
@@ -188,17 +188,17 @@ const PoolInfo = ({address, decimal1, decimal2, symbol1, symbol2, reserved1, res
   const yesterdayVolume1 = yesterdayVolume ? yesterdayVolume.pool_hour_volume_aggregate.aggregate.sum.amount_1 : 0;
   const yesterdayVolume2 = yesterdayVolume ? yesterdayVolume.pool_hour_volume_aggregate.aggregate.sum.amount_2 : 0;
 
-  const volumeDifference1 = todayVolume1 > 0 ? (todayVolume1 - yesterdayVolume1) / yesterdayVolume1 * 100 : 100;
-  const volumeDifference2 = todayVolume2 > 0 ? (todayVolume2 - yesterdayVolume2) / yesterdayVolume2 * 100 : 100;
+  const volumeDifference1 = todayVolume1 > 0 && yesterdayVolume1 > 0 ? (todayVolume1 - yesterdayVolume1) / yesterdayVolume1 * 100 : 0;
+  const volumeDifference2 = todayVolume2 > 0 && yesterdayVolume2 > 0 ? (todayVolume2 - yesterdayVolume2) / yesterdayVolume2 * 100 : 0;
 
   // Fee
   const fee1 =
     feesData && decimal1 != 1
-      ? formatAmount(feesData.pool_hour_fee_aggregate.aggregate.sum.fee_1, decimal1)
+      ? formatAmount(feesData.pool_hour_fee_aggregate.aggregate.sum.fee_1 || 0, decimal1)
       : "-";
   const fee2 =
     feesData && decimal1 != 1
-      ? formatAmount(feesData.pool_hour_fee_aggregate.aggregate.sum.fee_2, decimal2)
+      ? formatAmount(feesData.pool_hour_fee_aggregate.aggregate.sum.fee_2 || 0, decimal2)
       : "-";
 
   return (
@@ -236,7 +236,7 @@ const PoolInfo = ({address, decimal1, decimal2, symbol1, symbol2, reserved1, res
         <InfoPercentageLine 
           icon={icon1}
           symbol={symbol1}
-          amount={formatAmount(todayVolume1, decimal1)}
+          amount={formatAmount(todayVolume1 || 0, decimal1)}
           percentage={volumeDifference1}
         />
 
@@ -244,7 +244,7 @@ const PoolInfo = ({address, decimal1, decimal2, symbol1, symbol2, reserved1, res
         <InfoPercentageLine 
           icon={icon2}
           symbol={symbol2}
-          amount={formatAmount(todayVolume2, decimal2)}
+          amount={formatAmount(todayVolume2 || 0, decimal2)}
           percentage={volumeDifference2}
         />
       </Components.Card.Card>

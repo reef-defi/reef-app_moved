@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useMemo } from "react"
 import { useQuery, useSubscription, gql } from "@apollo/client"
 import { AddressVar, BasicVar } from "../poolTypes";
 import { Components } from "@reef-defi/react-lib";
@@ -45,9 +45,9 @@ type FeeQuery = { pool_hour_fee: Fee[] };
 
 const FeeChart = ({address, symbol1, symbol2, decimal1, decimal2} : BasicPoolInfo): JSX.Element => {
   const toDate = Date.now();
-  const fromDate = toDate - 50 * 60 * 60 * 1000; // last 50 hour
+  const fromDate = useMemo(() => toDate - 50 * 60 * 60 * 1000, []); // last 50 hour
   
-  const { data, loading } = useSubscription<FeeQuery, BasicVar>(
+  const { data, loading, error } = useSubscription<FeeQuery, BasicVar>(
     FEE_GQL,
     {
       variables: {
