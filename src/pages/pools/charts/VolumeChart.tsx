@@ -1,6 +1,6 @@
-import React from "react"
-import { useQuery, useSubscription, gql } from "@apollo/client"
-import { AddressVar, BasicVar } from "../poolTypes";
+import React, { useMemo } from "react"
+import { useSubscription, useQuery, gql } from "@apollo/client"
+import { BasicVar } from "../poolTypes";
 import { Components } from "@reef-defi/react-lib";
 import { timeFormat } from "d3-time-format";
 import { Chart } from "react-stockcharts";
@@ -13,14 +13,14 @@ import { scaleOrdinal, schemeCategory10 } from  "d3-scale";
 import { set } from "d3-collection";
 import { XAxis, YAxis } from "react-stockcharts/lib/axes";
 import {SingleValueTooltip} from "react-stockcharts/lib/tooltip"
-import { dropDuplicatesMultiKey, formatAmount, formatBasicAmount, std, toTimestamp } from "../../../utils/utils";
+import { dropDuplicatesMultiKey, formatAmount, std, toTimestamp } from "../../../utils/utils";
 import DefaultChart from "./DefaultChart";
 import { BasicPoolInfo } from "./types";
 
 const { Loading } = Components.Loading;
 
 const VOLUME_GQL = gql`
-subscription volume($address: String!, $fromTime: timestamptz!) {
+query volume($address: String!, $fromTime: timestamptz!) {
   pool_hour_volume(
     where: { 
       timeframe: { _gte: $fromTime }
@@ -44,15 +44,15 @@ interface Volume {
 type VolumeQuery = { pool_hour_volume: Volume[] };
 
 const VolumeChart = ({address, symbol1, symbol2, decimal1, decimal2} : BasicPoolInfo): JSX.Element => {
-  const toDate = Date.now();
+  const toDate = useMemo(() => Date.now(), []) ;
   const fromDate = toDate - 50 * 60 * 60 * 1000; // last 50 hour
 
-  const { data, loading } = useSubscription<VolumeQuery, BasicVar>(
+  const { data, loading, error } = useQuery<VolumeQuery, BasicVar>(
     VOLUME_GQL,
     {
       variables: {
         address,
-        fromTime: toTimestamp(new Date(fromDate))         
+        fromTime: new Date(fromDate).toISOString() 
       }
     }
   )
@@ -65,8 +65,8 @@ const VolumeChart = ({address, symbol1, symbol2, decimal1, decimal2} : BasicPool
     .map((d) => ({...d, date: new Date(d.timeframe)}))
     .sort((a, b) => a.date.getTime() - b.date.getTime());
 
-  if (volumeData.length === 0) {
-    return <span>No data found</span>;
+  if (volumeData.length <= 1) {
+    return <span>Not enough data</span>;
   }
 
   const values: number[] = volumeData.reduce((acc, {amount_1, amount_2}) => [...acc, amount_1, amount_2], []);

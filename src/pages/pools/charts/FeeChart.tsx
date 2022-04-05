@@ -52,7 +52,7 @@ const FeeChart = ({address, symbol1, symbol2, decimal1, decimal2} : BasicPoolInf
     {
       variables: {
         address,
-        fromTime: toTimestamp(new Date(fromDate))         
+        fromTime: new Date(fromDate).toISOString()
       }
     }
   )
@@ -64,8 +64,8 @@ const FeeChart = ({address, symbol1, symbol2, decimal1, decimal2} : BasicPoolInf
   const feeData = data.pool_hour_fee
     .map((d) => ({...d, date: new Date(d.timeframe)}))
 
-  if (feeData.length === 0) {
-    return <span>No data found</span>
+  if (feeData.length <= 1) {
+    return <span>Not enough data</span>
   }
 
   const values: number[] = feeData.reduce((acc, {fee_1, fee_2}) => [...acc, fee_1, fee_2], []);

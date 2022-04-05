@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useMemo } from "react"
 import { useQuery, gql } from "@apollo/client"
 import { AddressVar } from "../poolTypes";
 import { Components } from "@reef-defi/react-lib";
@@ -47,7 +47,7 @@ interface TVlVar extends AddressVar {
 }
 
 const TVLChart = ({address} : TVLChart): JSX.Element => {
-  const toDate = Date.now();
+  const toDate = useMemo(() => Date.now(), []);
   const fromDate = toDate - 50 * 60 * 60 * 1000; // last 50 hour
 
   const {loading, data} = useQuery<TVLQuery, TVlVar>(
@@ -55,7 +55,7 @@ const TVLChart = ({address} : TVLChart): JSX.Element => {
     {
       variables: {
         address,
-        fromTime: toTimestamp(new Date(fromDate))         
+        fromTime: new Date(fromDate).toISOString()
       }
     }
   );
@@ -75,8 +75,11 @@ const TVLChart = ({address} : TVLChart): JSX.Element => {
   const filteredData = dropDuplicatesMultiKey(tvl, ["date"])
     .sort((a, b) => a.date.getTime() - b.date.getTime()); 
 
-  if (loading || tvl.length === 0) {
+  if (loading) {
     return (<Loading />);
+  }
+  if (filteredData.length <= 1) {
+    return <span>Not enough data</span>
   }
 
   const values: number[] = tvl.map(({amount}) => amount);

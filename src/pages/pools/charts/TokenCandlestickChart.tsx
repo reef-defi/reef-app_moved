@@ -101,7 +101,7 @@ interface TokenCandlestickChart {
 
 const TokenCandlestickChart = ({whichToken, address} : TokenCandlestickChart): JSX.Element => {
   const toDate = Date.now();
-  const fromDate = toDate - 50 * 60 * 60 * 1000; // last hour
+  const fromDate = toDate - 50 * 60 * 60 * 1000; // last 50 hour
 
   const {loading, data} = useSubscription<CandlestickQuery, CandlestickVar>(
     DAY_CANDLESTICK_GQL, 
@@ -117,12 +117,11 @@ const TokenCandlestickChart = ({whichToken, address} : TokenCandlestickChart): J
       .filter(({date}) => date.getTime() > fromDate)
   : [];
   
-  
   if (loading) {
     return (<Loading />);
   }
-  if (candlestick.length === 0) {
-    return <span>No data found</span>
+  if (candlestick.length <= 1) {
+    return <span>Not enough data</span>
   }
 
   const r = dropDuplicatesMultiKey(candlestick, ["date"])
@@ -154,11 +153,13 @@ const TokenCandlestickChart = ({whichToken, address} : TokenCandlestickChart): J
         <SingleValueTooltip
           yAccessor={(d) => d.close}
           yDisplayFormat={(d) => "" + format('.4f')(d)}
+          yLabel={"Value"}
           fontSize={21}
           origin={[20, 10]}/>
         <SingleValueTooltip
           yAccessor={(d) => d.date}
           fontSize={14}
+          yLabel={"Date"}
           yDisplayFormat={timeFormat("%Y-%m-%d")}
           origin={[20, 30]}/>
       </Chart>
