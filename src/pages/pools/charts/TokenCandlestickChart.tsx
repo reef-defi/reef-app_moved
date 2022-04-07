@@ -1,5 +1,5 @@
-import React from "react"
-import {useSubscription, gql} from "@apollo/client"
+import React, { useMemo } from "react"
+import {useSubscription, useQuery, gql} from "@apollo/client"
 import { Components } from "@reef-defi/react-lib/";
 import DefaultChart from "./DefaultChart";
 
@@ -41,6 +41,7 @@ interface CandlestickQuery {
 interface CandlestickVar {
   address: string;
   whereToken: number;
+  fromTime: string;
 }
 
 interface OHLC {
@@ -52,12 +53,13 @@ interface OHLC {
 }
 
 const DAY_CANDLESTICK_GQL = gql`
-subscription candlestick($address: String!, $whereToken: Int!) {
+query candlestick($address: String!, $whereToken: Int!, $fromTime: timestamptz!) {
   pool_hour_candlestick(
     order_by: { timeframe: asc }
     where: { 
       pool: { address: { _ilike: $address } } 
       which_token: { _eq: $whereToken }
+      timeframe: { _gte: $fromTime }
     }
   ) {
     pool_id
@@ -100,39 +102,41 @@ interface TokenCandlestickChart {
 }
 
 const TokenCandlestickChart = ({whichToken, address} : TokenCandlestickChart): JSX.Element => {
-  const toDate = Date.now();
+  const toDate = useMemo(() => Date.now(), []);
   const fromDate = toDate - 50 * 60 * 60 * 1000; // last 50 hour
 
-  const {loading, data} = useSubscription<CandlestickQuery, CandlestickVar>(
+  const {loading, data, error} = useQuery<CandlestickQuery, CandlestickVar>(
     DAY_CANDLESTICK_GQL, 
     { 
-      variables: { address, whereToken: whichToken } 
+      variables: {
+        address, 
+        whereToken: whichToken, 
+        fromTime: new Date(fromDate).toISOString()
+      } 
     }
   );
   
   const candlestick = data 
   ? data.pool_hour_candlestick
-      .filter(({which_token}) => which_token === whichToken)
       .map((token) => whichToken === 1 ? token1Values(token) : token2Values(token))
       .filter(({date}) => date.getTime() > fromDate)
   : [];
-  
+
+  const results = dropDuplicatesMultiKey(candlestick, ["date"])
+    .sort((a, b) => a.date.getTime() - b.date.getTime()); 
+
   if (loading) {
     return (<Loading />);
   }
-  if (candlestick.length <= 1) {
+  if (results.length <= 1) {
     return <span>Not enough data</span>
   }
-
-  const r = dropDuplicatesMultiKey(candlestick, ["date"])
-    .sort((a, b) => a.date.getTime() - b.date.getTime()); 
-
-  const values: number[] = r.reduce((acc, {high, low}) => [...acc, high, low], []);
+  const values: number[] = results.reduce((acc, {high, low}) => [...acc, high, low], []);
   const adjust = std(values);
 
   return (
     <DefaultChart 
-      data={r}
+      data={results}
       fromDate={new Date(fromDate)}
       toDate={new Date(toDate)}
       type="svg"
