@@ -107,16 +107,19 @@ const FeeChart = ({address, symbol1, symbol2, decimal1, decimal2} : BasicPoolInf
         />
 
         <SingleValueTooltip
+          yLabel={symbol1}
           yAccessor={(d) => d.fee_1}
           yDisplayFormat={(d) => formatAmount(d, decimal1) + ` ${symbol1}`}
           fontSize={21}
           origin={[20, 10]}/>
         <SingleValueTooltip
+          yLabel={symbol2}
           yAccessor={(d) => d.fee_2}
           yDisplayFormat={(d) => formatAmount(d, decimal2) + ` ${symbol2}`}
           fontSize={21}
           origin={[20, 30]}/>
         <SingleValueTooltip
+          yLabel={"Date"}
           yAccessor={(d) => d.date}
           fontSize={14}
           yDisplayFormat={timeFormat("%Y-%m-%d %H:%M:%S")}

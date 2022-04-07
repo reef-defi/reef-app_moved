@@ -15,6 +15,7 @@ const DefaultChart: React.FC<DefaultChartType> = ({ratio, width, data, type, fro
     pointsPerPxThreshold={1}
     seriesName="MSFT"
     data={data}
+    displayXAccessor={d => d.date}
     xAccessor={d => d.date}
     xScale={scaleTime()}
     xExtents={[fromDate, toDate]}
