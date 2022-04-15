@@ -379,7 +379,9 @@ export const BondsComponent = ({
   return <>
     {!bondTimes?.lockTime || loadingValues ?
 
-      <Skeleton /> :
+      <ComponentCenter>
+        <Skeleton />
+      </ComponentCenter> :
 
       <ComponentCenter>
         <div className='bond-card'>
