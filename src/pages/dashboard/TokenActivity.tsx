@@ -41,9 +41,9 @@ export const TokenActivity = ({ address }: TokenActivity): JSX.Element => {
         {/* {!!transfers && !transfers.length && <div>Account has no activity.</div>} */}
         {!!transfers && !!transfers.length && (
         <div>
-            {transfers.map((t) => (
+            {transfers.map((t, index) => (
               <TokenActivityItem
-                key={t.timestamp}
+                key={index}
                 timestamp={t.timestamp}
                 token={t.token}
                 type={t.inbound ? TokenActivityType.RECEIVE : TokenActivityType.SEND}
