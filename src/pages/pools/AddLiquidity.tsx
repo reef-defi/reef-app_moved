@@ -17,37 +17,45 @@ interface UrlParams {
 
 type State = 'Init' | 'Loading' | 'Success';
 
+
+interface FindToken {
+  address?: string;
+  signer: ReefSigner;
+  tokensCombined?: Token[];
+  defaultAmountValue: TokenWithAmount;
+}
+// if address or token list or token in list or on rpc does not exist return default values
+// else combine data with default amount values 
+const findToken = async ({signer, address, tokensCombined, defaultAmountValue=createEmptyTokenWithAmount()}: FindToken): Promise<TokenWithAmount> => {
+  if (!address || !tokensCombined) {
+    return defaultAmountValue;
+  };
+
+  const existingToken = tokensCombined
+    .find(((token) => token.address.toLowerCase() === address.toLowerCase()));
+
+  if (existingToken) {
+    return {...defaultAmountValue, ...existingToken};
+  }
+
+  const promisedToken = await rpc.loadToken(address, signer.signer);
+  if (promisedToken) {
+    return {...defaultAmountValue, ...promisedToken};
+  }
+
+  return defaultAmountValue;
+}
+
 const AddLiqudity = (): JSX.Element => {
   const history = useHistory();
   const { address1, address2 } = useParams<UrlParams>();
   const [state, setState] = useState<State>('Init');
-  const [token1, setToken1] = useState<TokenWithAmount>(createEmptyTokenWithAmount());
+  const [token1, setToken1] = useState<TokenWithAmount>(reefTokenWithAmount());
   const [token2, setToken2] = useState<TokenWithAmount>(createEmptyTokenWithAmount());
   const signer: ReefSigner|undefined = hooks.useObservableState(appState.selectedSigner$);
   const tokensCombined: Token[]|undefined = hooks.useObservableState(appState.allAvailableSignerTokens$);
   const network: Network|undefined = hooks.useObservableState(appState.selectedNetworkSubj);
 
-  // if address or token list or token in list or on rpc does not exist return default values
-  // else combine data with default amount values 
-  const findToken = async (address?: string, defaultValue=createEmptyTokenWithAmount()): Promise<TokenWithAmount> => {
-    if (!address || !tokensCombined) {
-      return {...defaultValue};
-    };
-
-    const existingToken = tokensCombined
-      .find(((token) => token.address.toLowerCase() === address.toLowerCase()));
-
-    if (existingToken) {
-      return {...defaultValue, ...existingToken};
-    }
-
-    const promisedToken = await rpc.loadToken(address, signer.signer);
-    if (promisedToken) {
-      return {...defaultValue, ...promisedToken};
-    }
-
-    return defaultValue;
-  }
 
   useEffect(() => {
     const reset = async (): Promise<void> => {
@@ -56,22 +64,31 @@ const AddLiqudity = (): JSX.Element => {
       }
 
       setState('Loading')
-      setToken1(await findToken(address1, reefTokenWithAmount()));
-      setToken2(await findToken(address2, reefTokenWithAmount()));
+      await findToken({
+        signer,
+        tokensCombined,
+        address: address1,
+        defaultAmountValue: reefTokenWithAmount(),
+      })
+        .then(setToken1)
+        .catch((e) => console.error(`Token: ${address1} was not found`));
+
+      await findToken({
+        signer,
+        tokensCombined,
+        address: address2,
+        defaultAmountValue: createEmptyTokenWithAmount(),
+      })
+        .then((res) => ({...res, isEmpty: false}))
+        .then(setToken2)
+        .catch((e) => console.error(`Token: ${address2} was not found`));
+
       setState('Success')
     };
     reset();
   }, [address2, address1, tokensCombined]);
 
-
-
-
   const back = (): void => history.goBack();
-  /* const onAddLiqUpdate = (txState: utils.TxStatusUpdate): void => {
-    const updateTypes = [UpdateDataType.ACCOUNT_NATIVE_BALANCE, UpdateDataType.ACCOUNT_TOKENS];
-    const updateActions: UpdateAction[] = createUpdateActions(updateTypes, txState.addresses);
-    onTxUpdateResetSigners(txState, updateActions);
-  }; */
 
   return signer && network && state === 'Success' ? (
     <Components.AddLiquidity
@@ -81,7 +98,7 @@ const AddLiqudity = (): JSX.Element => {
       tokenValue1={token1}
       tokenValue2={token2}
       back={back}
-      onTxUpdate={onAddLiqUpdate}
+      // onTxUpdate={onAddLiqUpdate}
     />
   ) : (<div />);
 };
