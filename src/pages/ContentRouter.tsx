@@ -10,6 +10,7 @@ import {
   TRANSFER_TOKEN,
   BONDS_URL,
   POOL_CHART_URL,
+  DEFAULT_ADD_LIQUIDITY_URL,
 } from '../urls';
 import AddLiqudity from './pools/AddLiquidity';
 import Pools from './pools/Pools';
@@ -27,7 +28,11 @@ const ContentRouter = (): JSX.Element => (
       <Route exact path={SWAP_URL} component={Swap} />
       <Route exact path={POOLS_URL} component={Pools} />
       <Route exact path={DASHBOARD_URL} component={Dashboard} />
-      <Route path={`${ADD_LIQUIDITY_URL}`} component={AddLiqudity} />
+
+      {/* Partial path doesn't detect /add-liquidity/ url */}
+      <Route path={ADD_LIQUIDITY_URL} component={AddLiqudity} />
+      <Route exact path={DEFAULT_ADD_LIQUIDITY_URL} component={AddLiqudity} />
+      
       <Route exact path={ADD_LIQUIDITY_URL} component={AddLiqudity} />
       <Route path={POOL_CHART_URL} component={PoolPage} />
       <Route path={REMOVE_LIQUIDITY_URL} component={RemoveLiquidity} />

@@ -35,12 +35,12 @@ const findToken = async ({signer, address, tokensCombined, defaultAmountValue=cr
     .find(((token) => token.address.toLowerCase() === address.toLowerCase()));
 
   if (existingToken) {
-    return {...defaultAmountValue, ...existingToken};
+    return {...defaultAmountValue, ...existingToken, isEmpty: false};
   }
 
   const promisedToken = await rpc.loadToken(address, signer.signer);
   if (promisedToken) {
-    return {...defaultAmountValue, ...promisedToken};
+    return {...defaultAmountValue, ...promisedToken, isEmpty: false};
   }
 
   return defaultAmountValue;
@@ -79,7 +79,6 @@ const AddLiqudity = (): JSX.Element => {
         address: address2,
         defaultAmountValue: createEmptyTokenWithAmount(),
       })
-        .then((res) => ({...res, isEmpty: false}))
         .then(setToken2)
         .catch((e) => console.error(`Token: ${address2} was not found`));
 
