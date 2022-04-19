@@ -147,9 +147,9 @@ function formatTimeLeftObj(obj: Duration): string {
   return `${str}`;
 }
 
-async function calcuateBondTimes(contract: Contract | undefined): Promise<IBondTimes> {
-  const starts = (await contract?.startTime())?.toNumber();
-  const ends = (await contract?.releaseTime())?.toNumber();
+async function calcuateBondTimes(contract: Contract): Promise<IBondTimes> {
+  const starts = (await contract?.startTime()).toNumber();
+  const ends = (await contract?.releaseTime()).toNumber();
   let opportunity = ends;
   try {
     opportunity = (await contract?.windowOfOpportunity())?.toNumber();
@@ -395,10 +395,10 @@ export const BondsComponent = ({
 
     const setVars = async (): Promise<void> => {
       setLoadingValues(true);
-      const newBondTimes = await calcuateBondTimes(contract);
+      const newBondTimes = await calcuateBondTimes(updatedContract);
       await updateBondStakingClosedText(contract, newBondTimes);
-      await updateEarnedAmt(contract);
-      await updateLockedAmt(contract);
+      await updateEarnedAmt(updatedContract);
+      await updateLockedAmt(updatedContract);
       setBondTimes(newBondTimes);
       setLoadingValues(false);
     };
