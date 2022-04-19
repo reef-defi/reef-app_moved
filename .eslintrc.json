@@ -25,8 +25,11 @@
     "no-use-before-define": "off",
     "no-mixed-operators": "warn",
     "jsx-a11y/interactive-supports-focus": "warn",
+    "camelcase": "off",
+    "no-async-promise-executor": "warn",
     "no-unused-expressions": ["error", { "allowShortCircuit": true }],
     "@typescript-eslint/no-use-before-define": ["error"],
+    "jsx-a11y/anchor-is-valid": "off",
     "react/jsx-filename-extension": [ "warn", {"extensions": [".tsx"]} ],
     "import/extensions": [
       "error",

@@ -16,8 +16,8 @@ const menuItems = [
   { title: 'Send', url: TRANSFER_TOKEN },
   { title: 'Swap', url: SWAP_URL },
   { title: 'Pools', url: POOLS_URL },
-  { title: 'Staking', url: BONDS_URL},
-  { title: 'Creator', url: CREATE_ERC20_TOKEN_URL }
+  { title: 'Staking', url: BONDS_URL },
+  { title: 'Creator', url: CREATE_ERC20_TOKEN_URL },
 ];
 
 export interface Nav {

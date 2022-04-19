@@ -1,6 +1,5 @@
 import React from 'react';
-import { appState, createEmptyTokenWithAmount, hooks,
-} from '@reef-defi/react-lib';
+import { appState, createEmptyTokenWithAmount, hooks } from '@reef-defi/react-lib';
 import { TokenActivityItem, TokenActivityType } from './TokenActivityItem';
 import { TokenPill } from './TokenPill';
 import './TokenActivity.css';
@@ -15,14 +14,14 @@ noActivityTokenDisplay.iconUrl = '';
 noActivityTokenDisplay.name = 'No account history yet.';
 
 export const Skeleton = (): JSX.Element => (
-  <div className='token-activity-skeleton'>
-    <div className='token-activity-skeleton__icon'/>
-    <div className='token-activity-skeleton__info'>
-      <div className='token-activity-skeleton__title'/>
-      <div className='token-activity-skeleton__subtitle'/>
+  <div className="token-activity-skeleton">
+    <div className="token-activity-skeleton__icon" />
+    <div className="token-activity-skeleton__info">
+      <div className="token-activity-skeleton__title" />
+      <div className="token-activity-skeleton__subtitle" />
     </div>
 
-    <div className='token-activity-skeleton__amount'/>
+    <div className="token-activity-skeleton__amount" />
   </div>
 );
 export const TokenActivity = ({ address }: TokenActivity): JSX.Element => {
@@ -51,13 +50,15 @@ export const TokenActivity = ({ address }: TokenActivity): JSX.Element => {
             ))}
         </div>
         )}
-        {!transfers && <>
-          <Skeleton/>
-          <Skeleton/>
-          <Skeleton/>
-          <Skeleton/>
-          <Skeleton/>
-        </> }
+        {!transfers && (
+        <>
+          <Skeleton />
+          <Skeleton />
+          <Skeleton />
+          <Skeleton />
+          <Skeleton />
+        </>
+        ) }
       </div>
     </div>
   );
