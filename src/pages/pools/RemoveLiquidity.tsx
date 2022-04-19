@@ -37,7 +37,7 @@ const RemoveLiquidity = (): JSX.Element => {
     tokens,
     signer,
   });
-  const back = (): void => history.push(POOLS_URL);
+  const back = (): void => history.goBack();
 
   // Redirecting to pools page if any of tokens is empty on success
   if (state === 'Success' && (token1.isEmpty || token2.isEmpty)) {
