@@ -1,8 +1,19 @@
 import React from 'react';
 import './Tabs.css';
 
+interface TabOption {
+  key: string;
+  title: string;
+  notification?: number;
+}
 
-const Tabs: React.FC<unknown> = ({ tabs, selected, onChange }): JSX.Element => {
+interface Tabs {
+  tabs: TabOption[],
+  selected: string;
+  onChange: (key: string) => void;
+}
+
+const Tabs: React.FC<Tabs> = ({ tabs, selected, onChange }): JSX.Element => {
   return (
     <div className="tabs">
     {
