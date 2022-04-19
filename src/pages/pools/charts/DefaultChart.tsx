@@ -1,25 +1,27 @@
-import React from "react"
-import { scaleTime } from "d3-scale";
-import { ChartCanvas } from "react-stockcharts";
-import { CHART_HEIGHT, CHART_MARGIN, DefaultChartType } from "./types";
-import { fitWidth } from "react-stockcharts/lib/helper"
-import "./Chart.css";
+import React from 'react';
+import { scaleTime } from 'd3-scale';
+import { ChartCanvas } from 'react-stockcharts';
+import { fitWidth } from 'react-stockcharts/lib/helper';
+import { CHART_HEIGHT, CHART_MARGIN, DefaultChartType } from './types';
+import './Chart.css';
 
-const DefaultChart: React.FC<DefaultChartType> = ({ratio, width, data, type, fromDate, toDate, children}): JSX.Element => (
+const DefaultChart: React.FC<DefaultChartType> = ({
+  ratio, width, data, type, fromDate, toDate, children,
+}): JSX.Element => (
   <ChartCanvas
-    ratio={ratio} 
-    width={width} 
+    ratio={ratio}
+    width={width}
     height={CHART_HEIGHT}
     margin={CHART_MARGIN}
     type={type}
     pointsPerPxThreshold={1}
     seriesName="MSFT"
     data={data}
-    displayXAccessor={d => d.date}
-    xAccessor={d => d.date}
+    displayXAccessor={(d) => d.date}
+    xAccessor={(d) => d.date}
     xScale={scaleTime()}
     xExtents={[fromDate, toDate]}
-    mouseMoveEvent={true}
+    mouseMoveEvent
     panEvent={false}
     zoomEvent={false}
     clamp={false}
@@ -27,6 +29,5 @@ const DefaultChart: React.FC<DefaultChartType> = ({ratio, width, data, type, fro
     {children}
   </ChartCanvas>
 );
-
 
 export default fitWidth(DefaultChart);

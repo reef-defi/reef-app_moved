@@ -1,6 +1,6 @@
 import { availableNetworks, Network } from '@reef-defi/react-lib';
 
 export const innitialNetwork: Network = {
-  ...availableNetworks.testnet,
-  genesisHash: availableNetworks.testnet.genesisHash,
+  ...availableNetworks.mainnet,
+  // genesisHash: availableNetworks.testnet.genesisHash,
 };

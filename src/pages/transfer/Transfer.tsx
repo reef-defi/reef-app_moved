@@ -8,7 +8,7 @@ import {
   utils as reefUtils,
 } from '@reef-defi/react-lib';
 import React from 'react';
-import {Provider} from '@reef-defi/evm-provider';
+import { Provider } from '@reef-defi/evm-provider';
 
 const {
   isDataSet,
@@ -38,11 +38,9 @@ export const Transfer = (): JSX.Element => {
 
   return (
     <>
-      {!signerTokenBalances &&<Loading.Loading />}
+      {!signerTokenBalances && <Loading.Loading />}
       { provider && signerTokenBalances && selectedSigner
-      &&
-        <TransferComponent tokens={signerTokenBalances as Token[]} from={selectedSigner} provider={provider} accounts={accounts || []} currentAccount={selectedSigner}/>
-      }
+      && <TransferComponent tokens={signerTokenBalances as Token[]} from={selectedSigner} provider={provider} accounts={accounts || []} currentAccount={selectedSigner} />}
     </>
   );
 };

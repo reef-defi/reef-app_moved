@@ -1,10 +1,10 @@
-import React, { useMemo } from "react"
-import { useQuery, gql} from "@apollo/client"
-import { dropDuplicatesMultiKey, formatAmount, toDecimal, toTimestamp } from "../../utils/utils";
-import { Components } from "@reef-defi/react-lib";
-import { AddressVar, BasicVar } from "./poolTypes";
+import React, { useMemo } from 'react';
+import { useQuery, gql } from '@apollo/client';
+import { Components } from '@reef-defi/react-lib';
+import { formatAmount } from '../../utils/utils';
+import { AddressVar, BasicVar } from './poolTypes';
 
-const {BoldText, Text} = Components.Text;
+const { BoldText, Text } = Components.Text;
 interface PoolInfo {
   icon1: string;
   icon2: string;
@@ -15,7 +15,6 @@ interface PoolInfo {
   decimal2: number;
   reserved1: string;
   reserved2: string;
-  isPoolLoading: boolean;
 }
 
 interface Supply {
@@ -56,7 +55,7 @@ query pool_supply($address: String!) {
     timeframe
   }
 }
-`
+`;
 
 const POOL_VOLUME_GQL = gql`
 query pool_volume($address: String!, $fromTime: timestamptz!, $toTime: timestamptz!) {
@@ -75,7 +74,7 @@ query pool_volume($address: String!, $fromTime: timestamptz!, $toTime: timestamp
     }
   }
 }
-`
+`;
 
 const POOL_FEES_GQL = gql`
 query pool_fee($address: String!, $fromTime: timestamptz!) {
@@ -93,7 +92,7 @@ query pool_fee($address: String!, $fromTime: timestamptz!) {
     }
   }
 }
-`
+`;
 
 interface InfoLine {
   icon: string;
@@ -109,76 +108,84 @@ interface VolumeVar extends BasicVar {
   toTime: string;
 }
 
-const InfoLine: React.FC<InfoLine> = ({icon, symbol, amount, children}): JSX.Element => (
-<Components.Display.FullRow>
-  <Components.Display.ContentBetween>
-    <div className="d-flex align-middle">
-      <Components.Icons.TokenIcon src={icon}/>
-      <Components.Display.ME size="1" />
-      <Text className="m-auto">{symbol}</Text>
-    </div>
-    <div className="d-flex flex-column">
-      <BoldText size={1.3}>{amount}</BoldText>
-      { children }
-    </div>
-  </Components.Display.ContentBetween>
-</Components.Display.FullRow>
-)
+const InfoLine: React.FC<InfoLine> = ({
+  icon, symbol, amount, children,
+}): JSX.Element => (
+  <Components.Display.FullRow>
+    <Components.Display.ContentBetween>
+      <div className="d-flex align-middle">
+        <Components.Icons.TokenIcon src={icon} />
+        <Components.Display.ME size="1" />
+        <Text className="m-auto">{symbol}</Text>
+      </div>
+      <div className="d-flex flex-column">
+        <BoldText size={1.3}>{amount}</BoldText>
+        { children }
+      </div>
+    </Components.Display.ContentBetween>
+  </Components.Display.FullRow>
+);
 
-const InfoPercentageLine = ({amount, icon, symbol, percentage}: InfoPercentageLine): JSX.Element => (
+const InfoPercentageLine = ({
+  amount, icon, symbol, percentage,
+}: InfoPercentageLine): JSX.Element => (
   <InfoLine
     icon={icon}
     amount={amount}
     symbol={symbol}
   >
-    <Components.Text.ColorText color={percentage < 0 ? "danger" : "success"} size={0.8} className="text-end">{percentage.toFixed(3)} %</Components.Text.ColorText>
+    <Components.Text.ColorText color={percentage < 0 ? 'danger' : 'success'} size={0.8} className="text-end">
+      {percentage.toFixed(3)}
+      {' '}
+      %
+    </Components.Text.ColorText>
   </InfoLine>
-)
+);
 
-const PoolInfo = ({address, decimal1, decimal2, symbol1, symbol2, reserved1, reserved2, icon1, icon2} : PoolInfo): JSX.Element => {
+const PoolInfo = ({
+  address, decimal1, decimal2, symbol1, symbol2, reserved1, reserved2, icon1, icon2,
+} : PoolInfo): JSX.Element => {
   const currentTime = useMemo(() => new Date(Date.now()).toISOString(), []);
   const oneDayAgo = useMemo(() => new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), []);
   const twoDaysAgo = useMemo(() => new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(), []);
 
-  const {data: supplyData} = useQuery<SupplyQuery, AddressVar>(
+  const { data: supplyData } = useQuery<SupplyQuery, AddressVar>(
     POOL_SUPPLY_GQL,
-    { variables: { address } }
+    { variables: { address } },
   );
-  const {data: yesterdayVolume} = useQuery<VolumeQuery, VolumeVar>(
+  const { data: yesterdayVolume } = useQuery<VolumeQuery, VolumeVar>(
     POOL_VOLUME_GQL,
-    { 
-      variables: { 
+    {
+      variables: {
         address,
         fromTime: twoDaysAgo,
-        toTime: oneDayAgo
-      }
-    }
+        toTime: oneDayAgo,
+      },
+    },
   );
-  const {data: todayVolume} = useQuery<VolumeQuery, VolumeVar>(
+  const { data: todayVolume } = useQuery<VolumeQuery, VolumeVar>(
     POOL_VOLUME_GQL,
-    { 
-      variables: { 
+    {
+      variables: {
         address,
         fromTime: oneDayAgo,
-        toTime: currentTime
-      }
-    }
+        toTime: currentTime,
+      },
+    },
   );
 
-  console.log(todayVolume)
-  const {data: feesData } = useQuery<FeeSubscrition, BasicVar>(
+  console.log(todayVolume);
+  const { data: feesData } = useQuery<FeeSubscrition, BasicVar>(
     POOL_FEES_GQL,
-    { variables: { address, fromTime: oneDayAgo } }
+    { variables: { address, fromTime: oneDayAgo } },
   );
 
   // Supply
-  const totalSupply = 
-    supplyData && supplyData.pool_minute_supply.length > 0
-      ? formatAmount(supplyData.pool_minute_supply[0].total_supply, 18) 
-      : "-"
+  const totalSupply = supplyData && supplyData.pool_minute_supply.length > 0
+    ? formatAmount(supplyData.pool_minute_supply[0].total_supply, 18)
+    : '-';
 
-  const totalSupplyPercentage = 
-    supplyData && supplyData.pool_minute_supply.length > 0
+  const totalSupplyPercentage = supplyData && supplyData.pool_minute_supply.length > 0
     ? supplyData.pool_minute_supply[0].supply / supplyData.pool_minute_supply[0].total_supply * 100
     : 0;
 
@@ -192,23 +199,25 @@ const PoolInfo = ({address, decimal1, decimal2, symbol1, symbol2, reserved1, res
   const volumeDifference2 = todayVolume2 > 0 && yesterdayVolume2 > 0 ? (todayVolume2 - yesterdayVolume2) / yesterdayVolume2 * 100 : 0;
 
   // Fee
-  const fee1 =
-    feesData && decimal1 != 1
-      ? formatAmount(feesData.pool_hour_fee_aggregate.aggregate.sum.fee_1 || 0, decimal1)
-      : "-";
-  const fee2 =
-    feesData && decimal1 != 1
-      ? formatAmount(feesData.pool_hour_fee_aggregate.aggregate.sum.fee_2 || 0, decimal2)
-      : "-";
+  const fee1 = feesData && decimal1 !== 1
+    ? formatAmount(feesData.pool_hour_fee_aggregate.aggregate.sum.fee_1 || 0, decimal1)
+    : '-';
+  const fee2 = feesData && decimal1 !== 1
+    ? formatAmount(feesData.pool_hour_fee_aggregate.aggregate.sum.fee_2 || 0, decimal2)
+    : '-';
 
   return (
     <>
-     <Components.Display.MT size="2" />
+      <Components.Display.MT size="2" />
       <Components.Card.Card>
         <div className="d-flex flex-column">
           <BoldText size={1.2}>TVL</BoldText>
           <Components.Text.BoldText size={1.6}>{totalSupply}</Components.Text.BoldText>
-          <Components.Text.ColorText color={totalSupplyPercentage < 0 ? "danger" : "success"} size={1}>{totalSupplyPercentage.toFixed(3)} %</Components.Text.ColorText>
+          <Components.Text.ColorText color={totalSupplyPercentage < 0 ? 'danger' : 'success'} size={1}>
+            {totalSupplyPercentage.toFixed(3)}
+            {' '}
+            %
+          </Components.Text.ColorText>
         </div>
       </Components.Card.Card>
 
@@ -216,14 +225,14 @@ const PoolInfo = ({address, decimal1, decimal2, symbol1, symbol2, reserved1, res
       <Components.Card.Card>
         <BoldText size={1.2}>Total Tokens Locked</BoldText>
         <Components.Display.MT size="2" />
-        <InfoLine 
+        <InfoLine
           icon={icon1}
           symbol={symbol1}
           amount={reserved1}
         />
-        
+
         <Components.Display.MT size="1" />
-        <InfoLine 
+        <InfoLine
           icon={icon2}
           symbol={symbol2}
           amount={reserved2}
@@ -233,7 +242,7 @@ const PoolInfo = ({address, decimal1, decimal2, symbol1, symbol2, reserved1, res
       <Components.Card.Card>
         <BoldText size={1.2}>Volume 24h</BoldText>
 
-        <InfoPercentageLine 
+        <InfoPercentageLine
           icon={icon1}
           symbol={symbol1}
           amount={formatAmount(todayVolume1 || 0, decimal1)}
@@ -241,7 +250,7 @@ const PoolInfo = ({address, decimal1, decimal2, symbol1, symbol2, reserved1, res
         />
 
         <Components.Display.MT size="1" />
-        <InfoPercentageLine 
+        <InfoPercentageLine
           icon={icon2}
           symbol={symbol2}
           amount={formatAmount(todayVolume2 || 0, decimal2)}
@@ -252,13 +261,13 @@ const PoolInfo = ({address, decimal1, decimal2, symbol1, symbol2, reserved1, res
       <Components.Display.MT size="2" />
       <Components.Card.Card>
         <BoldText size={1.2}>Fees 24h</BoldText>
-        <InfoLine 
+        <InfoLine
           icon={icon1}
           symbol={symbol1}
           amount={fee1}
         />
         <Components.Display.MT size="1" />
-        <InfoLine 
+        <InfoLine
           icon={icon2}
           symbol={symbol2}
           amount={fee2}
@@ -266,6 +275,6 @@ const PoolInfo = ({address, decimal1, decimal2, symbol1, symbol2, reserved1, res
       </Components.Card.Card>
     </>
   );
-}
+};
 
 export default PoolInfo;

@@ -17,7 +17,6 @@ export enum TokenActivityType {
   RECEIVE = 'RECEIVE'
 }
 
-
 export const TokenActivityItem = ({
   token, timestamp, type,
 }: TokenActivityItem): JSX.Element => (

@@ -5,11 +5,11 @@ import '@reef-defi/react-lib/dist/index.css';
 import {
   BrowserRouter as Router,
 } from 'react-router-dom';
+import { graphql } from '@reef-defi/react-lib';
+import { ApolloProvider, ApolloConsumer } from '@apollo/client';
 import reportWebVitals from './reportWebVitals';
 import App from './App';
-import {graphql} from "@reef-defi/react-lib"
 
-import {ApolloProvider, ApolloConsumer} from "@apollo/client"
 import { innitialNetwork } from './environment';
 
 // const client = new ApolloClient({
