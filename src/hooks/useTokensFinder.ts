@@ -66,7 +66,6 @@ export const useTokensFinder = ({address1, address2, tokens, signer}: UseTokensF
         .then(setToken1)
         .catch((e) => console.error(`Token: ${address1} was not found`));
 
-
       console.log('loading')
       await findToken({
         signer,

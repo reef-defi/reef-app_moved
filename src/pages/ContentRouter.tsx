@@ -6,11 +6,12 @@ import {
   DASHBOARD_URL,
   POOLS_URL,
   REMOVE_LIQUIDITY_URL,
-  SWAP_URL,
   TRANSFER_TOKEN,
   BONDS_URL,
   POOL_CHART_URL,
   DEFAULT_ADD_LIQUIDITY_URL,
+  DEFAULT_SWAP_URL,
+  SPECIFIED_SWAP_URL,
 } from '../urls';
 import AddLiqudity from './pools/AddLiquidity';
 import Pools from './pools/Pools';
@@ -25,7 +26,9 @@ import PoolPage from './pools/PoolPage';
 const ContentRouter = (): JSX.Element => (
   <div className="content">
     <Switch>
-      <Route exact path={SWAP_URL} component={Swap} />
+      <Route exact path={DEFAULT_SWAP_URL} component={Swap} />
+      <Route path={SPECIFIED_SWAP_URL} component={Swap} />
+
       <Route exact path={POOLS_URL} component={Pools} />
       <Route exact path={DASHBOARD_URL} component={Dashboard} />
 

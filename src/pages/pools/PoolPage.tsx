@@ -7,7 +7,7 @@ import { formatAmount, getIconUrl } from '../../utils/utils';
 import PoolTransactions from './PoolTransactions';
 import { AddressVar, PoolData } from './poolTypes';
 import PoolInfo from './PoolInfo';
-import { ADD_LIQUIDITY_URL, REMOVE_LIQUIDITY_URL, SWAP_URL } from '../../urls';
+import { ADD_LIQUIDITY_URL, REMOVE_LIQUIDITY_URL, SPECIFIED_SWAP_URL } from '../../urls';
 import ChartSelector from './charts/ChartSelector';
 import { BasicPoolInfo } from './charts/types';
 import './Pool.css';
@@ -141,7 +141,11 @@ const PoolPage = (): JSX.Element => {
       .toNumber() / 1000
     : -1;
 
-  const openTrade = (): void => history.push(SWAP_URL);
+  const openTrade = (): void => history.push(
+    SPECIFIED_SWAP_URL
+      .replace(':address1', tokenAddress1)
+      .replace(':address2', tokenAddress2)
+  );
   const openAddLiquidity = (): void => history.push(
     ADD_LIQUIDITY_URL
       .replace(':address1', tokenAddress1)

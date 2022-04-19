@@ -1,4 +1,10 @@
-export const SWAP_URL = '/swap';
+export interface UrlAddressParams {
+  address1: string;
+  address2: string;
+}
+
+export const DEFAULT_SWAP_URL = '/swap';
+export const SPECIFIED_SWAP_URL = '/swap/:address1/:address2';
 export const POOLS_URL = '/pools';
 export const SETTINGS_URL = '/settings';
 export const DASHBOARD_URL = '/dashboard';
