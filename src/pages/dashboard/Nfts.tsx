@@ -8,9 +8,9 @@ const { isDataSet, DataProgress } = utils;
 const placeholderImage = 'https://cryptotelegram.com/wp-content/uploads/2021/04/reef-crypto-explained.jpg';
 
 export const Skeleton = (): JSX.Element => (
-  <div className='nft-skeleton'>
-    <div className='nft-skeleton__image'/>
-    <div className='nft-skeleton__name'/>
+  <div className="nft-skeleton">
+    <div className="nft-skeleton__image" />
+    <div className="nft-skeleton__name" />
   </div>
 );
 
@@ -28,7 +28,6 @@ export const Nfts = (): JSX.Element => (
             <div className="nfts__item-name">NFT Title</div>
           </div>
         </div> */}
-
 
         {/* <Skeleton />
         <Skeleton />

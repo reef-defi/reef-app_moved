@@ -1,5 +1,6 @@
 import { Components, Token, utils } from '@reef-defi/react-lib';
 import React from 'react';
+import { formatDate } from '../../utils/utils';
 import './TokenActivityItem.css';
 
 const { showBalance } = utils;
@@ -14,14 +15,6 @@ interface TokenActivityItem {
 export enum TokenActivityType {
   SEND = 'SEND',
   RECEIVE = 'RECEIVE'
-}
-
-const formatDate = timestamp => {
-  let date = new Date(timestamp)
-  const offset = date.getTimezoneOffset()
-  date = new Date(date.getTime() - (offset*60*1000))
-  const formatted = date.toISOString().split('T')[0]
-  return formatted.split("-").reverse().join("-")
 }
 
 export const TokenActivityItem = ({

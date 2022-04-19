@@ -22,7 +22,7 @@ export const TokenPill = ({ token }: TokenPill): JSX.Element => {
       <div className="token-balance-item radius-border d-flex d-flex-space-between d-flex-vert-center">
         <div className="token-balance-item_icon-text mr-1">
           <div className="token-balance-item_icon-text_w mr-1"><img src={token.iconUrl ? token.iconUrl : getIconUrl(token.address)} alt={token.name} /></div>
-          <div className='token-balance-item__info'>
+          <div className="token-balance-item__info">
             <div className="">
               <div className="title-font text-bold ">{token.name}</div>
               <div className="token-balance-item_sub-title">

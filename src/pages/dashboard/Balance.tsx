@@ -10,7 +10,7 @@ interface Balance {
 
 export const Loading = (): JSX.Element => (
   <span className="dashboard-balance-loading dashboard_balance-txt title-font text-bold text-color-dark-accent">
-    <div className='dashboard-balance-loading__container'>
+    <div className="dashboard-balance-loading__container">
       <span>$</span>
       <span>.</span>
       <span>.</span>
