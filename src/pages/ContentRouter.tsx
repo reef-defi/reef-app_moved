@@ -27,7 +27,7 @@ const ContentRouter = (): JSX.Element => (
       <Route exact path={SWAP_URL} component={Swap} />
       <Route exact path={POOLS_URL} component={Pools} />
       <Route exact path={DASHBOARD_URL} component={Dashboard} />
-      <Route path={`${ADD_LIQUIDITY_URL}/:address1/:address2`} component={AddLiqudity} />
+      <Route path={`${ADD_LIQUIDITY_URL}`} component={AddLiqudity} />
       <Route exact path={ADD_LIQUIDITY_URL} component={AddLiqudity} />
       <Route path={POOL_CHART_URL} component={PoolPage} />
       <Route path={REMOVE_LIQUIDITY_URL} component={RemoveLiquidity} />

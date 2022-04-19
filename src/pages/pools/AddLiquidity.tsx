@@ -15,42 +15,56 @@ interface UrlParams {
 //   const tokensCombined: Token[]|undefined = hooks.useObservableState(appState.allAvailableSignerTokens$);
 // }
 
+type State = 'Init' | 'Loading' | 'Success';
+
 const AddLiqudity = (): JSX.Element => {
   const history = useHistory();
   const { address1, address2 } = useParams<UrlParams>();
+  const [state, setState] = useState<State>('Init');
   const [token1, setToken1] = useState<TokenWithAmount>(createEmptyTokenWithAmount());
   const [token2, setToken2] = useState<TokenWithAmount>(createEmptyTokenWithAmount());
   const signer: ReefSigner|undefined = hooks.useObservableState(appState.selectedSigner$);
   const tokensCombined: Token[]|undefined = hooks.useObservableState(appState.allAvailableSignerTokens$);
   const network: Network|undefined = hooks.useObservableState(appState.selectedNetworkSubj);
 
+  // if address or token list or token in list or on rpc does not exist return default values
+  // else combine data with default amount values 
+  const findToken = async (address?: string, defaultValue=createEmptyTokenWithAmount()): Promise<TokenWithAmount> => {
+    if (!address || !tokensCombined) {
+      return {...defaultValue};
+    };
+
+    const existingToken = tokensCombined
+      .find(((token) => token.address.toLowerCase() === address.toLowerCase()));
+
+    if (existingToken) {
+      return {...defaultValue, ...existingToken};
+    }
+
+    const promisedToken = await rpc.loadToken(address, signer.signer);
+    if (promisedToken) {
+      return {...defaultValue, ...promisedToken};
+    }
+
+    return defaultValue;
+  }
+
   useEffect(() => {
     const reset = async (): Promise<void> => {
-      let tkn1 = tokensCombined?.find((t) => t.address === address1);
-      if (!tkn1 && signer) {
-        tkn1 = (await rpc.loadToken(address1, signer?.signer, '') || undefined);
+      if (!tokensCombined || state !== 'Init') {
+        return;
       }
-      console.log(tkn1)
-      setToken1(tkn1 ? {
-        ...tkn1,
-        amount: '',
-        price: 0,
-        isEmpty: false,
-      } : undefined);
 
-      let tkn2 = tokensCombined?.find((t) => t.address === address2);
-      if (!tkn2 && signer) {
-        tkn2 = (await rpc.loadToken(address2, signer?.signer, '') || undefined);
-      }
-      setToken2(tkn2 ? {
-        ...tkn2,
-        amount: '',
-        price: 0,
-        isEmpty: false,
-      } : undefined);
+      setState('Loading')
+      setToken1(await findToken(address1, reefTokenWithAmount()));
+      setToken2(await findToken(address2, reefTokenWithAmount()));
+      setState('Success')
     };
     reset();
   }, [address2, address1, tokensCombined]);
+
+
+
 
   const back = (): void => history.goBack();
   /* const onAddLiqUpdate = (txState: utils.TxStatusUpdate): void => {
@@ -59,7 +73,7 @@ const AddLiqudity = (): JSX.Element => {
     onTxUpdateResetSigners(txState, updateActions);
   }; */
 
-  return signer && network ? (
+  return signer && network && state === 'Success' ? (
     <Components.AddLiquidity
       tokens={tokensCombined || []}
       signer={signer}
@@ -67,7 +81,7 @@ const AddLiqudity = (): JSX.Element => {
       tokenValue1={token1}
       tokenValue2={token2}
       back={back}
-      // onTxUpdate={onAddLiqUpdate}
+      onTxUpdate={onAddLiqUpdate}
     />
   ) : (<div />);
 };

@@ -15,7 +15,6 @@ import {
 } from '@polkadot/util';
 import { DeriveEraRewards, DeriveOwnSlashes, DeriveStakerPoints } from '@polkadot/api-derive/types';
 import { Provider } from '@reef-defi/evm-provider';
-import { toUnits } from '../../../../reef-react-lib/src/utils';
 import { IBond } from './utils/bonds';
 import BondData from './utils/bond-contract';
 
@@ -46,11 +45,9 @@ export const getReefBondContract = (bond: IBond, signer: Signer): Contract => ne
 const {
   Display,
   Card: CardModule,
-  TokenAmountFieldMax,
   Modal,
   Loading,
   Input: InputModule,
-  TokenAmountView,
   Label,
   Button: ButtonModule,
   Text,
@@ -63,33 +60,15 @@ const {
 const {
   ComponentCenter,
   MT,
-  CenterColumn,
   Margin,
-  CenterRow,
 } = Display;
-
-const {
-  CardHeader,
-  CardHeaderBlank,
-  CardTitle,
-  Card,
-} = CardModule;
-
 const {
   OpenModalButton,
   default: ConfirmationModal,
-  ModalFooter,
-  ModalBody,
 } = Modal;
 
 const {
-  LoadingButtonIconWithText,
-  LoadingWithText,
-} = Loading;
-const {
-  Input,
   NumberInput,
-  InputAmount,
 } = InputModule;
 const { ConfirmLabel } = Label;
 const { Button } = ButtonModule;
@@ -390,7 +369,9 @@ export const BondsComponent = ({
   }, [bondAmount]);
 
   useEffect(() => {
-    const updatedContract = getReefBondContract(bond!, account!.signer);
+    if (!account) { return; }
+    
+    const updatedContract = getReefBondContract(bond!, account.signer);
     setContract(updatedContract);
 
     const setVars = async (): Promise<void> => {
