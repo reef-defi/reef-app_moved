@@ -3,14 +3,22 @@ import { useSubscription, useQuery, gql } from '@apollo/client';
 import { Components } from '@reef-defi/react-lib/';
 
 import { utcDay, utcMinute, utcHour } from 'd3-time';
+// @ts-ignore
 import { timeFormat } from 'd3-time-format';
+// @ts-ignore
 import { format } from 'd3-format';
 
+// @ts-ignore
 import { Chart } from 'react-stockcharts';
+// @ts-ignore
 import { CandlestickSeries } from 'react-stockcharts/lib/series';
+// @ts-ignore
 import { MouseCoordinateX, CrossHairCursor, CurrentCoordinate } from 'react-stockcharts/lib/coordinates';
+// @ts-ignore
 import { XAxis, YAxis } from 'react-stockcharts/lib/axes';
+// @ts-ignore
 import { SingleValueTooltip } from 'react-stockcharts/lib/tooltip';
+// @ts-ignore
 import { timeIntervalBarWidth } from 'react-stockcharts/lib/utils';
 import DefaultChart from './DefaultChart';
 import { dropDuplicatesMultiKey, std } from '../../../utils/utils';
@@ -136,7 +144,7 @@ const TokenCandlestickChart = ({ whichToken, address } : TokenCandlestickChart):
   if (results.length <= 1) {
     return <span>Not enough data</span>;
   }
-  const values: number[] = results.reduce((acc, { high, low }) => [...acc, high, low], []);
+  const values = results.reduce((acc, { high, low }) => [...acc, high, low], [] as number[]);
   const adjust = std(values);
 
   return (
@@ -146,7 +154,7 @@ const TokenCandlestickChart = ({ whichToken, address } : TokenCandlestickChart):
       toDate={new Date(toDate)}
       type="svg"
     >
-      <Chart id={1} yExtents={(d) => [d.high + adjust, d.low - adjust]}>
+      <Chart id={1} yExtents={(d: OHLC) => [d.high + adjust, d.low - adjust]}>
         <XAxis axisAt="bottom" orient="bottom" ticks={8} />
         <YAxis axisAt="left" orient="left" ticks={6} />
 
@@ -158,17 +166,17 @@ const TokenCandlestickChart = ({ whichToken, address } : TokenCandlestickChart):
 
         <CandlestickSeries width={timeIntervalBarWidth(utcHour)} />
 
-        <CurrentCoordinate yAccessor={(d) => d.close} fill={(d) => d.close} />
+        <CurrentCoordinate yAccessor={(d: OHLC) => d.close} fill={(d: OHLC) => d.close} />
 
         <SingleValueTooltip
-          yAccessor={(d) => d.close}
-          yDisplayFormat={(d) => `${format('.4f')(d)}`}
+          yAccessor={(d: OHLC) => d.close}
+          yDisplayFormat={(d: number) => `${format('.4f')(d)}`}
           yLabel="Value"
           fontSize={21}
           origin={[20, 10]}
         />
         <SingleValueTooltip
-          yAccessor={(d) => d.date}
+          yAccessor={(d: OHLC) => d.date}
           fontSize={14}
           yLabel="Date"
           yDisplayFormat={timeFormat('%Y-%m-%d')}

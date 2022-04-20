@@ -1,17 +1,19 @@
 import React, { useMemo } from 'react';
 import { useQuery, gql } from '@apollo/client';
 import { Components } from '@reef-defi/react-lib';
+// @ts-ignore
 import { timeFormat } from 'd3-time-format';
+// @ts-ignore
 import { Chart } from 'react-stockcharts';
+// @ts-ignore
 import { MouseCoordinateX, CrossHairCursor, CurrentCoordinate } from 'react-stockcharts/lib/coordinates';
+// @ts-ignore
 import { XAxis, YAxis } from 'react-stockcharts/lib/axes';
+// @ts-ignore
 import { SingleValueTooltip } from 'react-stockcharts/lib/tooltip';
 import './Chart.css';
-import {
-  ScatterSeries,
-  SquareMarker,
-  LineSeries,
-} from 'react-stockcharts/lib/series';
+// @ts-ignore
+import { ScatterSeries, SquareMarker, LineSeries, } from 'react-stockcharts/lib/series';
 import { AddressVar } from '../poolTypes';
 import {
   dropDuplicatesMultiKey, formatAmount, std, toTimestamp,
@@ -46,6 +48,11 @@ interface TVLData {
 type TVLQuery = { pool_hour_supply: TVLData[] }
 interface TVlVar extends AddressVar {
   fromTime: string;
+}
+
+interface Data {
+  amount: number;
+  date: string;
 }
 
 const TVLChart = ({ address } : TVLChart): JSX.Element => {
@@ -93,13 +100,13 @@ const TVLChart = ({ address } : TVLChart): JSX.Element => {
       toDate={new Date(toDate)}
       type="svg"
     >
-      <Chart id={1} yExtents={(d) => [d.amount + adjust, d.amount - adjust]}>
+      <Chart id={1} yExtents={(d: Data) => [d.amount + adjust, d.amount - adjust]}>
         <XAxis axisAt="bottom" orient="bottom" ticks={8} />
         <YAxis
           axisAt="left"
           orient="left"
           ticks={6}
-          displayFormat={(d) => formatAmount(d, 18)}
+          displayFormat={(d: number) => formatAmount(d, 18)}
         />
 
         <MouseCoordinateX
@@ -108,25 +115,25 @@ const TVLChart = ({ address } : TVLChart): JSX.Element => {
           displayFormat={timeFormat('%Y-%m-%d %H:%M:%S')}
         />
         <LineSeries
-          yAccessor={(d) => d.amount}
+          yAccessor={(d: Data) => d.amount}
           stroke="#ff7f0e"
           strokeDasharray="Solid"
         />
         <ScatterSeries
-          yAccessor={(d) => d.amount}
+          yAccessor={(d: Data) => d.amount}
           marker={SquareMarker}
           markerProps={{ width: 6, stroke: '#ff7f0e', fill: '#ff7f0e' }}
         />
-        <CurrentCoordinate yAccessor={(d) => d.amount} fill={(d) => d.amount} />
+        <CurrentCoordinate yAccessor={(d: Data) => d.amount} fill={(d: Data) => d.amount} />
 
         <SingleValueTooltip
-          yAccessor={(d) => d.amount}
-          yDisplayFormat={(d) => formatAmount(d, 18)}
+          yAccessor={(d: Data) => d.amount}
+          yDisplayFormat={(d: number) => formatAmount(d, 18)}
           fontSize={21}
           origin={[20, 10]}
         />
         <SingleValueTooltip
-          yAccessor={(d) => d.date}
+          yAccessor={(d: Data) => d.date}
           fontSize={14}
           yDisplayFormat={timeFormat('%Y-%m-%d %H:%M:%S')}
           origin={[20, 30]}

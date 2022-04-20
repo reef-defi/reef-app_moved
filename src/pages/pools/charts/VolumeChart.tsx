@@ -1,16 +1,23 @@
 import React, { useMemo } from 'react';
 import { useQuery, gql } from '@apollo/client';
 import { Components } from '@reef-defi/react-lib';
+// @ts-ignore
 import { timeFormat } from 'd3-time-format';
+// @ts-ignore
 import { Chart } from 'react-stockcharts';
+// @ts-ignore
 import { MouseCoordinateX, CrossHairCursor, CurrentCoordinate } from 'react-stockcharts/lib/coordinates';
-import {
-  GroupedBarSeries,
-} from 'react-stockcharts/lib/series';
-
+// @ts-ignore
+import { GroupedBarSeries } from 'react-stockcharts/lib/series';
+// @ts-ignore
 import { scaleOrdinal, schemeCategory10 } from 'd3-scale';
+// @ts-ignore
 import { set } from 'd3-collection';
+// @ts-ignore
 import { XAxis, YAxis } from 'react-stockcharts/lib/axes';
+// @ts-ignore
+import { SingleValueTooltip } from 'react-stockcharts/lib/tooltip';
+// @ts-ignore
 import { SingleValueTooltip } from 'react-stockcharts/lib/tooltip';
 import { BasicVar } from '../poolTypes';
 import {
@@ -45,6 +52,12 @@ interface Volume {
 
 type VolumeQuery = { pool_hour_volume: Volume[] };
 
+interface Data {
+  date: string;
+  amount_1: number;
+  amount_2: number;
+}
+
 const VolumeChart = ({
   address, symbol1, symbol2, decimal1, decimal2,
 } : BasicPoolInfo): JSX.Element => {
@@ -73,14 +86,14 @@ const VolumeChart = ({
     return <span>Not enough data</span>;
   }
 
-  const values: number[] = volumeData.reduce((acc, { amount_1, amount_2 }) => [...acc, amount_1, amount_2], []);
+  const values = volumeData.reduce((acc, { amount_1, amount_2 }) => [...acc, amount_1, amount_2], [] as number[]);
   const adjust = std(values);
 
   // console.log(values)
   const f = scaleOrdinal(schemeCategory10)
     .domain(set(volumeData.map((d) => d.date)));
 
-  const fill = (d, i): any => f(i);
+  const fill = (d: Data, i: any): any => f(i);
   return (
 
     <DefaultChart
@@ -89,13 +102,13 @@ const VolumeChart = ({
       toDate={new Date(toDate)}
       type="svg"
     >
-      <Chart id={1} yExtents={(d) => [d.amount_1 + adjust, d.amount_2 + adjust, 0]}>
+      <Chart id={1} yExtents={(d: Data) => [d.amount_1 + adjust, d.amount_2 + adjust, 0]}>
         <XAxis axisAt="bottom" orient="bottom" ticks={8} />
         <YAxis
           axisAt="left"
           orient="left"
           ticks={6}
-          displayFormat={(d) => d}
+          displayFormat={(d: Data) => d}
         />
 
         <MouseCoordinateX
@@ -104,11 +117,11 @@ const VolumeChart = ({
           displayFormat={timeFormat('%Y-%m-%d')}
         />
 
-        <CurrentCoordinate yAccessor={(d) => d.amount_1} fill={(d) => d.amount_1} />
-        <CurrentCoordinate yAccessor={(d) => d.amount_2} fill={(d) => d.amount_2} />
+        <CurrentCoordinate yAccessor={(d: Data) => d.amount_1} fill={(d: Data) => d.amount_1} />
+        <CurrentCoordinate yAccessor={(d: Data) => d.amount_2} fill={(d: Data) => d.amount_2} />
 
         <GroupedBarSeries
-          yAccessor={[(d) => d.amount_1, (d) => d.amount_2]}
+          yAccessor={[(d: Data) => d.amount_1, (d: Data) => d.amount_2]}
           fill={fill}
           spaceBetweenBar={3}
           width={20}
@@ -116,21 +129,21 @@ const VolumeChart = ({
 
         <SingleValueTooltip
           yLabel={symbol1}
-          yAccessor={(d) => d.amount_1}
-          yDisplayFormat={(d) => `${formatAmount(d, decimal1)} ${symbol1}`}
+          yAccessor={(d: any) => d.amount_1}
+          yDisplayFormat={(d: number) => `${formatAmount(d, decimal1)} ${symbol1}`}
           fontSize={21}
           origin={[20, 10]}
         />
         <SingleValueTooltip
           yLabel={symbol2}
-          yAccessor={(d) => d.amount_2}
-          yDisplayFormat={(d) => `${formatAmount(d, decimal2)} ${symbol2}`}
+          yAccessor={(d: Data) => d.amount_2}
+          yDisplayFormat={(d: number) => `${formatAmount(d, decimal2)} ${symbol2}`}
           fontSize={21}
           origin={[20, 30]}
         />
         <SingleValueTooltip
           yLabel="Date"
-          yAccessor={(d) => d.date}
+          yAccessor={(d: Data) => d.date}
           fontSize={14}
           yDisplayFormat={timeFormat('%Y-%m-%d %H:%M:%S')}
           origin={[20, 50]}
