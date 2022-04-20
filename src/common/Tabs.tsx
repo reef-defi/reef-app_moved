@@ -1,12 +1,14 @@
 import React from 'react';
 import './Tabs.css';
 
+interface TabOption {
+  key: string;
+  title: string;
+  notification?: number;
+}
+
 interface Tabs {
-  tabs: {
-    title: string;
-    key: string;
-    notification?: number;
-  }[];
+  tabs: TabOption[],
   selected: string;
   onChange: (key: string) => void;
 }
@@ -16,8 +18,8 @@ const Tabs: React.FC<Tabs> = ({ tabs, selected, onChange }): JSX.Element => (
     {
         tabs.map((tab) => (
           <button
-            key={tab.key}
             type="button"
+            key={tab.key}
             className={`
               tabs__tab
               ${selected === tab.key ? 'tabs__tab--selected' : ''}

@@ -3,28 +3,39 @@ import React from 'react';
 import {
   appState, Components, hooks, Network, ReefSigner, Token,
 } from '@reef-defi/react-lib';
+import { useParams } from 'react-router-dom';
+import { useTokensFinder } from '../../hooks/useTokensFinder';
+import { UrlAddressParams } from '../../urls';
 
 const { SwapComponent } = Components;
 
 const Swap = (): JSX.Element => {
-  const tokensCombined: Token[]|undefined = hooks.useObservableState(appState.allAvailableSignerTokens$);
   const network: Network|undefined = hooks.useObservableState(appState.selectedNetworkSubj);
+  const signer: ReefSigner|undefined = hooks.useObservableState(appState.selectedSigner$);
+  const tokens: Token[]|undefined = hooks.useObservableState(appState.allAvailableSignerTokens$);
 
-  const selectedAccount: ReefSigner|undefined = hooks.useObservableState(appState.selectedSigner$);
+  const { address1, address2 } = useParams<UrlAddressParams>();
 
-  /* const onSwapTxUpdate = (txState: utils.TxStatusUpdate): void => {
-    const updateTypes = [UpdateDataType.ACCOUNT_NATIVE_BALANCE, UpdateDataType.ACCOUNT_TOKENS];
-    const updateActions: UpdateAction[] = createUpdateActions(updateTypes, txState.addresses);
-    onTxUpdateResetSigners(txState, updateActions);
-  }; */
+  const [token1, token2, state] = useTokensFinder({
+    address1,
+    address2,
+    tokens,
+    signer,
+  });
 
-  return selectedAccount && network ? (
+  if (state !== 'Success') {
+    return <div>Loading...</div>;
+  }
+
+  return (
     <SwapComponent
-      tokens={tokensCombined || []}
-      account={selectedAccount}
+      buyToken={token2}
+      sellToken={token1}
+      tokens={tokens || []}
+      account={signer}
       network={{ ...network }}
     />
-  ) : (<div />);
+  );
 };
 
 export default Swap;

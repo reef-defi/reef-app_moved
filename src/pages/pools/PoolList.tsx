@@ -3,7 +3,7 @@ import React, { useMemo, useState } from 'react';
 import { Components } from '@reef-defi/react-lib';
 import { useHistory } from 'react-router-dom';
 import { useQuery, gql } from '@apollo/client';
-import { ADD_LIQUIDITY_URL, POOL_CHART_URL } from '../../urls';
+import { ADD_LIQUIDITY_URL, DEFAULT_ADD_LIQUIDITY_URL, POOL_CHART_URL } from '../../urls';
 import {
   formatAmount, toDecimal, toHumanAmount, toTimestamp,
 } from '../../utils/utils';
@@ -131,7 +131,7 @@ const PoolList = (): JSX.Element => {
     ? Math.ceil(poolAggregationData.verified_pool_aggregate.aggregate.count / 10)
     : 1;
 
-  const openAddLiquidity = (): void => history.push(ADD_LIQUIDITY_URL);
+  const openAddLiquidity = (): void => history.push(DEFAULT_ADD_LIQUIDITY_URL);
   const openPool = (address: string) => (): void => history.push(POOL_CHART_URL.replace(':address', address));
 
   const nextPage = (): void => setPageIndex(Math.min(maxPage - 1, pageIndex + 1));
