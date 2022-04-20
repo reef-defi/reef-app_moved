@@ -1,11 +1,9 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const {ProvidePlugin} = require('webpack');
-// const nodeExternals = require('webpack-node-externals');
 
 module.exports = {
   mode: 'development',
-  // target: 'node',
   entry: path.join(__dirname, "src", "index.tsx"),
 
   output: {
@@ -53,7 +51,7 @@ module.exports = {
       },
     ]
   },
-  // externals: [nodeExternals()],
+
   resolve: {
     extensions: ['.ts', '.tsx', '.js'],
     fallback: {
@@ -63,11 +61,12 @@ module.exports = {
   },
   
   devServer: {
-    port: 3000,
-    hot: true,
-    historyApiFallback: {
-      index: 'index.html'
+    static: {
+      directory: path.join(__dirname, 'public'),
     },
+    hot: true,
+    port: 3000,
+    historyApiFallback: true
   },
 
   plugins: [
