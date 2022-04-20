@@ -116,7 +116,7 @@ function formatSecondsToDate(seconds: number): string {
 function formatTimeLeftObj(obj: Duration): string {
   const str = Object.keys(obj)
     .map((key: string) => {
-      if (key !== 'seconds' && obj[key as keyof Duration] > 0) {
+      if (key !== 'seconds' && obj[key as keyof Duration]! > 0) {
         return `${obj[key as keyof Duration]} ${key}`;
       }
       return '';
@@ -221,7 +221,7 @@ export function balanceToNumber(amount: BN | ToBN = BN_ZERO, divisor: BN): numbe
 
   if (isBn(amount)) {
     value = amount;
-  } else if (isFunction) {
+  } else if (isFunction(amount)) {
     value = amount.toBn();
   }
 
@@ -377,7 +377,7 @@ export const BondsComponent = ({
     const setVars = async (): Promise<void> => {
       setLoadingValues(true);
       const newBondTimes = await calcuateBondTimes(updatedContract);
-      await updateBondStakingClosedText(contract, newBondTimes);
+      await updateBondStakingClosedText(updatedContract, newBondTimes);
       await updateEarnedAmt(updatedContract);
       await updateLockedAmt(updatedContract);
       setBondTimes(newBondTimes);

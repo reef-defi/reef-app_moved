@@ -1,6 +1,8 @@
 import React from 'react';
 import { scaleTime } from 'd3-scale';
+// @ts-ignore
 import { ChartCanvas } from 'react-stockcharts';
+// @ts-ignore
 import { fitWidth } from 'react-stockcharts/lib/helper';
 import { CHART_HEIGHT, CHART_MARGIN, DefaultChartType } from './types';
 import './Chart.css';
@@ -17,8 +19,8 @@ const DefaultChart: React.FC<DefaultChartType> = ({
     pointsPerPxThreshold={1}
     seriesName="MSFT"
     data={data}
-    displayXAccessor={(d) => d.date}
-    xAccessor={(d) => d.date}
+    displayXAccessor={(d: any) => d.date}
+    xAccessor={(d: any) => d.date}
     xScale={scaleTime()}
     xExtents={[fromDate, toDate]}
     mouseMoveEvent

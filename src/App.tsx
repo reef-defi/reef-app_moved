@@ -19,7 +19,7 @@ const App = (): JSX.Element => {
   );
 
   const currentSigner: ReefSigner|undefined = hooks.useObservableState(appState.selectedSigner$);
-  const apollo: ApolloClient<any> = hooks.useObservableState(graphql.apolloClientInstance$);
+  const apollo: ApolloClient<any>|undefined = hooks.useObservableState(graphql.apolloClientInstance$);
   hooks.useBindEvmAddressAlert(currentSigner, provider);
 
   return (
