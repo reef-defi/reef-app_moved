@@ -64,14 +64,15 @@ module.exports = {
   
   devServer: {
     port: 3000,
+    hot: true,
     historyApiFallback: {
       index: 'index.html'
-    }
+    },
   },
 
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, "public", "index.html"),
+      template: path.join(__dirname, "public", "index-template.html"),
       favicon: path.join(__dirname, "public", "favicon.ico")
     }),
     new ProvidePlugin({
