@@ -13,7 +13,7 @@ import { XAxis, YAxis } from 'react-stockcharts/lib/axes';
 import { SingleValueTooltip } from 'react-stockcharts/lib/tooltip';
 import './Chart.css';
 // @ts-ignore
-import { ScatterSeries, SquareMarker, LineSeries, } from 'react-stockcharts/lib/series';
+import { ScatterSeries, SquareMarker, LineSeries } from 'react-stockcharts/lib/series';
 import { AddressVar } from '../poolTypes';
 import {
   dropDuplicatesMultiKey, formatAmount, std, toTimestamp,

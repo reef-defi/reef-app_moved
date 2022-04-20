@@ -40,7 +40,6 @@ export const Skeleton = (): JSX.Element => (
   </div>
 );
 
-
 export const getReefBondContract = (bond: IBond, signer: Signer): Contract => new Contract(bond.bondContractAddress, BondData.abi, signer);
 
 const {

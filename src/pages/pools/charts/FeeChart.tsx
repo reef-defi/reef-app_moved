@@ -8,7 +8,7 @@ import { Chart } from 'react-stockcharts';
 // @ts-ignore
 import { MouseCoordinateX, CrossHairCursor, CurrentCoordinate } from 'react-stockcharts/lib/coordinates';
 // @ts-ignore
-import { GroupedBarSeries, } from 'react-stockcharts/lib/series';
+import { GroupedBarSeries } from 'react-stockcharts/lib/series';
 
 // @ts-ignore
 import { scaleOrdinal, schemeCategory10, scalePoint } from 'd3-scale';

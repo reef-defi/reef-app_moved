@@ -17,8 +17,6 @@ import { set } from 'd3-collection';
 import { XAxis, YAxis } from 'react-stockcharts/lib/axes';
 // @ts-ignore
 import { SingleValueTooltip } from 'react-stockcharts/lib/tooltip';
-// @ts-ignore
-import { SingleValueTooltip } from 'react-stockcharts/lib/tooltip';
 import { BasicVar } from '../poolTypes';
 import {
   dropDuplicatesMultiKey, formatAmount, std,
