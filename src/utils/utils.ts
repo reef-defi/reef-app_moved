@@ -17,7 +17,7 @@ export const getIconUrl = (tokenAddress: string): string => {
     return reefToken.iconUrl;
   }
   const lastNr = utils.getHashSumLastNr(tokenAddress);
-  return `img/token-icons/token-icon-${lastNr}.png`;
+  return `/img/token-icons/token-icon-${lastNr}.png`;
 };
 export const shortAddress = (address: string): string => (address.length > 10
   ? `${address.slice(0, 5)}...${address.slice(address.length - 5, address.length)}`
