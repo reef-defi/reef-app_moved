@@ -11,6 +11,7 @@
 # production
 /public/*.js
 /public/*.cjs
+/public/index.html
 
 # misc
 .DS_Store
