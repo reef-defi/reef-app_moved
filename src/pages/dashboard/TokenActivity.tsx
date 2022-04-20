@@ -42,6 +42,7 @@ export const TokenActivity = ({ address }: TokenActivity): JSX.Element => {
         <div>
             {transfers.map((t, index) => (
               <TokenActivityItem
+                // eslint-disable-next-line
                 key={index}
                 timestamp={t.timestamp}
                 token={t.token}

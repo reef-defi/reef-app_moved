@@ -13,27 +13,26 @@ interface Tabs {
   onChange: (key: string) => void;
 }
 
-const Tabs: React.FC<Tabs> = ({ tabs, selected, onChange }): JSX.Element => {
-  return (
-    <div className="tabs">
+const Tabs: React.FC<Tabs> = ({ tabs, selected, onChange }): JSX.Element => (
+  <div className="tabs">
     {
-        tabs.map(tab => (
+        tabs.map((tab) => (
           <button
+            type="button"
             key={tab.key}
             className={`
               tabs__tab
               ${selected === tab.key ? 'tabs__tab--selected' : ''}
               ${tab.notification ? 'tabs__tab--notification' : ''}
             `}
-            onClick={() => { onChange(tab.key) }}
+            onClick={() => { onChange(tab.key); }}
           >
-            { tab.notification ? <div className='tabs__tab-notification'>{ tab.notification }</div> : ""}
+            { tab.notification ? <div className="tabs__tab-notification">{ tab.notification }</div> : ''}
             <span>{tab.title}</span>
           </button>
         ))
       }
   </div>
-  );
-};
+);
 
 export default Tabs;

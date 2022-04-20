@@ -3,8 +3,8 @@ import React from 'react';
 import {
   appState, Components, hooks, Network, ReefSigner, Token,
 } from '@reef-defi/react-lib';
-import { useTokensFinder } from '../../hooks/useTokensFinder';
 import { useParams } from 'react-router-dom';
+import { useTokensFinder } from '../../hooks/useTokensFinder';
 import { UrlAddressParams } from '../../urls';
 
 const { SwapComponent } = Components;
@@ -14,7 +14,7 @@ const Swap = (): JSX.Element => {
   const signer: ReefSigner|undefined = hooks.useObservableState(appState.selectedSigner$);
   const tokens: Token[]|undefined = hooks.useObservableState(appState.allAvailableSignerTokens$);
 
-  const { address1, address2} = useParams<UrlAddressParams>();
+  const { address1, address2 } = useParams<UrlAddressParams>();
 
   const [token1, token2, state] = useTokensFinder({
     address1,

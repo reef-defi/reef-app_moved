@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Components,
   Token,
@@ -6,10 +6,10 @@ import {
   hooks,
   Network,
   ReefSigner,
-} from "@reef-defi/react-lib";
-import { Redirect, useHistory, useParams } from "react-router-dom";
-import { POOLS_URL } from "../../urls";
-import { useTokensFinder } from "../../hooks/useTokensFinder";
+} from '@reef-defi/react-lib';
+import { Redirect, useHistory, useParams } from 'react-router-dom';
+import { POOLS_URL } from '../../urls';
+import { useTokensFinder } from '../../hooks/useTokensFinder';
 
 const { RemoveLiquidityComponent } = Components;
 
@@ -22,13 +22,13 @@ const RemoveLiquidity = (): JSX.Element => {
   const history = useHistory();
   const { address1, address2 } = useParams<UrlParams>();
   const tokens: Token[] | undefined = hooks.useObservableState(
-    appState.allAvailableSignerTokens$
+    appState.allAvailableSignerTokens$,
   );
   const network: Network | undefined = hooks.useObservableState(
-    appState.selectedNetworkSubj
+    appState.selectedNetworkSubj,
   );
   const signer: ReefSigner | undefined = hooks.useObservableState(
-    appState.selectedSigner$
+    appState.selectedSigner$,
   );
 
   const [token1, token2, state] = useTokensFinder({
@@ -41,11 +41,11 @@ const RemoveLiquidity = (): JSX.Element => {
 
   // Redirecting to pools page if any of tokens is empty on success
   if (state === 'Success' && (token1.isEmpty || token2.isEmpty)) {
-    return <Redirect to={POOLS_URL} />
+    return <Redirect to={POOLS_URL} />;
   }
 
   if (state !== 'Success') {
-    return <div>Loading...</div>
+    return <div>Loading...</div>;
   }
 
   return (
@@ -56,7 +56,7 @@ const RemoveLiquidity = (): JSX.Element => {
       network={network}
       back={back}
     />
-  )
+  );
 };
 
 export default RemoveLiquidity;

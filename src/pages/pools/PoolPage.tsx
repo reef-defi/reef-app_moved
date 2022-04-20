@@ -144,12 +144,12 @@ const PoolPage = (): JSX.Element => {
   const openTrade = (): void => history.push(
     SPECIFIED_SWAP_URL
       .replace(':address1', tokenAddress1)
-      .replace(':address2', tokenAddress2)
+      .replace(':address2', tokenAddress2),
   );
   const openAddLiquidity = (): void => history.push(
     ADD_LIQUIDITY_URL
       .replace(':address1', tokenAddress1)
-      .replace(':address2', tokenAddress2)
+      .replace(':address2', tokenAddress2),
   );
   const openRemoveLiquidity = (): void => {
     if (!loadingPool && poolData) {

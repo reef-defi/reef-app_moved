@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 import {
   Components,
@@ -7,9 +7,9 @@ import {
   Token,
   Network,
   ReefSigner,
-} from "@reef-defi/react-lib";
-import { useHistory, useParams } from "react-router-dom";
-import { useTokensFinder } from "./../../hooks/useTokensFinder";
+} from '@reef-defi/react-lib';
+import { useHistory, useParams } from 'react-router-dom';
+import { useTokensFinder } from '../../hooks/useTokensFinder';
 
 interface UrlParams {
   address1: string;
@@ -21,13 +21,13 @@ const AddLiqudity = (): JSX.Element => {
   const { address1, address2 } = useParams<UrlParams>();
 
   const signer: ReefSigner | undefined = hooks.useObservableState(
-    appState.selectedSigner$
+    appState.selectedSigner$,
   );
   const tokensCombined: Token[] | undefined = hooks.useObservableState(
-    appState.allAvailableSignerTokens$
+    appState.allAvailableSignerTokens$,
   );
   const network: Network | undefined = hooks.useObservableState(
-    appState.selectedNetworkSubj
+    appState.selectedNetworkSubj,
   );
 
   const [token1, token2, state] = useTokensFinder({
@@ -39,7 +39,7 @@ const AddLiqudity = (): JSX.Element => {
 
   const back = (): void => history.goBack();
 
-  return signer && network && state === "Success" ? (
+  return signer && network && state === 'Success' ? (
     <Components.AddLiquidity
       tokens={tokensCombined || []}
       signer={signer}

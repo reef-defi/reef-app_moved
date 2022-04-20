@@ -35,7 +35,7 @@ const ContentRouter = (): JSX.Element => (
       {/* Partial path doesn't detect /add-liquidity/ url */}
       <Route path={ADD_LIQUIDITY_URL} component={AddLiqudity} />
       <Route exact path={DEFAULT_ADD_LIQUIDITY_URL} component={AddLiqudity} />
-      
+
       <Route exact path={ADD_LIQUIDITY_URL} component={AddLiqudity} />
       <Route path={POOL_CHART_URL} component={PoolPage} />
       <Route path={REMOVE_LIQUIDITY_URL} component={RemoveLiquidity} />
