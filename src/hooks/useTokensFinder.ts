@@ -8,7 +8,7 @@ type State = 'Init' | 'Loading' | 'Success';
 interface UseTokensFinder {
   address1?: string;
   address2?: string;
-  signer: ReefSigner;
+  signer?: ReefSigner;
   tokens?: Token[]
 }
 
@@ -55,7 +55,7 @@ export const useTokensFinder = ({
 
   useEffect(() => {
     const reset = async (): Promise<void> => {
-      if (!tokens || state !== 'Init') {
+      if (!tokens || !signer || state !== 'Init') {
         return;
       }
 

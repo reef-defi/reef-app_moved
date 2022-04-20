@@ -44,7 +44,7 @@ const RemoveLiquidity = (): JSX.Element => {
     return <Redirect to={POOLS_URL} />;
   }
 
-  if (state !== 'Success') {
+  if (state !== 'Success' || !network) {
     return <div>Loading...</div>;
   }
 

@@ -23,7 +23,7 @@ const Swap = (): JSX.Element => {
     signer,
   });
 
-  if (state !== 'Success') {
+  if (state !== 'Success' || !network || !signer) {
     return <div>Loading...</div>;
   }
 
