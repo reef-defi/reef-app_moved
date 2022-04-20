@@ -9,6 +9,8 @@ import NoExtension from './pages/error/NoExtension';
 import NoAccount from './pages/error/NoAccount';
 // import {innitialNetwork} from './environment';
 import { innitialNetwork } from './environment';
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = (): JSX.Element => {
   const { provider, loading, error } = hooks.useInitReefState(
@@ -32,12 +34,23 @@ const App = (): JSX.Element => {
           {!loading && !error && (
           <>
             <Nav display={!loading && !error} />
-            <ContentRouter />
-          </>
+            <ContentRouter />            
+            </>
           )}
 
           {error?.code === 1 && <NoExtension />}
           {error?.code === 2 && <NoAccount />}
+          <ToastContainer
+            draggable
+            newestOnTop
+            closeOnClick
+            hideProgressBar
+            position={toast.POSITION.BOTTOM_LEFT}
+            autoClose={5000}
+            rtl={false}
+            pauseOnFocusLoss={false}
+            pauseOnHover={false} />
+
         </div>
       </div>
     </ApolloProvider>
