@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const {ProvidePlugin} = require('webpack');
+const webpack = require('webpack');
+require('process');
 
 module.exports = {
   mode: 'development',
@@ -53,11 +54,11 @@ module.exports = {
   },
 
   resolve: {
-    extensions: ['.ts', '.tsx', '.js'],
+    extensions: ['.ts', '.tsx', '.js', '.cjs'],
     fallback: {
       'crypto': require.resolve('crypto-browserify'),
       'stream': require.resolve('stream-browserify'),
-    }
+    },
   },
   
   devServer: {
@@ -74,7 +75,7 @@ module.exports = {
       template: path.join(__dirname, "public", "index-template.html"),
       favicon: path.join(__dirname, "public", "favicon.ico")
     }),
-    new ProvidePlugin({
+    new webpack.ProvidePlugin({
       process: 'process/browser'
     })
   ],
