@@ -4,9 +4,6 @@ import { toast } from "react-toastify";
 
 const reefToken = reefTokenWithAmount();
 
-export const REEF_ADDRESS = '0x0000000000000000000000000000000001000000';
-export const EMPTY_ADDRESS = '0x';
-
 // eslint-disable-next-line
 export const notify = (message: string, type: Notify='success'): void => {
   toast[type](message);

@@ -1,4 +1,4 @@
-import { EMPTY_ADDRESS, REEF_ADDRESS } from "../utils/utils";
+import { utils } from "@reef-defi/react-lib";
 
 export interface UrlAddressParams {
   address1: string;
@@ -22,5 +22,5 @@ export const addressReplacer = (url: string, address1: string, address2: string)
   .replace(':address2', address2)
 
 
-export const defaultSwapUrl = addressReplacer(SPECIFIED_SWAP_URL, REEF_ADDRESS, EMPTY_ADDRESS)
-export const defaultAddliquidityUrl = addressReplacer(ADD_LIQUIDITY_URL, REEF_ADDRESS, EMPTY_ADDRESS);
+export const defaultSwapUrl = addressReplacer(SPECIFIED_SWAP_URL, utils.REEF_ADDRESS, utils.EMPTY_ADDRESS)
+export const defaultAddliquidityUrl = addressReplacer(ADD_LIQUIDITY_URL, utils.REEF_ADDRESS, utils.EMPTY_ADDRESS);
