@@ -9,8 +9,6 @@ import {
   TRANSFER_TOKEN,
   BONDS_URL,
   POOL_CHART_URL,
-  DEFAULT_ADD_LIQUIDITY_URL,
-  DEFAULT_SWAP_URL,
   SPECIFIED_SWAP_URL,
 } from '../urls';
 import AddLiqudity from './pools/AddLiquidity';
@@ -26,7 +24,6 @@ import PoolPage from './pools/PoolPage';
 const ContentRouter = (): JSX.Element => (
   <div className="content">
     <Switch>
-      <Route exact path={DEFAULT_SWAP_URL} component={Swap} />
       <Route path={SPECIFIED_SWAP_URL} component={Swap} />
 
       <Route exact path={POOLS_URL} component={Pools} />
@@ -34,7 +31,6 @@ const ContentRouter = (): JSX.Element => (
 
       {/* Partial path doesn't detect /add-liquidity/ url */}
       <Route path={ADD_LIQUIDITY_URL} component={AddLiqudity} />
-      <Route exact path={DEFAULT_ADD_LIQUIDITY_URL} component={AddLiqudity} />
 
       <Route exact path={ADD_LIQUIDITY_URL} component={AddLiqudity} />
       <Route path={POOL_CHART_URL} component={PoolPage} />

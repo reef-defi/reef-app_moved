@@ -1,9 +1,17 @@
 import { Notify, reefTokenWithAmount, utils } from '@reef-defi/react-lib';
 import { utils as ethUtils, BigNumber } from 'ethers';
+import { toast } from "react-toastify";
 
 const reefToken = reefTokenWithAmount();
+
+export const REEF_ADDRESS = '0x0000000000000000000000000000000001000000';
+export const EMPTY_ADDRESS = '0x';
+
 // eslint-disable-next-line
-export const notify = (message: string, type: Notify): void => {};
+export const notify = (message: string, type: Notify='success'): void => {
+  toast[type](message);
+}
+
 export const toCurrencyFormat = (value: number, options?: any): string => Intl.NumberFormat(navigator.language, {
   style: 'currency', currency: 'USD', currencyDisplay: 'symbol', ...options,
 }).format(value);
