@@ -34,7 +34,8 @@ export const Nfts = ({tokens}: Nfts): JSX.Element => {
                             style={{ backgroundImage: `url(${t.iconUrl})` }}
                         />
                         <div className="nfts__item-info">
-                            <div className="nfts__item-name">{t.name} <small> ({t.balance})</small></div>
+                            <div className="nfts__item-name">{t.name}</div>
+                            <div className='nfts__item-balance'>{t.balance}</div>
                         </div>
                     </div>
                 ))}
@@ -45,17 +46,6 @@ export const Nfts = ({tokens}: Nfts): JSX.Element => {
             <Skeleton/>
             <Skeleton/>
         </> }
-
-
-
-
-
-
-
-        {/* <Skeleton />
-        <Skeleton />
-        <Skeleton /> */}
-
       </div>
     </div>
 
