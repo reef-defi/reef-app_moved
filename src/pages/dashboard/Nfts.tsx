@@ -2,6 +2,7 @@ import React from 'react';
 import { Components, TokenWithAmount, utils } from '@reef-defi/react-lib';
 import { TokenPill } from './TokenPill';
 import './Nfts.css';
+import {TokenActivityItem, TokenActivityType} from "./TokenActivityItem";
 
 const { isDataSet, DataProgress } = utils;
 
@@ -14,20 +15,41 @@ export const Skeleton = (): JSX.Element => (
   </div>
 );
 
-export const Nfts = (): JSX.Element => (
-  <div className="nfts">
-    <div className="col-12">
-      <div className="nfts__container">
+interface Nfts {
+    tokens: any;
+}
 
-        {/* <div className="nfts__item">
-          <div
-            className="nfts__item-image"
-            style={{ backgroundImage: `url(${placeholderImage})` }}
-          />
-          <div className="nfts__item-info">
-            <div className="nfts__item-name">NFT Title</div>
-          </div>
-        </div> */}
+export const Nfts = ({tokens}: Nfts): JSX.Element => {
+    return (
+    <div className="nfts">
+    <div className="col-12">
+        {!!tokens && !tokens.length && <div>No NFTs in your wallet.</div>}
+
+        {!!tokens && !!tokens.length && (
+            <div className="nfts__container">
+                {tokens.map((t, i) => (
+                    <div className="nfts__item" key={i}>
+                        <div
+                            className="nfts__item-image"
+                            style={{ backgroundImage: `url(${t.iconUrl})` }}
+                        />
+                        <div className="nfts__item-info">
+                            <div className="nfts__item-name">{t.name} <small> ({t.balance})</small></div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        )}
+        {!tokens && <>
+            <Skeleton/>
+            <Skeleton/>
+            <Skeleton/>
+        </> }
+
+
+
+
+
 
 
         {/* <Skeleton />
@@ -37,8 +59,4 @@ export const Nfts = (): JSX.Element => (
       </div>
     </div>
 
-    <div>No NFTs in your wallet.</div>
-
-  </div>
-
-);
+)};
