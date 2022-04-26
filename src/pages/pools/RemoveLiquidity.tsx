@@ -10,6 +10,7 @@ import {
 import { Redirect, useHistory, useParams } from 'react-router-dom';
 import { POOLS_URL } from '../../urls';
 import { useTokensFinder } from '../../hooks/useTokensFinder';
+import { notify } from '../../utils/utils';
 
 const { RemoveLiquidityComponent } = Components;
 
@@ -45,7 +46,7 @@ const RemoveLiquidity = (): JSX.Element => {
   }
 
   if (state !== 'Success' || !network) {
-    return <div>Loading...</div>;
+    return <div />;
   }
 
   return (
@@ -54,7 +55,7 @@ const RemoveLiquidity = (): JSX.Element => {
       token2={token2}
       signer={signer}
       network={network}
-      back={back}
+      options={{back, notify}}
     />
   );
 };
