@@ -25,7 +25,7 @@ export const Skeleton = (): JSX.Element => (
   </div>
 );
 export const TokenActivity = ({ address }: TokenActivity): JSX.Element => {
-  const transfers: any[]|undefined = hooks.useObservableState(appState.transferHistory$);
+  const transfers = hooks.useObservableState(appState.transferHistory$);
 
   return (
     <div className="token-activity">
@@ -40,7 +40,7 @@ export const TokenActivity = ({ address }: TokenActivity): JSX.Element => {
         {/* {!!transfers && !transfers.length && <div>Account has no activity.</div>} */}
         {!!transfers && !!transfers.length && (
         <div>
-            {transfers.map((t, index) => (
+            {transfers.slice(0, 10).map((t, index) => (
               <TokenActivityItem
                 // eslint-disable-next-line
                 key={index}

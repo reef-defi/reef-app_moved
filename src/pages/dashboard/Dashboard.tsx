@@ -18,7 +18,7 @@ const {
 
 const Dashboard = (): JSX.Element => {
   const signerTokenBalances: TokenWithAmount[]|undefined = hooks.useObservableState(appState.tokenPrices$);
-  const signerNfts: Token|undefined = hooks.useObservableState(appState.selectedSignerNFTs$);
+  const signerNfts = hooks.useObservableState(appState.selectedSignerNFTs$);
   const selectedSigner: ReefSigner|undefined = hooks.useObservableState(appState.selectedSigner$);
 
   const totalBalance: reefUtils.DataWithProgress<number> = isDataSet(signerTokenBalances) && signerTokenBalances?.length ? (signerTokenBalances).reduce((state: reefUtils.DataWithProgress<number>, curr) => {
