@@ -1,4 +1,4 @@
-import { utils } from "@reef-defi/react-lib";
+import { utils } from '@reef-defi/react-lib';
 
 export interface UrlAddressParams {
   address1: string;
@@ -16,11 +16,9 @@ export const TRANSFER_TOKEN = '/send';
 export const CREATE_ERC20_TOKEN_URL = '/create-token';
 export const BONDS_URL = '/bonds';
 
-
-export const addressReplacer = (url: string, address1: string, address2: string) => url
+export const addressReplacer = (url: string, address1: string, address2: string): string => url
   .replace(':address1', address1)
-  .replace(':address2', address2)
+  .replace(':address2', address2);
 
-
-export const defaultSwapUrl = addressReplacer(SPECIFIED_SWAP_URL, utils.REEF_ADDRESS, utils.EMPTY_ADDRESS)
+export const defaultSwapUrl = addressReplacer(SPECIFIED_SWAP_URL, utils.REEF_ADDRESS, utils.EMPTY_ADDRESS);
 export const defaultAddliquidityUrl = addressReplacer(ADD_LIQUIDITY_URL, utils.REEF_ADDRESS, utils.EMPTY_ADDRESS);

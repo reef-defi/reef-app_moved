@@ -55,7 +55,7 @@ const RemoveLiquidity = (): JSX.Element => {
       token2={token2}
       signer={signer}
       network={network}
-      options={{back, notify}}
+      options={{ back, notify }}
     />
   );
 };

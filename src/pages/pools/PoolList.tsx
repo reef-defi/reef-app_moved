@@ -4,7 +4,7 @@ import { Components } from '@reef-defi/react-lib';
 import { useHistory } from 'react-router-dom';
 import { useQuery, gql } from '@apollo/client';
 import { defaultAddliquidityUrl, POOL_CHART_URL } from '../../urls';
-import {  formatAmount } from '../../utils/utils';
+import { formatAmount } from '../../utils/utils';
 
 const { BoldText } = Components.Text;
 const { Loading } = Components.Loading;

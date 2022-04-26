@@ -1,5 +1,9 @@
 import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
+import { ApolloClient } from '@apollo/client';
+import {
+  ReefSigner, graphql, hooks, appState,
+} from '@reef-defi/react-lib';
 import {
   ADD_LIQUIDITY_URL,
   CREATE_ERC20_TOKEN_URL,
@@ -20,18 +24,15 @@ import { Transfer } from './transfer/Transfer';
 import { Creator } from './creator/Creator';
 import { Bonds } from './bonds/Bonds';
 import PoolPage from './pools/PoolPage';
-import { ApolloClient } from '@apollo/client';
-import { ReefSigner, graphql, hooks, appState } from '@reef-defi/react-lib';
 import TokenContext from '../context/TokenContext';
 
 const ContentRouter = (): JSX.Element => {
-  
   const currentSigner: ReefSigner|undefined = hooks.useObservableState(appState.selectedSigner$);
   const apollo: ApolloClient<any>|undefined = hooks.useObservableState(graphql.apolloClientInstance$);
   // Its not appropriet to have token state in this component, but the problem was apollo client.
   // Once its decared properlly in App move TokenContext in the parent component (App.tsx)
   const tokens = hooks.useAllTokens(currentSigner?.address, apollo);
-  
+
   return (
     <div className="content">
       <TokenContext.Provider value={tokens}>
@@ -51,6 +52,6 @@ const ContentRouter = (): JSX.Element => {
       </TokenContext.Provider>
     </div>
   );
-}
+};
 
 export default ContentRouter;

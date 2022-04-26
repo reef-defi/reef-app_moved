@@ -26,14 +26,14 @@ const Swap = (): JSX.Element => {
     signer,
   });
 
-  const onTokenSelect = (address: string, token: TokenSelector='token1') => history.push(
+  const onTokenSelect = (address: string, token: TokenSelector = 'token1'): void => history.push(
     token === 'token1'
       ? addressReplacer(SPECIFIED_SWAP_URL, address, address2)
-      : addressReplacer(SPECIFIED_SWAP_URL, address1, address)
+      : addressReplacer(SPECIFIED_SWAP_URL, address1, address),
   );
 
   if (state !== 'Success' || !network || !signer) {
-    return <div/>;
+    return <div />;
   }
 
   return (
@@ -46,7 +46,7 @@ const Swap = (): JSX.Element => {
       options={{
         notify,
         onTokenSelect,
-      }}      
+      }}
     />
   );
 };

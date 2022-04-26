@@ -10,7 +10,7 @@ import {
 } from '@reef-defi/react-lib';
 import { useHistory, useParams } from 'react-router-dom';
 import { useTokensFinder } from '../../hooks/useTokensFinder';
-import {notify} from "../../utils/utils";
+import { notify } from '../../utils/utils';
 import { addressReplacer, ADD_LIQUIDITY_URL } from '../../urls';
 import TokenContext from '../../context/TokenContext';
 
@@ -37,10 +37,10 @@ const AddLiqudity = (): JSX.Element => {
     tokens,
   });
 
-  const onTokenSelect = (address: string, token: TokenSelector='token1') => history.push(
+  const onTokenSelect = (address: string, token: TokenSelector = 'token1'): void => history.push(
     token === 'token1'
       ? addressReplacer(ADD_LIQUIDITY_URL, address, address2)
-      : addressReplacer(ADD_LIQUIDITY_URL, address1, address)
+      : addressReplacer(ADD_LIQUIDITY_URL, address1, address),
   );
 
   return signer && network && state === 'Success' ? (
