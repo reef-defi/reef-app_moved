@@ -1,15 +1,18 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
 import {
   Components,
   hooks,
   appState,
-  Token,
   Network,
   ReefSigner,
+  TokenSelector,
 } from '@reef-defi/react-lib';
 import { useHistory, useParams } from 'react-router-dom';
 import { useTokensFinder } from '../../hooks/useTokensFinder';
+import { notify } from '../../utils/utils';
+import { addressReplacer, ADD_LIQUIDITY_URL } from '../../urls';
+import TokenContext from '../../context/TokenContext';
 
 interface UrlParams {
   address1: string;
@@ -17,14 +20,11 @@ interface UrlParams {
 }
 
 const AddLiqudity = (): JSX.Element => {
-  const history = useHistory();
   const { address1, address2 } = useParams<UrlParams>();
-
+  const history = useHistory();
+  const tokens = useContext(TokenContext);
   const signer: ReefSigner | undefined = hooks.useObservableState(
     appState.selectedSigner$,
-  );
-  const tokensCombined: Token[] | undefined = hooks.useObservableState(
-    appState.allAvailableSignerTokens$,
   );
   const network: Network | undefined = hooks.useObservableState(
     appState.selectedNetworkSubj,
@@ -34,20 +34,27 @@ const AddLiqudity = (): JSX.Element => {
     address1,
     address2,
     signer,
-    tokens: tokensCombined,
+    tokens,
   });
 
-  const back = (): void => history.goBack();
+  const onTokenSelect = (address: string, token: TokenSelector = 'token1'): void => history.push(
+    token === 'token1'
+      ? addressReplacer(ADD_LIQUIDITY_URL, address, address2)
+      : addressReplacer(ADD_LIQUIDITY_URL, address1, address),
+  );
 
   return signer && network && state === 'Success' ? (
     <Components.AddLiquidity
-      tokens={tokensCombined || []}
+      tokens={tokens}
       signer={signer}
       network={network}
       tokenValue1={token1}
       tokenValue2={token2}
-      back={back}
-      // onTxUpdate={onAddLiqUpdate}
+      options={{
+        back: history.goBack,
+        notify,
+        onTokenSelect,
+      }}
     />
   ) : (
     <div />

@@ -15,7 +15,7 @@ interface UseTokensFinder {
 type UseTokensFinderOutput = [TokenWithAmount, TokenWithAmount, State];
 
 interface FindToken {
-  tokens?: Token[];
+  tokens: Token[];
   address?: string;
   signer?: ReefSigner;
   defaultAmountValue: TokenWithAmount;
