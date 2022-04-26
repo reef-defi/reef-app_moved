@@ -25,6 +25,39 @@
   height: 200px;
   background-position: center;
   background-size: cover;
+  background-color: var(--border-color);
+}
+
+.nfts__item-image--loading {
+  position: relative;
+}
+
+.nfts__item-image--loading::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 10px;
+  height: 3px;
+  background: var(--gradient);
+  animation: nft-image-loading 3s linear infinite;
+}
+
+@keyframes nft-image-loading {
+  from {
+    left: 0;
+    width: 0;
+  }
+
+  47.5% {
+    left: 0;
+    width: 100%;
+  }
+
+  95%, to {
+    left: 100%;
+    width: 0;
+  }
 }
 
 .nfts__item-info {
