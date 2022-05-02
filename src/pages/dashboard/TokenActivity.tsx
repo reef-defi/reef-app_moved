@@ -1,8 +1,11 @@
 import React from 'react';
-import { appState, createEmptyTokenWithAmount, hooks } from '@reef-defi/react-lib';
+import {
+    appState, createEmptyTokenWithAmount, hooks, Network, TokenTransfer,
+} from '@reef-defi/react-lib';
 import { TokenActivityItem, TokenActivityType } from './TokenActivityItem';
 import { TokenPill } from './TokenPill';
 import './TokenActivity.css';
+import {getExtrinsicUrl} from "../../../../nft-reef-react-lib/src/utils";
 
 interface TokenActivity {
     address: string | undefined;
@@ -25,7 +28,8 @@ export const Skeleton = (): JSX.Element => (
   </div>
 );
 export const TokenActivity = ({ address }: TokenActivity): JSX.Element => {
-  const transfers = hooks.useObservableState(appState.transferHistory$);
+  const transfers: TokenTransfer[]|undefined = hooks.useObservableState(appState.transferHistory$);
+    const network: Network | undefined = hooks.useObservableState(appState.selectedNetworkSubj);
 
   return (
     <div className="token-activity">
@@ -37,7 +41,6 @@ export const TokenActivity = ({ address }: TokenActivity): JSX.Element => {
       </div>
       <div className="col-12 card">
         {!!transfers && !transfers.length && <div className="no-token-activity">No recent activity.</div>}
-        {/* {!!transfers && !transfers.length && <div>Account has no activity.</div>} */}
         {!!transfers && !!transfers.length && (
         <div>
             {transfers.slice(0, 10).map((t, index) => (
@@ -46,6 +49,7 @@ export const TokenActivity = ({ address }: TokenActivity): JSX.Element => {
                 key={index}
                 timestamp={t.timestamp}
                 token={t.token}
+                url={t.url}
                 type={t.inbound ? TokenActivityType.RECEIVE : TokenActivityType.SEND}
               />
             ))}
