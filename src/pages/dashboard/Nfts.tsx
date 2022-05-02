@@ -4,6 +4,8 @@ import { TokenPill } from './TokenPill';
 import './Nfts.css';
 import {TokenActivityItem, TokenActivityType} from "./TokenActivityItem";
 
+import NFT from "./NFT"
+
 const { isDataSet, DataProgress } = utils;
 
 const placeholderImage = 'https://cryptotelegram.com/wp-content/uploads/2021/04/reef-crypto-explained.jpg';
@@ -27,16 +29,8 @@ export const Nfts = ({tokens}: Nfts): JSX.Element => {
 
         {!!tokens && !!tokens.length && (
             <div className="nfts__container">
-                {tokens.map((t, i) => (
-                    <div className="nfts__item" key={i}>
-                        <div
-                            className="nfts__item-image"
-                            style={{ backgroundImage: `url(${t.iconUrl})` }}
-                        />
-                        <div className="nfts__item-info">
-                            <div className="nfts__item-name">{t.name} <small> ({t.balance})</small></div>
-                        </div>
-                    </div>
+                {tokens.map((token, i) => (
+                    <NFT data={token} key={i}/>
                 ))}
             </div>
         )}
@@ -45,17 +39,6 @@ export const Nfts = ({tokens}: Nfts): JSX.Element => {
             <Skeleton/>
             <Skeleton/>
         </> }
-
-
-
-
-
-
-
-        {/* <Skeleton />
-        <Skeleton />
-        <Skeleton /> */}
-
       </div>
     </div>
 
