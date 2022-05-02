@@ -9,6 +9,7 @@ interface TokenActivityItem {
   timestamp: number;
   type: TokenActivityType;
   token: Token;
+  url: string;
 }
 
 export enum TokenActivityType {
@@ -25,9 +26,10 @@ const formatDate = (timestamp: number) => {
 }
 
 export const TokenActivityItem = ({
-  token, timestamp, type,
+  token, timestamp, type, url,
 }: TokenActivityItem): JSX.Element => (
-  <div key={timestamp} className={` activity-item flex-1 ${type === TokenActivityType.RECEIVE ? 'receive-activity' : 'send-activity'} `}>
+  <div key={timestamp} className={` activity-item flex-1 ${type === TokenActivityType.RECEIVE ? 'receive-activity' : 'send-activity'} `}
+  onClick={()=>open(url, '_blank')}>
     <div className="d-flex d-flex-vert-center">
       <div className="activity-item_type-icon-w d-flex d-flex-vert-center">
         <div className="activity-item_type-icon receive m-auto">

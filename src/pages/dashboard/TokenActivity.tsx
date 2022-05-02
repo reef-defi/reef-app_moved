@@ -1,10 +1,11 @@
 import React from 'react';
 import {
-    appState, createEmptyTokenWithAmount, hooks, TokenTransfer,
+    appState, createEmptyTokenWithAmount, hooks, Network, TokenTransfer,
 } from '@reef-defi/react-lib';
 import { TokenActivityItem, TokenActivityType } from './TokenActivityItem';
 import { TokenPill } from './TokenPill';
 import './TokenActivity.css';
+import {getExtrinsicUrl} from "../../../../nft-reef-react-lib/src/utils";
 
 interface TokenActivity {
     address: string | undefined;
@@ -28,6 +29,7 @@ export const Skeleton = (): JSX.Element => (
 );
 export const TokenActivity = ({ address }: TokenActivity): JSX.Element => {
   const transfers: TokenTransfer[]|undefined = hooks.useObservableState(appState.transferHistory$);
+    const network: Network | undefined = hooks.useObservableState(appState.selectedNetworkSubj);
 
   return (
     <div className="token-activity">
@@ -46,6 +48,7 @@ export const TokenActivity = ({ address }: TokenActivity): JSX.Element => {
                 key={t.timestamp}
                 timestamp={t.timestamp}
                 token={t.token}
+                url={t.url}
                 type={t.inbound ? TokenActivityType.RECEIVE : TokenActivityType.SEND}
               />
             ))}
