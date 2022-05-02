@@ -10,6 +10,7 @@ interface TokenActivityItem {
   timestamp: number;
   type: TokenActivityType;
   token: Token;
+  url: string;
 }
 
 export enum TokenActivityType {
@@ -17,10 +18,19 @@ export enum TokenActivityType {
   RECEIVE = 'RECEIVE'
 }
 
+const formatDate = (timestamp: number) => {
+  let date = new Date(timestamp)
+  const offset = date.getTimezoneOffset()
+  date = new Date(date.getTime() - (offset*60*1000))
+  const formatted = date.toISOString().split('T')[0]
+  return formatted.split("-").reverse().join("-")
+}
+
 export const TokenActivityItem = ({
-  token, timestamp, type,
+  token, timestamp, type, url,
 }: TokenActivityItem): JSX.Element => (
-  <div key={timestamp} className={` activity-item flex-1 ${type === TokenActivityType.RECEIVE ? 'receive-activity' : 'send-activity'} `}>
+  <div key={timestamp} className={` activity-item flex-1 ${type === TokenActivityType.RECEIVE ? 'receive-activity' : 'send-activity'} `}
+  onClick={()=>open(url, '_blank')}>
     <div className="d-flex d-flex-vert-center">
       <div className="activity-item_type-icon-w d-flex d-flex-vert-center">
         <div className="activity-item_type-icon receive m-auto">
@@ -63,7 +73,7 @@ export const TokenActivityItem = ({
         <div className=" d-flex d-flex-vert-center">
           <div className="amount-text text-m title-font text-bold text-color-dark-accent mr-1 d-flex">
             <span className="activity-item__amount">
-              {type === TokenActivityType.RECEIVE ? '+' : '-'}
+              {type === TokenActivityType.RECEIVE ? '+ ' : '- '}
               {showBalance(token)}
             </span>
           </div>

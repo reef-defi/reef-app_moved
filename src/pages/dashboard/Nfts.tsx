@@ -2,6 +2,9 @@ import React from 'react';
 import { Components, TokenWithAmount, utils } from '@reef-defi/react-lib';
 import { TokenPill } from './TokenPill';
 import './Nfts.css';
+import {TokenActivityItem, TokenActivityType} from "./TokenActivityItem";
+
+import NFT from "./NFT"
 
 const { isDataSet, DataProgress } = utils;
 
@@ -14,30 +17,29 @@ export const Skeleton = (): JSX.Element => (
   </div>
 );
 
-export const Nfts = (): JSX.Element => (
-  <div className="nfts">
+interface Nfts {
+    tokens: any;
+}
+
+export const Nfts = ({tokens}: Nfts): JSX.Element => {
+    return (
+    <div className="nfts">
     <div className="col-12">
-      <div className="nfts__container">
+        {!!tokens && !tokens.length && <div>No NFTs in your wallet.</div>}
 
-        {/* <div className="nfts__item">
-          <div
-            className="nfts__item-image"
-            style={{ backgroundImage: `url(${placeholderImage})` }}
-          />
-          <div className="nfts__item-info">
-            <div className="nfts__item-name">NFT Title</div>
-          </div>
-        </div> */}
-
-        {/* <Skeleton />
-        <Skeleton />
-        <Skeleton /> */}
-
+        {!!tokens && !!tokens.length && (
+            <div className="nfts__container">
+                {tokens.map((token, i) => (
+                    <NFT data={token} key={i}/>
+                ))}
+            </div>
+        )}
+        {!tokens && <>
+            <Skeleton/>
+            <Skeleton/>
+            <Skeleton/>
+        </> }
       </div>
     </div>
 
-    <div>No NFTs in your wallet.</div>
-
-  </div>
-
-);
+)};

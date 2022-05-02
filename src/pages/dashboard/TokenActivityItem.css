@@ -1,3 +1,6 @@
+.activity-item {
+    cursor: pointer;
+}
 .activity-item_body {
     width: 100%;
     padding: 1em 0;
