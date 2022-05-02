@@ -16,7 +16,7 @@ export enum TokenActivityType {
   RECEIVE = 'RECEIVE'
 }
 
-const formatDate = timestamp => {
+const formatDate = (timestamp: number) => {
   let date = new Date(timestamp)
   const offset = date.getTimezoneOffset()
   date = new Date(date.getTime() - (offset*60*1000))
@@ -70,7 +70,7 @@ export const TokenActivityItem = ({
         <div className=" d-flex d-flex-vert-center">
           <div className="amount-text text-m title-font text-bold text-color-dark-accent mr-1 d-flex">
             <span className="activity-item__amount">
-              {type === TokenActivityType.RECEIVE ? '+' : '-'}
+              {type === TokenActivityType.RECEIVE ? '+ ' : '- '}
               {showBalance(token)}
             </span>
           </div>
