@@ -59,7 +59,6 @@ export const useTokensFinder = ({
         return;
       }
 
-      console.log('loading');
       setState('Loading');
       await findToken({
         signer,
@@ -70,7 +69,6 @@ export const useTokensFinder = ({
         .then(setToken1)
         .catch((e) => console.error(`Token: ${address1} was not found`));
 
-      console.log('loading');
       await findToken({
         signer,
         tokens,
@@ -80,7 +78,6 @@ export const useTokensFinder = ({
         .then(setToken2)
         .catch((e) => console.error(`Token: ${address2} was not found`));
 
-      console.log('end');
       setState('Success');
     };
     reset();

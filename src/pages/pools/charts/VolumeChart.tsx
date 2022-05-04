@@ -87,7 +87,6 @@ const VolumeChart = ({
   const values = volumeData.reduce((acc, { amount_1, amount_2 }) => [...acc, amount_1, amount_2], [] as number[]);
   const adjust = std(values);
 
-  // console.log(values)
   const f = scaleOrdinal(schemeCategory10)
     .domain(set(volumeData.map((d) => d.date)));
 

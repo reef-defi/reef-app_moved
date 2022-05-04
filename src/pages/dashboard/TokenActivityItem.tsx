@@ -18,19 +18,23 @@ export enum TokenActivityType {
   RECEIVE = 'RECEIVE'
 }
 
-const formatDate = (timestamp: number) => {
-  let date = new Date(timestamp)
-  const offset = date.getTimezoneOffset()
-  date = new Date(date.getTime() - (offset*60*1000))
-  const formatted = date.toISOString().split('T')[0]
-  return formatted.split("-").reverse().join("-")
-}
+const formatDateTs = (timestamp: number): string => {
+  let date = new Date(timestamp);
+  const offset = date.getTimezoneOffset();
+  date = new Date(date.getTime() - (offset * 60 * 1000));
+  const formatted = date.toISOString().split('T')[0];
+  return formatted.split('-').reverse().join('-');
+};
 
 export const TokenActivityItem = ({
   token, timestamp, type, url,
 }: TokenActivityItem): JSX.Element => (
-  <div key={timestamp} className={` activity-item flex-1 ${type === TokenActivityType.RECEIVE ? 'receive-activity' : 'send-activity'} `}
-  onClick={()=>open(url, '_blank')}>
+  <div
+    key={timestamp}
+    role="link"
+    className={` activity-item flex-1 ${type === TokenActivityType.RECEIVE ? 'receive-activity' : 'send-activity'} `}
+    onClick={() => window.open(url, '_blank ')}
+  >
     <div className="d-flex d-flex-vert-center">
       <div className="activity-item_type-icon-w d-flex d-flex-vert-center">
         <div className="activity-item_type-icon receive m-auto">
@@ -67,7 +71,7 @@ export const TokenActivityItem = ({
         <div className="token-balance-item_icon-text mr-1">
           <div>
             <div className="title-font text-bold">{type === TokenActivityType.RECEIVE ? 'Received' : 'Sent'}</div>
-            <div className="">{formatDate(timestamp)}</div>
+            <div className="">{formatDateTs(timestamp)}</div>
           </div>
         </div>
         <div className=" d-flex d-flex-vert-center">

@@ -174,7 +174,6 @@ const PoolInfo = ({
     },
   );
 
-  console.log(todayVolume);
   const { data: feesData } = useQuery<FeeSubscrition, BasicVar>(
     POOL_FEES_GQL,
     { variables: { address, fromTime: oneDayAgo } },
