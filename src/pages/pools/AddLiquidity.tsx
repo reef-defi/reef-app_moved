@@ -1,69 +1,64 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 
 import {
-  Components, rpc, TokenWithAmount, hooks, appState, Token, Network, ReefSigner,
+  Components,
+  hooks,
+  appState,
+  Network,
+  ReefSigner,
+  TokenSelector,
 } from '@reef-defi/react-lib';
 import { useHistory, useParams } from 'react-router-dom';
-import { POOLS_URL } from '../../urls';
+import { useTokensFinder } from '../../hooks/useTokensFinder';
+import { notify } from '../../utils/utils';
+import { addressReplacer, ADD_LIQUIDITY_URL } from '../../urls';
+import TokenContext from '../../context/TokenContext';
 
 interface UrlParams {
   address1: string;
   address2: string;
 }
+
 const AddLiqudity = (): JSX.Element => {
-  const history = useHistory();
   const { address1, address2 } = useParams<UrlParams>();
-  const [token1, setToken1] = useState<TokenWithAmount>();
-  const [token2, setToken2] = useState<TokenWithAmount>();
-  const signer: ReefSigner|undefined = hooks.useObservableState(appState.selectedSigner$);
-  const tokensCombined: Token[]|undefined = hooks.useObservableState(appState.allAvailableSignerTokens$);
-  const network: Network|undefined = hooks.useObservableState(appState.selectedNetworkSubj);
+  const history = useHistory();
+  const tokens = useContext(TokenContext);
+  const signer: ReefSigner | undefined = hooks.useObservableState(
+    appState.selectedSigner$,
+  );
+  const network: Network | undefined = hooks.useObservableState(
+    appState.selectedNetworkSubj,
+  );
 
-  useEffect(() => {
-    const reset = async (): Promise<void> => {
-      let tkn1 = tokensCombined?.find((t) => t.address === address1);
-      if (!tkn1 && signer) {
-        tkn1 = (await rpc.loadToken(address1, signer?.signer, '') || undefined);
-      }
-      setToken1(tkn1 ? {
-        ...tkn1,
-        amount: '',
-        price: 0,
-        isEmpty: false,
-      } : undefined);
+  const [token1, token2, state] = useTokensFinder({
+    address1,
+    address2,
+    signer,
+    tokens,
+  });
 
-      let tkn2 = tokensCombined?.find((t) => t.address === address2);
-      if (!tkn2 && signer) {
-        tkn2 = (await rpc.loadToken(address2, signer?.signer, '') || undefined);
-      }
-      setToken2(tkn2 ? {
-        ...tkn2,
-        amount: '',
-        price: 0,
-        isEmpty: false,
-      } : undefined);
-    };
-    reset();
-  }, [address2, address1, tokensCombined]);
+  const onTokenSelect = (address: string, token: TokenSelector = 'token1'): void => history.push(
+    token === 'token1'
+      ? addressReplacer(ADD_LIQUIDITY_URL, address, address2)
+      : addressReplacer(ADD_LIQUIDITY_URL, address1, address),
+  );
 
-  const back = (): void => history.push(POOLS_URL);
-  /* const onAddLiqUpdate = (txState: utils.TxStatusUpdate): void => {
-    const updateTypes = [UpdateDataType.ACCOUNT_NATIVE_BALANCE, UpdateDataType.ACCOUNT_TOKENS];
-    const updateActions: UpdateAction[] = createUpdateActions(updateTypes, txState.addresses);
-    onTxUpdateResetSigners(txState, updateActions);
-  }; */
-
-  return signer && network ? (
-    <Components.AddLiquidityComponent
-      tokens={tokensCombined || []}
+  return signer && network && state === 'Success' ? (
+    <Components.AddLiquidity
+      tokens={tokens}
       signer={signer}
       network={network}
       tokenValue1={token1}
       tokenValue2={token2}
-      back={back}
-      /* onTxUpdate={onAddLiqUpdate} */
+      options={{
+        back: history.goBack,
+        notify,
+        onTokenSelect,
+      }}
     />
-  ) : (<div />);
+  ) : (
+    <div />
+  );
 };
 
 export default AddLiqudity;

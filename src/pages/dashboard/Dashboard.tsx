@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   TokenWithAmount, utils as reefUtils, utils, appState, hooks, Token, ReefSigner,
 } from '@reef-defi/react-lib';
@@ -9,9 +9,8 @@ import { TokenBalances } from './TokenBalances';
 import { TokenActivity } from './TokenActivity';
 import { Nfts } from './Nfts';
 import { Staking } from './Staking';
-import Tabs from "./../../common/Tabs"
-import { useState } from 'react';
-import { bonds } from './../bonds/utils/bonds';
+import Tabs from '../../common/Tabs';
+import { bonds } from '../bonds/utils/bonds';
 
 const {
   DataProgress, isDataSet,
@@ -19,7 +18,7 @@ const {
 
 const Dashboard = (): JSX.Element => {
   const signerTokenBalances: TokenWithAmount[]|undefined = hooks.useObservableState(appState.tokenPrices$);
-  const signerNfts: Token|undefined = hooks.useObservableState(appState.selectedSignerNFTs$);
+  const signerNfts = hooks.useObservableState(appState.selectedSignerNFTs$);
   const selectedSigner: ReefSigner|undefined = hooks.useObservableState(appState.selectedSigner$);
 
   const totalBalance: reefUtils.DataWithProgress<number> = isDataSet(signerTokenBalances) && signerTokenBalances?.length ? (signerTokenBalances).reduce((state: reefUtils.DataWithProgress<number>, curr) => {
@@ -36,44 +35,44 @@ const Dashboard = (): JSX.Element => {
 
   const tabs = [
     {
-      key: "tokens",
-      title: "Tokens"
+      key: 'tokens',
+      title: 'Tokens',
     },
     {
-      key: "staking",
-      title: "Staking",
-      notification: bonds?.length
+      key: 'staking',
+      title: 'Staking',
+      notification: bonds?.length,
     },
     {
-      key: "nfts",
-      title: "NFTs"
+      key: 'nfts',
+      title: 'NFTs',
     },
     {
       key: 'activity',
-      title: 'Activity'
-    }
-  ]
+      title: 'Activity',
+    },
+  ];
 
-  const [tab, setTab] = useState(tabs[0].key)
+  const [tab, setTab] = useState(tabs[0].key);
 
   return (
-    <div className='dashboard'>
-      <div className='dashboard__top'>
+    <div className="dashboard">
+      <div className="dashboard__top">
         <Balance balance={totalBalance} />
         <ActionButtons />
       </div>
 
-      <div className='dashboard__main'>
-        <div className='dashboard__left'>
-          <Tabs tabs={tabs} selected={tab} onChange={e => setTab(e)}/>
+      <div className="dashboard__main">
+        <div className="dashboard__left">
+          <Tabs tabs={tabs} selected={tab} onChange={(e) => setTab(e)} />
 
           { tab === 'tokens' ? <TokenBalances tokens={signerTokenBalances as utils.DataWithProgress<TokenWithAmount[]>} /> : '' }
           { tab === 'staking' ? <Staking /> : '' }
-          { tab === 'nfts' ? <Nfts /> : '' }
+          { tab === 'nfts' ? <Nfts tokens={signerNfts}/> : '' }
           { tab === 'activity' ? <TokenActivity address={selectedSigner?.evmAddress} /> : '' }
         </div>
 
-        <div className='dashboard__right'>
+        <div className="dashboard__right">
           <TokenActivity address={selectedSigner?.evmAddress} />
         </div>
       </div>

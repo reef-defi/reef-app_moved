@@ -14,23 +14,23 @@ export const Skeleton = (): JSX.Element => (
     <div className="token-balance-item radius-border d-flex d-flex-space-between d-flex-vert-center">
       <div className="token-balance-item_icon-text mr-1">
         <div className="token-balance-item_icon-text_w mr-1">
-          <div className='token-skeleton__image'/>
+          <div className="token-skeleton__image" />
         </div>
-        <div className='token-balance-item__info'>
+        <div className="token-balance-item__info">
           <div className="">
             <div className="title-font text-bold ">
-              <div className='token-skeleton__title'/>
+              <div className="token-skeleton__title" />
             </div>
             <div className="token-balance-item_sub-title">
               <span>
-                <div className='token-skeleton__sub-title'/>
+                <div className="token-skeleton__sub-title" />
               </span>
             </div>
           </div>
 
           <div className="token-balance-item_balances title-font text-bold text-color-dark-accent">
             <div>
-              <div className='token-skeleton__balance'/>
+              <div className="token-skeleton__balance" />
             </div>
           </div>
         </div>
@@ -40,14 +40,14 @@ export const Skeleton = (): JSX.Element => (
 );
 
 export const TokenBalances = ({ tokens, onRefresh }: TokenBalances): JSX.Element => (
-  <div className='token-balances'>
+  <div className="token-balances">
     <div className="col-12">
       {!tokens && (
-            <div className="tokens-container">
-              <Skeleton />
-              <Skeleton />
-            </div>
-        )}
+      <div className="tokens-container">
+        <Skeleton />
+        <Skeleton />
+      </div>
+      )}
       { tokens && !!isDataSet(tokens) && (
       <div
         className={`
