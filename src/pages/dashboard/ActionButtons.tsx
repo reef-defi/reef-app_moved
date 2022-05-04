@@ -16,7 +16,7 @@ export const ActionButtons = (): JSX.Element => {
           type="button"
           className="button-light dashboard_actions_button dashboard_actions_button-swap radius-border"
           onClick={() => {
-            history.push('/swap');
+            history.push('/swap/0x0000000000000000000000000000000001000000/0x');
           }}
         >
           <div className="svg-w fill-white">
@@ -44,7 +44,7 @@ export const ActionButtons = (): JSX.Element => {
           type="button"
           className="button-light dashboard_actions_button dashboard_actions_button-buy radius-border"
           onClick={() => {
-            window.open('https://www.gate.io/trade/REEF_USDT', '_blank');
+            window.open('https://www.binance.com/en/buy-sell-crypto?channel=card&crypto=REEF', '_blank');
           }}
         >
           <div className="svg-w fill-white">

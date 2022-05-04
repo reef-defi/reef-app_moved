@@ -1,21 +1,23 @@
+type CbFunction = (...args: any[]) => any;
+
 export interface Arguments {
   url: string,
-  callback?: (...args: any[]) => any
+  callback?: CbFunction
 }
 
-const preloadImage = (url, callback): Arguments => {
-  if (!url) return
+const preloadImage = (url: string, callback: CbFunction): Arguments|undefined => {
+  if (!url) return;
 
-  let img = new Image()
-  img.src = url
+  const img = new Image();
+  img.src = url;
 
-  const complete = () => {
-    if (callback) callback()
-  }
+  const complete = (): void => {
+    if (callback) callback();
+  };
 
   img.onload = () => {
-    complete()
-  }
-}
+    complete();
+  };
+};
 
-export default preloadImage
+export default preloadImage;

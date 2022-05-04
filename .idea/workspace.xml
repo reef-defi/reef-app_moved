@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e1bedad1-3cf5-4a7c-8706-e7899f6a0615" name="Default Changelist" comment="lock @polkadot/util-crypto">
+    <list default="true" id="e1bedad1-3cf5-4a7c-8706-e7899f6a0615" name="Default Changelist" comment="yarn lock">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/environment.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/environment.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/dashboard/ActionButtons.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/dashboard/ActionButtons.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/dashboard/NFT.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/dashboard/NFT.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/dashboard/Nfts.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/dashboard/Nfts.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/dashboard/TokenActivity.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/dashboard/TokenActivity.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/dashboard/TokenActivityItem.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/dashboard/TokenActivityItem.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/preloadImage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/preloadImage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,6 +32,9 @@
       <filtered-out-file-type name="TAG" />
       <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
     </file-type-list>
+  </component>
+  <component name="PackageJsonUpdateNotifier">
+    <dismissed value="$PROJECT_DIR$/package.json" />
   </component>
   <component name="ProjectId" id="25EYAdUC5I71ruFo8NgXbAZBfJ5" />
   <component name="ProjectViewState">
@@ -51,6 +59,19 @@
     <property name="ts.external.directory.path" value="$PROJECT_DIR$/node_modules/typescript/lib" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
+  <component name="RunManager">
+    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
+      <option name="arquillianRunConfiguration">
+        <value>
+          <option name="containerStateName" value="" />
+        </value>
+      </option>
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -65,6 +86,7 @@
       <workItem from="1650560739137" duration="6625000" />
       <workItem from="1650708938235" duration="599000" />
       <workItem from="1650709647502" duration="12035000" />
+      <workItem from="1651578144168" duration="3179000" />
     </task>
     <task id="LOCAL-00001" summary="display signer nfts">
       <created>1650899390844</created>
@@ -96,6 +118,7 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="display signer nfts" />
