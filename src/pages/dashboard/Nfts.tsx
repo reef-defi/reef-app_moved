@@ -2,9 +2,7 @@ import React from 'react';
 import {
   Components, TokenNFT, TokenWithAmount, utils,
 } from '@reef-defi/react-lib';
-import { TokenPill } from './TokenPill';
 import './Nfts.css';
-import { TokenActivityItem, TokenActivityType } from './TokenActivityItem';
 
 import NFT from './NFT';
 
@@ -20,7 +18,7 @@ export const Skeleton = (): JSX.Element => (
 );
 
 interface Nfts {
-    tokens: any;
+    tokens: TokenNFT[]|undefined;
 }
 
 export const Nfts = ({ tokens }: Nfts): JSX.Element => (

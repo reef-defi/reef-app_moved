@@ -68,19 +68,19 @@ const isContrIndexed = async (address: string): Promise<boolean> => new Promise(
   const tmt = setTimeout(() => {
     resolve(false);
   }, 120000);
-  const apollo = await firstValueFrom(graphql.apolloClientInstance$);
+  const apollo = await firstValueFrom(graphql.apolloClientInstance$) as any;
   apollo.subscribe({
     query: CONTRACT_EXISTS_GQL,
     variables: { address },
     fetchPolicy: 'network-only',
   }).subscribe({
-    next(result) {
+    next(result: any) {
       if (result.data.contract && result.data.contract.length) {
         clearTimeout(tmt);
         resolve(true);
       }
     },
-    error(err) {
+    error(err: any) {
       clearTimeout(tmt);
       console.log('isContrIndexed error=', err);
       resolve(false);
