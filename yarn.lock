@@ -19,7 +19,7 @@
     jsonpointer "^5.0.0"
     leven "^3.1.0"
 
-"@apollo/client@^3.5.7", "@apollo/client@^3.6.2":
+"@apollo/client@^3.6.2":
   version "3.6.2"
   resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.6.2.tgz#0418bfa6358dd117894c8af396706cfa2b186032"
   integrity sha512-DNWyl+NNU2VsfHtXwOr4rV9hnQFPkl2/dNXeouhk9q7bXCWdEh3K8YTt/frULGVKbQjtnlPmz8C+LFI/JZ2N3w==
@@ -2766,7 +2766,7 @@
     "@reef-defi/api-derive" "^1.0.1"
     "@reef-defi/types" "^1.0.1"
 
-"@reef-defi/evm-provider@^1.0.6":
+"@reef-defi/evm-provider@^1.0.7":
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/@reef-defi/evm-provider/-/evm-provider-1.0.7.tgz#cfb35495e5328ff68675be8edbab3585d5e51d00"
   integrity sha512-Knbvlyu7e1d2THGwgia+ZwbK3aQ1NF8F41TnifqWKpxDKcaLW9GrRJA8A7VU0TifSYPiG/w9rZz5VOBqt7HurQ==
@@ -2811,15 +2811,15 @@
   dependencies:
     "@babel/runtime" "^7.16.0"
 
-"@reef-defi/react-lib@^1.0.42":
-  version "1.0.42"
-  resolved "https://registry.yarnpkg.com/@reef-defi/react-lib/-/react-lib-1.0.42.tgz#a86ba8bd90c813f37ac6a4b8fb6949b89171be88"
-  integrity sha512-pQz+b5aFba2MtYQGGBslkewZAoVCq0wJ3drx6YwenKrQa+EkMnFhf9q/8lhhuHbDjYMHx/tevZ2P0IPXeJ5cow==
+"@reef-defi/react-lib@^1.0.43":
+  version "1.0.43"
+  resolved "https://registry.yarnpkg.com/@reef-defi/react-lib/-/react-lib-1.0.43.tgz#3b667b5d618c40ea37b59c08e3acfed989d8a4b3"
+  integrity sha512-L18EKPOB+4lUWxnxpavl6N8qYDnghZXyCAaCHRFmiKHYsNDj3lIUR/r1WmkCtnBVDo2W/B6Y+ar2j8HxebFckA==
   dependencies:
-    "@apollo/client" "^3.5.7"
+    "@apollo/client" "^3.6.2"
     "@polkadot/extension-dapp" "^0.40.4"
     "@polkadot/react-identicon" "^0.86.4"
-    "@reef-defi/evm-provider" "^1.0.6"
+    "@reef-defi/evm-provider" "^1.0.7"
     "@reef-defi/extension-dapp" "^0.41.2"
     "@reef-defi/extension-inject" "^0.41.2"
     "@types/react-router-dom" "^5.3.0"
