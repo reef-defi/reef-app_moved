@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  Components, TokenNFT, TokenWithAmount, utils,
-} from '@reef-defi/react-lib';
+import { TokenNFT, utils } from '@reef-defi/react-lib';
 import './Nfts.css';
 
 import NFT from './NFT';
@@ -23,24 +21,29 @@ interface Nfts {
 
 export const Nfts = ({ tokens }: Nfts): JSX.Element => (
   <div className="nfts">
-    <div className="col-12">
-      {!!tokens && !tokens.length && <div>No NFTs in your wallet.</div>}
-
-      {!!tokens && !!tokens.length && (
+    {!!tokens && !tokens.length && (
+    <div className="col-12 card">
+      <div className="nfts__empty-nft-list">No NFTs in your wallet.</div>
+    </div>
+    )}
+    {!!tokens && !!tokens.length && (
+      <div className="col-12">
+        {!!tokens && !!tokens.length && (
         <div className="nfts__container">
           {tokens.map((token: TokenNFT, i: number) => (
             <NFT data={token} key={token.address} />
           ))}
         </div>
-      )}
-      {!tokens && (
-        <>
-          <Skeleton />
-          <Skeleton />
-          <Skeleton />
-        </>
-      ) }
-    </div>
+        )}
+      </div>
+    )}
+    {!tokens && (
+      <div className="col-12">
+        <Skeleton />
+        <Skeleton />
+        <Skeleton />
+      </div>
+    ) }
   </div>
 
 );

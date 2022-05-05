@@ -37,8 +37,8 @@ export const TokenActivity = ({ address }: TokenActivity): JSX.Element => {
         </div>
 
       </div>
-      <div className="col-12 card">
-        {!!transfers && !transfers.length && <div className="no-token-activity">No recent activity.</div>}
+      <div className={`col-12 card  ${transfers?.length ? 'card-bg-light' : ''}`}>
+        {!!transfers && !transfers.length && <div className="no-token-activity">No recent transfer activity.</div>}
         {!!transfers && !!transfers.length && (
         <div>
             {transfers.slice(0, 10).map((t, index) => (
