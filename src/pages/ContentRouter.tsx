@@ -23,8 +23,8 @@ import Dashboard from './dashboard/Dashboard';
 import { Transfer } from './transfer/Transfer';
 import { Creator } from './creator/Creator';
 import { Bonds } from './bonds/Bonds';
-import PoolPage from './pools/PoolPage';
 import TokenContext from '../context/TokenContext';
+import Pool from './pools/Pool';
 
 const ContentRouter = (): JSX.Element => {
   const currentSigner: ReefSigner|undefined = hooks.useObservableState(appState.selectedSigner$);
@@ -42,7 +42,7 @@ const ContentRouter = (): JSX.Element => {
           <Route exact path={DASHBOARD_URL} component={Dashboard} />
           <Route path={ADD_LIQUIDITY_URL} component={AddLiqudity} />
           <Route exact path={ADD_LIQUIDITY_URL} component={AddLiqudity} />
-          <Route path={POOL_CHART_URL} component={PoolPage} />
+          <Route path={POOL_CHART_URL} component={Pool} />
           <Route path={REMOVE_LIQUIDITY_URL} component={RemoveLiquidity} />
           <Route exact path={TRANSFER_TOKEN} component={Transfer} />
           <Route exact path={CREATE_ERC20_TOKEN_URL} component={Creator} />
