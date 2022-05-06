@@ -1,23 +1,20 @@
-import React from "react";
-import { Components } from "@reef-defi/react-lib";
-import { useHistory, useParams } from "react-router-dom";
-import { ADD_LIQUIDITY_URL, REMOVE_LIQUIDITY_URL, SPECIFIED_SWAP_URL } from "../../urls";
-import { getIconUrl } from "../../utils/utils";
-import { innitialNetwork } from "../../environment";
+import React from 'react';
+import { Components } from '@reef-defi/react-lib';
+import { useHistory, useParams } from 'react-router-dom';
+import { ADD_LIQUIDITY_URL, REMOVE_LIQUIDITY_URL, SPECIFIED_SWAP_URL } from '../../urls';
+import { getIconUrl } from '../../utils/utils';
+import { innitialNetwork } from '../../environment';
 
-const {PoolPage} = Components;
-
-interface Pool { }
+const { PoolPage } = Components;
 
 interface UrlParam {
   address: string;
 }
 
-
-const Pool = ({}: Pool): JSX.Element => {
+const Pool = (): JSX.Element => {
   const history = useHistory();
   const { address } = useParams<UrlParam>();
- 
+
   const openTrade = (address1: string, address2: string): void => history.push(
     SPECIFIED_SWAP_URL
       .replace(':address1', address1)
