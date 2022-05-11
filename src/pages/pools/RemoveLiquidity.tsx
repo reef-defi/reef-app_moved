@@ -1,15 +1,10 @@
-import React from 'react';
 import {
-  Components,
-  Token,
-  appState,
-  hooks,
-  Network,
-  ReefSigner,
+  appState, Components, hooks,
+  Network, ReefSigner, store, Token
 } from '@reef-defi/react-lib';
-import { Redirect, useHistory, useParams } from 'react-router-dom';
-import { POOLS_URL } from '../../urls';
-import { useTokensFinder } from '../../hooks/useTokensFinder';
+import React, { useContext, useReducer } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
+import TokenContext from '../../context/TokenContext';
 import { notify } from '../../utils/utils';
 
 const { RemoveLiquidityComponent } = Components;
@@ -21,10 +16,9 @@ interface UrlParams {
 
 const RemoveLiquidity = (): JSX.Element => {
   const history = useHistory();
+  const tokens = useContext(TokenContext);
   const { address1, address2 } = useParams<UrlParams>();
-  const tokens: Token[] | undefined = hooks.useObservableState(
-    appState.allAvailableSignerTokens$,
-  );
+
   const network: Network | undefined = hooks.useObservableState(
     appState.selectedNetworkSubj,
   );
@@ -32,30 +26,39 @@ const RemoveLiquidity = (): JSX.Element => {
     appState.selectedSigner$,
   );
 
-  const [token1, token2, state] = useTokensFinder({
+  const[state, dispatch] = useReducer(store.removeLiquidityReducer, store.initialRemoveLiquidityState);
+
+  
+  hooks.useRemoveLiquidity({
     address1,
     address2,
+    dispatch, 
+    state,
     tokens,
+    network,
+    signer
+  })
+
+  const onRemoveLiquidity = hooks.onRemoveLiquidity({
+    state,
+    dispatch,
+    network,
     signer,
-  });
-  const back = (): void => history.goBack();
-
-  // Redirecting to pools page if any of tokens is empty on success
-  if (state === 'Success' && (token1.isEmpty || token2.isEmpty)) {
-    return <Redirect to={POOLS_URL} />;
-  }
-
-  if (state !== 'Success' || !network) {
+    notify,
+  })
+  
+  if (!signer) {
     return <div />;
   }
-
   return (
     <RemoveLiquidityComponent
-      token1={token1}
-      token2={token2}
-      signer={signer}
-      network={network}
-      options={{ back, notify }}
+      state={state}
+      actions={{
+        onRemoveLiquidity,
+        back: history.goBack,
+        setSettings: (settings) => dispatch(store.setSettingsAction(settings)),
+        setPercentage: (percentage) => dispatch(store.setPercentageAction(percentage)),
+      }}
     />
   );
 };
