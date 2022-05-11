@@ -1,19 +1,16 @@
-import React, { useContext } from 'react';
-
 import {
-  Components,
-  hooks,
-  appState,
-  Network,
-  ReefSigner,
-  TokenSelector,
+  appState, Components,
+  hooks, Network,
+  ReefSigner, store, Token
 } from '@reef-defi/react-lib';
+import React, { useContext, useReducer } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-import { useTokensFinder } from '../../hooks/useTokensFinder';
-import { notify } from '../../utils/utils';
-import { addressReplacer, ADD_LIQUIDITY_URL } from '../../urls';
 import TokenContext from '../../context/TokenContext';
+import { addressReplacer, ADD_LIQUIDITY_URL } from '../../urls';
+import { notify } from '../../utils/utils';
 
+
+const {AddLiquidity} = Components;
 interface UrlParams {
   address1: string;
   address2: string;
@@ -30,34 +27,52 @@ const AddLiqudity = (): JSX.Element => {
     appState.selectedNetworkSubj,
   );
 
-  const [token1, token2, state] = useTokensFinder({
+  const [state, dispatch] = useReducer(store.addLiquidityReducer, store.initialAddLiquidityState);
+  hooks.useAddLiquidity({
     address1,
     address2,
-    signer,
+    dispatch,
+    state,
     tokens,
-  });
+    signer,
+    network
+  })
 
-  const onTokenSelect = (address: string, token: TokenSelector = 'token1'): void => history.push(
-    token === 'token1'
-      ? addressReplacer(ADD_LIQUIDITY_URL, address, address2)
-      : addressReplacer(ADD_LIQUIDITY_URL, address1, address),
-  );
-
-  return signer && network && state === 'Success' ? (
-    <Components.AddLiquidity
-      tokens={tokens}
-      signer={signer}
-      network={network}
-      tokenValue1={token1}
-      tokenValue2={token2}
-      options={{
-        back: history.goBack,
-        notify,
-        onTokenSelect,
-      }}
+  const selectToken1 = (token: Token) => {
+    dispatch(store.setToken1Action(token));
+    history.push(addressReplacer(ADD_LIQUIDITY_URL, token.address, address2));
+  };
+  const selectToken2 = (token: Token) => {
+    dispatch(store.setToken2Action(token));
+    history.push(addressReplacer(ADD_LIQUIDITY_URL, address1, token.address));
+  };
+  const onAddLiquidity = hooks.onAddLiquidity({
+    state,
+    network,
+    signer,
+    dispatch,
+    notify,
+    updateTokenState: async () => {}
+  })
+  if (!signer) {
+    return <div/>;
+  }
+  return (
+    <AddLiquidity
+    signer={signer}
+    state={state}
+    tokens={tokens}
+    actions={{
+      selectToken1,
+      selectToken2,
+      onAddLiquidity,
+      back: history.goBack,
+      onAddressChange: async () => {},
+      setSettings: (settings) => dispatch(store.setSettingsAction(settings)),
+      setToken1Amount: (amount) => dispatch(store.setToken1AmountAction(amount)),
+      setToken2Amount: (amount) => dispatch(store.setToken2AmountAction(amount)),
+    }}
     />
-  ) : (
-    <div />
   );
 };
 
