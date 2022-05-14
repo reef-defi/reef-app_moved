@@ -11,6 +11,7 @@ const Bubbles: React.FC<unknown> = ({ children }): JSX.Element => (
         for (let i = 0; i < 20; i += 1) {
           output.push(
             <div
+              key={i}
               className="bubbles__bubble"
               style={{
                 animationDelay: `${i * 0.5 - 0.1}s`,
