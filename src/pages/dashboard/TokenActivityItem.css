@@ -1,3 +1,6 @@
+.activity-item {
+    cursor: pointer;
+}
 .activity-item_body {
     width: 100%;
     padding: 1em 0;
@@ -27,19 +30,19 @@
 }
 
 .send-activity .receive {
-    display: none;
+    display: none !important;
 }
 
 .send-activity .send {
-    display: block;
+    display: flex;
 }
 
 .receive-activity .receive {
-    display: block;
+    display: flex;
 }
 
 .receive-activity .send {
-    display: none;
+    display: none !important;
 }
 
 .send-activity .activity-item_type-icon-w {
@@ -87,6 +90,10 @@
     line-height: 1.3;
     /* font-size: 1.25rem; */
     margin-right: 5px;
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .send-activity .activity-item__amount {
@@ -94,4 +101,51 @@
     background: transparent;
     -webkit-background-clip: unset;
     -webkit-text-fill-color: unset;
+}
+
+.activity-item--nft {
+    position: relative;
+}
+
+.activity-item--nft .activity-item_type-icon-w {
+    position: absolute;
+    z-index: 1;
+    top: 7px;
+    left: 48px;
+    margin: 0;
+    min-width: 24px;
+    min-height: 24px;
+    height: 24px;
+    border-radius: 5px;
+}
+
+.activity-item--nft .activity-item_type-icon {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.activity-item--nft .activity-item_type-icon svg {
+    width: 16px;
+    height: 16px;
+}
+
+.activity-item__nft-image {
+    border-radius: 0.5em;
+    min-width: 3.5em;
+    min-height: 3.5em;
+    height: 3.5em;
+    margin: 0 0.7em;
+    background-size: cover;
+    background-position: center;
+}
+
+@media only screen and (max-width: 1200px) {
+    .activity-item .token-balance-item,
+    .activity-item .token-balance-item_icon-text {
+        align-items: flex-start;
+        text-align: left;
+    }
 }

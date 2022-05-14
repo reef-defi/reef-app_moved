@@ -8,16 +8,16 @@ import { saveSignerLocalPointer } from '../store/internalStore';
 import { ReefLogo } from './Icons';
 import {
   BONDS_URL,
-  CREATE_ERC20_TOKEN_URL, DASHBOARD_URL, POOLS_URL, SWAP_URL, TRANSFER_TOKEN,
+  CREATE_ERC20_TOKEN_URL, DASHBOARD_URL, defaultSwapUrl, POOLS_URL, TRANSFER_TOKEN,
 } from '../urls';
 
 const menuItems = [
   { title: 'Dashboard', url: DASHBOARD_URL },
   { title: 'Send', url: TRANSFER_TOKEN },
-  { title: 'Swap', url: SWAP_URL },
+  { title: 'Swap', url: defaultSwapUrl },
   { title: 'Pools', url: POOLS_URL },
-  { title: 'Staking', url: BONDS_URL},
-  { title: 'Creator', url: CREATE_ERC20_TOKEN_URL }
+  { title: 'Staking', url: BONDS_URL },
+  { title: 'Creator', url: CREATE_ERC20_TOKEN_URL },
 ];
 
 export interface Nav {
