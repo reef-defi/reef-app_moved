@@ -430,7 +430,7 @@ export const BondsComponent = ({
                   <>
                     <div className="bond-card__info-item">
                       <div className="bond-card__info-label">Bond contract</div>
-                      <div className="bond-card__info-value"><a href={`https://reefscan.com/contract/${bond.bondContractAddress}`} target="_blank" rel="noreferrer">{bond.bondContractAddress}</a></div>
+                      <div className="bond-card__info-value"><a href={`https://reefscan.com/contract/${bond.bondContractAddress}`} target="_blank" rel="noreferrer">{utils.toAddressShortDisplay(bond.bondContractAddress)}</a></div>
                     </div>
                   </>
                   {!bondTimes?.opportunity.ended && !stakingClosedText
