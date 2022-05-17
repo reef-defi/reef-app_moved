@@ -1,11 +1,15 @@
 import {
-  appState, Components, hooks,
-  Network, ReefSigner, store, Token
-} from '@reef-defi/react-lib';
-import React, { useContext, useReducer } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
-import TokenContext from '../../context/TokenContext';
-import { notify } from '../../utils/utils';
+  appState,
+  Components,
+  hooks,
+  Network,
+  ReefSigner,
+  store,
+} from "@reef-defi/react-lib";
+import React, { useContext, useReducer } from "react";
+import { useHistory, useParams } from "react-router-dom";
+import TokenContext from "../../context/TokenContext";
+import { notify } from "../../utils/utils";
 
 const { RemoveLiquidityComponent } = Components;
 
@@ -20,24 +24,26 @@ const RemoveLiquidity = (): JSX.Element => {
   const { address1, address2 } = useParams<UrlParams>();
 
   const network: Network | undefined = hooks.useObservableState(
-    appState.currentNetwork$,
+    appState.selectedNetworkSubj
   );
   const signer: ReefSigner | undefined = hooks.useObservableState(
-    appState.selectedSigner$,
+    appState.selectedSigner$
   );
 
-  const[state, dispatch] = useReducer(store.removeLiquidityReducer, store.initialRemoveLiquidityState);
+  const [state, dispatch] = useReducer(
+    store.removeLiquidityReducer,
+    store.initialRemoveLiquidityState
+  );
 
-  
   hooks.useRemoveLiquidity({
     address1,
     address2,
-    dispatch, 
+    dispatch,
     state,
     tokens,
     network,
-    signer
-  })
+    signer,
+  });
 
   const onRemoveLiquidity = hooks.onRemoveLiquidity({
     state,
@@ -45,8 +51,8 @@ const RemoveLiquidity = (): JSX.Element => {
     network,
     signer,
     notify,
-  })
-  
+  });
+
   if (!signer) {
     return <div />;
   }
@@ -57,7 +63,8 @@ const RemoveLiquidity = (): JSX.Element => {
         onRemoveLiquidity,
         back: history.goBack,
         setSettings: (settings) => dispatch(store.setSettingsAction(settings)),
-        setPercentage: (percentage) => dispatch(store.setPercentageAction(percentage)),
+        setPercentage: (percentage) =>
+          dispatch(store.setPercentageAction(percentage)),
       }}
     />
   );
