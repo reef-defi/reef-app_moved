@@ -86,9 +86,6 @@
 .bond-card__stats,
 .bond-skeleton__stats {
   width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: 30px;
   margin-top: 20px;
 }
 
@@ -103,6 +100,11 @@
   position: relative;
   border: dashed 1px #b9bfcf;
   padding: 25px 15px;
+}
+
+.bond-card__stat + .bond-card__stat,
+.bond-skeleton__stat + .bond-skeleton__stat {
+  margin-top: 16px;
 }
 
 .bond-card__stat-label {
