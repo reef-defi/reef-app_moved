@@ -44,7 +44,7 @@ export const ActionButtons = (): JSX.Element => {
           type="button"
           className="button-light dashboard_actions_button dashboard_actions_button-buy radius-border buy-binance-btn"
           onClick={() => {
-            window.open('https://www.binance.com/en/buy-sell-crypto?channel=card&crypto=REEF', '_blank');
+            window.open('https://www.binance.com/en/trade/REEF_USDT?theme=dark&type=spot', '_blank');
           }}
         >
           <div className="svg-w fill-white">

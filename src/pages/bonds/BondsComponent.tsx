@@ -290,6 +290,13 @@ export const BondsComponent = ({
       const totalEarned = parseFloat(earned);
       const earnedRel = totalEarned / validatorRewards.total;
       const averageEarned = earnedRel * (validatorRewards.average);
+      /* console.log('account earned=',earned);
+      console.log('validator rewards=', validatorRewards.total);
+      console.log('earned relative=', earnedRel);
+      console.log('locked amt=', lockedAmount);
+      console.log('validator daily average=', validatorRewards.average);
+      console.log('earned daily average=', averageEarned);
+      console.log('number of days=', validatorRewards.days); */
       const daysInYear = 365;
       const yearlyEstimate = averageEarned * daysInYear;
       let apy = ((yearlyEstimate / parseFloat(lockedAmount)) * 100);
@@ -311,8 +318,11 @@ export const BondsComponent = ({
     setVals();
   }, [account, bond.bondValidatorAddress]);
 
-  const updateLockedAmt = async (c: Contract): Promise<void> => {
-    const lAmount = await c.balanceOf(account?.evmAddress);
+  const updateLockedAmt = async (c: Contract, accountEvmAddress?: string): Promise<void> => {
+    if (!accountEvmAddress) {
+      return;
+    }
+    const lAmount = await c.balanceOf(accountEvmAddress);
     setLockedAmount(formatAmountNearZero(lAmount.toString()));
     const lockedElem = document.querySelector('.bond-card__stat-value');
     if (lockedElem) {
@@ -354,8 +364,9 @@ export const BondsComponent = ({
     setBondAmountMax(+(balanceFixedAmt - 101).toFixed(0));
   }, [account?.balance]);
 
-  async function updateEarnedAmt(newContract: Contract): Promise<void> {
-    const e = await newContract.earned(account?.evmAddress);
+  async function updateEarnedAmt(newContract: Contract, accountEvmAddress: string): Promise<void> {
+    const e = await newContract.earned(accountEvmAddress);
+    // console.log("eeeeee=",e.toString());
     setEarned(formatAmountNearZero(e.toString()));
   }
 
@@ -378,8 +389,10 @@ export const BondsComponent = ({
       setLoadingValues(true);
       const newBondTimes = await calcuateBondTimes(updatedContract);
       await updateBondStakingClosedText(updatedContract, newBondTimes);
-      await updateEarnedAmt(updatedContract);
-      await updateLockedAmt(updatedContract);
+      const accountEvmAddress = '0xeBDcfcE3377Bd7593F14A4C70eD2974D55a1aB96'; // account.evmAddress;
+      // const accountEvmAddress = account.evmAddress;
+      await updateEarnedAmt(updatedContract, accountEvmAddress);
+      await updateLockedAmt(updatedContract, accountEvmAddress);
       setBondTimes(newBondTimes);
       setLoadingValues(false);
     };
@@ -430,7 +443,7 @@ export const BondsComponent = ({
                   <>
                     <div className="bond-card__info-item">
                       <div className="bond-card__info-label">Bond contract</div>
-                      <div className="bond-card__info-value"><a href={`https://reefscan.com/contract/${bond.bondContractAddress}`} target="_blank" rel="noreferrer">{bond.bondContractAddress}</a></div>
+                      <div className="bond-card__info-value"><a href={`https://reefscan.com/contract/${bond.bondContractAddress}`} target="_blank" rel="noreferrer">{utils.toAddressShortDisplay(bond.bondContractAddress)}</a></div>
                     </div>
                   </>
                   {!bondTimes?.opportunity.ended && !stakingClosedText
@@ -444,7 +457,7 @@ export const BondsComponent = ({
                     )
                     : ''}
 
-                  {/* {stakedRewards && (
+                  {stakedRewards && (
                   <>
                     <div className="bond-card__info-item">
                       <div className="bond-card__info-label">Average daily reward</div>
@@ -472,8 +485,7 @@ export const BondsComponent = ({
                       </div>
                     </div>
                   </>
-                  )} */}
-
+                  )}
                   {
                 !bondTimes.ending.ended
                 && (
@@ -578,7 +590,7 @@ export const BondsComponent = ({
                     text: 'Transaction Failed.',
                   });
                 }
-                await updateLockedAmt(contract!);
+                await updateLockedAmt(contract!, account?.evmAddress);
                 setBondAmount('');
                 setLoadingText('');
                 setTimeout(() => {

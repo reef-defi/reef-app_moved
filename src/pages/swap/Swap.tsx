@@ -14,7 +14,7 @@ const { SwapComponent } = Components;
 const Swap = (): JSX.Element => {
   const history = useHistory();
   const tokens = useContext(TokenContext);
-  const network: Network|undefined = hooks.useObservableState(appState.selectedNetworkSubj);
+  const network: Network|undefined = hooks.useObservableState(appState.currentNetwork$);
   const signer: ReefSigner|undefined = hooks.useObservableState(appState.selectedSigner$);
 
   const { address1, address2 } = useParams<UrlAddressParams>();
