@@ -26,7 +26,7 @@ const RemoveLiquidity = (): JSX.Element => {
     appState.allAvailableSignerTokens$,
   );
   const network: Network | undefined = hooks.useObservableState(
-    appState.selectedNetworkSubj,
+    appState.currentNetwork$,
   );
   const signer: ReefSigner | undefined = hooks.useObservableState(
     appState.selectedSigner$,

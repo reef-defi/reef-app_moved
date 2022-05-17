@@ -27,7 +27,7 @@ export const Skeleton = (): JSX.Element => (
 );
 export const TokenActivity = ({ address }: TokenActivity): JSX.Element => {
   const transfers: TokenTransfer[]|null|undefined = hooks.useObservableState(appState.transferHistory$);
-  const network: Network | undefined = hooks.useObservableState(appState.selectedNetworkSubj);
+  const network: Network | undefined = hooks.useObservableState(appState.currentNetwork$);
 
   return (
     <div className="token-activity">

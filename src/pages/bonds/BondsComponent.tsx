@@ -289,8 +289,14 @@ export const BondsComponent = ({
     if (validatorRewards && earned && lockedAmount) {
       const totalEarned = parseFloat(earned);
       const earnedRel = totalEarned / validatorRewards.total;
-      console.log("RRRR=",totalEarned ,'VAL REW TOT=', validatorRewards.total, 'lock=', lockedAmount);
       const averageEarned = earnedRel * (validatorRewards.average);
+      /* console.log('account earned=',earned);
+      console.log('validator rewards=', validatorRewards.total);
+      console.log('earned relative=', earnedRel);
+      console.log('locked amt=', lockedAmount);
+      console.log('validator daily average=', validatorRewards.average);
+      console.log('earned daily average=', averageEarned);
+      console.log('number of days=', validatorRewards.days); */
       const daysInYear = 365;
       const yearlyEstimate = averageEarned * daysInYear;
       let apy = ((yearlyEstimate / parseFloat(lockedAmount)) * 100);
@@ -360,7 +366,7 @@ export const BondsComponent = ({
 
   async function updateEarnedAmt(newContract: Contract, accountEvmAddress: string): Promise<void> {
     const e = await newContract.earned(accountEvmAddress);
-    console.log("eeeeee=",e.toString());
+    // console.log("eeeeee=",e.toString());
     setEarned(formatAmountNearZero(e.toString()));
   }
 
@@ -384,6 +390,7 @@ export const BondsComponent = ({
       const newBondTimes = await calcuateBondTimes(updatedContract);
       await updateBondStakingClosedText(updatedContract, newBondTimes);
       const accountEvmAddress = '0xeBDcfcE3377Bd7593F14A4C70eD2974D55a1aB96'; // account.evmAddress;
+      // const accountEvmAddress = account.evmAddress;
       await updateEarnedAmt(updatedContract, accountEvmAddress);
       await updateLockedAmt(updatedContract, accountEvmAddress);
       setBondTimes(newBondTimes);
