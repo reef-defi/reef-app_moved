@@ -27,7 +27,7 @@ const AddLiqudity = (): JSX.Element => {
     appState.selectedSigner$,
   );
   const network: Network | undefined = hooks.useObservableState(
-    appState.selectedNetworkSubj,
+    appState.currentNetwork$,
   );
 
   const [token1, token2, state] = useTokensFinder({
