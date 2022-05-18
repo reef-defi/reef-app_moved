@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Components, appState, hooks, ReefSigner, Network,
+  Components, appState, hooks, ReefSigner, Network, availableNetworks,
 } from '@reef-defi/react-lib';
 import './Nav.css';
 import { Link, useHistory, useLocation } from 'react-router-dom';
@@ -10,6 +10,7 @@ import {
   BONDS_URL,
   CREATE_ERC20_TOKEN_URL, DASHBOARD_URL, defaultSwapUrl, POOLS_URL, TRANSFER_TOKEN,
 } from '../urls';
+import { appAvailableNetworks } from '../environment';
 
 const menuItems = [
   { title: 'Dashboard', url: DASHBOARD_URL },
@@ -73,6 +74,8 @@ const Nav = ({ display }: Nav): JSX.Element => {
               selectedSigner={signer}
               selectAccount={selectAccount}
               reefscanUrl={network.reefscanUrl}
+              selectNetwork={appState.setCurrentNetwork}
+              availableNetworks={appAvailableNetworks}
             />
             )}
           </nav>
