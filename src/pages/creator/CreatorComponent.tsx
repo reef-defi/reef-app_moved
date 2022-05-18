@@ -254,7 +254,7 @@ export const CreatorComponent = ({
               <Button disabled={!resultMessage.complete} onClick={init}>Close</Button>
               {resultMessage.complete && (
               <Link to={`/add-supply//${deployedContract?.address}`} className="btn btn-reef border-rad">
-                Create pool
+                <span>Create pool</span>
               </Link>
               )}
               {!resultMessage.complete && <Button disabled>Create pool</Button>}
