@@ -258,7 +258,6 @@ const calcReturn = async (provider: Provider, validatorId: string): Promise< {re
   const points = await api.derive.staking.stakerPoints(validatorId, false);
   const slashes = await api.derive.staking.ownSlashes(validatorId, false);
   const decimals = provider.api.registry.chainDecimals[0];
-
   const divisor = new BN('1'.padEnd(decimals + 1, '0'));
 
   const rewards = extractRewards(eraRewards, slashes, points, divisor);
@@ -282,30 +281,22 @@ export const BondsComponent = ({
   const [loadingValues, setLoadingValues] = useState(false);
   const [txStatus, setTxStatus] = useState<ITxStatus | undefined>(undefined);
   const [validationText, setValidationText] = useState('');
-  const [validatorRewards, setValidatorRewards] = useState<{total:number, average:number, days:number}>();
-  const [stakedRewards, setStakedRewards] = useState<{ totalEarned: number; averageEarned: number; yearlyEstimate:number; apy:number }>();
+  const [bondRewards, setBondRewards] = useState<{total:number, average:number, days:number}>();
 
-  useEffect(() => {
-    if (validatorRewards && earned && lockedAmount) {
-      const totalEarned = parseFloat(earned);
-      const earnedRel = totalEarned / validatorRewards.total;
-      const averageEarned = earnedRel * (validatorRewards.average);
-      /* console.log('account earned=',earned);
-      console.log('validator rewards=', validatorRewards.total);
-      console.log('earned relative=', earnedRel);
-      console.log('locked amt=', lockedAmount);
-      console.log('validator daily average=', validatorRewards.average);
-      console.log('earned daily average=', averageEarned);
-      console.log('number of days=', validatorRewards.days); */
+  /* useEffect(() => {
+    if (bondRewards) {
+      const totalLocked = parseFloat(bondTotalLocked);
+      const earnedRel = totalLocked / bondRewards.total;
+      const averageEarned = earnedRel * (bondRewards.average);
       const daysInYear = 365;
       const yearlyEstimate = averageEarned * daysInYear;
       let apy = ((yearlyEstimate / parseFloat(lockedAmount)) * 100);
       apy = !Number.isNaN(apy) ? parseFloat(apy.toFixed(2)) : 0;
       setStakedRewards({
-        totalEarned, averageEarned, yearlyEstimate, apy,
+        totalEarned: totalLocked, averageEarned, yearlyEstimate, apy,
       });
     }
-  }, [validatorRewards, earned, lockedAmount]);
+  }, [bondRewards, bondTotalLocked]); */
 
   useEffect(() => {
     const setVals = async (): Promise<void> => {
@@ -313,7 +304,7 @@ export const BondsComponent = ({
         return;
       }
       const { rewards, total, average } = await calcReturn(account.signer.provider, bond.bondValidatorAddress);
-      setValidatorRewards({ total, average, days: rewards.length });
+      setBondRewards({ total, average, days: rewards.length });
     };
     setVals();
   }, [account, bond.bondValidatorAddress]);
@@ -389,8 +380,7 @@ export const BondsComponent = ({
       setLoadingValues(true);
       const newBondTimes = await calcuateBondTimes(updatedContract);
       await updateBondStakingClosedText(updatedContract, newBondTimes);
-      const accountEvmAddress = '0xeBDcfcE3377Bd7593F14A4C70eD2974D55a1aB96'; // account.evmAddress;
-      // const accountEvmAddress = account.evmAddress;
+      const accountEvmAddress = account.evmAddress;
       await updateEarnedAmt(updatedContract, accountEvmAddress);
       await updateLockedAmt(updatedContract, accountEvmAddress);
       setBondTimes(newBondTimes);
@@ -457,36 +447,16 @@ export const BondsComponent = ({
                     )
                     : ''}
 
-                  {stakedRewards && (
-                  <>
-                    <div className="bond-card__info-item">
-                      <div className="bond-card__info-label">Average daily reward</div>
-                      <div className="bond-card__info-value">
-                        {!!stakedRewards.averageEarned && <span>~</span>}
-                        {' '}
-                        {stakedRewards.averageEarned.toFixed(stakedRewards.averageEarned > 5 || !stakedRewards.averageEarned ? 0 : 3)}
-                      </div>
+                  {/* { (
+                  <div className="bond-card__info-item">
+                    <div className="bond-card__info-label">Expected Bond APY</div>
+                    <div className="bond-card__info-value">
+                      {}
                     </div>
+                  </div>
+                  )} */}
 
-                    <div className="bond-card__info-item">
-                      <div className="bond-card__info-label">Estimated yearly rewards</div>
-                      <div className="bond-card__info-value">
-                        {!!stakedRewards.yearlyEstimate && <span>~</span>}
-                        {' '}
-                        {stakedRewards.yearlyEstimate.toFixed((stakedRewards.yearlyEstimate > 10 || !stakedRewards.yearlyEstimate) ? 0 : 2)}
-                        {!!stakedRewards.apy
-                  && (
-                  <small>
-                    (
-                    {stakedRewards.apy}
-                    %)
-                  </small>
-                  )}
-                      </div>
-                    </div>
-                  </>
-                  )}
-                  {
+                  {/* {
                 !bondTimes.ending.ended
                 && (
                 <div className="bond-card__info-item">
@@ -494,7 +464,7 @@ export const BondsComponent = ({
                   <div className="bond-card__info-value">{bondTimes?.availableLockTime}</div>
                 </div>
                 )
-              }
+              } */}
 
                   <div className="bond-card__info-item">
                     <div
