@@ -24,7 +24,7 @@ const AddLiqudity = (): JSX.Element => {
     appState.selectedSigner$,
   );
   const network: Network | undefined = hooks.useObservableState(
-    appState.selectedNetworkSubj,
+    appState.currentNetwork$,
   );
 
   const [state, dispatch] = useReducer(store.addLiquidityReducer, store.initialAddLiquidityState);

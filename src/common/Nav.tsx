@@ -29,7 +29,7 @@ const Nav = ({ display }: Nav): JSX.Element => {
   const { pathname } = useLocation();
   const signer: ReefSigner|undefined = hooks.useObservableState(appState.selectedSigner$);
   const accounts: ReefSigner[]|undefined = hooks.useObservableState(appState.signers$);
-  const network: Network|undefined = hooks.useObservableState(appState.selectedNetworkSubj);
+  const network: Network|undefined = hooks.useObservableState(appState.currentNetwork$);
   const selectAccount = (index: number): void => {
     saveSignerLocalPointer(index);
     appState.selectAddressSubj.next(index != null ? accounts?.[index].address : undefined);

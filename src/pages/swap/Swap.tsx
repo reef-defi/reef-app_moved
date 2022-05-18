@@ -1,5 +1,5 @@
 import {
-  appState, Components, hooks, Network, ReefSigner, Settings, store, Token
+  appState, Components, hooks, Network, ReefSigner, Settings, store, Token, utils
 } from '@reef-defi/react-lib';
 import React, { useContext, useReducer } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
@@ -15,7 +15,7 @@ const Swap = (): JSX.Element => {
   const tokens = useContext(TokenContext);
   const { address1, address2 } = useParams<UrlAddressParams>();
 
-  const network: Network|undefined = hooks.useObservableState(appState.selectedNetworkSubj);
+  const network: Network|undefined = hooks.useObservableState(appState.currentNetwork$);
   const signer: ReefSigner|undefined = hooks.useObservableState(appState.selectedSigner$);
 
 
@@ -58,7 +58,7 @@ const Swap = (): JSX.Element => {
   const setSettings = (settings: Settings) => dispatch(store.setSettingsAction(settings))
   const setToken1Amount = (amount: string) => dispatch(store.setToken1AmountAction(amount));
   const setToken2Amount = (amount: string) => dispatch(store.setToken2AmountAction(amount));
-
+  // console.log('Tokens: ', tokens.find(({address}) => address === utils.REEF_ADDRESS))
   const actions: store.SwapComponentActions = {
     onAddressChange: async () => {},
     onSwap,

@@ -12,7 +12,7 @@ import { notify } from '../../utils/utils';
 const { Send } = Components;
 
 export const Transfer = (): JSX.Element => {
-  const provider: Provider|undefined = hooks.useObservableState(appState.providerSubj);
+  const provider: Provider|undefined = hooks.useObservableState(appState.currentProvider$);
   const accounts: ReefSigner[]|undefined = hooks.useObservableState(appState.signers$);
   const selectedSigner: ReefSigner|undefined = hooks.useObservableState(appState.selectedSigner$);
   const tokens = useContext(TokenContext);
