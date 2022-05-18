@@ -24,7 +24,7 @@ const RemoveLiquidity = (): JSX.Element => {
   const { address1, address2 } = useParams<UrlParams>();
 
   const network: Network | undefined = hooks.useObservableState(
-    appState.selectedNetworkSubj
+    appState.currentNetwork$
   );
   const signer: ReefSigner | undefined = hooks.useObservableState(
     appState.selectedSigner$
