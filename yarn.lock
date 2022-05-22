@@ -2894,10 +2894,10 @@
   dependencies:
     "@babel/runtime" "^7.16.0"
 
-"@reef-defi/react-lib@^1.0.46":
-  version "1.0.46"
-  resolved "https://registry.yarnpkg.com/@reef-defi/react-lib/-/react-lib-1.0.46.tgz#19eba05eb860977811ffde884ff9afec826cb8ed"
-  integrity sha512-K+Xa7VIj71ef4kb44aZ0rdaRk6lgCvLDPrNjt0thPO4OLZD1qgL+hhJ5AWZfvU4ovRzFph+aQHYE8r9aH+AMeg==
+"@reef-defi/react-lib@^1.0.47":
+  version "1.0.47"
+  resolved "https://registry.yarnpkg.com/@reef-defi/react-lib/-/react-lib-1.0.47.tgz#bc3981b73c5086df5b1ffa6efe60fa2330448da6"
+  integrity sha512-RixSuVmRHHlL2xjBK4QTeccnSmB9usXeat3oddd6Io1jMYwe8uo0W+vsOwSBpnU6EiBM5qwMM0Fqj/spf6UStg==
   dependencies:
     "@apollo/client" "^3.6.2"
     "@polkadot/extension-dapp" "^0.40.4"
