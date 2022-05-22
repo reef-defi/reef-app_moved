@@ -12,4 +12,4 @@ export const innitialNetwork = { ...availableNetworks.mainnet };
 } as Network; */
 
 export const appAvailableNetworks = [availableNetworks.mainnet, availableNetworks.testnet];
-console.log('1.0.48');
+console.log('v1.0.48');
