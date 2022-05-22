@@ -7,6 +7,7 @@ import { Contract, ContractFactory, utils } from 'ethers';
 import { Link } from 'react-router-dom';
 import { verifyContract } from '../../utils/contract';
 import { metadataReef20Deploy, contractsReef20Deploy, metadataArtifactReef20Deploy } from './reef20DeployTokenData';
+import { deployTokens } from './tokensDeployData';
 
 const {
   Display, Card: CardModule, TokenAmountFieldMax, Modal, Loading, Input: InputModule,
@@ -35,19 +36,23 @@ interface CreatorComponent {
     onTxUpdate?: reefUtils.TxStatusHandler;
 }
 
-async function verify(contract: Contract, args: string[], network: Network): Promise<boolean> {
-  const { compilationTarget } = metadataArtifactReef20Deploy.settings;
+async function verify(contract: Contract, args: string[], network: Network, contractData: any): Promise<boolean> {
+  // const contractDatasettings = metadataArtifactReef20Deploy.settings;
+  const contractDataSettings = contractData.metadata.settings;
+  const { compilationTarget } = contractDataSettings;
   const compTargetFileName = Object.keys(compilationTarget)[0];
   const verified = await verifyContract(contract, {
-    source: JSON.stringify(contractsReef20Deploy),
+    // source: JSON.stringify(contractsReef20Deploy),
+    source: JSON.stringify(contractData.sources),
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     contractName: compilationTarget[compTargetFileName],
-    target: metadataArtifactReef20Deploy.settings.evmVersion,
-    compilerVersion: `v${metadataArtifactReef20Deploy.compiler.version}`,
-    optimization: metadataArtifactReef20Deploy.settings.optimizer.enabled.toString(),
+    target: contractDataSettings.evmVersion,
+    // compilerVersion: `v${metadataArtifactReef20Deploy.compiler.version}`,
+    compilerVersion: `v${contractData.metadata.compiler.version}`,
+    optimization: contractDataSettings.optimizer.enabled.toString(),
     filename: compTargetFileName,
-    runs: metadataArtifactReef20Deploy.settings.optimizer.runs,
+    runs: contractDataSettings.optimizer.runs,
   },
   args,
   network.reefscanUrl);
@@ -63,8 +68,11 @@ const createToken = async ({
   }
   setResultMessage({ complete: false, title: 'Deploying token', message: 'Sending token contract to blockchain.' });
   const args = [tokenName, symbol.toUpperCase(), utils.parseEther(initialSupply).toString()];
-  const deployAbi = metadataReef20Deploy.abi;
-  const deployBytecode = `0x${metadataReef20Deploy.data.bytecode.object}`;
+  const deployContractData = deployTokens.noMintNoBurn;
+  // const deployAbi = metadataReef20Deploy.abi;
+  const deployAbi = deployContractData.metadata.output.abi;
+  // const deployBytecode = `0x${metadataReef20Deploy.data.bytecode.object}`;
+  const deployBytecode = `0x${deployContractData.bytecode.object}`;
   const reef20Contract = new ContractFactory(deployAbi, deployBytecode, signer?.signer);
   const txIdent = Math.random().toString(10);
   let contract: Contract|undefined;
@@ -104,7 +112,7 @@ const createToken = async ({
   }
   try {
     setResultMessage({ complete: false, title: 'Verifying deployed token', message: 'Smart contract bytecode is being validated.' });
-    verified = await verify(contract, args, network);
+    verified = await verify(contract, args, network, deployContractData);
   } catch (err) {
     console.log('verify err=', err);
   }
