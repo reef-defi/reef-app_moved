@@ -267,7 +267,7 @@ export const CreatorComponent = ({
             <ModalFooter>
               <Button disabled={!resultMessage.complete} onClick={init}>Close</Button>
               {resultMessage.complete && (
-              <Link to={`/add-supply//${deployedContract?.address}`} className="btn btn-reef border-rad">
+              <Link to={`/add-supply/0x0000000000000000000000000000000001000000/${deployedContract?.address}`} className="btn btn-reef border-rad">
                 <span>Create pool</span>
               </Link>
               )}
