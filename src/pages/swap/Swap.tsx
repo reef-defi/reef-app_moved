@@ -1,19 +1,22 @@
-import React, { useContext } from 'react';
-
 import {
-  appState, Components, hooks, Network, ReefSigner, Token, TokenSelector,
+  appState, Components, hooks, Network, ReefSigner, TokenSelector
 } from '@reef-defi/react-lib';
+import React, { useContext } from 'react';
+import { useMemo } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
+import PoolContext from '../../context/PoolContext';
+import TokenContext from '../../context/TokenContext';
 import { useTokensFinder } from '../../hooks/useTokensFinder';
 import { addressReplacer, SPECIFIED_SWAP_URL, UrlAddressParams } from '../../urls';
 import { notify } from '../../utils/utils';
-import TokenContext from '../../context/TokenContext';
+
 
 const { SwapComponent } = Components;
 
 const Swap = (): JSX.Element => {
   const history = useHistory();
   const tokens = useContext(TokenContext);
+  const pools = useContext(PoolContext);
   const network: Network|undefined = hooks.useObservableState(appState.currentNetwork$);
   const signer: ReefSigner|undefined = hooks.useObservableState(appState.selectedSigner$);
 
