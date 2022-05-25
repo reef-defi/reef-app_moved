@@ -23,7 +23,7 @@ const {
 } = Modal;
 
 const { LoadingButtonIconWithText } = Loading;
-const { Input, NumberInput, InputAmount } = InputModule;
+const { Input, NumberInput, InputAmount, CheckboxInput } = InputModule;
 const { ConfirmLabel } = Label;
 const { calculateUsdAmount } = reefUtils;
 const { Button } = ButtonModule;
@@ -32,6 +32,11 @@ interface CreatorComponent {
     signer: ReefSigner | undefined;
     network: Network;
     onTxUpdate?: reefUtils.TxStatusHandler;
+}
+
+interface ITokenOptions {
+  burnable: boolean;
+  mintable: boolean;
 }
 
 async function verify(contract: Contract, args: string[], network: Network, contractData: DeployContractData): Promise<boolean> {
@@ -56,15 +61,22 @@ async function verify(contract: Contract, args: string[], network: Network, cont
 }
 
 const createToken = async ({
-  signer, network, tokenName, symbol, initialSupply, onTxUpdate, setResultMessage, setVerifiedContract, setDeployedContract,
-}: {signer?: ReefSigner, setResultMessage: any, tokenName: string, symbol: string, initialSupply: string, network: Network, onTxUpdate?: reefUtils.TxStatusHandler, setVerifiedContract: any, setDeployedContract: any}): Promise<void> => {
+  signer, network, tokenName, symbol, initialSupply, tokenOptions, onTxUpdate, setResultMessage, setVerifiedContract, setDeployedContract,
+}: {signer?: ReefSigner, setResultMessage: any, tokenName: string, symbol: string, initialSupply: string, tokenOptions: ITokenOptions, network: Network, onTxUpdate?: reefUtils.TxStatusHandler, setVerifiedContract: any, setDeployedContract: any}): Promise<void> => {
   if (!signer) {
     console.log('signer not set ');
     return;
   }
   setResultMessage({ complete: false, title: 'Deploying token', message: 'Sending token contract to blockchain.' });
   const args = [tokenName, symbol.toUpperCase(), utils.parseEther(initialSupply).toString()];
-  const deployContractData = deployTokens.mintBurn;
+  let deployContractData = deployTokens.mintBurn;
+  if (!tokenOptions.burnable && !tokenOptions.mintable) {
+    deployContractData = deployTokens.noMintNoBurn;
+  } else if (tokenOptions.burnable && !tokenOptions.mintable) {
+    deployContractData = deployTokens.noMintBurn;
+  } else if (!tokenOptions.burnable && tokenOptions.mintable) {
+    deployContractData = deployTokens.mintNoBurn
+  }
   const deployAbi = deployContractData.metadata.output.abi;
   const deployBytecode = `0x${deployContractData.bytecode.object}`;
   const reef20Contract = new ContractFactory(deployAbi, deployBytecode, signer?.signer);
@@ -126,6 +138,7 @@ export const CreatorComponent = ({
   const [resultMessage, setResultMessage] = useState<{complete: boolean, title: string, message: string, contract?: Contract} | null>(null);
   const [tokenName, setTokenName] = useState('');
   const [symbol, setSymbol] = useState('');
+  const [tokenOptions, setTokenOptions] = useState<ITokenOptions>({ burnable: true, mintable: true });
   const [initialSupply, setInitialSupply] = useState('');
   const [validationMsg, setValidationMsg] = useState('');
   const [verifiedContract, setVerifiedContract] = useState<Contract>();
@@ -210,6 +223,24 @@ export const CreatorComponent = ({
             <div><small className="text-color-disabled">{initialSupply && `Decimal value on chain: ${utils.parseEther(initialSupply)}`}</small></div>
           </MT>
           <MT size="2">
+            <div className="d-flex">
+              <div className="mr-2">
+            <CheckboxInput
+              checked={tokenOptions.burnable}
+              onChange={(evt) => setTokenOptions({...tokenOptions, burnable: !tokenOptions.burnable})}
+              id='burn'
+              labelText='Burnable'
+            />
+              </div>
+            <CheckboxInput
+              checked={tokenOptions.mintable}
+              onChange={(evt) => setTokenOptions({...tokenOptions, mintable: !tokenOptions.mintable})}
+              id='mint'
+              labelText='Mintable'
+            />
+            </div>
+          </MT>
+          <MT size="2">
             <CenterColumn>
               <OpenModalButton id="createModalToggle" disabled={!!validationMsg}>
                 {validationMsg || 'Create'}
@@ -224,7 +255,7 @@ export const CreatorComponent = ({
         title="Confirm and Create"
         confirmBtnLabel="Create"
         confirmFun={() => createToken({
-          signer, network, tokenName, symbol, initialSupply, onTxUpdate, setResultMessage, setVerifiedContract, setDeployedContract,
+          signer, network, tokenName, symbol, initialSupply, tokenOptions, onTxUpdate, setResultMessage, setVerifiedContract, setDeployedContract,
         })}
       >
         <Margin size="3">
@@ -235,6 +266,12 @@ export const CreatorComponent = ({
         </Margin>
         <Margin size="3">
           <ConfirmLabel title="Initial Supply" value={initialSupply ? utils.parseEther(initialSupply).toString() : ''} />
+        </Margin>
+        <Margin size="3">
+          <ConfirmLabel title="Burnable" value={tokenOptions.burnable ? 'Yes' : 'No'} />
+        </Margin>
+        <Margin size="3">
+          <ConfirmLabel title="Mintable" value={tokenOptions.mintable ? 'Yes' : 'No'} />
         </Margin>
       </ConfirmationModal>
     </>
