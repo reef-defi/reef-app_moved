@@ -1,6 +1,6 @@
 import { availableNetworks, Network } from '@reef-defi/react-lib';
 
-export const innitialNetwork = { ...availableNetworks.testnet };
+export const innitialNetwork = { ...availableNetworks.mainnet };
 /* || availableNetworks.testnet || */
 /* {
   name: 'testnet',
@@ -12,3 +12,4 @@ export const innitialNetwork = { ...availableNetworks.testnet };
 } as Network; */
 
 export const appAvailableNetworks = [availableNetworks.mainnet, availableNetworks.testnet];
+console.log('1.0.48-tokens');
