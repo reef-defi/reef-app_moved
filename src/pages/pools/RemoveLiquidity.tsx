@@ -9,6 +9,7 @@ import {
 import React, { useContext, useReducer } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import TokenContext from "../../context/TokenContext";
+import TokenPricesContext from "../../context/TokenPricesContext";
 import { notify } from "../../utils/utils";
 
 const { RemoveLiquidityComponent } = Components;
@@ -21,6 +22,7 @@ interface UrlParams {
 const RemoveLiquidity = (): JSX.Element => {
   const history = useHistory();
   const tokens = useContext(TokenContext);
+  const tokenPrices = useContext(TokenPricesContext);
   const { address1, address2 } = useParams<UrlParams>();
 
   const network: Network | undefined = hooks.useObservableState(
@@ -43,6 +45,7 @@ const RemoveLiquidity = (): JSX.Element => {
     tokens,
     network,
     signer,
+    tokenPrices,
   });
 
   const onRemoveLiquidity = hooks.onRemoveLiquidity({
