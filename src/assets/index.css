@@ -105,6 +105,10 @@ svg.fill-white {
     margin-right: 1em;
 }
 
+.mr-2 {
+    margin-right: 2em;
+}
+
 .pl-1rem {
     padding-left: 1rem;
 }
@@ -197,7 +201,7 @@ input.form-control {
     border-radius: 10px;
     padding: 15px;
     transition: all 0.15s;
-} 
+}
 
 input.form-control::placeholder {
     font-weight: 500;

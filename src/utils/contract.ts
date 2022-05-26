@@ -12,6 +12,7 @@ interface BaseContract {
     target: string;
     optimization: string;
     compilerVersion: string;
+    license: string;
 }
 
 export interface VerificationContractReq extends BaseContract {
@@ -112,7 +113,7 @@ export const verifyContract = async (deployedContract: Contract, contract: ReefC
       source: contract.source,
       optimization: contract.optimization,
       compilerVersion: contract.compilerVersion,
-      // not required - license: contract.license,
+      license: contract.license,
       runs: contract.runs,
     };
     await contractVerificatorApi.post<VerificationContractReq, AxiosResponse<string>>(`${url}${CONTRACT_VERIFICATION_URL}`, body);

@@ -1,12 +1,11 @@
 import {
-  availableNetworks,
-  Components, Network, ReefSigner, reefTokenWithAmount, utils as reefUtils,
+  availableNetworks, Components, Network, ReefSigner, utils as reefUtils,
 } from '@reef-defi/react-lib';
 import React, { useEffect, useState } from 'react';
 import { Contract, ContractFactory, utils } from 'ethers';
 import { Link } from 'react-router-dom';
 import { verifyContract } from '../../utils/contract';
-import { metadataReef20Deploy, contractsReef20Deploy, metadataArtifactReef20Deploy } from './reef20DeployTokenData';
+import { DeployContractData, deployTokens } from './tokensDeployData';
 
 const {
   Display, Card: CardModule, TokenAmountFieldMax, Modal, Loading, Input: InputModule,
@@ -24,7 +23,7 @@ const {
 } = Modal;
 
 const { LoadingButtonIconWithText } = Loading;
-const { Input, NumberInput, InputAmount } = InputModule;
+const { Input, NumberInput, InputAmount, CheckboxInput } = InputModule;
 const { ConfirmLabel } = Label;
 const { calculateUsdAmount } = reefUtils;
 const { Button } = ButtonModule;
@@ -35,19 +34,26 @@ interface CreatorComponent {
     onTxUpdate?: reefUtils.TxStatusHandler;
 }
 
-async function verify(contract: Contract, args: string[], network: Network): Promise<boolean> {
-  const { compilationTarget } = metadataArtifactReef20Deploy.settings;
+interface ITokenOptions {
+  burnable: boolean;
+  mintable: boolean;
+}
+
+async function verify(contract: Contract, args: string[], network: Network, contractData: DeployContractData): Promise<boolean> {
+  const contractDataSettings = contractData.metadata.settings;
+  const { compilationTarget } = contractDataSettings;
   const compTargetFileName = Object.keys(compilationTarget)[0];
   const verified = await verifyContract(contract, {
-    source: JSON.stringify(contractsReef20Deploy),
+    source: JSON.stringify(contractData.sources),
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     contractName: compilationTarget[compTargetFileName],
-    target: metadataArtifactReef20Deploy.settings.evmVersion,
-    compilerVersion: `v${metadataArtifactReef20Deploy.compiler.version}`,
-    optimization: metadataArtifactReef20Deploy.settings.optimizer.enabled.toString(),
+    target: contractDataSettings.evmVersion,
+    compilerVersion: `v${contractData.metadata.compiler.version}`,
+    optimization: contractDataSettings.optimizer.enabled.toString(),
     filename: compTargetFileName,
-    runs: metadataArtifactReef20Deploy.settings.optimizer.runs,
+    runs: contractData.metadata.settings.optimizer.runs,
+    license: 'MIT',
   },
   args,
   network.reefscanUrl);
@@ -55,16 +61,24 @@ async function verify(contract: Contract, args: string[], network: Network): Pro
 }
 
 const createToken = async ({
-  signer, network, tokenName, symbol, initialSupply, onTxUpdate, setResultMessage, setVerifiedContract, setDeployedContract,
-}: {signer?: ReefSigner, setResultMessage: any, tokenName: string, symbol: string, initialSupply: string, network: Network, onTxUpdate?: reefUtils.TxStatusHandler, setVerifiedContract: any, setDeployedContract: any}): Promise<void> => {
+  signer, network, tokenName, symbol, initialSupply, tokenOptions, onTxUpdate, setResultMessage, setVerifiedContract, setDeployedContract,
+}: {signer?: ReefSigner, setResultMessage: any, tokenName: string, symbol: string, initialSupply: string, tokenOptions: ITokenOptions, network: Network, onTxUpdate?: reefUtils.TxStatusHandler, setVerifiedContract: any, setDeployedContract: any}): Promise<void> => {
   if (!signer) {
     console.log('signer not set ');
     return;
   }
   setResultMessage({ complete: false, title: 'Deploying token', message: 'Sending token contract to blockchain.' });
   const args = [tokenName, symbol.toUpperCase(), utils.parseEther(initialSupply).toString()];
-  const deployAbi = metadataReef20Deploy.abi;
-  const deployBytecode = `0x${metadataReef20Deploy.data.bytecode.object}`;
+  let deployContractData = deployTokens.mintBurn;
+  if (!tokenOptions.burnable && !tokenOptions.mintable) {
+    deployContractData = deployTokens.noMintNoBurn;
+  } else if (tokenOptions.burnable && !tokenOptions.mintable) {
+    deployContractData = deployTokens.noMintBurn;
+  } else if (!tokenOptions.burnable && tokenOptions.mintable) {
+    deployContractData = deployTokens.mintNoBurn
+  }
+  const deployAbi = deployContractData.metadata.output.abi;
+  const deployBytecode = `0x${deployContractData.bytecode.object}`;
   const reef20Contract = new ContractFactory(deployAbi, deployBytecode, signer?.signer);
   const txIdent = Math.random().toString(10);
   let contract: Contract|undefined;
@@ -104,13 +118,15 @@ const createToken = async ({
   }
   try {
     setResultMessage({ complete: false, title: 'Verifying deployed token', message: 'Smart contract bytecode is being validated.' });
-    verified = await verify(contract, args, network);
+    verified = await verify(contract, args, network, deployContractData);
   } catch (err) {
     console.log('verify err=', err);
   }
   if (verified) {
     setVerifiedContract(contract);
-    setResultMessage({ complete: true, title: 'Token created', message: `Congratulations, you have your new token ${tokenName} with address ${contract.address} in your assets. Innitial supply is ${initialSupply} ${symbol.toUpperCase()}. Next step is to create a pool so users can start trading.` });
+    setResultMessage({
+      complete: true, title: 'Token created', message: `Success, your new token ${tokenName} is deployed. Innitial supply is ${initialSupply} ${symbol.toUpperCase()}. Next step is to create a pool so users can start trading.`, contract,
+    });
   } else {
     setResultMessage({ complete: true, title: 'Error verifying token', message: `Verifying deployed contract ${contract.address} failed.` });
   }
@@ -119,9 +135,10 @@ const createToken = async ({
 export const CreatorComponent = ({
   signer, onTxUpdate, network,
 }: CreatorComponent): JSX.Element => {
-  const [resultMessage, setResultMessage] = useState<{complete: boolean, title: string, message: string} | null>(null);
+  const [resultMessage, setResultMessage] = useState<{complete: boolean, title: string, message: string, contract?: Contract} | null>(null);
   const [tokenName, setTokenName] = useState('');
   const [symbol, setSymbol] = useState('');
+  const [tokenOptions, setTokenOptions] = useState<ITokenOptions>({ burnable: true, mintable: true });
   const [initialSupply, setInitialSupply] = useState('');
   const [validationMsg, setValidationMsg] = useState('');
   const [verifiedContract, setVerifiedContract] = useState<Contract>();
@@ -164,6 +181,7 @@ export const CreatorComponent = ({
     setResultMessage(null);
   };
 
+  // @ts-ignore
   return (
     <>
       { !resultMessage
@@ -205,6 +223,24 @@ export const CreatorComponent = ({
             <div><small className="text-color-disabled">{initialSupply && `Decimal value on chain: ${utils.parseEther(initialSupply)}`}</small></div>
           </MT>
           <MT size="2">
+            <div className="d-flex">
+              <div className="mr-2">
+            <CheckboxInput
+              checked={tokenOptions.burnable}
+              onChange={(evt) => setTokenOptions({...tokenOptions, burnable: !tokenOptions.burnable})}
+              id='burn'
+              labelText='Burnable'
+            />
+              </div>
+            <CheckboxInput
+              checked={tokenOptions.mintable}
+              onChange={(evt) => setTokenOptions({...tokenOptions, mintable: !tokenOptions.mintable})}
+              id='mint'
+              labelText='Mintable'
+            />
+            </div>
+          </MT>
+          <MT size="2">
             <CenterColumn>
               <OpenModalButton id="createModalToggle" disabled={!!validationMsg}>
                 {validationMsg || 'Create'}
@@ -219,7 +255,7 @@ export const CreatorComponent = ({
         title="Confirm and Create"
         confirmBtnLabel="Create"
         confirmFun={() => createToken({
-          signer, network, tokenName, symbol, initialSupply, onTxUpdate, setResultMessage, setVerifiedContract, setDeployedContract,
+          signer, network, tokenName, symbol, initialSupply, tokenOptions, onTxUpdate, setResultMessage, setVerifiedContract, setDeployedContract,
         })}
       >
         <Margin size="3">
@@ -230,6 +266,12 @@ export const CreatorComponent = ({
         </Margin>
         <Margin size="3">
           <ConfirmLabel title="Initial Supply" value={initialSupply ? utils.parseEther(initialSupply).toString() : ''} />
+        </Margin>
+        <Margin size="3">
+          <ConfirmLabel title="Burnable" value={tokenOptions.burnable ? 'Yes' : 'No'} />
+        </Margin>
+        <Margin size="3">
+          <ConfirmLabel title="Mintable" value={tokenOptions.mintable ? 'Yes' : 'No'} />
         </Margin>
       </ConfirmationModal>
     </>
@@ -246,14 +288,23 @@ export const CreatorComponent = ({
           <MT size="3">
             <div className="text-center">
               {!resultMessage.complete && <Loading.Loading />}
-              <div>{resultMessage.message}</div>
+              <div>
+                <p>
+                  {resultMessage.message}
+                  <br />
+                  {resultMessage.contract && (
+                  <small><a href={`${network.reefscanFrontendUrl}/contract/${resultMessage.contract.address}`} target="self">open in explorer</a></small>
+                  )}
+                </p>
+
+              </div>
             </div>
           </MT>
           <MT size="2">
             <ModalFooter>
               <Button disabled={!resultMessage.complete} onClick={init}>Close</Button>
               {resultMessage.complete && (
-              <Link to={`/add-supply//${deployedContract?.address}`} className="btn btn-reef border-rad">
+              <Link to={`/add-supply/0x0000000000000000000000000000000001000000/${deployedContract?.address}`} className="btn btn-reef border-rad">
                 <span>Create pool</span>
               </Link>
               )}

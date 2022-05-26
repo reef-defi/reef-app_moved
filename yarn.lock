@@ -2894,10 +2894,10 @@
   dependencies:
     "@babel/runtime" "^7.16.0"
 
-"@reef-defi/react-lib@^1.0.46":
-  version "1.0.46"
-  resolved "https://registry.yarnpkg.com/@reef-defi/react-lib/-/react-lib-1.0.46.tgz#19eba05eb860977811ffde884ff9afec826cb8ed"
-  integrity sha512-K+Xa7VIj71ef4kb44aZ0rdaRk6lgCvLDPrNjt0thPO4OLZD1qgL+hhJ5AWZfvU4ovRzFph+aQHYE8r9aH+AMeg==
+"@reef-defi/react-lib@^1.0.49":
+  version "1.0.49"
+  resolved "https://registry.yarnpkg.com/@reef-defi/react-lib/-/react-lib-1.0.49.tgz#4aade48677b7381b6bec7102ab57ab112cf4e049"
+  integrity sha512-clGuFMdrVy3jGAZlgcNW2gcOu9Q12af9lFsQZMUzocliGymHEFvSGTz46hGQMynS9Y8JUNvHRPS8+JeVefTN4g==
   dependencies:
     "@apollo/client" "^3.6.2"
     "@polkadot/extension-dapp" "^0.40.4"
@@ -2907,6 +2907,7 @@
     "@reef-defi/extension-inject" "^0.41.2"
     "@types/react-router-dom" "^5.3.0"
     axios "^0.21.4"
+    bignumber.js "^9.0.2"
     bootstrap "^5.1.1"
     eslint-import-resolver-typescript "^2.4.0"
     ethers "^5.5.4"
@@ -4856,6 +4857,11 @@ big.js@^5.2.2:
   version "5.2.2"
   resolved "https://registry.yarnpkg.com/big.js/-/big.js-5.2.2.tgz#65f0af382f578bcdc742bd9c281e9cb2d7768328"
   integrity sha512-vyL2OymJxmarO8gxMr0mhChsO9QGwhynfuu4+MHTAW6czfq9humCB7rKpUjDd9YUiDPU4mzpyupFSvOClAwbmQ==
+
+bignumber.js@^9.0.2:
+  version "9.0.2"
+  resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-9.0.2.tgz#71c6c6bed38de64e24a65ebe16cfcf23ae693673"
+  integrity sha512-GAcQvbpsM0pUb0zw1EI0KhQEZ+lRwR5fYaAp3vPOYuP7aDvGy6cVN6XHLauvF8SOga2y0dcLcjt3iQDTSEliyw==
 
 binary-extensions@^2.0.0:
   version "2.2.0"
