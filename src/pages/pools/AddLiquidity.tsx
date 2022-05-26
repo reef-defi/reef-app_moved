@@ -6,6 +6,7 @@ import {
 import React, { useContext, useReducer } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import TokenContext from '../../context/TokenContext';
+import TokenPricesContext from '../../context/TokenPricesContext';
 import { addressReplacer, ADD_LIQUIDITY_URL } from '../../urls';
 import { notify } from '../../utils/utils';
 
@@ -20,6 +21,7 @@ const AddLiqudity = (): JSX.Element => {
   const { address1, address2 } = useParams<UrlParams>();
   const history = useHistory();
   const tokens = useContext(TokenContext);
+  const tokenPrices = useContext(TokenPricesContext);
   const signer: ReefSigner | undefined = hooks.useObservableState(
     appState.selectedSigner$,
   );
@@ -35,7 +37,8 @@ const AddLiqudity = (): JSX.Element => {
     state,
     tokens,
     signer,
-    network
+    network,
+    tokenPrices,
   })
 
   const selectToken1 = (token: Token) => {

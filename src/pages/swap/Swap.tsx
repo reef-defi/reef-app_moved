@@ -4,6 +4,7 @@ import {
 import React, { useContext, useReducer } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import TokenContext from '../../context/TokenContext';
+import TokenPricesContext from '../../context/TokenPricesContext';
 import { addressReplacer, SPECIFIED_SWAP_URL, UrlAddressParams } from '../../urls';
 import { notify } from '../../utils/utils';
 
@@ -13,6 +14,7 @@ const { SwapComponent } = Components;
 const Swap = (): JSX.Element => {
   const history = useHistory();
   const tokens = useContext(TokenContext);
+  const tokenPrices = useContext(TokenPricesContext);
   const { address1, address2 } = useParams<UrlAddressParams>();
 
   const network: Network|undefined = hooks.useObservableState(appState.currentNetwork$);
@@ -28,6 +30,7 @@ const Swap = (): JSX.Element => {
     network,
     state,
     tokens,
+    tokenPrices,
     account: signer
   });
 

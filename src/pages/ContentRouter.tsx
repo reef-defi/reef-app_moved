@@ -25,6 +25,7 @@ import { Creator } from './creator/Creator';
 import { Bonds } from './bonds/Bonds';
 import PoolContext from '../context/PoolContext';
 import TokenContext from '../context/TokenContext';
+import TokenPrices from '../context/TokenPricesContext';
 import Pool from './pools/Pool';
 
 const ContentRouter = (): JSX.Element => {
@@ -41,11 +42,11 @@ const ContentRouter = (): JSX.Element => {
     [tokens, pools, reefPrice]
   );
 
-  console.log(tokenPrices);
   return (
     <div className="content">
       <TokenContext.Provider value={tokens}>
         <PoolContext.Provider value={pools}>
+          <TokenPrices.Provider value={tokenPrices}>
           <Switch>
             <Route path={SPECIFIED_SWAP_URL} component={Swap} />
             <Route exact path={POOLS_URL} component={Pools} />
@@ -59,6 +60,7 @@ const ContentRouter = (): JSX.Element => {
             <Route exact path={BONDS_URL} component={Bonds} />
             <Route path="/" render={() => (<Redirect to={DASHBOARD_URL} />)} />
           </Switch>
+          </TokenPrices.Provider>
         </PoolContext.Provider>
       </TokenContext.Provider>
     </div>
