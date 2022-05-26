@@ -5,12 +5,12 @@ import {
   Network,
   ReefSigner,
   store,
-} from "@reef-defi/react-lib";
-import React, { useContext, useReducer } from "react";
-import { useHistory, useParams } from "react-router-dom";
-import TokenContext from "../../context/TokenContext";
-import TokenPricesContext from "../../context/TokenPricesContext";
-import { notify } from "../../utils/utils";
+} from '@reef-defi/react-lib';
+import React, { useContext, useReducer } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
+import TokenContext from '../../context/TokenContext';
+import TokenPricesContext from '../../context/TokenPricesContext';
+import { notify } from '../../utils/utils';
 
 const { RemoveLiquidityComponent } = Components;
 
@@ -26,15 +26,15 @@ const RemoveLiquidity = (): JSX.Element => {
   const { address1, address2 } = useParams<UrlParams>();
 
   const network: Network | undefined = hooks.useObservableState(
-    appState.currentNetwork$
+    appState.currentNetwork$,
   );
   const signer: ReefSigner | undefined = hooks.useObservableState(
-    appState.selectedSigner$
+    appState.selectedSigner$,
   );
 
   const [state, dispatch] = useReducer(
     store.removeLiquidityReducer,
-    store.initialRemoveLiquidityState
+    store.initialRemoveLiquidityState,
   );
 
   hooks.useRemoveLiquidity({
@@ -66,8 +66,7 @@ const RemoveLiquidity = (): JSX.Element => {
         onRemoveLiquidity,
         back: history.goBack,
         setSettings: (settings) => dispatch(store.setSettingsAction(settings)),
-        setPercentage: (percentage) =>
-          dispatch(store.setPercentageAction(percentage)),
+        setPercentage: (percentage) => dispatch(store.setPercentageAction(percentage)),
       }}
     />
   );

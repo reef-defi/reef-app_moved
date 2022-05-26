@@ -23,7 +23,9 @@ const {
 } = Modal;
 
 const { LoadingButtonIconWithText } = Loading;
-const { Input, NumberInput, InputAmount, CheckboxInput } = InputModule;
+const {
+  Input, NumberInput, InputAmount, CheckboxInput,
+} = InputModule;
 const { ConfirmLabel } = Label;
 const { calculateUsdAmount } = reefUtils;
 const { Button } = ButtonModule;
@@ -75,7 +77,7 @@ const createToken = async ({
   } else if (tokenOptions.burnable && !tokenOptions.mintable) {
     deployContractData = deployTokens.noMintBurn;
   } else if (!tokenOptions.burnable && tokenOptions.mintable) {
-    deployContractData = deployTokens.mintNoBurn
+    deployContractData = deployTokens.mintNoBurn;
   }
   const deployAbi = deployContractData.metadata.output.abi;
   const deployBytecode = `0x${deployContractData.bytecode.object}`;
@@ -225,19 +227,19 @@ export const CreatorComponent = ({
           <MT size="2">
             <div className="d-flex">
               <div className="mr-2">
-            <CheckboxInput
-              checked={tokenOptions.burnable}
-              onChange={(evt) => setTokenOptions({...tokenOptions, burnable: !tokenOptions.burnable})}
-              id='burn'
-              labelText='Burnable'
-            />
+                <CheckboxInput
+                  checked={tokenOptions.burnable}
+                  onChange={(evt) => setTokenOptions({ ...tokenOptions, burnable: !tokenOptions.burnable })}
+                  id="burn"
+                  labelText="Burnable"
+                />
               </div>
-            <CheckboxInput
-              checked={tokenOptions.mintable}
-              onChange={(evt) => setTokenOptions({...tokenOptions, mintable: !tokenOptions.mintable})}
-              id='mint'
-              labelText='Mintable'
-            />
+              <CheckboxInput
+                checked={tokenOptions.mintable}
+                onChange={(evt) => setTokenOptions({ ...tokenOptions, mintable: !tokenOptions.mintable })}
+                id="mint"
+                labelText="Mintable"
+              />
             </div>
           </MT>
           <MT size="2">

@@ -1,7 +1,7 @@
 import {
   appState, Components,
   hooks, Network,
-  ReefSigner, store, Token
+  ReefSigner, store, Token,
 } from '@reef-defi/react-lib';
 import React, { useContext, useReducer } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
@@ -10,8 +10,7 @@ import TokenPricesContext from '../../context/TokenPricesContext';
 import { addressReplacer, ADD_LIQUIDITY_URL } from '../../urls';
 import { notify } from '../../utils/utils';
 
-
-const {AddLiquidity} = Components;
+const { AddLiquidity } = Components;
 interface UrlParams {
   address1: string;
   address2: string;
@@ -39,13 +38,13 @@ const AddLiqudity = (): JSX.Element => {
     signer,
     network,
     tokenPrices,
-  })
+  });
 
-  const selectToken1 = (token: Token) => {
+  const selectToken1 = (token: Token): void => {
     dispatch(store.setToken1Action(token));
     history.push(addressReplacer(ADD_LIQUIDITY_URL, token.address, address2));
   };
-  const selectToken2 = (token: Token) => {
+  const selectToken2 = (token: Token): void => {
     dispatch(store.setToken2Action(token));
     history.push(addressReplacer(ADD_LIQUIDITY_URL, address1, token.address));
   };
@@ -55,26 +54,26 @@ const AddLiqudity = (): JSX.Element => {
     signer,
     dispatch,
     notify,
-    updateTokenState: async () => {}
-  })
+    updateTokenState: async () => {}, // eslint-disable-line
+  });
   if (!signer) {
-    return <div/>;
+    return <div />;
   }
   return (
     <AddLiquidity
-    signer={signer}
-    state={state}
-    tokens={tokens}
-    actions={{
-      selectToken1,
-      selectToken2,
-      onAddLiquidity,
-      back: history.goBack,
-      onAddressChange: async () => {},
-      setSettings: (settings) => dispatch(store.setSettingsAction(settings)),
-      setToken1Amount: (amount) => dispatch(store.setToken1AmountAction(amount)),
-      setToken2Amount: (amount) => dispatch(store.setToken2AmountAction(amount)),
-    }}
+      signer={signer}
+      state={state}
+      tokens={tokens}
+      actions={{
+        selectToken1,
+        selectToken2,
+        onAddLiquidity,
+        back: history.goBack,
+        onAddressChange: async () => {}, // eslint-disable-line
+        setSettings: (settings) => dispatch(store.setSettingsAction(settings)),
+        setToken1Amount: (amount) => dispatch(store.setToken1AmountAction(amount)),
+        setToken2Amount: (amount) => dispatch(store.setToken2AmountAction(amount)),
+      }}
     />
   );
 };

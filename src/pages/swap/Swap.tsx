@@ -1,5 +1,5 @@
 import {
-  appState, Components, hooks, Network, ReefSigner, Settings, store, Token, utils
+  appState, Components, hooks, Network, ReefSigner, Settings, store, Token, utils,
 } from '@reef-defi/react-lib';
 import React, { useContext, useReducer } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
@@ -7,7 +7,6 @@ import TokenContext from '../../context/TokenContext';
 import TokenPricesContext from '../../context/TokenPricesContext';
 import { addressReplacer, SPECIFIED_SWAP_URL, UrlAddressParams } from '../../urls';
 import { notify } from '../../utils/utils';
-
 
 const { SwapComponent } = Components;
 
@@ -20,7 +19,6 @@ const Swap = (): JSX.Element => {
   const network: Network|undefined = hooks.useObservableState(appState.currentNetwork$);
   const signer: ReefSigner|undefined = hooks.useObservableState(appState.selectedSigner$);
 
-
   const [state, dispatch] = useReducer(store.swapReducer, store.initialSwapState);
   // hook manages all nececcery swap updates
   hooks.useSwapState({
@@ -31,7 +29,7 @@ const Swap = (): JSX.Element => {
     state,
     tokens,
     tokenPrices,
-    account: signer
+    account: signer,
   });
 
   // Actions
@@ -41,29 +39,29 @@ const Swap = (): JSX.Element => {
     account: signer,
     dispatch,
     notify,
-    updateTokenState: async () => {},
+    updateTokenState: async () => {}, // eslint-disable-line
   });
-  const onSwitch = () => {
+  const onSwitch = (): void => {
     dispatch(store.switchTokensAction());
     dispatch(store.clearTokenAmountsAction());
     history.push(addressReplacer(SPECIFIED_SWAP_URL, state.token2.address, state.token1.address));
-  }
-  const selectToken1 = (token: Token) => {
+  };
+  const selectToken1 = (token: Token): void => {
     dispatch(store.setToken1Action(token));
     dispatch(store.clearTokenAmountsAction());
     history.push(addressReplacer(SPECIFIED_SWAP_URL, token.address, state.token2.address));
-  }
-  const selectToken2 = (token: Token) => {
+  };
+  const selectToken2 = (token: Token): void => {
     dispatch(store.setToken2Action(token));
     dispatch(store.clearTokenAmountsAction());
     history.push(addressReplacer(SPECIFIED_SWAP_URL, state.token1.address, token.address));
-  }
-  const setSettings = (settings: Settings) => dispatch(store.setSettingsAction(settings))
-  const setToken1Amount = (amount: string) => dispatch(store.setToken1AmountAction(amount));
-  const setToken2Amount = (amount: string) => dispatch(store.setToken2AmountAction(amount));
-  // console.log('Tokens: ', tokens.find(({address}) => address === utils.REEF_ADDRESS))
+  };
+  const setSettings = (settings: Settings): void => dispatch(store.setSettingsAction(settings));
+  const setToken1Amount = (amount: string): void => dispatch(store.setToken1AmountAction(amount));
+  const setToken2Amount = (amount: string): void => dispatch(store.setToken2AmountAction(amount));
+
   const actions: store.SwapComponentActions = {
-    onAddressChange: async () => {},
+    onAddressChange: async () => {}, // eslint-disable-line
     onSwap,
     onSwitch,
     selectToken1,
@@ -71,10 +69,10 @@ const Swap = (): JSX.Element => {
     setSettings,
     setToken1Amount,
     setToken2Amount,
-  }
+  };
 
   if (!signer) {
-    return <div/>;
+    return <div />;
   }
   return (
     <SwapComponent
