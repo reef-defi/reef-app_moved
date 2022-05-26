@@ -64,7 +64,7 @@ const RemoveLiquidity = (): JSX.Element => {
       state={state}
       actions={{
         onRemoveLiquidity,
-        back: history.goBack, 
+        back: history.goBack,
         setSettings: (settings) => dispatch(store.setSettingsAction(settings)),
         setPercentage: (percentage) => dispatch(store.setPercentageAction(percentage)),
       }}
