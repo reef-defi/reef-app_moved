@@ -10,8 +10,6 @@ import { ApolloProvider, ApolloConsumer } from '@apollo/client';
 import reportWebVitals from './reportWebVitals';
 import App from './App';
 
-import { innitialNetwork } from './environment';
-
 // const client = new ApolloClient({
 //   cache: new InMemoryCache(),
 //   uri: innitialNetwork.graphqlUrl

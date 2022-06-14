@@ -9,18 +9,12 @@ import ContentRouter from './pages/ContentRouter';
 import Nav from './common/Nav';
 import NoExtension from './pages/error/NoExtension';
 import NoAccount from './pages/error/NoAccount';
-import { innitialNetwork } from './environment';
 import OptionContext from './context/OptionContext';
 import { notify } from './utils/utils';
 import 'react-toastify/dist/ReactToastify.css';
 
 const App = (): JSX.Element => {
-  const { provider, loading, error } = hooks.useInitReefState(
-    'Reef Wallet App',
-    {
-      network: innitialNetwork,
-    },
-  );
+  const { provider, loading, error } = hooks.useInitReefState('Reef Wallet App');
   const history = useHistory();
   const currentSigner: ReefSigner|undefined = hooks.useObservableState(appState.selectedSigner$);
   const apollo: ApolloClient<any>|undefined = hooks.useObservableState(graphql.apolloClientInstance$);

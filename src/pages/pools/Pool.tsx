@@ -1,9 +1,8 @@
 import React from 'react';
-import { Components } from '@reef-defi/react-lib';
+import { Components, hooks, appState } from '@reef-defi/react-lib';
 import { useHistory, useParams } from 'react-router-dom';
 import { ADD_LIQUIDITY_URL, REMOVE_LIQUIDITY_URL, SPECIFIED_SWAP_URL } from '../../urls';
 import { getIconUrl } from '../../utils/utils';
-import { innitialNetwork } from '../../environment';
 
 const { PoolPage } = Components;
 
@@ -33,10 +32,12 @@ const Pool = (): JSX.Element => {
     );
   };
 
+  const network = hooks.useObservableState(appState.currentNetwork$);
+
   return (
     <PoolPage
       address={address}
-      reefscanFrontendUrl={innitialNetwork.reefscanFrontendUrl}
+      reefscanFrontendUrl={network?.reefscanFrontendUrl}
       openTrade={openTrade}
       getIconUrl={getIconUrl}
       openAddLiquidity={openAddLiquidity}

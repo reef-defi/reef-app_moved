@@ -1,11 +1,8 @@
 import React from 'react';
-
-import { Components, utils } from '@reef-defi/react-lib';
+import { Components, utils, hooks, appState } from '@reef-defi/react-lib';
 import { useHistory } from 'react-router-dom';
 import { ADD_LIQUIDITY_URL, POOL_CHART_URL } from '../../urls';
-import { innitialNetwork } from '../../environment';
-// import PoolTransactions from './PoolTransactions';
-// import PoolList from './PoolList';
+
 const { PoolList, PoolTransactions } = Components;
 
 const Pools = (): JSX.Element => {
@@ -18,6 +15,7 @@ const Pools = (): JSX.Element => {
   const openPool = (address: string): void => history.push(
     POOL_CHART_URL.replace(':address', address),
   );
+  const network = hooks.useObservableState(appState.currentNetwork$);
 
   return (
     <div className="w-100 row justify-content-center">
@@ -28,7 +26,7 @@ const Pools = (): JSX.Element => {
         />
         <Components.Display.MT size="4" />
         <PoolTransactions
-          reefscanFrontendUrl={innitialNetwork.reefscanFrontendUrl}
+          reefscanFrontendUrl={network?.reefscanFrontendUrl}
         />
       </div>
     </div>
