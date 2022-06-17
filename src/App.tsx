@@ -9,7 +9,6 @@ import ContentRouter from './pages/ContentRouter';
 import Nav from './common/Nav';
 import NoExtension from './pages/error/NoExtension';
 import NoAccount from './pages/error/NoAccount';
-import { innitialNetwork } from './environment';
 import OptionContext from './context/OptionContext';
 import { notify } from './utils/utils';
 import 'react-toastify/dist/ReactToastify.css';

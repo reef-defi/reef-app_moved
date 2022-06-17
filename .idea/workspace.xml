@@ -1,20 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e1bedad1-3cf5-4a7c-8706-e7899f6a0615" name="Default Changelist" comment="lib 1.0.53">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/common/Nav.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/Nav.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/ContentRouter.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/ContentRouter.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/bonds/Bonds.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/bonds/Bonds.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/creator/Creator.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/creator/Creator.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/dashboard/Dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/dashboard/Dashboard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/dashboard/Staking.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/dashboard/Staking.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/pools/AddLiquidity.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/pools/AddLiquidity.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/pools/Pool.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/pools/Pool.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/pools/RemoveLiquidity.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/pools/RemoveLiquidity.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/swap/Swap.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/swap/Swap.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/transfer/Transfer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/transfer/Transfer.tsx" afterDir="false" />
+    <list default="true" id="e1bedad1-3cf5-4a7c-8706-e7899f6a0615" name="Default Changelist" comment="yarn lock">
+      <change beforePath="$PROJECT_DIR$/src/pages/pools/Pools.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/pools/Pools.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,7 +12,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="develop" />
+        <entry key="$PROJECT_DIR$" value="lib_upgrade" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />

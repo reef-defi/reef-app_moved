@@ -1,7 +1,5 @@
-import { availableNetworks, Network } from '@reef-defi/react-lib';
+import { availableNetworks } from '@reef-defi/react-lib';
 
-export const innitialNetwork = { ...availableNetworks.mainnet };
-/* || availableNetworks.testnet || */
 /* {
   name: 'testnet',
   rpcUrl: 'ws://localhost:9944',
@@ -12,4 +10,4 @@ export const innitialNetwork = { ...availableNetworks.mainnet };
 } as Network; */
 
 export const appAvailableNetworks = [availableNetworks.mainnet, availableNetworks.testnet];
-console.log('Version: 1.0.52');
+console.log('Version: 1.0.53');
