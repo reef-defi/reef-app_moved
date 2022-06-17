@@ -6,7 +6,7 @@ import { BondsComponent } from './BondsComponent';
 import { bonds, IBond } from './utils/bonds';
 
 export const Bonds = (): JSX.Element => {
-  const selectedSigner: ReefSigner | undefined = hooks.useObservableState(appState.selectedSigner$);
+  const selectedSigner: ReefSigner | undefined | null = hooks.useObservableState(appState.selectedSigner$);
   const network: Network | undefined = hooks.useObservableState(appState.currentNetwork$);
 
   return (

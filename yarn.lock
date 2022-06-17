@@ -2827,6 +2827,11 @@
     "@types/websocket" "^1.0.4"
     websocket "^1.0.34"
 
+"@popperjs/core@^2.11.5":
+  version "2.11.5"
+  resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.5.tgz#db5a11bf66bdab39569719555b0f76e138d7bd64"
+  integrity sha512-9X2obfABZuDVLCgPK9aX0a/x4jaOEweTTWE2+9sr0Qqqevj2Uv5XorvusThmc9XGYpS9yI+fhh8RTafBtGposw==
+
 "@reef-defi/api-derive@^1.0.1", "@reef-defi/api-derive@^1.0.4":
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/@reef-defi/api-derive/-/api-derive-1.0.4.tgz#4c2478944d2ce1509ccef4447339d2944a0480ed"
@@ -2894,10 +2899,10 @@
   dependencies:
     "@babel/runtime" "^7.16.0"
 
-"@reef-defi/react-lib@^1.0.52":
-  version "1.0.52"
-  resolved "https://registry.yarnpkg.com/@reef-defi/react-lib/-/react-lib-1.0.52.tgz#126e8086204a4c5736d2bf59c9f79be1ca19250b"
-  integrity sha512-+hQL2FUFEl8XqjCv9urh9mG1gSAfpPVwHP7pSWe3Olq577V+UZAcafHUmZ9J+Ihj2QKCsEJHuDZ/wJNoD62JOg==
+"@reef-defi/react-lib@^1.0.53":
+  version "1.0.53"
+  resolved "https://registry.yarnpkg.com/@reef-defi/react-lib/-/react-lib-1.0.53.tgz#8561f1e06bedf6d9381627adcf44ea74603840e1"
+  integrity sha512-dWhAyDcm9Bb4g7FqSJ8kLVS8awCJxsyUrbZ/B7JvmFU9ngLl2hqEG/q1iB+KgJjyZKrPUYiaGE2iv5xBvzYthw==
   dependencies:
     "@apollo/client" "^3.6.2"
     "@polkadot/extension-dapp" "^0.40.4"

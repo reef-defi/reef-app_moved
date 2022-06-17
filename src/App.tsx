@@ -18,13 +18,12 @@ const App = (): JSX.Element => {
   const { provider, loading, error } = hooks.useInitReefState(
     'Reef Wallet App',
     {
-      network: innitialNetwork,
     },
   );
   const history = useHistory();
-  const currentSigner: ReefSigner|undefined = hooks.useObservableState(appState.selectedSigner$);
+  const currentSigner: ReefSigner|undefined|null = hooks.useObservableState(appState.selectedSigner$);
   const apollo: ApolloClient<any>|undefined = hooks.useObservableState(graphql.apolloClientInstance$);
-  hooks.useBindEvmAddressAlert(currentSigner, provider);
+  hooks.useBindEvmAddressAlert(currentSigner||undefined, provider);
 
   return (
     <>
