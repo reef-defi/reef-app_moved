@@ -14,11 +14,7 @@ import { notify } from './utils/utils';
 import 'react-toastify/dist/ReactToastify.css';
 
 const App = (): JSX.Element => {
-  const { provider, loading, error } = hooks.useInitReefState(
-    'Reef Wallet App',
-    {
-    },
-  );
+  const { provider, loading, error } = hooks.useInitReefState('Reef Wallet App');
   const history = useHistory();
   const currentSigner: ReefSigner|undefined|null = hooks.useObservableState(appState.selectedSigner$);
   const apollo: ApolloClient<any>|undefined = hooks.useObservableState(graphql.apolloClientInstance$);
