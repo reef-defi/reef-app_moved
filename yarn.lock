@@ -2827,6 +2827,11 @@
     "@types/websocket" "^1.0.4"
     websocket "^1.0.34"
 
+"@popperjs/core@^2.11.5":
+  version "2.11.5"
+  resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.5.tgz#db5a11bf66bdab39569719555b0f76e138d7bd64"
+  integrity sha512-9X2obfABZuDVLCgPK9aX0a/x4jaOEweTTWE2+9sr0Qqqevj2Uv5XorvusThmc9XGYpS9yI+fhh8RTafBtGposw==
+
 "@reef-defi/api-derive@^1.0.1", "@reef-defi/api-derive@^1.0.4":
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/@reef-defi/api-derive/-/api-derive-1.0.4.tgz#4c2478944d2ce1509ccef4447339d2944a0480ed"
