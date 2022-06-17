@@ -17,7 +17,7 @@ const Swap = (): JSX.Element => {
   const { address1, address2 } = useParams<UrlAddressParams>();
 
   const network: Network|undefined = hooks.useObservableState(appState.currentNetwork$);
-  const signer: ReefSigner|undefined = hooks.useObservableState(appState.selectedSigner$);
+  const signer: ReefSigner|undefined | null = hooks.useObservableState(appState.selectedSigner$);
 
   const [state, dispatch] = useReducer(store.swapReducer, store.initialSwapState);
   // hook manages all nececcery swap updates
@@ -29,14 +29,14 @@ const Swap = (): JSX.Element => {
     state,
     tokens,
     tokenPrices,
-    account: signer,
+    account: signer||undefined,
   });
 
   // Actions
   const onSwap = hooks.onSwap({
     state,
     network,
-    account: signer,
+    account: signer||undefined,
     dispatch,
     notify,
     updateTokenState: async () => {}, // eslint-disable-line
