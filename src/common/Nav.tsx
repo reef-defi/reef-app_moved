@@ -28,12 +28,12 @@ export interface Nav {
 const Nav = ({ display }: Nav): JSX.Element => {
   const history = useHistory();
   const { pathname } = useLocation();
-  const signer: ReefSigner|undefined = hooks.useObservableState(appState.selectedSigner$);
-  const accounts: ReefSigner[]|undefined = hooks.useObservableState(appState.signers$);
+  const signer: ReefSigner|undefined|null = hooks.useObservableState(appState.selectedSigner$);
+  const accounts: ReefSigner[]|undefined|null = hooks.useObservableState(appState.signers$);
   const network: Network|undefined = hooks.useObservableState(appState.currentNetwork$);
   const selectAccount = (index: number): void => {
     saveSignerLocalPointer(index);
-    appState.selectAddressSubj.next(index != null ? accounts?.[index].address : undefined);
+    appState.setCurrentAddress(index != null ? accounts?.[index].address : undefined);
   };
 
   const menuItemsView = menuItems
@@ -71,7 +71,7 @@ const Nav = ({ display }: Nav): JSX.Element => {
 
             <Components.AccountSelector
               accounts={accounts}
-              selectedSigner={signer}
+              selectedSigner={signer||undefined}
               selectAccount={selectAccount}
               reefscanUrl={network.reefscanUrl}
               selectNetwork={appState.setCurrentNetwork}

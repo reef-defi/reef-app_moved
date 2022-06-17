@@ -1,8 +1,9 @@
 import React from 'react';
-import { Components, hooks, appState } from '@reef-defi/react-lib';
+import { Components } from '@reef-defi/react-lib';
 import { useHistory, useParams } from 'react-router-dom';
 import { ADD_LIQUIDITY_URL, REMOVE_LIQUIDITY_URL, SPECIFIED_SWAP_URL } from '../../urls';
 import { getIconUrl } from '../../utils/utils';
+import {hooks, appState} from "@reef-defi/react-lib";
 
 const { PoolPage } = Components;
 
@@ -13,6 +14,7 @@ interface UrlParam {
 const Pool = (): JSX.Element => {
   const history = useHistory();
   const { address } = useParams<UrlParam>();
+  const network = hooks.useObservableState(appState.currentNetwork$);
 
   const openTrade = (address1: string, address2: string): void => history.push(
     SPECIFIED_SWAP_URL
@@ -32,17 +34,18 @@ const Pool = (): JSX.Element => {
     );
   };
 
-  const network = hooks.useObservableState(appState.currentNetwork$);
-
-  return (
-    <PoolPage
-      address={address}
-      reefscanFrontendUrl={network?.reefscanFrontendUrl}
-      openTrade={openTrade}
-      getIconUrl={getIconUrl}
-      openAddLiquidity={openAddLiquidity}
-      openRemoveLiquidity={openRemoveLiquidity}
-    />
+  return (<>
+    {network &&
+      <PoolPage
+          address={address}
+          reefscanFrontendUrl={network.reefscanFrontendUrl}
+          openTrade={openTrade}
+          getIconUrl={getIconUrl}
+          openAddLiquidity={openAddLiquidity}
+          openRemoveLiquidity={openRemoveLiquidity}
+      />
+    }
+    </>
   );
 };
 

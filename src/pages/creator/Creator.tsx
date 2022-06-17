@@ -5,7 +5,7 @@ import {
 import { CreatorComponent } from './CreatorComponent';
 
 export const Creator = (): JSX.Element => {
-  const selectedSigner: ReefSigner|undefined = hooks.useObservableState(appState.selectedSigner$);
+  const selectedSigner: ReefSigner|undefined|null = hooks.useObservableState(appState.selectedSigner$);
   const network: Network|undefined = hooks.useObservableState(appState.currentNetwork$);
 
   /* const onCreatorTxUpdate = (txState: utils.TxStatusUpdate): void => {
@@ -18,7 +18,7 @@ export const Creator = (): JSX.Element => {
     <>
       {network && (
       <CreatorComponent
-        signer={selectedSigner}
+        signer={selectedSigner||undefined}
         network={network}
       />
       )}
