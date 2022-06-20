@@ -21,7 +21,7 @@ const AddLiqudity = (): JSX.Element => {
   const history = useHistory();
   const tokens = useContext(TokenContext);
   const tokenPrices = useContext(TokenPricesContext);
-  const signer: ReefSigner | undefined = hooks.useObservableState(
+  const signer: ReefSigner | undefined | null = hooks.useObservableState(
     appState.selectedSigner$,
   );
   const network: Network | undefined = hooks.useObservableState(
@@ -35,7 +35,7 @@ const AddLiqudity = (): JSX.Element => {
     dispatch,
     state,
     tokens,
-    signer,
+    signer: signer || undefined,
     network,
     tokenPrices,
   });
@@ -51,7 +51,7 @@ const AddLiqudity = (): JSX.Element => {
   const onAddLiquidity = hooks.onAddLiquidity({
     state,
     network,
-    signer,
+    signer: signer||undefined,
     dispatch,
     notify,
     updateTokenState: async () => {}, // eslint-disable-line

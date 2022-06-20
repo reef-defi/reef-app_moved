@@ -29,7 +29,7 @@ import TokenPrices from '../context/TokenPricesContext';
 import Pool from './pools/Pool';
 
 const ContentRouter = (): JSX.Element => {
-  const currentSigner: ReefSigner|undefined = hooks.useObservableState(appState.selectedSigner$);
+  const currentSigner: ReefSigner|undefined|null = hooks.useObservableState(appState.selectedSigner$);
   const apollo: ApolloClient<any>|undefined = hooks.useObservableState(graphql.apolloClientInstance$);
   const reefPrice = hooks.useObservableState(appState.reefPrice$);
   // Its not appropriet to have token state in this component, but the problem was apollo client.

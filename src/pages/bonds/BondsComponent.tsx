@@ -351,8 +351,10 @@ export const BondsComponent = ({
   }, []);
 
   useEffect(() => {
-    const balanceFixedAmt = +ethers.utils.formatEther(account?.balance || '0');
-    setBondAmountMax(+(balanceFixedAmt - 101).toFixed(0));
+    const balanceFixedAmt: number = +ethers.utils.formatEther(account?.balance || '0');
+    const keepMinBalance = 201;
+    const balanceMax: number = balanceFixedAmt >= keepMinBalance? (+(balanceFixedAmt - keepMinBalance)):0;
+    setBondAmountMax(+balanceMax.toFixed(0));
   }, [account?.balance]);
 
   async function updateEarnedAmt(newContract: Contract, accountEvmAddress: string): Promise<void> {
