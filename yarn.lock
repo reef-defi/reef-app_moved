@@ -2899,33 +2899,9 @@
   dependencies:
     "@babel/runtime" "^7.16.0"
 
-"@reef-defi/react-lib@^1.0.53":
-  version "1.0.53"
-  resolved "https://registry.yarnpkg.com/@reef-defi/react-lib/-/react-lib-1.0.53.tgz#8561f1e06bedf6d9381627adcf44ea74603840e1"
-  integrity sha512-dWhAyDcm9Bb4g7FqSJ8kLVS8awCJxsyUrbZ/B7JvmFU9ngLl2hqEG/q1iB+KgJjyZKrPUYiaGE2iv5xBvzYthw==
-  dependencies:
-    "@apollo/client" "^3.6.2"
-    "@polkadot/extension-dapp" "^0.40.4"
-    "@polkadot/react-identicon" "^0.86.4"
-    "@reef-defi/evm-provider" "^1.0.7"
-    "@reef-defi/extension-dapp" "^0.41.2"
-    "@reef-defi/extension-inject" "^0.41.2"
-    "@types/react-router-dom" "^5.3.0"
-    axios "^0.21.4"
-    bignumber.js "^9.0.2"
-    bootstrap "^5.1.1"
-    eslint-import-resolver-typescript "^2.4.0"
-    ethers "^5.5.4"
-    graphql "^16.2.0"
-    process "^0.11.10"
-    react-copy-to-clipboard "^5.0.4"
-    react-router-dom "^5.3.0"
-    react-stockcharts "^0.7.8"
-    react-tooltip "^4.2.21"
-    recharts "^2.1.9"
-    rxjs "^7.5.4"
-    subscriptions-transport-ws "^0.11.0"
-    zen-observable-ts "^1.1.0"
+"@reef-defi/react-lib@link:../reef-react-lib":
+  version "0.0.0"
+  uid ""
 
 "@reef-defi/type-definitions@^1.0.4":
   version "1.0.4"
