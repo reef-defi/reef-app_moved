@@ -31,7 +31,7 @@ const Nav = ({ display }: Nav): JSX.Element => {
   const signer: ReefSigner|undefined|null = hooks.useObservableState(appState.selectedSigner$);
   const accounts: ReefSigner[]|undefined|null = hooks.useObservableState(appState.signers$);
   const network: Network|undefined = hooks.useObservableState(appState.currentNetwork$);
-  const mainnetSelected = network == null || network?.name === availableNetworks.mainnet.name;
+  const mainnetSelected = network == null || network?.rpcUrl === availableNetworks.mainnet.rpcUrl;
   const selectAccount = (index: number): void => {
     saveSignerLocalPointer(index);
     appState.setCurrentAddress(index != null ? accounts?.[index].address : undefined);
