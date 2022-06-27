@@ -109,7 +109,7 @@ export const TokenActivityItem = ({
             </div>
             {
               !isNFT
-              && <div className="activity-item_icon-w"><img src={token.iconUrl} alt="" className="activity-item_icon" /></div>
+              && <div className="activity-item_icon-w mr-1"><img src={token.iconUrl} alt="" className="activity-item_icon" /></div>
             }
           </div>
         </div>
