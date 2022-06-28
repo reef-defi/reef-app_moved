@@ -26,7 +26,7 @@ import { Bonds } from './bonds/Bonds';
 import PoolContext from '../context/PoolContext';
 import TokenContext from '../context/TokenContext';
 import TokenPrices from '../context/TokenPricesContext';
-import Pool from './pools/Pool';
+import Pool from './pools/Pool/Pool';
 
 const ContentRouter = (): JSX.Element => {
   const currentSigner: ReefSigner|undefined|null = hooks.useObservableState(appState.selectedSigner$);

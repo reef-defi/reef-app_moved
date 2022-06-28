@@ -1,8 +1,16 @@
 .pools {
   width: 100%;
-  padding: 0 5px;
+  padding: 2.5rem calc(3.5rem + 5px);
   display: flex;
   flex-flow: column nowrap;
+  animation: pools-appear 0.4s 0.1s backwards;
+}
+
+@keyframes pools-appear {
+  from {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
 }
 
 .pools__top {

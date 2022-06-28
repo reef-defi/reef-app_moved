@@ -1,0 +1,12 @@
+.pool-chart {
+  flex-grow: 1;
+  align-self: stretch;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: stretch;
+  padding-bottom: 35px;
+}
+
+.pool-chart .uik-card {
+  background-color: #eeebf6;
+}

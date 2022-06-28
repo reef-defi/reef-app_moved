@@ -2,12 +2,14 @@ import React, { useContext, useMemo, useState } from 'react';
 import Uik from '@reef-defi/ui-kit';
 import './pools.css';
 import { faArrowUpFromBracket, faCoins } from '@fortawesome/free-solid-svg-icons';
+import { hooks } from '@reef-defi/react-lib';
+import { useHistory } from 'react-router-dom';
 import PoolsSearch from './PoolsSearch';
-import { hooks } from "@reef-defi/react-lib";
 import TokenPricesContext from '../../context/TokenPricesContext';
-
+import { POOL_CHART_URL } from '../../urls';
 
 interface Pool {
+  address?: string,
   tvl: string;
   volume24h: string;
   volumeChange24h: number;
@@ -22,104 +24,31 @@ interface Pool {
   };
 }
 
-const data: Pool[] = [
-  {
-    tvl: '$1.60 M',
-    volume24h: '$140.150',
-    volumeChange24h: 15,
-    token1: {
-      name: 'REEF',
-      image: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png',
-    },
-    token2: {
-      name: 'FISH',
-      image: 'https://app.reef.io/img/token-icons/token-icon-7.png',
-    },
-  },
-  {
-    tvl: '$722.23 K',
-    volume24h: '$120.584',
-    volumeChange24h: 25,
-    myLiquidity: '$56.5K',
-    token1: {
-      name: 'REEF',
-      image: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png',
-    },
-    token2: {
-      name: 'FISH',
-      image: 'https://app.reef.io/img/token-icons/token-icon-7.png',
-    },
-  },
-  {
-    tvl: '$301.12 K',
-    volume24h: '$90.050',
-    volumeChange24h: -8.5,
-    token1: {
-      name: 'REEF',
-      image: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png',
-    },
-    token2: {
-      name: 'FISH',
-      image: 'https://app.reef.io/img/token-icons/token-icon-7.png',
-    },
-  },
-  {
-    tvl: '$1.60 M',
-    volume24h: '$140.150',
-    volumeChange24h: 0,
-    token1: {
-      name: 'REEF',
-      image: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png',
-    },
-    token2: {
-      name: 'FISH',
-      image: 'https://app.reef.io/img/token-icons/token-icon-7.png',
-    },
-  },
-  {
-    tvl: '$722.23 K',
-    volume24h: '$120.584',
-    volumeChange24h: 0.5,
-    myLiquidity: '$56.5K',
-    token1: {
-      name: 'REEF',
-      image: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png',
-    },
-    token2: {
-      name: 'FISH',
-      image: 'https://app.reef.io/img/token-icons/token-icon-7.png',
-    },
-  },
-  {
-    tvl: '$301.12 K',
-    volume24h: '$90.050',
-    volumeChange24h: -2.5,
-    token1: {
-      name: 'REEF',
-      image: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png',
-    },
-    token2: {
-      name: 'FISH',
-      image: 'https://app.reef.io/img/token-icons/token-icon-7.png',
-    },
-  },
-];
-
 const PoolsList = (): JSX.Element => {
   const pageCount = 10;
   const [currentPage, changePage] = useState(1);
   const [search, setSearch] = useState('');
-  const tokenPrices = useContext(TokenPricesContext)
+  const tokenPrices = useContext(TokenPricesContext);
 
   const [pools, arePoolsLoading] = hooks.usePoolsList({
     limit: pageCount,
-    offset: (currentPage-1) * pageCount,
-    reefscanApi: "https://testnet.reefscan.com",
+    offset: (currentPage - 1) * pageCount,
+    reefscanApi: 'https://testnet.reefscan.com',
     search,
-    signer: "5DvcwghWVZW9BueQ1RzHYcosrKUX6tbbMPhnYGv6XdjMmubF",
+    signer: '5DvcwghWVZW9BueQ1RzHYcosrKUX6tbbMPhnYGv6XdjMmubF',
     tokenPrices,
-    queryType: 'All'
-  })
+    queryType: 'All',
+  });
+
+  const history = useHistory();
+  const openPool = (
+    address: string,
+    action: 'provide' | 'withdraw' = 'provide',
+  ): void => history.push(
+    POOL_CHART_URL
+      .replace(':address', address || 'address')
+      .replace(':action', action),
+  );
 
   return (
     <>
@@ -151,10 +80,10 @@ const PoolsList = (): JSX.Element => {
 
         <Uik.TBody>
           {
-                pools.map((item, index) => (
+                pools.map((item: Pool, index) => (
                   <Uik.Tr
                     key={`pool-${index}`}
-                    onClick={() => {}}
+                    onClick={() => openPool(item.address || '')}
                   >
                     <Uik.Td>
                       <div className="pools__pair">
@@ -169,8 +98,14 @@ const PoolsList = (): JSX.Element => {
                         { item.token2.name }
                       </span>
                     </Uik.Td>
-                    <Uik.Td align="right">$ { item.tvl }</Uik.Td>
-                    <Uik.Td align="right">$ { item.volume24h }</Uik.Td>
+                    <Uik.Td align="right">
+                      $
+                      { item.tvl }
+                    </Uik.Td>
+                    <Uik.Td align="right">
+                      $
+                      { item.volume24h }
+                    </Uik.Td>
                     <Uik.Td align="right">
                       <Uik.Trend
                         type={item.volumeChange24h >= 0 ? 'good' : 'bad'}
@@ -181,7 +116,17 @@ const PoolsList = (): JSX.Element => {
                     <Uik.Td align="right">
                       {
                         !!item.myLiquidity
-                        && <Uik.Button text="Withdraw" icon={faArrowUpFromBracket} fill />
+                        && (
+                        <Uik.Button
+                          text="Withdraw"
+                          icon={faArrowUpFromBracket}
+                          fill
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openPool(item.address || '', 'withdraw');
+                          }}
+                        />
+                        )
                       }
                       <Uik.Button text="Provide" icon={faCoins} fill />
                     </Uik.Td>

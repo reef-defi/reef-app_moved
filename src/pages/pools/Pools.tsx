@@ -1,7 +1,7 @@
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 
 import { faRightLeft } from '@fortawesome/free-solid-svg-icons';
-import { hooks } from "@reef-defi/react-lib";
+import { hooks } from '@reef-defi/react-lib';
 import Uik from '@reef-defi/ui-kit';
 
 import TokenPricesContext from '../../context/TokenPricesContext';
@@ -19,7 +19,11 @@ const Pools = (): JSX.Element => {
         <div className="pools__total">
           <Uik.Text type="lead">Total Supply</Uik.Text>
           <div className="pools__total-amount">
-            <Uik.Text type="headline">$ {totalLiquidity.split('.')[0]}</Uik.Text>
+            <Uik.Text type="headline">
+              $
+              {' '}
+              {totalLiquidity.split('.')[0]}
+            </Uik.Text>
             <Uik.Trend
               type="good"
               text="$1,650K"
@@ -32,9 +36,10 @@ const Pools = (): JSX.Element => {
           text="Show Transactions"
         />
       </Uik.Container>
+
       <MyPoolsList />
       <PoolsList />
     </div>
   );
-}
+};
 export default Pools;
