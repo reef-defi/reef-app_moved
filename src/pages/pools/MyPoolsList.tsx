@@ -117,9 +117,9 @@ const MyPoolsList = (): JSX.Element => {
                       { item.token2.name }
                     </span>
                   </Uik.Td>
-                  <Uik.Td align="right">{ item.myLiquidity }</Uik.Td>
-                  <Uik.Td align="right">{ item.tvl }</Uik.Td>
-                  <Uik.Td align="right">{ item.volume24h }</Uik.Td>
+                  <Uik.Td align="right">$ { item.myLiquidity }</Uik.Td>
+                  <Uik.Td align="right">$ { item.tvl }</Uik.Td>
+                  <Uik.Td align="right">$ { item.volume24h }</Uik.Td>
                   <Uik.Td align="right">
                     <Uik.Trend
                       type={item.volumeChange24h >= 0 ? 'good' : 'bad'}
