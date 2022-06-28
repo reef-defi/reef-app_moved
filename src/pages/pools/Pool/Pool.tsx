@@ -5,7 +5,7 @@ import Chart from './Chart';
 import Actions from './Actions';
 
 const data = {
-  token1: {
+  firstToken: {
     name: 'Reef',
     image: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png',
     percentage: 50,
@@ -17,7 +17,7 @@ const data = {
       name: 'FISH',
     },
   },
-  token2: {
+  secondToken: {
     name: 'Fish',
     image: 'https://app.reef.io/img/token-icons/token-icon-7.png',
     percentage: 50,
@@ -35,12 +35,45 @@ const data = {
   volumeChange24h: 20,
 };
 
+const actionsData = {
+  firstToken: {
+    name: 'Reef',
+    image: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png',
+    available: 1000,
+    provided: 500,
+    ratio: 0.001,
+  },
+  secondToken: {
+    name: 'Test',
+    image: '',
+    available: 1000000,
+    provided: 500000,
+    ratio: 1000,
+  },
+  fees: {
+    provide: {
+      amount: 0.02,
+      token: {
+        name: 'Reef',
+        image: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png',
+      },
+    },
+    withdraw: {
+      amount: 0.02,
+      token: {
+        name: 'Reef',
+        image: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png',
+      },
+    },
+  },
+};
+
 const Pool = () => (
   <div className="pool">
     <Stats data={data} />
 
     <div className="pool__content">
-      <Actions />
+      <Actions data={actionsData} />
       <Chart />
     </div>
   </div>

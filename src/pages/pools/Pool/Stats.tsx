@@ -71,22 +71,22 @@ const Stats = ({ data }: Props) => (
           >
             <div className="pool-stats__pool-select-pair">
               <img
-                src={data.token1.image}
-                alt={data.token1.name}
-                className={`pool-stats__pool-select-pair--${Uik.utils.slug(data.token1.name)}`}
+                src={data.firstToken.image}
+                alt={data.firstToken.name}
+                className={`pool-stats__pool-select-pair--${Uik.utils.slug(data.firstToken.name)}`}
               />
               <img
-                src={data.token2.image}
-                alt={data.token1.name}
-                className={`pool-stats__pool-select-pair--${Uik.utils.slug(data.token2.name)}`}
+                src={data.secondToken.image}
+                alt={data.firstToken.name}
+                className={`pool-stats__pool-select-pair--${Uik.utils.slug(data.secondToken.name)}`}
               />
             </div>
             <span className="pool-stats__pool-select-name">
-              { data.token1.name }
+              { data.firstToken.name }
               {' '}
               /
               {' '}
-              { data.token2.name }
+              { data.secondToken.name }
             </span>
           </button>
 
@@ -132,8 +132,8 @@ const Stats = ({ data }: Props) => (
       </div>
 
       <div className="pool-stats__tokens">
-        <Token token={data.token1} />
-        <Token token={data.token2} />
+        <Token token={data.firstToken} />
+        <Token token={data.secondToken} />
       </div>
     </div>
 
