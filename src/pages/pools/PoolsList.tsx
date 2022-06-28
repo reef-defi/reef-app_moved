@@ -1,10 +1,28 @@
-import React, { useState } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 import Uik from '@reef-defi/ui-kit';
 import './pools.css';
 import { faArrowUpFromBracket, faCoins } from '@fortawesome/free-solid-svg-icons';
 import PoolsSearch from './PoolsSearch';
+import { hooks } from "@reef-defi/react-lib";
+import TokenPricesContext from '../../context/TokenPricesContext';
 
-const data = [
+
+interface Pool {
+  tvl: string;
+  volume24h: string;
+  volumeChange24h: number;
+  myLiquidity?: string;
+  token1: {
+    name: string;
+    image: string;
+  };
+  token2: {
+    name: string;
+    image: string;
+  };
+}
+
+const data: Pool[] = [
   {
     tvl: '$1.60 M',
     volume24h: '$140.150',
@@ -91,6 +109,17 @@ const PoolsList = (): JSX.Element => {
   const pageCount = 10;
   const [currentPage, changePage] = useState(1);
   const [search, setSearch] = useState('');
+  const tokenPrices = useContext(TokenPricesContext)
+
+  const [pools, arePoolsLoading] = hooks.usePoolsList({
+    limit: pageCount,
+    offset: (currentPage-1) * pageCount,
+    reefscanApi: "https://testnet.reefscan.com",
+    search,
+    signer: "5DvcwghWVZW9BueQ1RzHYcosrKUX6tbbMPhnYGv6XdjMmubF",
+    tokenPrices,
+    queryType: 'All'
+  })
 
   return (
     <>
@@ -122,7 +151,7 @@ const PoolsList = (): JSX.Element => {
 
         <Uik.TBody>
           {
-                data.map((item, index) => (
+                pools.map((item, index) => (
                   <Uik.Tr
                     key={`pool-${index}`}
                     onClick={() => {}}
