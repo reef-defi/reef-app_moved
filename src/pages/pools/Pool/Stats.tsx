@@ -10,7 +10,15 @@ interface TokenStatsProps {
   token: hooks.TokenStats;
 }
 
-const Token = ({token}: TokenStatsProps) => (
+const displayAmount = (amount: string | number): string => {
+  if (
+    typeof amount === 'number' && isNaN(amount)
+    || typeof amount === 'string' && amount === 'NaN'
+  ) return '0';
+  return Uik.utils.formatHumanAmount(amount, 4);
+};
+
+const Token = ({ token }: TokenStatsProps) => (
   <div className="pool-stats__token">
     <div className="pool-stats__token-info">
       <div className="pool-stats__token-main">
@@ -39,7 +47,7 @@ const Token = ({token}: TokenStatsProps) => (
         {' '}
         =
         {' '}
-        {token.ratio.amount}
+        {displayAmount(token.ratio.amount)}
         {' '}
         {token.ratio.symbol}
       </div>
@@ -48,17 +56,17 @@ const Token = ({token}: TokenStatsProps) => (
     <div className="pool-stats__token-stats">
       <div className="pool-stats__token-stat">
         <div className="pool-stats__token-stat-label">Amount Locked</div>
-        <div className="pool-stats__token-stat-value">{ Uik.utils.formatHumanAmount(token.amountLocked) }</div>
+        <div className="pool-stats__token-stat-value">{ displayAmount(token.amountLocked) }</div>
       </div>
 
       <div className="pool-stats__token-stat">
         <div className="pool-stats__token-stat-label">My Liquidity</div>
-        <div className="pool-stats__token-stat-value">{ token.mySupply }</div>
+        <div className="pool-stats__token-stat-value">{ displayAmount(token.mySupply) }</div>
       </div>
 
       <div className="pool-stats__token-stat">
         <div className="pool-stats__token-stat-label">Fees 24h</div>
-        <div className="pool-stats__token-stat-value">{ token.fees24h }</div>
+        <div className="pool-stats__token-stat-value">{ displayAmount(token.fees24h) }</div>
       </div>
     </div>
   </div>
@@ -106,7 +114,8 @@ const Stats = ({ data }: StatsProps) => (
             <div className="pool-stats__main-stat-label">Total Value Locked</div>
             <div className="pool-stats__main-stat-value">
               $
-              { Uik.utils.formatHumanAmount(data.tvlUSD) }
+              {' '}
+              { displayAmount(data.tvlUSD) }
             </div>
           </div>
 
@@ -114,7 +123,8 @@ const Stats = ({ data }: StatsProps) => (
             <div className="pool-stats__main-stat-label">My Liquidity</div>
             <div className="pool-stats__main-stat-value">
               $
-              { data.mySupplyUSD }
+              {' '}
+              { displayAmount(data.mySupplyUSD) }
             </div>
           </div>
 
@@ -123,12 +133,13 @@ const Stats = ({ data }: StatsProps) => (
             <div className="pool-stats__main-stat-value">
               <span>
                 $
-                { data.volume24hUSD }
+                {' '}
+                { displayAmount(data.volume24hUSD) }
               </span>
               <Uik.Trend
                 type={data.volumeChange24h >= 0 ? 'good' : 'bad'}
                 direction={data.volumeChange24h >= 0 ? 'up' : 'down'}
-                text={`${data.volumeChange24h}%`}
+                text={`${data.volumeChange24h.toFixed(2)}%`}
               />
             </div>
           </div>
