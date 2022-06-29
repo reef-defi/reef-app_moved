@@ -15,7 +15,7 @@ const displayAmount = (amount: string | number): string => {
     typeof amount === 'number' && isNaN(amount)
     || typeof amount === 'string' && amount === 'NaN'
   ) return '0';
-  return Uik.utils.formatHumanAmount(amount, 4);
+  return Uik.utils.formatHumanAmount(amount);
 };
 
 const Token = ({ token }: TokenStatsProps) => (
