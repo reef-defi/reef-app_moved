@@ -3,20 +3,20 @@
   padding: 2.5rem calc(3.5rem + 5px);
   display: flex;
   flex-flow: column nowrap;
-  animation: pools-appear 0.4s 0.1s backwards;
-}
-
-@keyframes pools-appear {
-  from {
-    opacity: 0;
-    transform: translateY(-15px);
-  }
 }
 
 .pools__top {
   justify-content: space-between;
   width: 100%;
   margin-bottom: 30px;
+  animation: pools-top-appear 0.4s;
+}
+
+@keyframes pools-top-appear {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
 }
 
 .pools__total-amount  {
@@ -83,7 +83,18 @@
   padding-right: 10px;
 }
 
-.pools .uik-table + .pools__table-top {
+.pools__list {
+  animation: pools-list-appear 0.4s;
+}
+
+@keyframes pools-list-appear {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+.pools__list + .pools__list {
   margin-top: 50px;
 }
 

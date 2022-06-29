@@ -27,6 +27,7 @@ interface Pool {
 const PoolsList = (): JSX.Element => {
   const pageCount = 10;
   const [currentPage, changePage] = useState(1);
+  const [changedPage, setChangedPage] = useState(false);
   const [search, setSearch] = useState('');
   const tokenPrices = useContext(TokenPricesContext);
 
@@ -50,8 +51,14 @@ const PoolsList = (): JSX.Element => {
       .replace(':action', action),
   );
 
+  if (
+    !pools.length
+    && !search
+    && !changedPage
+  ) return (<></>);
+
   return (
-    <>
+    <div className="pools__list">
       <div className="pools__table-top">
         <Uik.Text type="title">Pools</Uik.Text>
         <PoolsSearch
@@ -65,7 +72,7 @@ const PoolsList = (): JSX.Element => {
         pagination={{
           count: pageCount,
           current: currentPage,
-          onChange: (page) => { changePage(page); },
+          onChange: (page) => { changePage(page); setChangedPage(true); },
         }}
       >
         <Uik.THead>
@@ -100,11 +107,11 @@ const PoolsList = (): JSX.Element => {
                     </Uik.Td>
                     <Uik.Td align="right">
                       $
-                      { item.tvl }
+                      { Uik.utils.formatHumanAmount(item.tvl || '') }
                     </Uik.Td>
                     <Uik.Td align="right">
                       $
-                      { item.volume24h }
+                      { Uik.utils.formatHumanAmount(item.volume24h || '') }
                     </Uik.Td>
                     <Uik.Td align="right">
                       <Uik.Trend
@@ -135,7 +142,7 @@ const PoolsList = (): JSX.Element => {
               }
         </Uik.TBody>
       </Uik.Table>
-    </>
+    </div>
   );
 };
 

@@ -21,12 +21,11 @@
   flex-flow: row nowrap;
   justify-content: center;
   align-items: flex-start;
-  animation: pool-content-appear 0.5s;
+  animation: pool-content-appear 0.9s;
 }
 
 @keyframes pool-content-appear {
   from {
-    opacity: 0;
-    transform: scale(0.98);
+    transform: translateY(-15px);
   }
 }
