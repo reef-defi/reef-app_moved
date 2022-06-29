@@ -108,14 +108,17 @@ const MyPoolsList = (): JSX.Element => {
                   </Uik.Td>
                   <Uik.Td align="right">
                     $
+                    {' '}
                     { Uik.utils.formatHumanAmount(item.myLiquidity || '') }
                   </Uik.Td>
                   <Uik.Td align="right">
                     $
+                    {' '}
                     { Uik.utils.formatHumanAmount(item.tvl || '') }
                   </Uik.Td>
                   <Uik.Td align="right">
                     $
+                    {' '}
                     { Uik.utils.formatHumanAmount(item.volume24h || '') }
                   </Uik.Td>
                   <Uik.Td align="right">

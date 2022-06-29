@@ -21,6 +21,7 @@ const Pools = (): JSX.Element => {
           <div className="pools__total-amount">
             <Uik.Text type="headline">
               $
+              {' '}
               {Uik.utils.formatHumanAmount(totalLiquidity)}
             </Uik.Text>
             <Uik.Trend
