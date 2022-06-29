@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import { BigNumber } from 'bignumber.js';
 
 import { faRightLeft } from '@fortawesome/free-solid-svg-icons';
 import { hooks } from '@reef-defi/react-lib';
@@ -12,6 +13,9 @@ import PoolsList from './PoolsList';
 const Pools = (): JSX.Element => {
   const tokenPrices = useContext(TokenPricesContext);
   const totalLiquidity = hooks.useTotalSupply(tokenPrices);
+  const poolVolume = hooks.usePoolVolume(tokenPrices);
+
+  const getVolume = (): number => new BigNumber(poolVolume).toNumber();
 
   return (
     <div className="pools">
@@ -25,9 +29,9 @@ const Pools = (): JSX.Element => {
               {Uik.utils.formatHumanAmount(totalLiquidity)}
             </Uik.Text>
             <Uik.Trend
-              type="good"
-              text="$1,650K"
-              direction="up"
+              type={getVolume() >= 0 ? 'good' : 'bad'}
+              direction={getVolume() >= 0 ? 'up' : 'down'}
+              text={`${getVolume().toFixed(2)}%`}
             />
           </div>
         </div>
