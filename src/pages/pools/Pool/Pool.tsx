@@ -3,7 +3,7 @@ import React, { useContext } from 'react';
 import Stats from './Stats';
 import Chart from './Chart';
 import Actions from './Actions';
-import { hooks } from '@reef-defi/react-lib';
+import { appState, hooks, ReefSigner } from '@reef-defi/react-lib';
 import { useParams } from 'react-router-dom';
 import TokenPricesContext from '../../../context/TokenPricesContext';
 
@@ -49,9 +49,14 @@ interface Params {
 const Pool = () => {
   const {address} = useParams<Params>();
   const tokenPrices = useContext(TokenPricesContext);
+
+  const signer: ReefSigner | undefined | null = hooks.useObservableState(
+    appState.selectedSigner$,
+  );
+  
   const [poolInfo, loading] = hooks.usePoolInfo(
     address,
-    '5DvcwghWVZW9BueQ1RzHYcosrKUX6tbbMPhnYGv6XdjMmubF',
+    signer?.address || '',
     tokenPrices
   );
 

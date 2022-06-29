@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import Uik from '@reef-defi/ui-kit';
 import './pools.css';
 import { faArrowUpFromBracket, faCoins } from '@fortawesome/free-solid-svg-icons';
-import { hooks } from '@reef-defi/react-lib';
+import { appState, hooks, ReefSigner } from '@reef-defi/react-lib';
 import { useHistory } from 'react-router-dom';
 import PoolsSearch from './PoolsSearch';
 import TokenPricesContext from '../../context/TokenPricesContext';
@@ -25,18 +25,24 @@ interface Pool {
 }
 
 const MyPoolsList = (): JSX.Element => {
-  const pageCount = 10;
   const [currentPage, changePage] = useState(1);
   const [changedPage, setChangedPage] = useState(false);
   const [search, setSearch] = useState('');
   const tokenPrices = useContext(TokenPricesContext);
 
+  const signer = hooks.useObservableState(
+    appState.selectedSigner$,
+  );
+  const network = hooks.useObservableState(appState.currentNetwork$);
+  
+  const userPools = hooks.useFindUserPools(signer?.address || '');
+
   const [pools, arePoolsLoading] = hooks.usePoolsList({
-    limit: pageCount,
-    offset: (currentPage - 1) * pageCount,
-    reefscanApi: 'https://testnet.reefscan.com',
+    limit: 10,
+    offset: (currentPage - 1) * 10,
+    reefscanApi: network?.reefscanUrl || '',
     search,
-    signer: '5DvcwghWVZW9BueQ1RzHYcosrKUX6tbbMPhnYGv6XdjMmubF',
+    signer: signer?.address || '',
     tokenPrices,
     queryType: 'User',
   });
@@ -70,7 +76,7 @@ const MyPoolsList = (): JSX.Element => {
       <Uik.Table
         seamless
         pagination={{
-          count: pageCount,
+          count: userPools.length,
           current: currentPage,
           onChange: (page) => { changePage(page); setChangedPage(true); },
         }}

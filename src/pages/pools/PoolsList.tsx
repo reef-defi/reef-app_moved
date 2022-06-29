@@ -2,7 +2,7 @@ import React, { useContext, useMemo, useState } from 'react';
 import Uik from '@reef-defi/ui-kit';
 import './pools.css';
 import { faArrowUpFromBracket, faCoins } from '@fortawesome/free-solid-svg-icons';
-import { hooks } from '@reef-defi/react-lib';
+import { appState, hooks } from '@reef-defi/react-lib';
 import { useHistory } from 'react-router-dom';
 import PoolsSearch from './PoolsSearch';
 import TokenPricesContext from '../../context/TokenPricesContext';
@@ -15,12 +15,17 @@ const PoolsList = (): JSX.Element => {
   const [search, setSearch] = useState('');
   const tokenPrices = useContext(TokenPricesContext);
 
+  const signer = hooks.useObservableState(
+    appState.selectedSigner$,
+  );
+  const network = hooks.useObservableState(appState.currentNetwork$);
+  const c = hooks.usePoolCount()
   const [pools, arePoolsLoading] = hooks.usePoolsList({
     limit: pageCount,
     offset: (currentPage - 1) * pageCount,
-    reefscanApi: 'https://testnet.reefscan.com',
+    reefscanApi: network?.reefscanUrl || '',
     search,
-    signer: '5DvcwghWVZW9BueQ1RzHYcosrKUX6tbbMPhnYGv6XdjMmubF',
+    signer: signer?.address || '',
     tokenPrices,
     queryType: 'All',
   });
