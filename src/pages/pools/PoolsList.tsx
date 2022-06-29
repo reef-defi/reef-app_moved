@@ -103,7 +103,7 @@ const PoolsList = (): JSX.Element => {
                       <Uik.Trend
                         type={item.volumeChange24h >= 0 ? 'good' : 'bad'}
                         direction={item.volumeChange24h >= 0 ? 'up' : 'down'}
-                        text={`${item.volumeChange24h}%`}
+                        text={`${item.volumeChange24h.toFixed(2)}%`}
                       />
                     </Uik.Td>
                     <Uik.Td align="right">
