@@ -8,22 +8,6 @@ import PoolsSearch from './PoolsSearch';
 import TokenPricesContext from '../../context/TokenPricesContext';
 import { POOL_CHART_URL } from '../../urls';
 
-interface Pool {
-  address?: string,
-  tvl: string;
-  volume24h: string;
-  volumeChange24h: number;
-  myLiquidity?: string;
-  token1: {
-    name: string;
-    image: string;
-  };
-  token2: {
-    name: string;
-    image: string;
-  };
-}
-
 const PoolsList = (): JSX.Element => {
   const pageCount = 10;
   const [currentPage, changePage] = useState(1);
@@ -47,7 +31,7 @@ const PoolsList = (): JSX.Element => {
     action: 'provide' | 'withdraw' = 'provide',
   ): void => history.push(
     POOL_CHART_URL
-      .replace(':address', address || 'address')
+      .replace(':address', address)
       .replace(':action', action),
   );
 
@@ -87,10 +71,10 @@ const PoolsList = (): JSX.Element => {
 
         <Uik.TBody>
           {
-                pools.map((item: Pool, index) => (
+                pools.map((item, index) => (
                   <Uik.Tr
                     key={`pool-${index}`}
-                    onClick={() => openPool(item.address || '')}
+                    onClick={() => openPool(item.address)}
                   >
                     <Uik.Td>
                       <div className="pools__pair">

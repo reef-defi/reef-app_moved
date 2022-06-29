@@ -1,39 +1,12 @@
 import './pool.css';
-import React from 'react';
+import React, { useContext } from 'react';
 import Stats from './Stats';
 import Chart from './Chart';
 import Actions from './Actions';
+import { hooks } from '@reef-defi/react-lib';
+import { useParams } from 'react-router-dom';
+import TokenPricesContext from '../../../context/TokenPricesContext';
 
-const data = {
-  firstToken: {
-    name: 'Reef',
-    image: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png',
-    percentage: 50,
-    amountLocked: '460.57 k',
-    myLiquidity: '12,78 k',
-    fees24h: '36,50',
-    ratio: {
-      amount: 0.001,
-      name: 'FISH',
-    },
-  },
-  secondToken: {
-    name: 'Fish',
-    image: 'https://app.reef.io/img/token-icons/token-icon-7.png',
-    percentage: 50,
-    amountLocked: '460.57 k',
-    myLiquidity: '12,78 k',
-    fees24h: '36,50',
-    ratio: {
-      amount: 1000,
-      name: 'REEF',
-    },
-  },
-  totalValueLocked: '1.60 M',
-  myLiquidity: '1.25 k',
-  volume24h: '218.35 k',
-  volumeChange24h: 20,
-};
 
 const actionsData = {
   firstToken: {
@@ -68,15 +41,34 @@ const actionsData = {
   },
 };
 
-const Pool = () => (
-  <div className="pool">
-    <Stats data={data} />
+interface Params {
+  address: string;
+  action: string;
+}
 
-    <div className="pool__content">
-      <Actions data={actionsData} />
-      <Chart />
+const Pool = () => {
+  const {address} = useParams<Params>();
+  const tokenPrices = useContext(TokenPricesContext);
+  const [poolInfo, loading] = hooks.usePoolInfo(
+    address,
+    '5DvcwghWVZW9BueQ1RzHYcosrKUX6tbbMPhnYGv6XdjMmubF',
+    tokenPrices
+  );
+
+  if (!poolInfo) {
+    return <div>Loading...</div>
+  }
+
+  return (
+    <div className="pool">
+      <Stats data={poolInfo} />
+
+      <div className="pool__content">
+        <Actions data={actionsData} />
+        <Chart />
+      </div>
     </div>
-  </div>
-);
+  );
+}
 
 export default Pool;

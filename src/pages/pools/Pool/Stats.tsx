@@ -1,26 +1,30 @@
 import './stats.css';
 import Uik from '@reef-defi/ui-kit';
 import React from 'react';
+import { hooks } from '@reef-defi/react-lib';
 
-export interface Props {
-  data?: any
+interface StatsProps {
+  data: hooks.PoolStats;
+}
+interface TokenStatsProps {
+  token: hooks.TokenStats;
 }
 
-const Token = ({ token }: any) => (
+const Token = ({token}: TokenStatsProps) => (
   <div className="pool-stats__token">
     <div className="pool-stats__token-info">
       <div className="pool-stats__token-main">
         <img
-          src={token.image}
-          alt={token.name}
+          src={token.icon}
+          alt={token.symbol}
           className={`
               pool-stats__token-image
-              pool-stats__token-image--${Uik.utils.slug(token.name)}
+              pool-stats__token-image--${Uik.utils.slug(token.symbol)}
             `}
         />
 
         <div>
-          <div className="pool-stats__token-name">{ token.name }</div>
+          <div className="pool-stats__token-name">{ token.symbol }</div>
           <div className="pool-stats__token-percentage">
             { token.percentage }
             %
@@ -31,25 +35,25 @@ const Token = ({ token }: any) => (
       <div className="pool-stats__token-value-ratio">
         1
         {' '}
-        {token.name}
+        {token.symbol}
         {' '}
         =
         {' '}
         {token.ratio.amount}
         {' '}
-        {token.ratio.name}
+        {token.ratio.symbol}
       </div>
     </div>
 
     <div className="pool-stats__token-stats">
       <div className="pool-stats__token-stat">
         <div className="pool-stats__token-stat-label">Amount Locked</div>
-        <div className="pool-stats__token-stat-value">{ token.amountLocked }</div>
+        <div className="pool-stats__token-stat-value">{ Uik.utils.formatHumanAmount(token.amountLocked) }</div>
       </div>
 
       <div className="pool-stats__token-stat">
         <div className="pool-stats__token-stat-label">My Liquidity</div>
-        <div className="pool-stats__token-stat-value">{ token.myLiquidity }</div>
+        <div className="pool-stats__token-stat-value">{ token.mySupply }</div>
       </div>
 
       <div className="pool-stats__token-stat">
@@ -60,7 +64,7 @@ const Token = ({ token }: any) => (
   </div>
 );
 
-const Stats = ({ data }: Props) => (
+const Stats = ({ data }: StatsProps) => (
   <div className="pool-stats">
     <div className="pool-stats__wrapper">
       <div className="pool-stats__main">
@@ -71,22 +75,22 @@ const Stats = ({ data }: Props) => (
           >
             <div className="pool-stats__pool-select-pair">
               <img
-                src={data.firstToken.image}
-                alt={data.firstToken.name}
-                className={`pool-stats__pool-select-pair--${Uik.utils.slug(data.firstToken.name)}`}
+                src={data.firstToken.icon}
+                alt={data.firstToken.symbol}
+                className={`pool-stats__pool-select-pair--${Uik.utils.slug(data.firstToken.symbol)}`}
               />
               <img
-                src={data.secondToken.image}
-                alt={data.firstToken.name}
-                className={`pool-stats__pool-select-pair--${Uik.utils.slug(data.secondToken.name)}`}
+                src={data.secondToken.icon}
+                alt={data.firstToken.symbol}
+                className={`pool-stats__pool-select-pair--${Uik.utils.slug(data.secondToken.symbol)}`}
               />
             </div>
             <span className="pool-stats__pool-select-name">
-              { data.firstToken.name }
+              { data.firstToken.symbol }
               {' '}
               /
               {' '}
-              { data.secondToken.name }
+              { data.secondToken.symbol }
             </span>
           </button>
 
@@ -102,7 +106,7 @@ const Stats = ({ data }: Props) => (
             <div className="pool-stats__main-stat-label">Total Value Locked</div>
             <div className="pool-stats__main-stat-value">
               $
-              { data.totalValueLocked }
+              { Uik.utils.formatHumanAmount(data.tvlUSD) }
             </div>
           </div>
 
@@ -110,7 +114,7 @@ const Stats = ({ data }: Props) => (
             <div className="pool-stats__main-stat-label">My Liquidity</div>
             <div className="pool-stats__main-stat-value">
               $
-              { data.myLiquidity }
+              { data.mySupplyUSD }
             </div>
           </div>
 
@@ -119,7 +123,7 @@ const Stats = ({ data }: Props) => (
             <div className="pool-stats__main-stat-value">
               <span>
                 $
-                { data.volume24h }
+                { data.volume24hUSD }
               </span>
               <Uik.Trend
                 type={data.volumeChange24h >= 0 ? 'good' : 'bad'}
