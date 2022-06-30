@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 import { BigNumber } from 'bignumber.js';
 
 import { faRightLeft } from '@fortawesome/free-solid-svg-icons';
@@ -13,9 +13,15 @@ import PoolsList from './PoolsList';
 const Pools = (): JSX.Element => {
   const tokenPrices = useContext(TokenPricesContext);
   const totalLiquidity = hooks.useTotalSupply(tokenPrices);
-  const poolVolume = hooks.usePoolVolume(tokenPrices);
+  const yesterdayTotalLiquidity = hooks.useTotalSupply(tokenPrices, true);
 
-  const getVolume = (): number => new BigNumber(poolVolume).toNumber();
+  const percentage = useMemo(() => new BigNumber(totalLiquidity)
+    .minus(yesterdayTotalLiquidity)
+    .div(yesterdayTotalLiquidity)
+    .multipliedBy(100)
+    .toNumber(),
+    [totalLiquidity, yesterdayTotalLiquidity]
+  );
 
   return (
     <div className="pools">
@@ -29,9 +35,9 @@ const Pools = (): JSX.Element => {
               {Uik.utils.formatHumanAmount(totalLiquidity)}
             </Uik.Text>
             <Uik.Trend
-              type={getVolume() >= 0 ? 'good' : 'bad'}
-              direction={getVolume() >= 0 ? 'up' : 'down'}
-              text={`${getVolume().toFixed(2)}%`}
+              type={percentage >= 0 ? 'good' : 'bad'}
+              direction={percentage >= 0 ? 'up' : 'down'}
+              text={`${percentage.toFixed(2)}%`}
             />
           </div>
         </div>
