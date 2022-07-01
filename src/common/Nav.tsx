@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Components, appState, hooks, ReefSigner, Network,
+  Components, appState, hooks, ReefSigner, Network, utils,
 } from '@reef-defi/react-lib';
 import './Nav.css';
 import { Link, useHistory, useLocation } from 'react-router-dom';
@@ -32,6 +32,13 @@ const Nav = ({ display }: Nav): JSX.Element => {
     { title: 'Staking', url: BONDS_URL },
     { title: 'Creator', url: CREATE_ERC20_TOKEN_URL },
   ];
+
+  const navigateToBind = (): void => {
+    if (signer) {
+      history.push(addressReplacer(BIND_URL, signer.address));
+      utils.closeModal('account-modal');
+    }
+  };
 
   const selectAccount = (index: number): void => {
     saveSignerLocalPointer(index);
@@ -84,6 +91,7 @@ const Nav = ({ display }: Nav): JSX.Element => {
               reefscanUrl={network.reefscanUrl}
               selectNetwork={appState.setCurrentNetwork}
               availableNetworks={appAvailableNetworks}
+              bindAccountCb={navigateToBind}
             />
             )}
           </nav>
