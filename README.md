@@ -11,10 +11,8 @@ For developing the app and lib simultaneously you will need to do certain steps:
 
 1. Fork/Clone [@reef-defi/react-lib](git@github.com:reef-defi/reef-react-lib.git) besides reef-app project.
 2. In `package.json` replace `"@reef-defi/react-lib": "v..."` with `"@reef-defi/react-lib": "link:./../reef-react-lib/"`
-3. Go to `./../reef-react-lib/node_modules/react` and call `yarn link`.
-4. Go back to `reef-app` root directory and call `yarn link react`.
-5. `yarn`
-6. `yarn start`
+3. `yarn`
+4. `yarn start`
 
 # Steps before Deployment when developing with react-lib * 
 Do not forget to publish the lib before app deployment! 

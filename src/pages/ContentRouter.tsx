@@ -14,6 +14,7 @@ import {
   BONDS_URL,
   POOL_CHART_URL,
   SPECIFIED_SWAP_URL,
+  BIND_URL,
 } from '../urls';
 import AddLiqudity from './pools/AddLiquidity';
 import Pools from './pools/Pools';
@@ -27,6 +28,7 @@ import PoolContext from '../context/PoolContext';
 import TokenContext from '../context/TokenContext';
 import TokenPrices from '../context/TokenPricesContext';
 import Pool from './pools/Pool';
+import Bind from './bind/Bind';
 
 const ContentRouter = (): JSX.Element => {
   const currentSigner: ReefSigner|undefined|null = hooks.useObservableState(appState.selectedSigner$);
@@ -58,6 +60,7 @@ const ContentRouter = (): JSX.Element => {
               <Route exact path={TRANSFER_TOKEN} component={Transfer} />
               <Route exact path={CREATE_ERC20_TOKEN_URL} component={Creator} />
               <Route exact path={BONDS_URL} component={Bonds} />
+              <Route path={BIND_URL} component={Bind} />
               <Route path="/" render={() => (<Redirect to={DASHBOARD_URL} />)} />
             </Switch>
           </TokenPrices.Provider>
