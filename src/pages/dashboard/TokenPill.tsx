@@ -1,15 +1,10 @@
-import {
-  Components, hooks as reefHooks, TokenWithAmount, utils as reefUtils,
-  utils,
-} from '@reef-defi/react-lib';
+import { TokenWithAmount, utils } from '@reef-defi/react-lib';
 import React from 'react';
-import { getIconUrl, toCurrencyFormat } from '../../utils/utils';
+import { toCurrencyFormat } from '../../utils/utils';
 import './TokenPill.css';
 
-const { DataProgress, isDataSet } = reefUtils;
-
-const { showBalance } = reefUtils;
-const { Loading } = Components.Loading;
+const { isDataSet } = utils;
+const { showBalance } = utils;
 
 interface TokenPill {
     token: TokenWithAmount
@@ -21,7 +16,7 @@ export const TokenPill = ({ token }: TokenPill): JSX.Element => {
     <div key={token.address} className="col-md-12 col-lg-6">
       <div className="token-balance-item radius-border d-flex d-flex-space-between d-flex-vert-center">
         <div className="token-balance-item_icon-text mr-1">
-          <div className="token-balance-item_icon-text_w mr-1"><img src={token.iconUrl ? token.iconUrl : getIconUrl(token.address)} alt={token.name} /></div>
+          <div className="token-balance-item_icon-text_w mr-1"><img src={token.iconUrl ? token.iconUrl : utils.getIconUrl(token.address)} alt={token.name} /></div>
           <div className="token-balance-item__info">
             <div className="">
               <div className="title-font text-bold ">{token.name}</div>

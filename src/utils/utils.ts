@@ -1,8 +1,6 @@
-import { Notify, reefTokenWithAmount, utils } from '@reef-defi/react-lib';
+import { Notify } from '@reef-defi/react-lib';
 import { utils as ethUtils, BigNumber } from 'ethers';
 import { toast } from 'react-toastify';
-
-const reefToken = reefTokenWithAmount();
 
 // eslint-disable-next-line
 export const notify = (message: string, type: Notify='success'): void => {
@@ -17,13 +15,6 @@ export const delay = async (milliseconds: number): Promise<void> => new Promise(
   setTimeout(resolve, milliseconds);
 });
 
-export const getIconUrl = (tokenAddress: string): string => {
-  if (tokenAddress === reefToken.address) {
-    return reefToken.iconUrl;
-  }
-  const lastNr = utils.getHashSumLastNr(tokenAddress);
-  return `/img/token-icons/token-icon-${lastNr}.png`;
-};
 export const shortAddress = (address: string): string => (address.length > 10
   ? `${address.slice(0, 5)}...${address.slice(address.length - 5, address.length)}`
   : address);
