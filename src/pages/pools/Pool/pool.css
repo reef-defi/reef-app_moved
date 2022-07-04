@@ -3,16 +3,25 @@
   width: 100%;
   max-width: 100%;
   min-height: calc(100vh - 60px);
+  max-height: calc(100vh - 60px);
+  overflow: hidden;
   background-color: #ded9ed;
   display: flex;
   flex-flow: column nowrap;
   justify-content: flex-start;
   align-items: flex-start;
+  animation: pool-appear 0.4s;
+}
+
+@keyframes pool-appear {
+  from {
+    opacity: 0;
+  }
 }
 
 .pool__content {
   width: 100%;
-  max-width: 1570px;
+  max-width: 1730px;
   padding: 0 35px;
   margin: -20px auto 0 auto;
   flex-grow: 1;
@@ -21,7 +30,7 @@
   flex-flow: row nowrap;
   justify-content: center;
   align-items: flex-start;
-  animation: pool-content-appear 0.9s;
+  animation: pool-content-appear 0.4s;
 }
 
 @keyframes pool-content-appear {

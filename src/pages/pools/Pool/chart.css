@@ -24,7 +24,7 @@
 }
 
 .pool-chart .uik-card {
-  padding: 20px 10px 10px 20px;
+  padding: 20px 15px 15px 25px;
 }
 
 .pool-chart__top {
@@ -33,10 +33,15 @@
   flex-flow: row nowrap;
   justify-content: center;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
+  z-index: 2;
+}
+
+.pool-chart__top .uik-tabs {
+  padding: 6px;
 }
 
 .pool-chart__top .uik-tabs .uik-tabs__tab {
-  font-size: 0.938rem;
-  padding: 9px 13px;
+  font-size: 0.875rem;
+  padding: 8px 12px;
 }

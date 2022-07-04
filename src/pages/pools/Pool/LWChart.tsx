@@ -31,7 +31,7 @@ export interface Props {
 
 const chartOptions = {
   layout: {
-    textColor: '#394259',
+    textColor: '#898e9c',
     fontSize: 12,
     fontFamily: "'Poppins', sans-serif",
     background: {

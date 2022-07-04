@@ -2,15 +2,7 @@
   width: 100%;
   position: relative;
   background: linear-gradient(to right, #962477, #5631a3);
-  animation: pool-stats-appear 0.5s;
   transform-origin: 50% 0;
-}
-
-@keyframes pool-stats-appear {
-  from {
-    opacity: 0;
-    transform: scaleY(0);
-  }
 }
 
 .pool-stats__wrapper {
@@ -21,12 +13,12 @@
   flex-flow: row nowrap;
   justify-content: space-between;
   align-items: stretch;
-  animation: pool-stats-content-appear 0.5s 0.4s backwards;
+  animation: pool-stats-content-appear 0.4s;
 }
 
 @keyframes pool-stats-content-appear {
   from {
-    transform: translateY(-5px);
+    transform: translateY(-15px);
     opacity: 0;
   }
 }

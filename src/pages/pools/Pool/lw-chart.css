@@ -1,4 +1,11 @@
 .lw-chart {
   width: 100%;
   flex-grow: 1;
+  animation: lw-chart 0.25s;
+}
+
+@keyframes lw-chart {
+  from {
+    opacity: 0;
+  }
 }
