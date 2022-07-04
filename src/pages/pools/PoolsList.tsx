@@ -19,8 +19,7 @@ const PoolsList = (): JSX.Element => {
     appState.selectedSigner$,
   );
   const network = hooks.useObservableState(appState.currentNetwork$);
-  const c = hooks.usePoolCount()
-  const [pools, arePoolsLoading] = hooks.usePoolsList({
+  const [pools, arePoolsLoading, count] = hooks.usePoolsList({
     limit: pageCount,
     offset: (currentPage - 1) * pageCount,
     reefscanApi: network?.reefscanUrl || '',
@@ -59,7 +58,7 @@ const PoolsList = (): JSX.Element => {
       <Uik.Table
         seamless
         pagination={{
-          count: pageCount,
+          count: pageCount, // TODO change to count
           current: currentPage,
           onChange: (page) => { changePage(page); setChangedPage(true); },
         }}

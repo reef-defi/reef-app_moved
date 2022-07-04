@@ -37,7 +37,7 @@ const MyPoolsList = (): JSX.Element => {
   
   const userPools = hooks.useFindUserPools(signer?.address || '');
 
-  const [pools, arePoolsLoading] = hooks.usePoolsList({
+  const [pools, arePoolsLoading, count] = hooks.usePoolsList({
     limit: 10,
     offset: (currentPage - 1) * 10,
     reefscanApi: network?.reefscanUrl || '',
@@ -76,7 +76,7 @@ const MyPoolsList = (): JSX.Element => {
       <Uik.Table
         seamless
         pagination={{
-          count: userPools.length,
+          count: currentPage, // TODO change to count once endpoints are online...
           current: currentPage,
           onChange: (page) => { changePage(page); setChangedPage(true); },
         }}
