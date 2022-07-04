@@ -40,16 +40,13 @@ const Token = ({ token }: TokenStatsProps) => (
         </div>
       </div>
 
-      <div className="pool-stats__token-value-ratio">
-        1
-        {' '}
-        {token.symbol}
-        {' '}
-        =
-        {' '}
-        {displayAmount(token.ratio.amount)}
-        {' '}
-        {token.ratio.symbol}
+      <div>
+        <div className="pool-stats__token-price">$ 0.00</div>
+        <div className="pool-stats__token-value-ratio">
+          {displayAmount(token.ratio.amount)}
+          {' '}
+          {token.ratio.symbol}
+        </div>
       </div>
     </div>
 
