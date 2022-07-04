@@ -9,4 +9,34 @@
 
 .pool-chart .uik-card {
   background-color: #eeebf6;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.pool-chart .uik-card__content {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-grow: 1;
+}
+
+.pool-chart .uik-card {
+  padding: 20px 10px 10px 20px;
+}
+
+.pool-chart__top {
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.pool-chart__top .uik-tabs .uik-tabs__tab {
+  font-size: 0.938rem;
+  padding: 9px 13px;
 }
