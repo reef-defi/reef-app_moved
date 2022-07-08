@@ -166,33 +166,19 @@ const chartData = {
 const actionsData = {
   firstToken: {
     name: 'Reef',
+    symbol: 'REEF',
     image: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png',
-    available: 1000,
-    provided: 500,
-    ratio: 0.001,
+    price: 0.05,
+    available: 10000,
+    providing: 5000,
   },
   secondToken: {
-    name: 'Test',
+    name: 'Test Token',
+    symbol: 'TEST',
     image: '',
-    available: 1000000,
-    provided: 500000,
-    ratio: 1000,
-  },
-  fees: {
-    provide: {
-      amount: 0.02,
-      token: {
-        name: 'Reef',
-        image: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png',
-      },
-    },
-    withdraw: {
-      amount: 0.02,
-      token: {
-        name: 'Reef',
-        image: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png',
-      },
-    },
+    price: 0.025,
+    available: 20000,
+    providing: 2500,
   },
 };
 
@@ -201,7 +187,7 @@ interface Params {
   action: string;
 }
 
-const Pool = () => {
+const Pool = (): JSX.Element => {
   const { address } = useParams<Params>();
   const tokenPrices = useContext(TokenPricesContext);
 
