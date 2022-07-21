@@ -1,8 +1,11 @@
 import './actions.css';
 import {
-  appState, Components,
-  hooks, Network,
-  ReefSigner, store,
+  appState,
+  Components,
+  hooks,
+  Network,
+  ReefSigner,
+  store,
 } from '@reef-defi/react-lib';
 import React, { useContext, useReducer } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
@@ -29,13 +32,18 @@ const Actions = (): JSX.Element => {
     appState.currentNetwork$,
   );
 
-  const [state, dispatch] = useReducer(store.addLiquidityReducer, store.initialAddLiquidityState);
+  // Provide
+
+  const [provideState, provideDispatch] = useReducer(
+    store.addLiquidityReducer,
+    store.initialAddLiquidityState,
+  );
 
   hooks.useAddLiquidity({
     address1,
     address2,
-    dispatch,
-    state,
+    dispatch: provideDispatch,
+    state: provideState,
     tokens,
     signer: signer || undefined,
     network,
@@ -43,21 +51,56 @@ const Actions = (): JSX.Element => {
   });
 
   const onAddLiquidity = hooks.onAddLiquidity({
-    state,
+    state: provideState,
     network,
     signer: signer || undefined,
-    dispatch,
+    dispatch: provideDispatch,
     notify,
     updateTokenState: async () => {}, // eslint-disable-line
   });
 
   const provide = {
-    state,
+    state: provideState,
     actions: {
       onAddLiquidity,
       back: history.goBack,
-      setToken1Amount: (amount: any) => dispatch(store.setToken1AmountAction(amount)),
-      setToken2Amount: (amount: any) => dispatch(store.setToken2AmountAction(amount)),
+      setToken1Amount: (amount: any) => provideDispatch(store.setToken1AmountAction(amount)),
+      setToken2Amount: (amount: any) => provideDispatch(store.setToken2AmountAction(amount)),
+    },
+  };
+
+  // Withdraw
+
+  const [withdrawState, withdrawDispatch] = useReducer(
+    store.removeLiquidityReducer,
+    store.initialRemoveLiquidityState,
+  );
+
+  hooks.useRemoveLiquidity({
+    address1,
+    address2,
+    dispatch: withdrawDispatch,
+    state: withdrawState,
+    tokens,
+    network,
+    signer: signer || undefined,
+    tokenPrices,
+  });
+
+  const onRemoveLiquidity = hooks.onRemoveLiquidity({
+    state: withdrawState,
+    dispatch: withdrawDispatch,
+    network,
+    signer: signer || undefined,
+    notify,
+  });
+
+  const withdraw = {
+    state: withdrawState,
+    actions: {
+      onRemoveLiquidity,
+      back: history.goBack,
+      setPercentage: (percentage: any) => withdrawDispatch(store.setPercentageAction(percentage)),
     },
   };
 
@@ -69,6 +112,7 @@ const Actions = (): JSX.Element => {
         <PoolActions
           className="pool-actions"
           provide={provide}
+          withdraw={withdraw}
         />
         )
       }
