@@ -1,41 +1,55 @@
-import React from 'react';
+import React, { useContext, useMemo } from 'react';
+import { BigNumber } from 'bignumber.js';
 
-import {appState, Components, hooks, utils} from '@reef-defi/react-lib';
-import { useHistory } from 'react-router-dom';
-import { ADD_LIQUIDITY_URL, POOL_CHART_URL } from '../../urls';
+import { faRightLeft } from '@fortawesome/free-solid-svg-icons';
+import { hooks } from '@reef-defi/react-lib';
+import Uik from '@reef-defi/ui-kit';
 
-const { PoolList, PoolTransactions } = Components;
+import TokenPricesContext from '../../context/TokenPricesContext';
+import MyPoolsList from './MyPoolsList';
+import './pools.css';
+import PoolsList from './PoolsList';
 
 const Pools = (): JSX.Element => {
-  const history = useHistory();
-  const network = hooks.useObservableState(appState.currentNetwork$);
+  const tokenPrices = useContext(TokenPricesContext);
+  const totalLiquidity = hooks.useTotalSupply(tokenPrices);
+  const yesterdayTotalLiquidity = hooks.useTotalSupply(tokenPrices, true);
 
-  const openAddLiquidity = (): void => history.push(
-    ADD_LIQUIDITY_URL
-      .replace(':address1', utils.REEF_ADDRESS)
-      .replace(':address2', '0x'),
-  );
-  const openPool = (address: string): void => history.push(
-    POOL_CHART_URL.replace(':address', address),
-  );
+  const percentage = useMemo(() => new BigNumber(totalLiquidity)
+    .minus(yesterdayTotalLiquidity)
+    .div(yesterdayTotalLiquidity)
+    .multipliedBy(100)
+    .toNumber(),
+  [totalLiquidity, yesterdayTotalLiquidity]);
 
-  return (<>
-    {network &&
-    <div className="w-100 row justify-content-center">
-      <div className="col-xl-10 col-lg-10 col-md-12">
-        <PoolList
-            openPool={openPool}
-            openAddLiquidity={openAddLiquidity}
+  return (
+    <div className="pools">
+
+      <Uik.Container className="pools__top">
+        <div className="pools__total">
+          <Uik.Text type="lead">Total Supply</Uik.Text>
+          <div className="pools__total-amount">
+            <Uik.Text type="headline">
+              $
+              {' '}
+              {Uik.utils.formatHumanAmount(totalLiquidity)}
+            </Uik.Text>
+            <Uik.Trend
+              type={percentage >= 0 ? 'good' : 'bad'}
+              direction={percentage >= 0 ? 'up' : 'down'}
+              text={`${percentage.toFixed(2)}%`}
+            />
+          </div>
+        </div>
+        <Uik.Button
+          icon={faRightLeft}
+          text="Show Transactions"
         />
-        <Components.Display.MT size="4"/>
-        <PoolTransactions
-            reefscanFrontendUrl={network.reefscanFrontendUrl}
-        />
-      </div>
+      </Uik.Container>
+
+      <MyPoolsList />
+      <PoolsList />
     </div>
-    }
-    </>
   );
 };
-
 export default Pools;

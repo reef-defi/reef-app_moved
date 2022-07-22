@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 import { Contract, utils } from 'ethers';
-import { gql } from '@apollo/client';
-import { firstValueFrom } from 'rxjs';
+import {ApolloClient, gql} from '@apollo/client';
+import { firstValueFrom, Observable } from 'rxjs';
 import { graphql } from '@reef-defi/react-lib';
 
 const CONTRACT_VERIFICATION_URL = '/api/verificator/submit-verification';
@@ -69,7 +69,8 @@ const isContrIndexed = async (address: string): Promise<boolean> => new Promise(
   const tmt = setTimeout(() => {
     resolve(false);
   }, 120000);
-  const apollo = await firstValueFrom(graphql.apolloClientInstance$) as any;
+  let apolloClInst$: unknown = graphql.apolloClientInstance$;
+  const apollo = await firstValueFrom(apolloClInst$ as Observable<ApolloClient<any>>);
   apollo.subscribe({
     query: CONTRACT_EXISTS_GQL,
     variables: { address },
@@ -91,7 +92,7 @@ const isContrIndexed = async (address: string): Promise<boolean> => new Promise(
     },
 
   });
-});
+}) as Promise<boolean>;
 
 export const verifyContract = async (deployedContract: Contract, contract: ReefContract, arg: string[], url?: string): Promise<boolean> => {
   if (!url) {

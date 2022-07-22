@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   TokenWithAmount, utils as reefUtils, utils, appState, hooks, Token, ReefSigner,
 } from '@reef-defi/react-lib';
@@ -11,15 +11,48 @@ import { Nfts } from './Nfts';
 import { Staking } from './Staking';
 import Tabs from '../../common/Tabs';
 import { bonds } from '../bonds/utils/bonds';
+import Bind from '../bind/Bind';
 
 const {
   DataProgress, isDataSet,
 } = reefUtils;
 
+const DEFAULT_TABS = [
+  {
+    key: 'tokens',
+    title: 'Tokens',
+  },
+  {
+    key: 'staking',
+    title: 'Staking',
+    notification: bonds?.length,
+  },
+  {
+    key: 'nfts',
+    title: 'NFTs',
+  },
+  {
+    key: 'activity',
+    title: 'Activity',
+  },
+];
+
 const Dashboard = (): JSX.Element => {
+  let tabs = DEFAULT_TABS;
   const signerTokenBalances: TokenWithAmount[]|undefined = hooks.useObservableState(appState.tokenPrices$);
   const signerNfts = hooks.useObservableState(appState.selectedSignerNFTs$);
-  const selectedSigner: ReefSigner|undefined | null= hooks.useObservableState(appState.selectedSigner$);
+  const selectedSigner: ReefSigner|undefined | null = hooks.useObservableState(appState.selectedSigner$);
+  const [tab, setTab] = useState<string>('');
+
+  // If account is not bound, add bind tab to 'tabs' array
+  if (!!selectedSigner && !selectedSigner.isEvmClaimed) {
+    const bindTab = { key: 'bind', title: 'Bind Account' };
+    tabs = [bindTab, ...tabs];
+  }
+
+  useEffect(() => {
+    setTab(tabs[0].key);
+  }, [selectedSigner]);
 
   const totalBalance: reefUtils.DataWithProgress<number> = isDataSet(signerTokenBalances) && signerTokenBalances?.length ? (signerTokenBalances).reduce((state: reefUtils.DataWithProgress<number>, curr) => {
     if (Number.isNaN(curr.balance) || Number.isNaN(curr.price) || !isDataSet(curr.balance)) {
@@ -32,28 +65,6 @@ const Dashboard = (): JSX.Element => {
     }
     return state;
   }, DataProgress.LOADING) : DataProgress.LOADING;
-
-  const tabs = [
-    {
-      key: 'tokens',
-      title: 'Tokens',
-    },
-    {
-      key: 'staking',
-      title: 'Staking',
-      notification: bonds?.length,
-    },
-    {
-      key: 'nfts',
-      title: 'NFTs',
-    },
-    {
-      key: 'activity',
-      title: 'Activity',
-    },
-  ];
-
-  const [tab, setTab] = useState(tabs[0].key);
 
   return (
     <div className="dashboard">
@@ -70,6 +81,7 @@ const Dashboard = (): JSX.Element => {
           { tab === 'staking' ? <Staking /> : '' }
           { tab === 'nfts' ? <Nfts tokens={signerNfts} /> : '' }
           { tab === 'activity' ? <TokenActivity address={selectedSigner?.evmAddress} /> : '' }
+          { tab === 'bind' ? <Bind /> : '' }
         </div>
 
         <div className="dashboard__right">
