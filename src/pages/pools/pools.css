@@ -216,3 +216,14 @@
 .pools-search__clear-btn:active svg {
   transform: scale(1.1);
 }
+
+.uik-pool-actions-token__value input {
+  font-family: var(--font-family);
+}
+
+.uik-pool-actions__cta-wrapper {
+  border: none;
+  background-color: transparent;
+  width: 100%;
+  display: flex;
+}
