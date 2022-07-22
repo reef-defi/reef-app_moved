@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  defaultOptions, graphql, hooks,
+  appState, availableNetworks, defaultOptions, graphql, hooks, ReefSigner,
 } from '@reef-defi/react-lib';
 import { ApolloProvider, ApolloClient } from '@apollo/client';
 import { ToastContainer, toast } from 'react-toastify';
@@ -14,7 +14,12 @@ import { notify } from './utils/utils';
 import 'react-toastify/dist/ReactToastify.css';
 
 const App = (): JSX.Element => {
-  const { loading, error } = hooks.useInitReefState('Reef Wallet App');
+  const { provider, loading, error } = hooks.useInitReefState(
+    'Reef Wallet App',
+    {
+      network: availableNetworks.testnet,
+    },
+  );
   const history = useHistory();
   const apollo: ApolloClient<any>|undefined = hooks.useObservableState(graphql.apolloClientInstance$);
 

@@ -20,11 +20,11 @@ const Pools = (): JSX.Element => {
     .div(yesterdayTotalLiquidity)
     .multipliedBy(100)
     .toNumber(),
-    [totalLiquidity, yesterdayTotalLiquidity]
-  );
+  [totalLiquidity, yesterdayTotalLiquidity]);
 
   return (
     <div className="pools">
+
       <Uik.Container className="pools__top">
         <div className="pools__total">
           <Uik.Text type="lead">Total Supply</Uik.Text>
