@@ -1,0 +1,47 @@
+.pool-chart {
+  flex-grow: 1;
+  align-self: stretch;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: stretch;
+  padding-bottom: 35px;
+}
+
+.pool-chart .uik-card {
+  background-color: #eeebf6;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.pool-chart .uik-card__content {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-grow: 1;
+}
+
+.pool-chart .uik-card {
+  padding: 20px 15px 15px 25px;
+}
+
+.pool-chart__top {
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  z-index: 2;
+}
+
+.pool-chart__top .uik-tabs {
+  padding: 6px;
+}
+
+.pool-chart__top .uik-tabs .uik-tabs__tab {
+  font-size: 0.875rem;
+  padding: 8px 12px;
+}
