@@ -1,0 +1,229 @@
+.pools {
+  width: 100%;
+  padding: 2.5rem calc(3.5rem + 5px);
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.pools__top {
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 30px;
+  animation: pools-top-appear 0.4s;
+}
+
+@keyframes pools-top-appear {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+.pools__total-amount  {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: flex-end; 
+}
+
+.pools__total-amount .uik-text {
+  font-size: 3rem;
+  font-family: 'Lato', sans-serif;
+  font-weight: 900;
+}
+
+.pools__total-amount .uik-trend {
+  margin-bottom: 0.438rem;
+  margin-left: 10px;
+}
+
+.pools__total-amount .uik-trend__content {
+  font-size: 1rem;
+}
+
+.pools > .uik-text {
+  padding: 0 0 10px 5px;
+}
+
+.pools__pair {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.pools__pair img {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 0 2px var(--bg);
+  background-color: var(--bg);
+}
+
+.uik-table-row:nth-child(odd) .pools__pair img {
+  box-shadow: 0 0 0 2px #e4e0ef;
+  background-color: #e4e0ef;
+}
+
+.uik-table-row:hover .pools__pair img {
+  box-shadow: 0 0 0 2px #dbd6ea;
+  background-color: #dbd6ea;
+}
+
+.pools__pair img + img {
+  margin-left: -5px;
+}
+
+.pools__pair + span {
+  margin-left: 15px;
+}
+
+.pools .uik-table .uik-table-cell:last-child .uik-table-cell__content {
+  padding-right: 10px;
+}
+
+.pools__list {
+  animation: pools-list-appear 0.4s;
+}
+
+@keyframes pools-list-appear {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+.pools__list + .pools__list {
+  margin-top: 50px;
+}
+
+.pools__table-top {
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.pools__table-top .pools-search {
+  margin-left: 25px;
+}
+
+.pools-search {
+  flex-grow: 1;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.pools-search__wrapper {
+  position: relative;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-end;
+  align-items: center;
+  z-index: 3;
+}
+
+.pools-search__input {
+  background-color: #e7def0;
+  border-radius: 12px;
+  transition: all 0.2s ease-out;
+  border: solid 1px transparent;
+  color: var(--text);
+  font-weight: 500;
+  padding: 11px 18px 11px 35px;
+  font-size: 14px;
+  line-height: 1.1;
+  width: 105px;
+  font-family: var(--font-family);
+}
+
+.pools-search__input:hover {
+  background-color: #e1d5ec;
+  cursor: pointer;
+}
+
+.pools-search__input:focus,
+.pools-search--open .pools-search__input {
+  transition: all 0.2s ease-out;
+  background-color: rgba(255,255,255,0.2);
+  padding: 11px 35px;
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 10px 15px -8px hsla(
+    var(--secondary--h),
+    var(--secondary--s),
+    var(--secondary--l),
+    0.3
+  );
+  width: 300px;
+}
+
+.pools-search__input::placeholder {
+  user-select: none;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.pools-search__icon {
+  width: 13px;
+  color: var(--primary);
+  position: absolute;
+  left: 15px;
+  pointer-events: none;
+}
+
+.pools-search__input:focus::placeholder {
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+.pools-search__input:focus:hover,
+.pools-search--open .pools-search__input:hover {
+  cursor: initial;
+}
+
+.pools-search__clear-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  background: transparent;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  position: absolute;
+  right: 5px;
+  transition: all 0.15s;
+}
+
+.pools-search__clear-btn svg {
+  width: 10px;
+  height: 18px;
+  color: var(--primary);
+  transition: all 0.1s;
+}
+
+.pools-search__clear-btn:hover {
+  background-color: #e1d5ec;
+  transition: none;
+}
+
+.pools-search__clear-btn:active svg {
+  transform: scale(1.1);
+}
+
+.uik-pool-actions-token__value input {
+  font-family: var(--font-family);
+}
+
+.uik-pool-actions__cta-wrapper {
+  border: none;
+  background-color: transparent;
+  width: 100%;
+  display: flex;
+}
