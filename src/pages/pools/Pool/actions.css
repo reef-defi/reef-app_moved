@@ -1,4 +1,6 @@
 .pool-actions {
   margin-right: 35px;
   width: 450px;
+  min-width: 450px;
+  max-width: 450px;
 }
