@@ -5,7 +5,7 @@
       "DOM",
       "DOM.Iterable",
       "esnext",
-      "ScriptHost" 
+      "ScriptHost"
     ],
     "allowJs": true,
     "skipLibCheck": true,
@@ -18,10 +18,10 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    // "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react"
   },
   "include": [
     "./src/**/*.ts"
-  ]
+  ],
+  "extends": "../../tsconfig.base.json"
 }

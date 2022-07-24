@@ -10,7 +10,7 @@ module.exports = {
   output: {
     path:path.resolve(__dirname, "public"),
   },
-  
+
   module: {
     rules: [
       {
@@ -60,7 +60,7 @@ module.exports = {
       'stream': require.resolve('stream-browserify'),
     },
   },
-  
+
   devServer: {
     static: {
       directory: path.join(__dirname, 'public'),
