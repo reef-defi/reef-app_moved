@@ -18,10 +18,22 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
         add: [
           new webpack.ProvidePlugin({
             process: 'process/browser'
+          }),
+          new HtmlWebpackPlugin({
+            template: path.join(__dirname, "public", "index-template.html"),
+            filename: 'template.html',
+            favicon: path.join(__dirname, "public", "favicon.ico")
           })
         ]
       },
       configure: (config) => {
+        config.mode = 'development';
+        config.entry = path.join(__dirname, "src", "index.tsx");
+
+        config.output = {
+          path:path.resolve(__dirname, "public")
+        };
+
         // Remove guard against importing modules outside of `src`.
         // Needed for workspace projects.
         config.resolve.plugins = config.resolve.plugins.filter(
