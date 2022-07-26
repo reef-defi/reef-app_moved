@@ -13,7 +13,7 @@ import TokenContext from '../../../context/TokenContext';
 import TokenPricesContext from '../../../context/TokenPricesContext';
 import { notify } from '../../../utils/utils';
 
-const { PoolActions } = Components;
+// const { PoolActions } = Components;
 
 interface UrlParams {
   address1: string;
@@ -108,13 +108,13 @@ const Actions = (): JSX.Element => {
     <>
       {
         !!signer
-        && (
-        <PoolActions
-          className="pool-actions"
-          provide={provide}
-          withdraw={withdraw}
-        />
-        )
+        // && (
+        // // <PoolActions
+        // //   className="pool-actions"
+        // //   provide={provide}
+        // //   withdraw={withdraw}
+        // // />
+        // )
       }
     </>
   );

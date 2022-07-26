@@ -41,8 +41,8 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "start": "craco start",
-    "build": "BUILD_PATH=../../dist/apps/reef-app craco build",
+    "start": "webpack-dev-server",
+    "build": "webpack",
     "test": "craco test",
     "eject": "react-scripts eject",
     "lint": "eslint --fix --ext .ts,.tsx ./src/",
