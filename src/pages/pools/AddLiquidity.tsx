@@ -51,7 +51,7 @@ const AddLiqudity = (): JSX.Element => {
   const onAddLiquidity = hooks.onAddLiquidity({
     state,
     network,
-    signer: signer||undefined,
+    signer: signer || undefined,
     dispatch,
     notify,
     updateTokenState: async () => {}, // eslint-disable-line

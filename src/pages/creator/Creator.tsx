@@ -18,7 +18,7 @@ export const Creator = (): JSX.Element => {
     <>
       {network && (
       <CreatorComponent
-        signer={selectedSigner||undefined}
+        signer={selectedSigner || undefined}
         network={network}
       />
       )}

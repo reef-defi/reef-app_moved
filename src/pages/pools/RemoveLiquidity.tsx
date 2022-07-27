@@ -44,7 +44,7 @@ const RemoveLiquidity = (): JSX.Element => {
     state,
     tokens,
     network,
-    signer: signer||undefined,
+    signer: signer || undefined,
     tokenPrices,
   });
 
@@ -52,7 +52,7 @@ const RemoveLiquidity = (): JSX.Element => {
     state,
     dispatch,
     network,
-    signer: signer||undefined,
+    signer: signer || undefined,
     notify,
   });
 

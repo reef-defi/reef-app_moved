@@ -20,7 +20,7 @@ interface Actions {
   address2: string;
 }
 
-const Actions = ({address1, address2}: Actions): JSX.Element => {
+const Actions = ({ address1, address2 }: Actions): JSX.Element => {
   const history = useHistory();
   const tokens = useContext(TokenContext);
   const tokenPrices = useContext(TokenPricesContext);
@@ -34,7 +34,7 @@ const Actions = ({address1, address2}: Actions): JSX.Element => {
   // Trade
   const [tradeState, tradeDispatch] = useReducer(
     store.swapReducer,
-    store.initialSwapState
+    store.initialSwapState,
   );
 
   hooks.useSwapState({
@@ -45,13 +45,13 @@ const Actions = ({address1, address2}: Actions): JSX.Element => {
     tokenPrices,
     tokens,
     account: signer || undefined,
-    network
+    network,
   });
 
   const onSwap = hooks.onSwap({
     state: tradeState,
     network,
-    account: signer||undefined,
+    account: signer || undefined,
     dispatch: tradeDispatch,
     notify,
     updateTokenState: async () => {}, // eslint-disable-line
@@ -61,7 +61,7 @@ const Actions = ({address1, address2}: Actions): JSX.Element => {
     tradeDispatch(store.setPercentageAction(0));
     tradeDispatch(store.clearTokenAmountsAction());
   };
-  
+
   const trade = {
     state: tradeState,
     actions: {
@@ -70,8 +70,8 @@ const Actions = ({address1, address2}: Actions): JSX.Element => {
       setPercentage: (amount: number) => tradeDispatch(store.setPercentageAction(amount)),
       setToken1Amount: (amount: string): void => tradeDispatch(store.setToken1AmountAction(amount)),
       setToken2Amount: (amount: string): void => tradeDispatch(store.setToken2AmountAction(amount)),
-    }
-  }
+    },
+  };
   // Provide
   const [provideState, provideDispatch] = useReducer(
     store.addLiquidityReducer,
@@ -114,7 +114,6 @@ const Actions = ({address1, address2}: Actions): JSX.Element => {
     store.removeLiquidityReducer,
     store.initialRemoveLiquidityState,
   );
-  
 
   hooks.useRemoveLiquidity({
     address1,

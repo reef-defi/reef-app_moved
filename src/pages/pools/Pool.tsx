@@ -1,5 +1,7 @@
 import React from 'react';
-import { appState, Components, hooks, utils } from '@reef-defi/react-lib';
+import {
+  appState, Components, hooks, utils,
+} from '@reef-defi/react-lib';
 import { useHistory, useParams } from 'react-router-dom';
 import { ADD_LIQUIDITY_URL, REMOVE_LIQUIDITY_URL, SPECIFIED_SWAP_URL } from '../../urls';
 
@@ -32,17 +34,19 @@ const Pool = (): JSX.Element => {
     );
   };
 
-  return (<>
-    {network &&
+  return (
+    <>
+      {network
+      && (
       <PoolPage
-          address={address}
-          reefscanFrontendUrl={network.reefscanFrontendUrl}
-          openTrade={openTrade}
-          getIconUrl={utils.getIconUrl}
-          openAddLiquidity={openAddLiquidity}
-          openRemoveLiquidity={openRemoveLiquidity}
+        address={address}
+        reefscanFrontendUrl={network.reefscanFrontendUrl}
+        openTrade={openTrade}
+        getIconUrl={utils.getIconUrl}
+        openAddLiquidity={openAddLiquidity}
+        openRemoveLiquidity={openRemoveLiquidity}
       />
-    }
+      )}
     </>
   );
 };

@@ -34,7 +34,7 @@ const MyPoolsList = (): JSX.Element => {
     appState.selectedSigner$,
   );
   const network = hooks.useObservableState(appState.currentNetwork$);
-  
+
   const userPools = hooks.useFindUserPools(signer?.address || '');
 
   const [pools, arePoolsLoading, count] = hooks.usePoolsList({
