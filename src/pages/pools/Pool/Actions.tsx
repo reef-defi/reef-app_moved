@@ -15,13 +15,12 @@ import { notify } from '../../../utils/utils';
 
 const { PoolActions } = Components;
 
-interface UrlParams {
+interface Actions {
   address1: string;
   address2: string;
 }
 
-const Actions = (): JSX.Element => {
-  const { address1, address2 } = useParams<UrlParams>();
+const Actions = ({address1, address2}: Actions): JSX.Element => {
   const history = useHistory();
   const tokens = useContext(TokenContext);
   const tokenPrices = useContext(TokenPricesContext);
@@ -32,8 +31,48 @@ const Actions = (): JSX.Element => {
     appState.currentNetwork$,
   );
 
-  // Provide
+  // Trade
+  const [tradeState, tradeDispatch] = useReducer(
+    store.swapReducer,
+    store.initialSwapState
+  );
 
+  hooks.useSwapState({
+    address1,
+    address2,
+    dispatch: tradeDispatch,
+    state: tradeState,
+    tokenPrices,
+    tokens,
+    account: signer || undefined,
+    network
+  });
+
+  const onSwap = hooks.onSwap({
+    state: tradeState,
+    network,
+    account: signer||undefined,
+    dispatch: tradeDispatch,
+    notify,
+    updateTokenState: async () => {}, // eslint-disable-line
+  });
+  const onSwitch = (): void => {
+    tradeDispatch(store.switchTokensAction());
+    tradeDispatch(store.setPercentageAction(0));
+    tradeDispatch(store.clearTokenAmountsAction());
+  };
+  
+  const trade = {
+    state: tradeState,
+    actions: {
+      onSwap,
+      onSwitch,
+      setPercentage: (amount: number) => tradeDispatch(store.setPercentageAction(amount)),
+      setToken1Amount: (amount: string): void => tradeDispatch(store.setToken1AmountAction(amount)),
+      setToken2Amount: (amount: string): void => tradeDispatch(store.setToken2AmountAction(amount)),
+    }
+  }
+  // Provide
   const [provideState, provideDispatch] = useReducer(
     store.addLiquidityReducer,
     store.initialAddLiquidityState,
@@ -64,17 +103,18 @@ const Actions = (): JSX.Element => {
     actions: {
       onAddLiquidity,
       back: history.goBack,
+      setPercentage: (amount: number) => provideDispatch(store.setPercentageAction(amount)),
       setToken1Amount: (amount: any) => provideDispatch(store.setToken1AmountAction(amount)),
       setToken2Amount: (amount: any) => provideDispatch(store.setToken2AmountAction(amount)),
     },
   };
 
   // Withdraw
-
   const [withdrawState, withdrawDispatch] = useReducer(
     store.removeLiquidityReducer,
     store.initialRemoveLiquidityState,
   );
+  
 
   hooks.useRemoveLiquidity({
     address1,
@@ -100,7 +140,7 @@ const Actions = (): JSX.Element => {
     actions: {
       onRemoveLiquidity,
       back: history.goBack,
-      setPercentage: (percentage: any) => withdrawDispatch(store.setPercentageAction(percentage)),
+      setPercentage: (percentage: number) => withdrawDispatch(store.setPercentageAction(percentage)),
     },
   };
 
@@ -111,6 +151,7 @@ const Actions = (): JSX.Element => {
         && (
         <PoolActions
           className="pool-actions"
+          trade={trade}
           provide={provide}
           withdraw={withdraw}
         />
