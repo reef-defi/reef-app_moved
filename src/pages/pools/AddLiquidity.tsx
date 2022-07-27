@@ -69,6 +69,7 @@ const AddLiqudity = (): JSX.Element => {
         selectToken2,
         onAddLiquidity,
         back: history.goBack,
+        setPercentage: async () => {}, // eslint-disable-line
         onAddressChange: async () => {}, // eslint-disable-line
         setSettings: (settings) => dispatch(store.setSettingsAction(settings)),
         setToken1Amount: (amount) => dispatch(store.setToken1AmountAction(amount)),
