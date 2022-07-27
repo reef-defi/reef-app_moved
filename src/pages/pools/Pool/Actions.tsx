@@ -99,7 +99,7 @@ const Actions = ({address1, address2}: Actions): JSX.Element => {
     actions: {
       onRemoveLiquidity,
       back: history.goBack,
-      setPercentage: (percentage: any) => withdrawDispatch(store.setPercentageAction(percentage)),
+      setPercentage: (percentage: number) => withdrawDispatch(store.setPercentageAction(percentage)),
     },
   };
 
