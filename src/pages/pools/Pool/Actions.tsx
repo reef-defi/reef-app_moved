@@ -58,6 +58,7 @@ const Actions = ({address1, address2}: Actions): JSX.Element => {
   });
   const onSwitch = (): void => {
     tradeDispatch(store.switchTokensAction());
+    tradeDispatch(store.setPercentageAction(0));
     tradeDispatch(store.clearTokenAmountsAction());
   };
   
