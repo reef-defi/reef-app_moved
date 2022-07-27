@@ -5,9 +5,12 @@ import { hooks } from '@reef-defi/react-lib';
 
 interface StatsProps {
   data: hooks.PoolStats;
+  price1: number;
+  price2: number
 }
 interface TokenStatsProps {
   token: hooks.TokenStats;
+  price: number;
 }
 
 const displayAmount = (amount: string | number): string => {
@@ -18,7 +21,7 @@ const displayAmount = (amount: string | number): string => {
   return Uik.utils.formatHumanAmount(amount);
 };
 
-const Token = ({ token }: TokenStatsProps) => (
+const Token = ({ token, price }: TokenStatsProps) => (
   <div className="pool-stats__token">
     <div className="pool-stats__token-info">
       <div className="pool-stats__token-main">
@@ -41,7 +44,7 @@ const Token = ({ token }: TokenStatsProps) => (
       </div>
 
       <div>
-        <div className="pool-stats__token-price">$ 0.00</div>
+        <div className="pool-stats__token-price">$ {price.toFixed(4)}</div>
         <div className="pool-stats__token-value-ratio">
           {displayAmount(token.ratio.amount)}
           {' '}
@@ -69,7 +72,7 @@ const Token = ({ token }: TokenStatsProps) => (
   </div>
 );
 
-const Stats = ({ data }: StatsProps) => (
+const Stats = ({ data, price1, price2 }: StatsProps) => (
   <div className="pool-stats">
     <div className="pool-stats__wrapper">
       <div className="pool-stats__main">
@@ -144,8 +147,8 @@ const Stats = ({ data }: StatsProps) => (
       </div>
 
       <div className="pool-stats__tokens">
-        <Token token={data.firstToken} />
-        <Token token={data.secondToken} />
+        <Token token={data.firstToken} price={price1} />
+        <Token token={data.secondToken} price={price2} />
       </div>
     </div>
 

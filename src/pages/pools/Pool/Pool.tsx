@@ -16,9 +16,24 @@ interface Params {
   action: string;
 }
 
+const preprocess = <T extends {time: Date}>(data: T[], first: T, last: T, missing: (v: T, time: Date) => T): T[] => {
+  const r = [...data, last]
+  .reduce((acc, item) => { 
+    const last = acc[acc.length-1];
+    const lastDate = new Date(last.time);
+    lastDate.setDate(lastDate.getDate() + 1);
 
+    while (lastDate < item.time) {
+      acc.push(missing(last, new Date(lastDate)))
+      lastDate.setDate(lastDate.getDate() + 1);
+    }
+    acc.push(item);
+    return acc;
+  }, [first])
+  return r.slice(1, r.length-1);
+}
 
-const processCandlestick = (data: PoolDayCandlestickQuery, prevDay: PoolDayCandlestickQuery, whichToken: 1 | 2 = 1): CandlestickData[] => data.pool_day_candlestick.map(({
+const processCandlestick = (data: PoolDayCandlestickQuery, prevDay: PoolDayCandlestickQuery, whichToken: 1 | 2 = 1): CandlestickData[] => [...data.pool_day_candlestick.map(({
     close_1, high_1, low_1,close_2,high_2,low_2,open_2, open_1, timeframe,
   }) => ({
     close: whichToken === 1 ? close_1 : close_2,
@@ -26,7 +41,15 @@ const processCandlestick = (data: PoolDayCandlestickQuery, prevDay: PoolDayCandl
     low: whichToken === 1 ? low_1 : low_2,
     open: whichToken === 1 ? open_1 : open_2,
     time: new Date(timeframe),
-  }))
+  })), 
+  {
+    close: 0,
+    high: 0,
+    low: 0,
+    open: 0,
+    time: new Date(Date.now()),
+  }
+]
   .reduce((acc, item) => { 
     const last = acc[acc.length-1];
     const lastDate = new Date(last.time);
@@ -48,11 +71,12 @@ const processCandlestick = (data: PoolDayCandlestickQuery, prevDay: PoolDayCandl
   .map((item): CandlestickData => ({...item, time: item.time.toLocaleDateString().split('/').reverse().join('-')}))
   .slice(1)
 
+
 interface Mid {value: number, time: Date}
 interface Out {value: number, time: string}
 
 const processEmptySpaces = (data: Mid[], fromDate: Date): Out[] => 
-  data.reduce((acc, item) => {
+  [...data, {value: 0, time: new Date(Date.now())}].reduce((acc, item) => {
     const last = acc[acc.length-1];
     const lastDate = new Date(last.time);
     lastDate.setDate(lastDate.getDate() + 1);
@@ -89,8 +113,8 @@ const Pool = (): JSX.Element => {
   );
 
 
-  const tokenPrice1 = poolInfo ? tokenPrices[poolInfo.firstToken.address] : 0;
-  const tokenPrice2 = poolInfo ? tokenPrices[poolInfo.secondToken.address] : 0;
+  const tokenPrice1 = (poolInfo ? tokenPrices[poolInfo.firstToken.address] : 0) || 0;
+  const tokenPrice2 = (poolInfo ? tokenPrices[poolInfo.secondToken.address] : 0) || 0;
 
   const { data: lastDay1 } = hooks.useLastDayCandlestick(address, fromTime, 1);
   const { data: lastDay2 } = hooks.useLastDayCandlestick(address, fromTime, 2);
@@ -155,7 +179,7 @@ const Pool = (): JSX.Element => {
 
   return (
     <div className="pool">
-      <Stats data={poolInfo} />
+      <Stats data={poolInfo} price1={tokenPrice1} price2={tokenPrice2} />
 
       <div className="pool__content">
         <Actions 
