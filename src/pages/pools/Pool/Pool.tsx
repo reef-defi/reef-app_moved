@@ -8,16 +8,6 @@ import Chart from './Chart';
 import Actions from './Actions';
 import TokenPricesContext from '../../../context/TokenPricesContext';
 
-const chartTokens = {
-  firstToken: {
-    name: 'Reef',
-    image: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6951.png',
-  },
-  secondToken: {
-    name: 'Fish',
-    image: 'https://app.reef.io/img/token-icons/token-icon-7.png',
-  },
-};
 
 interface Params {
   address: string;
@@ -42,6 +32,7 @@ const Pool = (): JSX.Element => {
     signer?.address || '',
     tokenPrices,
   );
+
 
   const tokenPrice1 = poolInfo ? tokenPrices[poolInfo.firstToken.address] : 0;
   const tokenPrice2 = poolInfo ? tokenPrices[poolInfo.secondToken.address] : 0;
@@ -134,9 +125,21 @@ const Pool = (): JSX.Element => {
       <Stats data={poolInfo} />
 
       <div className="pool__content">
-        <Actions />
+        <Actions 
+          address1={poolInfo.firstToken.address}
+          address2={poolInfo.secondToken.address}
+        />
         <Chart
-          tokens={chartTokens}
+          tokens={{
+            firstToken: {
+              name: poolInfo.firstToken.symbol,
+              image: poolInfo.firstToken.icon
+            },
+            secondToken: {
+              name: poolInfo.secondToken.symbol,
+              image: poolInfo.secondToken.icon
+            }
+            }}
           data={{
             firstToken,
             secondToken,

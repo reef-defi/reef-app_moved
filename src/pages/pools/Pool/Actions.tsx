@@ -15,13 +15,12 @@ import { notify } from '../../../utils/utils';
 
 const { PoolActions } = Components;
 
-interface UrlParams {
+interface Actions {
   address1: string;
   address2: string;
 }
 
-const Actions = (): JSX.Element => {
-  const { address1, address2 } = useParams<UrlParams>();
+const Actions = ({address1, address2}: Actions): JSX.Element => {
   const history = useHistory();
   const tokens = useContext(TokenContext);
   const tokenPrices = useContext(TokenPricesContext);
