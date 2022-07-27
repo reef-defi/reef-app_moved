@@ -1,12 +1,12 @@
-import React, { useContext, useState } from 'react';
-import Uik from '@reef-defi/ui-kit';
-import './pools.css';
 import { faArrowUpFromBracket, faCoins } from '@fortawesome/free-solid-svg-icons';
-import { appState, hooks, ReefSigner } from '@reef-defi/react-lib';
+import { appState, hooks } from '@reef-defi/react-lib';
+import Uik from '@reef-defi/ui-kit';
+import React, { useContext, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import PoolsSearch from './PoolsSearch';
 import TokenPricesContext from '../../context/TokenPricesContext';
 import { POOL_CHART_URL } from '../../urls';
+import './pools.css';
+import PoolsSearch from './PoolsSearch';
 
 interface Pool {
   address?: string,
@@ -35,9 +35,8 @@ const MyPoolsList = (): JSX.Element => {
   );
   const network = hooks.useObservableState(appState.currentNetwork$);
 
-  const userPools = hooks.useFindUserPools(signer?.address || '');
 
-  const [pools, arePoolsLoading, count] = hooks.usePoolsList({
+  const [pools,, count] = hooks.usePoolsList({
     limit: 10,
     offset: (currentPage - 1) * 10,
     reefscanApi: network?.reefscanUrl || '',
@@ -76,7 +75,7 @@ const MyPoolsList = (): JSX.Element => {
       <Uik.Table
         seamless
         pagination={{
-          count: currentPage, // TODO change to count once endpoints are online...
+          count: count, // TODO change to count once endpoints are online...
           current: currentPage,
           onChange: (page) => { changePage(page); setChangedPage(true); },
         }}
