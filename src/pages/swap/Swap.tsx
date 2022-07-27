@@ -62,7 +62,7 @@ const Swap = (): JSX.Element => {
 
   const actions: store.SwapComponentActions = {
     onAddressChange: async () => {}, // eslint-disable-line
-    setPercentage: async () => {},
+    setPercentage: () => {}, // eslint-disable-line
     onSwap,
     onSwitch,
     selectToken1,

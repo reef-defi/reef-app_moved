@@ -45,8 +45,9 @@ const Bind = (): JSX.Element => {
 
   useEffect(() => {
     const [, params] = window.location.href.split('?');
-    const urlParams = params?.split('&').map((e) => e.split('=').map(decodeURIComponent)).reduce((r: any, [k, v]) => {
-      r[k] = v;
+    // TODO WTF!? Rewrite all
+    const urlParams = params?.split('&').map((e) => e.split('=').map(decodeURIComponent)).reduce((r: any, [k, v]) => { // eslint-disable-line
+      r[k] = v;// eslint-disable-line
 
       return r;
     }, {});

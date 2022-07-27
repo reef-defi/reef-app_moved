@@ -96,7 +96,7 @@ const MyPoolsList = (): JSX.Element => {
           {
               pools.map((item: Pool, index) => (
                 <Uik.Tr
-                  key={`my-pool-${index}`}
+                  key={`my-pool-${item.address}`}
                   onClick={() => openPool(item.address || '')}
                 >
                   <Uik.Td>

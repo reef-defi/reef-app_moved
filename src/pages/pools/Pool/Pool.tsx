@@ -15,23 +15,6 @@ interface Params {
   action: string;
 }
 
-const preprocess = <T extends {time: Date}>(data: T[], first: T, last: T, missing: (v: T, time: Date) => T): T[] => {
-  const r = [...data, last]
-    .reduce((acc, item) => {
-      const last = acc[acc.length - 1];
-      const lastDate = new Date(last.time);
-      lastDate.setDate(lastDate.getDate() + 1);
-
-      while (lastDate < item.time) {
-        acc.push(missing(last, new Date(lastDate)));
-        lastDate.setDate(lastDate.getDate() + 1);
-      }
-      acc.push(item);
-      return acc;
-    }, [first]);
-  return r.slice(1, r.length - 1);
-};
-
 const processCandlestick = (data: PoolDayCandlestickQuery, prevDay: PoolDayCandlestickQuery, whichToken: 1 | 2 = 1): CandlestickData[] => {
   const result = [...data.pool_day_candlestick.map(({
     close_1, high_1, low_1, close_2, high_2, low_2, open_2, open_1, timeframe,
