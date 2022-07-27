@@ -29,14 +29,14 @@ const Swap = (): JSX.Element => {
     state,
     tokens,
     tokenPrices,
-    account: signer||undefined,
+    account: signer || undefined,
   });
 
   // Actions
   const onSwap = hooks.onSwap({
     state,
     network,
-    account: signer||undefined,
+    account: signer || undefined,
     dispatch,
     notify,
     updateTokenState: async () => {}, // eslint-disable-line
@@ -62,7 +62,7 @@ const Swap = (): JSX.Element => {
 
   const actions: store.SwapComponentActions = {
     onAddressChange: async () => {}, // eslint-disable-line
-    setPercentage: async () => {},
+    setPercentage: () => {}, // eslint-disable-line
     onSwap,
     onSwitch,
     selectToken1,

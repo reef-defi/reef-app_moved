@@ -15,13 +15,13 @@ interface TokenStatsProps {
 
 const displayAmount = (amount: string | number): string => {
   if (
-    typeof amount === 'number' && isNaN(amount)
+    typeof amount === 'number' && Number.isNaN(amount)
     || typeof amount === 'string' && amount === 'NaN'
   ) return '0';
   return Uik.utils.formatHumanAmount(amount);
 };
 
-const Token = ({ token, price }: TokenStatsProps) => (
+const Token = ({ token, price }: TokenStatsProps): JSX.Element => (
   <div className="pool-stats__token">
     <div className="pool-stats__token-info">
       <div className="pool-stats__token-main">
@@ -44,7 +44,10 @@ const Token = ({ token, price }: TokenStatsProps) => (
       </div>
 
       <div>
-        <div className="pool-stats__token-price">$ {price.toFixed(4)}</div>
+        <div className="pool-stats__token-price">
+          $
+          {price.toFixed(4)}
+        </div>
         <div className="pool-stats__token-value-ratio">
           {displayAmount(token.ratio.amount)}
           {' '}
@@ -72,7 +75,7 @@ const Token = ({ token, price }: TokenStatsProps) => (
   </div>
 );
 
-const Stats = ({ data, price1, price2 }: StatsProps) => (
+const Stats = ({ data, price1, price2 }: StatsProps): JSX.Element => (
   <div className="pool-stats">
     <div className="pool-stats__wrapper">
       <div className="pool-stats__main">

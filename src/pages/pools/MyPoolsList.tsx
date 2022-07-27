@@ -34,7 +34,7 @@ const MyPoolsList = (): JSX.Element => {
     appState.selectedSigner$,
   );
   const network = hooks.useObservableState(appState.currentNetwork$);
-  
+
   const userPools = hooks.useFindUserPools(signer?.address || '');
 
   const [pools, arePoolsLoading, count] = hooks.usePoolsList({
@@ -96,7 +96,7 @@ const MyPoolsList = (): JSX.Element => {
           {
               pools.map((item: Pool, index) => (
                 <Uik.Tr
-                  key={`my-pool-${index}`}
+                  key={`my-pool-${item.address}`}
                   onClick={() => openPool(item.address || '')}
                 >
                   <Uik.Td>

@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 import { Contract, utils } from 'ethers';
-import {ApolloClient, gql} from '@apollo/client';
+import { ApolloClient, gql } from '@apollo/client';
 import { firstValueFrom, Observable } from 'rxjs';
 import { graphql } from '@reef-defi/react-lib';
 
@@ -69,7 +69,7 @@ const isContrIndexed = async (address: string): Promise<boolean> => new Promise(
   const tmt = setTimeout(() => {
     resolve(false);
   }, 120000);
-  let apolloClInst$: unknown = graphql.apolloClientInstance$;
+  const apolloClInst$: unknown = graphql.apolloClientInstance$;
   const apollo = await firstValueFrom(apolloClInst$ as Observable<ApolloClient<any>>);
   apollo.subscribe({
     query: CONTRACT_EXISTS_GQL,

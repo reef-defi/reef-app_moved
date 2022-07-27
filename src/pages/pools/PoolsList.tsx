@@ -75,9 +75,9 @@ const PoolsList = (): JSX.Element => {
 
         <Uik.TBody>
           {
-                pools.map((item, index) => (
+                pools.map((item) => (
                   <Uik.Tr
-                    key={`pool-${index}`}
+                    key={`pool-${item.address}`}
                     onClick={() => openPool(item.address)}
                   >
                     <Uik.Td>

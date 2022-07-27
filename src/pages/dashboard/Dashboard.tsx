@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   TokenWithAmount, utils as reefUtils, utils, appState, hooks, Token, ReefSigner,
 } from '@reef-defi/react-lib';

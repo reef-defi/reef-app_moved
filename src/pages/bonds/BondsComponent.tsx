@@ -353,7 +353,7 @@ export const BondsComponent = ({
   useEffect(() => {
     const balanceFixedAmt: number = +ethers.utils.formatEther(account?.balance || '0');
     const keepMinBalance = 201;
-    const balanceMax: number = balanceFixedAmt >= keepMinBalance? (+(balanceFixedAmt - keepMinBalance)):0;
+    const balanceMax: number = balanceFixedAmt >= keepMinBalance ? (+(balanceFixedAmt - keepMinBalance)) : 0;
     setBondAmountMax(+balanceMax.toFixed(0));
   }, [account?.balance]);
 
