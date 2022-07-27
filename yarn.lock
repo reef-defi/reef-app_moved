@@ -3539,18 +3539,21 @@
   dependencies:
     "@babel/runtime" "^7.16.0"
 
-"@reef-defi/react-lib@1.0.65":
-  version "1.0.65"
-  resolved "https://registry.yarnpkg.com/@reef-defi/react-lib/-/react-lib-1.0.65.tgz#c9aa811eff668dd2b1edf40af3a17e88a1760b36"
-  integrity sha512-qYO2YDNzVVYAthEkHSQ0yD6mYQPC5izpzmUiT096lYjOD/qBpjS0h5a5VzMNoT3sjDx68Vb87/7bE2fOjQ7gPQ==
+"@reef-defi/react-lib@^1.0.66":
+  version "1.0.66"
+  resolved "https://registry.yarnpkg.com/@reef-defi/react-lib/-/react-lib-1.0.66.tgz#6fdf108d2a8f670cbe6eec0f852fd38aa25821e5"
+  integrity sha512-8DKRzsOz/Q0CtaiipWBhMxw+CACyyLcZfozAqVcil0CdvxYbKYJcxJfekoxOZO5MYHHwDgX9wGJhrLwEwcn50g==
   dependencies:
     "@apollo/client" "^3.6.2"
+    "@fortawesome/free-regular-svg-icons" "^6.1.0"
+    "@fortawesome/free-solid-svg-icons" "^6.1.0"
     "@polkadot/extension-dapp" "^0.40.4"
     "@polkadot/react-identicon" "^0.86.4"
     "@reef-defi/evm-provider" "^1.0.7"
     "@reef-defi/extension-base" "^1.0.5"
     "@reef-defi/extension-dapp" "^0.41.2"
     "@reef-defi/extension-inject" "^0.41.2"
+    "@reef-defi/ui-kit" "^1.0.2"
     "@types/react-router-dom" "^5.3.0"
     axios "^0.21.4"
     bignumber.js "^9.0.2"
@@ -5593,9 +5596,9 @@ bindings@^1.3.0, bindings@^1.5.0:
   dependencies:
     file-uri-to-path "1.0.0"
 
-"bip32-ed25519@git+https://github.com/Zondax/bip32-ed25519.git":
+"bip32-ed25519@https://github.com/Zondax/bip32-ed25519":
   version "0.0.4"
-  resolved "git+https://github.com/Zondax/bip32-ed25519.git#0949df01b5c93885339bc28116690292088f6134"
+  resolved "https://github.com/Zondax/bip32-ed25519#0949df01b5c93885339bc28116690292088f6134"
   dependencies:
     bn.js "^5.1.1"
     elliptic "^6.4.1"
