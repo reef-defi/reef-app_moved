@@ -33,7 +33,8 @@ const preprocess = <T extends {time: Date}>(data: T[], first: T, last: T, missin
   return r.slice(1, r.length-1);
 }
 
-const processCandlestick = (data: PoolDayCandlestickQuery, prevDay: PoolDayCandlestickQuery, whichToken: 1 | 2 = 1): CandlestickData[] => [...data.pool_day_candlestick.map(({
+const processCandlestick = (data: PoolDayCandlestickQuery, prevDay: PoolDayCandlestickQuery, whichToken: 1 | 2 = 1): CandlestickData[] => {
+  const result = [...data.pool_day_candlestick.map(({
     close_1, high_1, low_1,close_2,high_2,low_2,open_2, open_1, timeframe,
   }) => ({
     close: whichToken === 1 ? close_1 : close_2,
@@ -68,9 +69,10 @@ const processCandlestick = (data: PoolDayCandlestickQuery, prevDay: PoolDayCandl
     open: whichToken === 1 ? prevDay.pool_day_candlestick[0].open_1 : prevDay.pool_day_candlestick[0].open_2,
     time: new Date(prevDay.pool_day_candlestick[0].timeframe),
   }])
-  .map((item): CandlestickData => ({...item, time: item.time.toLocaleDateString().split('/').reverse().join('-')}))
-  .slice(1)
+  .map((item): CandlestickData => ({...item, time: item.time.toLocaleDateString().split('/').reverse().join('-')}));
 
+  return result.slice(1, result.length-1);
+}
 
 interface Mid {value: number, time: Date}
 interface Out {value: number, time: string}
