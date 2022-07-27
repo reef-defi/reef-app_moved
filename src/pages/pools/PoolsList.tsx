@@ -1,12 +1,12 @@
-import React, { useContext, useMemo, useState } from 'react';
-import Uik from '@reef-defi/ui-kit';
-import './pools.css';
 import { faArrowUpFromBracket, faCoins } from '@fortawesome/free-solid-svg-icons';
 import { appState, hooks } from '@reef-defi/react-lib';
+import Uik from '@reef-defi/ui-kit';
+import React, { useContext, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import PoolsSearch from './PoolsSearch';
 import TokenPricesContext from '../../context/TokenPricesContext';
 import { POOL_CHART_URL } from '../../urls';
+import './pools.css';
+import PoolsSearch from './PoolsSearch';
 
 const PoolsList = (): JSX.Element => {
   const pageCount = 10;
@@ -19,7 +19,7 @@ const PoolsList = (): JSX.Element => {
     appState.selectedSigner$,
   );
   const network = hooks.useObservableState(appState.currentNetwork$);
-  const [pools, arePoolsLoading, count] = hooks.usePoolsList({
+  const [pools, ,count] = hooks.usePoolsList({
     limit: pageCount,
     offset: (currentPage - 1) * pageCount,
     reefscanApi: network?.reefscanUrl || '',
@@ -58,7 +58,7 @@ const PoolsList = (): JSX.Element => {
       <Uik.Table
         seamless
         pagination={{
-          count: pageCount, // TODO change to count
+          count: count,
           current: currentPage,
           onChange: (page) => { changePage(page); setChangedPage(true); },
         }}
