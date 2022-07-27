@@ -7,12 +7,67 @@ import Stats from './Stats';
 import Chart from './Chart';
 import Actions from './Actions';
 import TokenPricesContext from '../../../context/TokenPricesContext';
+import { CandlestickData } from './LWChart';
+import { PoolDayCandlestickQuery } from '@reef-defi/react-lib/dist/graphql/pools';
 
 
 interface Params {
   address: string;
   action: string;
 }
+
+
+
+const processCandlestick = (data: PoolDayCandlestickQuery, prevDay: PoolDayCandlestickQuery, whichToken: 1 | 2 = 1): CandlestickData[] => data.pool_day_candlestick.map(({
+    close_1, high_1, low_1,close_2,high_2,low_2,open_2, open_1, timeframe,
+  }) => ({
+    close: whichToken === 1 ? close_1 : close_2,
+    high: whichToken === 1 ? high_1 : high_2,
+    low: whichToken === 1 ? low_1 : low_2,
+    open: whichToken === 1 ? open_1 : open_2,
+    time: new Date(timeframe),
+  }))
+  .reduce((acc, item) => { 
+    const last = acc[acc.length-1];
+    const lastDate = new Date(last.time);
+    lastDate.setDate(lastDate.getDate() + 1);
+
+    while (lastDate < item.time) {
+      acc.push({time: new Date(lastDate), close: last.close, high: last.close, low: last.close, open: last.close});
+      lastDate.setDate(lastDate.getDate() + 1);
+    }
+    acc.push(item);
+    return acc;
+  }, [{
+    close: whichToken === 1 ? prevDay.pool_day_candlestick[0].close_1 : prevDay.pool_day_candlestick[0].close_2,
+    high: whichToken === 1 ? prevDay.pool_day_candlestick[0].high_1 : prevDay.pool_day_candlestick[0].high_2,
+    low: whichToken === 1 ? prevDay.pool_day_candlestick[0].low_1 : prevDay.pool_day_candlestick[0].low_2,
+    open: whichToken === 1 ? prevDay.pool_day_candlestick[0].open_1 : prevDay.pool_day_candlestick[0].open_2,
+    time: new Date(prevDay.pool_day_candlestick[0].timeframe),
+  }])
+  .map((item): CandlestickData => ({...item, time: item.time.toLocaleDateString().split('/').reverse().join('-')}))
+  .slice(1)
+
+interface Mid {value: number, time: Date}
+interface Out {value: number, time: string}
+
+const processEmptySpaces = (data: Mid[], fromDate: Date): Out[] => 
+  data.reduce((acc, item) => {
+    const last = acc[acc.length-1];
+    const lastDate = new Date(last.time);
+    lastDate.setDate(lastDate.getDate() + 1);
+
+    while (lastDate < item.time) {
+      acc.push({time: new Date(lastDate), value: 0});
+      lastDate.setDate(lastDate.getDate() + 1);
+    }
+    acc.push(item)
+    return acc;
+  }, [
+    {value: 0, time: new Date(fromDate)}
+  ])
+  .map((item) => ({...item, time: item.time.toLocaleDateString().split('/').reverse().join('-')}))
+  .slice(1)
 
 const Pool = (): JSX.Element => {
   const { address } = useParams<Params>();
@@ -23,7 +78,7 @@ const Pool = (): JSX.Element => {
   );
 
   const fromTime = useMemo(
-    () => Date.now() - 70 * 24 * 60 * 60 * 1000,
+    () => Date.now() - 31 * 24 * 60 * 60 * 1000,
     [],
   );
 
@@ -37,45 +92,25 @@ const Pool = (): JSX.Element => {
   const tokenPrice1 = poolInfo ? tokenPrices[poolInfo.firstToken.address] : 0;
   const tokenPrice2 = poolInfo ? tokenPrices[poolInfo.secondToken.address] : 0;
 
+  const { data: lastDay1 } = hooks.useLastDayCandlestick(address, fromTime, 1);
+  const { data: lastDay2 } = hooks.useLastDayCandlestick(address, fromTime, 2);
   const { data: candlestick1 } = hooks.useDayCandlestick(address, fromTime, 1);
   const { data: candlestick2 } = hooks.useDayCandlestick(address, fromTime, 2);
   const { data: volumeData } = hooks.useDayPoolVolume(address, fromTime);
   const { data: feeData } = hooks.useDayPoolFee(address, fromTime);
   const { data: tvlData } = hooks.useDayTvl(address, fromTime);
 
-  const firstToken = useMemo(
-    () => (candlestick1
-      ? candlestick1.pool_day_candlestick.map(
-        ({
-          close_1, high_1, low_1, open_1, timeframe,
-        }) => ({
-          close: close_1,
-          high: high_1,
-          low: low_1,
-          open: open_1,
-          time: new Date(timeframe).toLocaleDateString().split('/').reverse()
-            .join('-'),
-        }),
-      )
-      : []),
-    [candlestick1],
+  const firstToken = useMemo(() => candlestick1 && lastDay1 && lastDay1.pool_day_candlestick.length > 0
+    ? processCandlestick(candlestick1, lastDay1, 1)
+    : [],
+    [candlestick1, lastDay1]
   );
-  const secondToken = useMemo(
-    () => (candlestick2
-      ? candlestick2.pool_day_candlestick.map(
-        ({
-          close_2, high_2, low_2, open_2, timeframe,
-        }) => ({
-          close: close_2,
-          high: high_2,
-          low: low_2,
-          open: open_2,
-          time: new Date(timeframe).toLocaleDateString().split('/').reverse()
-            .join('-'),
-        }),
-      )
-      : []),
-    [candlestick2],
+
+  // console.log(firstToken)
+  const secondToken = useMemo(() => candlestick2 && lastDay2 && lastDay2.pool_day_candlestick.length > 0
+    ? processCandlestick(candlestick2, lastDay2, 2)
+    : [],
+    [candlestick2, lastDay2]
   );
   const tvl = useMemo(
     () => (tvlData
@@ -89,29 +124,27 @@ const Pool = (): JSX.Element => {
   );
   const fees = useMemo(
     () => (feeData
-      ? feeData.pool_day_fee.map(({ fee_1, fee_2, timeframe }) => ({
+      ? processEmptySpaces(feeData.pool_day_fee.map(({ fee_1, fee_2, timeframe }) => ({
         value: new BigNumber(fee_1)
           .multipliedBy(tokenPrice1)
           .plus(new BigNumber(fee_2).multipliedBy(tokenPrice2))
           .toNumber(),
-        time: new Date(timeframe).toLocaleDateString().split('/').reverse()
-          .join('-'),
-      }))
+        time: new Date(timeframe),
+      })), new Date(fromTime))
       : []),
     [feeData, tokenPrice1, tokenPrice2],
   );
   const volume = useMemo(
     () => (volumeData
-      ? volumeData.pool_day_volume.map(
+      ? processEmptySpaces(volumeData.pool_day_volume.map(
         ({ timeframe, amount_1, amount_2 }) => ({
           value: new BigNumber(amount_1)
             .multipliedBy(tokenPrice1)
             .plus(new BigNumber(amount_2).multipliedBy(tokenPrice2))
             .toNumber(),
-          time: new Date(timeframe).toLocaleDateString().split('/').reverse()
-            .join('-'),
+          time: new Date(timeframe),
         }),
-      )
+      ), new Date(fromTime))
       : []),
     [volumeData, tokenPrice1, tokenPrice2],
   );
