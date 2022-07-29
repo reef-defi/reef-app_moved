@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import {
-  TokenWithAmount, utils as reefUtils, rpc, appState, hooks, Token, ReefSigner,
+  TokenWithAmount, utils as reefUtils, utils, appState, hooks, Token, ReefSigner,
 } from '@reef-defi/react-lib';
 import { Balance } from './Balance';
 import { ActionButtons } from './ActionButtons';
@@ -12,6 +12,9 @@ import { Staking } from './Staking';
 import Tabs from '../../common/Tabs';
 import { bonds } from '../bonds/utils/bonds';
 import Bind from '../bind/Bind';
+import TokenContext from '../../context/TokenContext';
+import TokenPricesContext from '../../context/TokenPricesContext';
+import BigNumber from 'bignumber.js';
 
 const {
   DataProgress, isDataSet,
@@ -39,7 +42,10 @@ const DEFAULT_TABS = [
 
 const Dashboard = (): JSX.Element => {
   let tabs = DEFAULT_TABS;
-  const signerTokenBalances: TokenWithAmount[]|undefined = hooks.useObservableState(appState.tokenPrices$);
+  const tokens = useContext(TokenContext);
+  const tokenPrices = useContext(TokenPricesContext);
+
+  // const signerTokenBalances: TokenWithAmount[]|undefined = hooks.useObservableState(appState.tokenPrices$);
   const signerNfts = hooks.useObservableState(appState.selectedSignerNFTs$);
   const selectedSigner: ReefSigner|undefined | null = hooks.useObservableState(appState.selectedSigner$);
   const [tab, setTab] = useState<string>('');
@@ -54,18 +60,17 @@ const Dashboard = (): JSX.Element => {
     setTab(tabs[0].key);
   }, [selectedSigner]);
 
-  const totalBalance: reefUtils.DataWithProgress<number> = isDataSet(signerTokenBalances) && signerTokenBalances?.length ? (signerTokenBalances).reduce((state: reefUtils.DataWithProgress<number>, curr) => {
-    // rpc.filterTokensWithReefPool(signerTokenBalances );
-    if (Number.isNaN(curr.balance) || Number.isNaN(curr.price) || !isDataSet(curr.balance)) {
-      return state;
-    }
-    const balVal = reefUtils.calculateBalanceValue(curr);
-    if (!Number.isNaN(balVal) && isDataSet(balVal)) {
-      const stateNr = isDataSet(state) ? state as number : 0;
-      return stateNr + (balVal as number);
-    }
-    return state;
-  }, DataProgress.LOADING) : DataProgress.LOADING;
+  const totalBalance = useMemo(() => tokens.reduce(
+      (acc, { balance, decimals, address }) =>
+        acc.plus(
+          new BigNumber(balance.toString())
+            .div(new BigNumber(10).pow(decimals))
+            .multipliedBy(tokenPrices[address] || 0)
+        ),
+      new BigNumber(0)
+    ).toNumber(), 
+    [tokenPrices, tokens]
+  );
 
   return (
     <div className="dashboard">
@@ -78,7 +83,7 @@ const Dashboard = (): JSX.Element => {
         <div className="dashboard__left">
           <Tabs tabs={tabs} selected={tab} onChange={(e) => setTab(e)} />
 
-          { tab === 'tokens' ? <TokenBalances tokens={signerTokenBalances as reefUtils.DataWithProgress<TokenWithAmount[]>} /> : '' }
+          { tab === 'tokens' ? <TokenBalances tokens={tokens} /> : '' }
           { tab === 'staking' ? <Staking /> : '' }
           { tab === 'nfts' ? <Nfts tokens={signerNfts} /> : '' }
           { tab === 'activity' ? <TokenActivity address={selectedSigner?.evmAddress} /> : '' }
