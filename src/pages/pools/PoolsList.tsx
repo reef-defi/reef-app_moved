@@ -28,7 +28,7 @@ const PoolsList = (): JSX.Element => {
     tokenPrices,
     queryType: 'All',
   });
-  console.log('Count: ', count);
+
   const history = useHistory();
   const openPool = (
     address: string,
