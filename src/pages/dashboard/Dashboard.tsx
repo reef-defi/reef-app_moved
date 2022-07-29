@@ -72,6 +72,11 @@ const Dashboard = (): JSX.Element => {
     [tokenPrices, tokens]
   );
 
+  const availableTokens = useMemo(
+    () => tokens.filter(({ balance }) => balance.gt(0)),
+    [tokens]
+  );
+
   return (
     <div className="dashboard">
       <div className="dashboard__top">
@@ -83,7 +88,7 @@ const Dashboard = (): JSX.Element => {
         <div className="dashboard__left">
           <Tabs tabs={tabs} selected={tab} onChange={(e) => setTab(e)} />
 
-          { tab === 'tokens' ? <TokenBalances tokens={tokens} /> : '' }
+          { tab === 'tokens' ? <TokenBalances tokens={availableTokens} /> : '' }
           { tab === 'staking' ? <Staking /> : '' }
           { tab === 'nfts' ? <Nfts tokens={signerNfts} /> : '' }
           { tab === 'activity' ? <TokenActivity address={selectedSigner?.evmAddress} /> : '' }
