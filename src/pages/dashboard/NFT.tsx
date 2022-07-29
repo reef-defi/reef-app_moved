@@ -1,16 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import preloadImage from '../../utils/preloadImage';
+import {ERC721ContractData, NFT as NFTData} from "@reef-defi/react-lib";
 
-const NFT = ({ data }: any): JSX.Element => {
+const NFT = ({ balance, iconUrl, data, type }: NFTData): JSX.Element => {
   const [imgLoaded, setImgLoaded] = useState(false);
 
+  const name = type === 'ERC721' ? (data as ERC721ContractData).name : '';
+
   useEffect(() => {
-    if (!data?.iconUrl) {
+    if (iconUrl) {
       setImgLoaded(true);
       return;
     }
 
-    preloadImage(data.iconUrl, () => setImgLoaded(true));
+    preloadImage(iconUrl, () => setImgLoaded(true));
 
     // eslint-disable-next-line consistent-return,@typescript-eslint/no-empty-function
     return function () {};
@@ -24,13 +27,13 @@ const NFT = ({ data }: any): JSX.Element => {
               ${!imgLoaded ? 'nfts__item-image--loading' : ''}
           `}
         style={
-            data.iconUrl && imgLoaded
-              ? { backgroundImage: `url(${data.iconUrl})` } : {}
+            iconUrl && imgLoaded
+              ? { backgroundImage: `url(${iconUrl})` } : {}
           }
       />
       <div className="nfts__item-info">
-        <div className="nfts__item-name">{data.name}</div>
-        <div className="nfts__item-balance">{data.balance}</div>
+        <div className="nfts__item-name">{name}</div>
+        <div className="nfts__item-balance">{balance}</div>
       </div>
     </div>
   );
