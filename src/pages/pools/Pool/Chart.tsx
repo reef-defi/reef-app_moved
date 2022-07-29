@@ -61,7 +61,7 @@ const Chart = ({
         </div>
 
         {
-          getData.length
+          !!getData.length
           && (
           <LWChart
             key={tab}
