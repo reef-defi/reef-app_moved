@@ -19,7 +19,7 @@ const PoolsList = (): JSX.Element => {
     appState.selectedSigner$,
   );
   const network = hooks.useObservableState(appState.currentNetwork$);
-  const [pools, ,count] = hooks.usePoolsList({
+  const [pools, , count] = hooks.usePoolsList({
     limit: pageCount,
     offset: (currentPage - 1) * pageCount,
     reefscanApi: network?.reefscanUrl || '',
@@ -32,7 +32,7 @@ const PoolsList = (): JSX.Element => {
   const history = useHistory();
   const openPool = (
     address: string,
-    action: 'provide' | 'withdraw' = 'provide',
+    action: 'trade' | 'provide' | 'withdraw' = 'trade',
   ): void => history.push(
     POOL_CHART_URL
       .replace(':address', address)
@@ -58,7 +58,7 @@ const PoolsList = (): JSX.Element => {
       <Uik.Table
         seamless
         pagination={{
-          count: count,
+          count,
           current: currentPage,
           onChange: (page) => { changePage(page); setChangedPage(true); },
         }}
@@ -125,7 +125,15 @@ const PoolsList = (): JSX.Element => {
                         />
                         )
                       }
-                      <Uik.Button text="Provide" icon={faCoins} fill />
+                      <Uik.Button
+                        text="Provide"
+                        icon={faCoins}
+                        fill
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openPool(item.address || '', 'provide');
+                        }}
+                      />
                     </Uik.Td>
                   </Uik.Tr>
                 ))

@@ -7,7 +7,7 @@ import {
   ReefSigner,
   store,
 } from '@reef-defi/react-lib';
-import React, { useContext, useReducer } from 'react';
+import React, { useContext, useMemo, useReducer } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import TokenContext from '../../../context/TokenContext';
 import TokenPricesContext from '../../../context/TokenPricesContext';
@@ -143,6 +143,13 @@ const Actions = ({ address1, address2 }: Actions): JSX.Element => {
     },
   };
 
+  const params = useParams();
+  const getTab = useMemo(() => {
+    // @ts-ignore-next-line
+    const { action } = params;
+    return action.charAt(0).toUpperCase() + action.slice(1);
+  }, [params]);
+
   return (
     <>
       {
@@ -150,6 +157,7 @@ const Actions = ({ address1, address2 }: Actions): JSX.Element => {
         && (
         <PoolActions
           className="pool-actions"
+          tab={getTab}
           trade={trade}
           provide={provide}
           withdraw={withdraw}

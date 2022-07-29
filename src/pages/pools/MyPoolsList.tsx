@@ -35,7 +35,6 @@ const MyPoolsList = (): JSX.Element => {
   );
   const network = hooks.useObservableState(appState.currentNetwork$);
 
-
   const [pools,, count] = hooks.usePoolsList({
     limit: 10,
     offset: (currentPage - 1) * 10,
@@ -49,7 +48,7 @@ const MyPoolsList = (): JSX.Element => {
   const history = useHistory();
   const openPool = (
     address: string,
-    action: 'provide' | 'withdraw' = 'provide',
+    action: 'trade' | 'provide' | 'withdraw' = 'trade',
   ): void => history.push(
     POOL_CHART_URL
       .replace(':address', address || 'address')
@@ -75,7 +74,7 @@ const MyPoolsList = (): JSX.Element => {
       <Uik.Table
         seamless
         pagination={{
-          count: count, // TODO change to count once endpoints are online...
+          count, // TODO change to count once endpoints are online...
           current: currentPage,
           onChange: (page) => { changePage(page); setChangedPage(true); },
         }}
@@ -143,7 +142,15 @@ const MyPoolsList = (): JSX.Element => {
                         openPool(item.address || '', 'withdraw');
                       }}
                     />
-                    <Uik.Button text="Provide" icon={faCoins} fill />
+                    <Uik.Button
+                      text="Provide"
+                      icon={faCoins}
+                      fill
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openPool(item.address || '', 'provide');
+                      }}
+                    />
                   </Uik.Td>
                 </Uik.Tr>
               ))
