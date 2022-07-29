@@ -1,11 +1,11 @@
 import React from 'react';
 import {
-  Components, appState, hooks, ReefSigner, Network, utils,
+  Components, appState, hooks, ReefSigner, Network, utils, availableNetworks,
 } from '@reef-defi/react-lib';
 import './Nav.css';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { saveSignerLocalPointer } from '../store/internalStore';
-import { ReefLogo } from './Icons';
+import { ReefLogo, ReefTestnetLogo } from './Icons';
 import {
   addressReplacer,
   BIND_URL,
@@ -24,6 +24,7 @@ const Nav = ({ display }: Nav): JSX.Element => {
   const signer: ReefSigner|undefined|null = hooks.useObservableState(appState.selectedSigner$);
   const accounts: ReefSigner[]|undefined|null = hooks.useObservableState(appState.signers$);
   const network: Network|undefined = hooks.useObservableState(appState.currentNetwork$);
+  const mainnetSelected = network == null || network?.rpcUrl === availableNetworks.mainnet.rpcUrl;
   const menuItems = [
     { title: 'Dashboard', url: DASHBOARD_URL },
     { title: 'Send', url: TRANSFER_TOKEN },
@@ -72,7 +73,7 @@ const Nav = ({ display }: Nav): JSX.Element => {
         <div className="logo-w">
           <button type="button" className="logo-btn" onClick={() => { history.push('/'); }}>
             <div className="svg-w h-100 w-100">
-              <ReefLogo />
+              {mainnetSelected ? <ReefLogo /> : <ReefTestnetLogo />}
             </div>
           </button>
         </div>
