@@ -15,6 +15,7 @@ import Bind from '../bind/Bind';
 import TokenContext from '../../context/TokenContext';
 import TokenPricesContext from '../../context/TokenPricesContext';
 import BigNumber from 'bignumber.js';
+import NftContext from '../../context/NftContext';
 
 const {
   DataProgress, isDataSet,
@@ -42,11 +43,13 @@ const DEFAULT_TABS = [
 
 const Dashboard = (): JSX.Element => {
   let tabs = DEFAULT_TABS;
-  const tokens = useContext(TokenContext);
+
+  const {nfts} = useContext(NftContext);
+  const {tokens, loading} = useContext(TokenContext);
   const tokenPrices = useContext(TokenPricesContext);
 
   // const signerTokenBalances: TokenWithAmount[]|undefined = hooks.useObservableState(appState.tokenPrices$);
-  const signerNfts = hooks.useObservableState(appState.selectedSignerNFTs$);
+  // const signerNfts = hooks.useObservableState(appState.selectedSignerNFTs$);
   const selectedSigner: ReefSigner|undefined | null = hooks.useObservableState(appState.selectedSigner$);
   const [tab, setTab] = useState<string>('');
 
@@ -80,7 +83,7 @@ const Dashboard = (): JSX.Element => {
   return (
     <div className="dashboard">
       <div className="dashboard__top">
-        <Balance balance={totalBalance} />
+        <Balance balance={totalBalance} loading={loading} />
         <ActionButtons />
       </div>
 
@@ -90,7 +93,7 @@ const Dashboard = (): JSX.Element => {
 
           { tab === 'tokens' ? <TokenBalances tokens={availableTokens} /> : '' }
           { tab === 'staking' ? <Staking /> : '' }
-          { tab === 'nfts' ? <Nfts tokens={signerNfts} /> : '' }
+          { tab === 'nfts' ? <Nfts nfts={nfts} /> : '' }
           { tab === 'activity' ? <TokenActivity address={selectedSigner?.evmAddress} /> : '' }
           { tab === 'bind' ? <Bind /> : '' }
         </div>
