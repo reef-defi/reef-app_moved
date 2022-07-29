@@ -1,17 +1,27 @@
-import { TokenWithAmount, utils } from '@reef-defi/react-lib';
-import React from 'react';
+import { Token, utils } from '@reef-defi/react-lib';
+import BigNumber from 'bignumber.js';
+import React, { useContext, useMemo } from 'react';
+import TokenPricesContext from '../../context/TokenPricesContext';
 import { toCurrencyFormat } from '../../utils/utils';
 import './TokenPill.css';
 
-const { isDataSet } = utils;
 const { showBalance } = utils;
 
 interface TokenPill {
-    token: TokenWithAmount
+  token: Token;
 }
 
 export const TokenPill = ({ token }: TokenPill): JSX.Element => {
-  const balanceValue = utils.calculateBalanceValue(token);
+  const tokenPrices = useContext(TokenPricesContext);
+
+  const price = useMemo(() => tokenPrices[token.address], [tokenPrices]);
+  
+  const balanceValue = price
+    ? new BigNumber(token.balance.toString())
+        .div(new BigNumber(10).pow(token.decimals))
+        .multipliedBy(price)
+        .toNumber()
+    : undefined;
   return (
     <div key={token.address} className="col-md-12 col-lg-6">
       <div className="token-balance-item radius-border d-flex d-flex-space-between d-flex-vert-center">
@@ -24,8 +34,8 @@ export const TokenPill = ({ token }: TokenPill): JSX.Element => {
                 <span>{showBalance(token)}</span>
 
                 <span className="token-balance-item__price">
-                  {isDataSet(token.price) && toCurrencyFormat(token.price as number, { maximumFractionDigits: token.price < 1 ? 4 : 2 }) }
-                  {!isDataSet(token.price) && <span>No pool data</span> }
+                  {price && toCurrencyFormat(price, { maximumFractionDigits: price! < 1 ? 4 : 2 }) }
+                  {!price && <span>No pool data</span> }
                   {/* TODO {!isDataSet(token.price) && token.price === DataProgress.LOADING && <Loading />} */}
                   {/* TODO {!isDataSet(token.price) && token.price === DataProgress.NO_DATA && ' - '} */}
                 </span>
@@ -34,9 +44,9 @@ export const TokenPill = ({ token }: TokenPill): JSX.Element => {
 
             <div className="token-balance-item_balances title-font text-bold text-color-dark-accent">
               <div>
-                {isDataSet(balanceValue) && (
+                {balanceValue && (
                 <div className="token-balance-item__balance">
-                  {toCurrencyFormat(balanceValue as number)}
+                  {toCurrencyFormat(balanceValue)}
                 </div>
                 ) }
               </div>
