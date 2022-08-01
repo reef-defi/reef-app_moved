@@ -145,10 +145,12 @@ const LWChart = ({
   }, []);
 
   return (
-    <div
-      ref={chartWrapper}
-      className="lw-chart"
-    />
+    <div className="lw-chart__wrapper">
+      <div
+        ref={chartWrapper}
+        className="lw-chart"
+      />
+    </div>
   );
 };
 
