@@ -4,3 +4,14 @@
   min-width: 450px;
   max-width: 450px;
 }
+
+.uik-pool-actions__cta.uik-button--disabled {
+  background: #e6e2f1;
+  color: hsla(
+    var(--text-light--h),
+    var(--text-light--s),
+    var(--text-light--l),
+    0.6
+  );
+  box-shadow: none;
+}
