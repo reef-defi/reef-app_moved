@@ -46,7 +46,7 @@ const PoolsList = (): JSX.Element => {
   ) return (<></>);
 
   return (
-    <div className="pools__list">
+    <div className="pools__list pools__list--all">
       <div className="pools__table-top">
         <Uik.Text type="title">Pools</Uik.Text>
         <PoolsSearch
