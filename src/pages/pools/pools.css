@@ -227,3 +227,12 @@
   width: 100%;
   display: flex;
 }
+
+.pools__list .uik-table-head-cell {
+  width: calc(100% / 6) !important;
+}
+
+.pools__list--all .uik-table-head-cell:first-child,
+.pools__list--all .uik-table-cell:first-child {
+  width: calc(100% / 6 * 2) !important;
+}
