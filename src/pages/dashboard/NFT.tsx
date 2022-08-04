@@ -1,34 +1,72 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import preloadImage from '../../utils/preloadImage';
-import {ERC721ContractData, NFT as NFTData} from "@reef-defi/react-lib";
+import { NFT as NFTData, hooks, utils } from "@reef-defi/react-lib";
+import React, { useState } from 'react';
 
-const NFT = ({ balance, iconUrl, data, type }: NFTData): JSX.Element => {
-  const [imgLoaded, setImgLoaded] = useState(false);
+interface NftComponent {
+  icon: string;
+  name: string;
+  balance: string;
+}
 
-  const name = type === 'ERC721' ? (data as ERC721ContractData).name : '';
+type UseNftState = [NftComponent, boolean];
 
-  useEffect(() => {
-    if (iconUrl) {
-      setImgLoaded(true);
-      return;
+// TODO Matjaž load name and from IPFS
+// This function will only be triggered if the address is of ERC1155 contract type
+const loadNft1155Data = async (address: string, balance: string): Promise<NftComponent> => {
+  // Retrieve mata data from IPFS
+
+  // Extract url of image
+
+  // Replace name and icon with loaded data
+  return {
+    balance,
+    name: "",
+    icon: utils.getIconUrl(address),
+  }
+};
+
+const useNftState = ({address, type, name, balance}: NFTData): UseNftState => {
+  const [loading, setLoading] = useState(false);
+  const [state, setState] = useState<NftComponent>({
+    balance,
+    name,
+    icon: utils.getIconUrl(address)
+  });
+
+  hooks.useAsyncEffect(async () => {
+    if (type === 'ERC1155') {
+      Promise.resolve()
+        .then(() => setLoading(true))
+        .then(() => loadNft1155Data(address, balance))
+        .then(setState)
+        .catch((err) => {
+          console.error('ERC1155 IPFS data went sideways');
+          console.error(err);
+        })
+        .finally(() => {
+          setLoading(false);
+        })
     }
+  }, [address, type]);
 
-    preloadImage(iconUrl, () => setImgLoaded(true));
+  return [state, loading];
+}
 
-    // eslint-disable-next-line consistent-return,@typescript-eslint/no-empty-function
-    return function () {};
-  }, []);
+const NFT = (defautlData: NFTData): JSX.Element => {
+  const [
+    {icon, name, balance},
+    loading
+  ] = useNftState(defautlData);
 
   return (
     <div className="nfts__item">
       <div
         className={`
               nfts__item-image
-              ${!imgLoaded ? 'nfts__item-image--loading' : ''}
+              ${loading ? 'nfts__item-image--loading' : ''}
           `}
         style={
-            iconUrl && imgLoaded
-              ? { backgroundImage: `url(${iconUrl})` } : {}
+            icon && !loading
+              ? { backgroundImage: `url(${icon})` } : {}
           }
       />
       <div className="nfts__item-info">

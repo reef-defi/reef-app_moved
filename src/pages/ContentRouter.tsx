@@ -1,35 +1,25 @@
+import { appState, hooks, ReefSigner } from '@reef-defi/react-lib';
 import React, { useMemo } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
-import { ApolloClient } from '@apollo/client';
-import {
-  ReefSigner, graphql, hooks, appState,
-} from '@reef-defi/react-lib';
-import {
-  ADD_LIQUIDITY_URL,
-  CREATE_ERC20_TOKEN_URL,
-  DASHBOARD_URL,
-  POOLS_URL,
-  REMOVE_LIQUIDITY_URL,
-  TRANSFER_TOKEN,
-  BONDS_URL,
-  POOL_CHART_URL,
-  SPECIFIED_SWAP_URL,
-  BIND_URL,
-} from '../urls';
-import AddLiqudity from './pools/AddLiquidity';
-import Pools from './pools/Pools';
-import RemoveLiquidity from './pools/RemoveLiquidity';
-import Swap from './swap/Swap';
-import Dashboard from './dashboard/Dashboard';
-import { Transfer } from './transfer/Transfer';
-import { Creator } from './creator/Creator';
-import { Bonds } from './bonds/Bonds';
+import NftContext from '../context/NftContext';
 import PoolContext from '../context/PoolContext';
 import TokenContext from '../context/TokenContext';
 import TokenPrices from '../context/TokenPricesContext';
-import NftContext from '../context/NftContext';
+import {
+  ADD_LIQUIDITY_URL, BIND_URL, BONDS_URL, CREATE_ERC20_TOKEN_URL,
+  DASHBOARD_URL,
+  POOLS_URL, POOL_CHART_URL, REMOVE_LIQUIDITY_URL, SPECIFIED_SWAP_URL, TRANSFER_TOKEN
+} from '../urls';
 import Bind from './bind/Bind';
+import { Bonds } from './bonds/Bonds';
+import { Creator } from './creator/Creator';
+import Dashboard from './dashboard/Dashboard';
+import AddLiqudity from './pools/AddLiquidity';
 import Pool from './pools/Pool/Pool';
+import Pools from './pools/Pools';
+import RemoveLiquidity from './pools/RemoveLiquidity';
+import Swap from './swap/Swap';
+import { Transfer } from './transfer/Transfer';
 
 const ContentRouter = (): JSX.Element => {
   const currentSigner: ReefSigner|undefined|null = hooks.useObservableState(appState.selectedSigner$);
