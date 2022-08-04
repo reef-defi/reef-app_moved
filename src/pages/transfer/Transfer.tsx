@@ -15,7 +15,7 @@ export const Transfer = (): JSX.Element => {
   const provider: Provider|undefined = hooks.useObservableState(appState.currentProvider$);
   const accounts: ReefSigner[]|undefined|null = hooks.useObservableState(appState.signers$);
   const selectedSigner: ReefSigner|undefined|null = hooks.useObservableState(appState.selectedSigner$);
-  const {tokens} = useContext(TokenContext);
+  const { tokens } = useContext(TokenContext);
 
   if (!accounts || !selectedSigner || !provider) {
     return <div />;

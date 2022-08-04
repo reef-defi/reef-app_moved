@@ -2,7 +2,6 @@ import { Token } from '@reef-defi/react-lib';
 import React from 'react';
 import { TokenPill } from './TokenPill';
 
-
 interface TokenBalances {
   tokens: Token[];
 }

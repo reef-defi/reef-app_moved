@@ -22,7 +22,7 @@ interface Actions {
 
 const Actions = ({ address1, address2 }: Actions): JSX.Element => {
   const history = useHistory();
-  const {tokens} = useContext(TokenContext);
+  const { tokens } = useContext(TokenContext);
   const tokenPrices = useContext(TokenPricesContext);
   const signer: ReefSigner | undefined | null = hooks.useObservableState(
     appState.selectedSigner$,

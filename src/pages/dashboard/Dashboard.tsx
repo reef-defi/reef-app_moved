@@ -1,6 +1,10 @@
-import { appState, hooks, ReefSigner, utils as reefUtils } from '@reef-defi/react-lib';
+import {
+  appState, hooks, ReefSigner, utils as reefUtils,
+} from '@reef-defi/react-lib';
 import BigNumber from 'bignumber.js';
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, {
+  useContext, useEffect, useMemo, useState,
+} from 'react';
 import Tabs from '../../common/Tabs';
 import NftContext from '../../context/NftContext';
 import TokenContext from '../../context/TokenContext';
@@ -42,8 +46,8 @@ const DEFAULT_TABS = [
 const Dashboard = (): JSX.Element => {
   let tabs = DEFAULT_TABS;
 
-  const {nfts} = useContext(NftContext);
-  const {tokens, loading} = useContext(TokenContext);
+  const { nfts } = useContext(NftContext);
+  const { tokens, loading } = useContext(TokenContext);
   const tokenPrices = useContext(TokenPricesContext);
 
   // const signerTokenBalances: TokenWithAmount[]|undefined = hooks.useObservableState(appState.tokenPrices$);
@@ -62,20 +66,18 @@ const Dashboard = (): JSX.Element => {
   }, [selectedSigner]);
 
   const totalBalance = useMemo(() => tokens.reduce(
-      (acc, { balance, decimals, address }) =>
-        acc.plus(
-          new BigNumber(balance.toString())
-            .div(new BigNumber(10).pow(decimals))
-            .multipliedBy(tokenPrices[address] || 0)
-        ),
-      new BigNumber(0)
-    ).toNumber(), 
-    [tokenPrices, tokens]
-  );
+    (acc, { balance, decimals, address }) => acc.plus(
+      new BigNumber(balance.toString())
+        .div(new BigNumber(10).pow(decimals))
+        .multipliedBy(tokenPrices[address] || 0),
+    ),
+    new BigNumber(0),
+  ).toNumber(),
+  [tokenPrices, tokens]);
 
   const availableTokens = useMemo(
     () => tokens.filter(({ balance }) => balance.gt(0)),
-    [tokens]
+    [tokens],
   );
 
   return (

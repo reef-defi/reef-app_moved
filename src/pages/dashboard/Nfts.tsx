@@ -4,9 +4,9 @@ import './Nfts.css';
 
 import NFT from './NFT';
 
-const { isDataSet, DataProgress } = utils;
+// const { isDataSet, DataProgress } = utils;
 
-const placeholderImage = 'https://cryptotelegram.com/wp-content/uploads/2021/04/reef-crypto-explained.jpg';
+// const placeholderImage = 'https://cryptotelegram.com/wp-content/uploads/2021/04/reef-crypto-explained.jpg';
 
 export const Skeleton = (): JSX.Element => (
   <div className="nft-skeleton">
@@ -31,7 +31,16 @@ export const Nfts = ({ nfts }: Nfts): JSX.Element => (
         {!!nfts.length && (
         <div className="nfts__container">
           {nfts.map((nft) => (
-            <NFT key={`${nft.address}-${nft.nftId}`} {...nft} />
+            <NFT
+              key={`${nft.address}-${nft.nftId}`}
+              address={nft.address}
+              balance={nft.balance}
+              data={nft.data}
+              iconUrl={nft.iconUrl}
+              name={nft.name}
+              nftId={nft.nftId}
+              type={nft.type}
+            />
           ))}
         </div>
         )}

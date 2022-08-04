@@ -15,12 +15,12 @@ export const TokenPill = ({ token }: TokenPill): JSX.Element => {
   const tokenPrices = useContext(TokenPricesContext);
 
   const price = useMemo(() => tokenPrices[token.address], [tokenPrices]);
-  
+
   const balanceValue = price
     ? new BigNumber(token.balance.toString())
-        .div(new BigNumber(10).pow(token.decimals))
-        .multipliedBy(price)
-        .toNumber()
+      .div(new BigNumber(10).pow(token.decimals))
+      .multipliedBy(price)
+      .toNumber()
     : undefined;
   return (
     <div key={token.address} className="col-md-12 col-lg-6">

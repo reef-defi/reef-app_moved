@@ -19,7 +19,7 @@ interface UrlParams {
 const AddLiqudity = (): JSX.Element => {
   const { address1, address2 } = useParams<UrlParams>();
   const history = useHistory();
-  const {tokens} = useContext(TokenContext);
+  const { tokens } = useContext(TokenContext);
   const tokenPrices = useContext(TokenPricesContext);
   const signer: ReefSigner | undefined | null = hooks.useObservableState(
     appState.selectedSigner$,

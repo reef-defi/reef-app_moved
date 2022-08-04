@@ -8,7 +8,7 @@ import TokenPrices from '../context/TokenPricesContext';
 import {
   ADD_LIQUIDITY_URL, BIND_URL, BONDS_URL, CREATE_ERC20_TOKEN_URL,
   DASHBOARD_URL,
-  POOLS_URL, POOL_CHART_URL, REMOVE_LIQUIDITY_URL, SPECIFIED_SWAP_URL, TRANSFER_TOKEN
+  POOLS_URL, POOL_CHART_URL, REMOVE_LIQUIDITY_URL, SPECIFIED_SWAP_URL, TRANSFER_TOKEN,
 } from '../urls';
 import Bind from './bind/Bind';
 import { Bonds } from './bonds/Bonds';
@@ -37,8 +37,8 @@ const ContentRouter = (): JSX.Element => {
 
   return (
     <div className="content">
-      <TokenContext.Provider value={{tokens, loading: tokenLoading}}>
-        <NftContext.Provider value={{nfts, loading: nftsLoading}}>
+      <TokenContext.Provider value={{ tokens, loading: tokenLoading }}>
+        <NftContext.Provider value={{ nfts, loading: nftsLoading }}>
           <PoolContext.Provider value={pools}>
             <TokenPrices.Provider value={tokenPrices}>
               <Switch>
