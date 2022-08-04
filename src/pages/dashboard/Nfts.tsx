@@ -1,12 +1,12 @@
 import React from 'react';
-import { TokenNFT, utils } from '@reef-defi/react-lib';
+import { NFT as NFTData, TokenNFT, utils } from '@reef-defi/react-lib';
 import './Nfts.css';
 
 import NFT from './NFT';
 
-const { isDataSet, DataProgress } = utils;
+// const { isDataSet, DataProgress } = utils;
 
-const placeholderImage = 'https://cryptotelegram.com/wp-content/uploads/2021/04/reef-crypto-explained.jpg';
+// const placeholderImage = 'https://cryptotelegram.com/wp-content/uploads/2021/04/reef-crypto-explained.jpg';
 
 export const Skeleton = (): JSX.Element => (
   <div className="nft-skeleton">
@@ -16,34 +16,43 @@ export const Skeleton = (): JSX.Element => (
 );
 
 interface Nfts {
-    tokens: TokenNFT[]|undefined;
+  nfts: NFTData[];
 }
 
-export const Nfts = ({ tokens }: Nfts): JSX.Element => (
+export const Nfts = ({ nfts }: Nfts): JSX.Element => (
   <div className="nfts">
-    {!!tokens && !tokens.length && (
+    {nfts.length === 0 && (
     <div className="col-12 card">
       <div className="nfts__empty-nft-list">No NFTs in your wallet.</div>
     </div>
     )}
-    {!!tokens && !!tokens.length && (
+    {nfts.length > 0 && (
       <div className="col-12">
-        {!!tokens && !!tokens.length && (
+        {!!nfts.length && (
         <div className="nfts__container">
-          {tokens.map((token: TokenNFT, i: number) => (
-            <NFT data={token} key={token.address + token.nftId} />
+          {nfts.map((nft) => (
+            <NFT
+              key={`${nft.address}-${nft.nftId}`}
+              address={nft.address}
+              balance={nft.balance}
+              data={nft.data}
+              iconUrl={nft.iconUrl}
+              name={nft.name}
+              nftId={nft.nftId}
+              type={nft.type}
+            />
           ))}
         </div>
         )}
       </div>
     )}
-    {!tokens && (
+    {/* {nfts.length  && (
       <div className="col-12">
         <Skeleton />
         <Skeleton />
         <Skeleton />
       </div>
-    ) }
+    ) } */}
   </div>
 
 );

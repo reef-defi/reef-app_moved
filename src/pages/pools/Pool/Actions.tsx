@@ -22,7 +22,7 @@ interface Actions {
 
 const Actions = ({ address1, address2 }: Actions): JSX.Element => {
   const history = useHistory();
-  const tokens = useContext(TokenContext);
+  const { tokens } = useContext(TokenContext);
   const tokenPrices = useContext(TokenPricesContext);
   const signer: ReefSigner | undefined | null = hooks.useObservableState(
     appState.selectedSigner$,
@@ -116,22 +116,22 @@ const Actions = ({ address1, address2 }: Actions): JSX.Element => {
   );
 
   hooks.useRemoveLiquidity({
-    address1,
-    address2,
-    dispatch: withdrawDispatch,
-    state: withdrawState,
     tokens,
     network,
-    signer: signer || undefined,
+    address1,
+    address2,
     tokenPrices,
+    state: withdrawState,
+    signer: signer || undefined,
+    dispatch: withdrawDispatch,
   });
 
   const onRemoveLiquidity = hooks.onRemoveLiquidity({
-    state: withdrawState,
-    dispatch: withdrawDispatch,
     network,
+    state: withdrawState,
     signer: signer || undefined,
     notify,
+    dispatch: withdrawDispatch,
   });
 
   const withdraw = {

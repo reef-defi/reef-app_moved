@@ -1,12 +1,9 @@
+import { Token } from '@reef-defi/react-lib';
 import React from 'react';
-import { Components, TokenWithAmount, utils } from '@reef-defi/react-lib';
 import { TokenPill } from './TokenPill';
 
-const { isDataSet, DataProgress } = utils;
-
 interface TokenBalances {
-    tokens: utils.DataWithProgress<TokenWithAmount[]>;
-    onRefresh?: any;
+  tokens: Token[];
 }
 
 export const Skeleton = (): JSX.Element => (
@@ -39,16 +36,16 @@ export const Skeleton = (): JSX.Element => (
   </div>
 );
 
-export const TokenBalances = ({ tokens, onRefresh }: TokenBalances): JSX.Element => (
+export const TokenBalances = ({ tokens }: TokenBalances): JSX.Element => (
   <div className="token-balances">
     <div className="col-12">
-      {!tokens && (
+      {tokens.length === 0 && (
       <div className="tokens-container">
         <Skeleton />
         <Skeleton />
       </div>
       )}
-      { tokens && !!isDataSet(tokens) && (
+      { tokens.length > 0 && (
       <div
         className={`
           tokens-container
@@ -56,16 +53,8 @@ export const TokenBalances = ({ tokens, onRefresh }: TokenBalances): JSX.Element
         `}
         style={{ maxHeight: 'auto' }}
       >
-        {(tokens as TokenWithAmount[]).map((token: TokenWithAmount) => (<TokenPill token={token} key={token.address} />
-        ))}
+        {tokens.map((token) => (<TokenPill token={token} key={token.address} />))}
       </div>
-      )}
-      {(
-        (!!tokens && (!!isDataSet(tokens) && !(tokens as TokenWithAmount[]).length))
-          || (!isDataSet(tokens) && tokens === DataProgress.NO_DATA)
-      )
-      && (
-      <div>No tokens to display.</div>
       )}
     </div>
   </div>

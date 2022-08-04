@@ -1,4 +1,11 @@
 import { Token } from '@reef-defi/react-lib';
 import { createContext } from 'react';
 
-export default createContext<Token[]>([]);
+interface TokenContext {
+  tokens: Token[];
+  loading: boolean;
+}
+export default createContext<TokenContext>({
+  loading: false,
+  tokens: [],
+});
