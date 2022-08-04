@@ -1,3 +1,13 @@
+.lw-chart__wrapper {
+  width: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-grow: 1;
+  overflow: hidden;
+}
+
 .lw-chart {
   width: 100%;
   flex-grow: 1;
