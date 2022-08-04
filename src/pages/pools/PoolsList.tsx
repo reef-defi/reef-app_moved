@@ -28,7 +28,7 @@ const PoolsList = (): JSX.Element => {
     tokenPrices,
     queryType: 'All',
   });
-
+  console.log('Count: ', count);
   const history = useHistory();
   const openPool = (
     address: string,
@@ -58,7 +58,7 @@ const PoolsList = (): JSX.Element => {
       <Uik.Table
         seamless
         pagination={{
-          count,
+          count: Math.ceil(count/pageCount),
           current: currentPage,
           onChange: (page) => { changePage(page); setChangedPage(true); },
         }}
