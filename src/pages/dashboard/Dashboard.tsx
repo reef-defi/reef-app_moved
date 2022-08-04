@@ -1,21 +1,19 @@
+import { appState, hooks, ReefSigner, utils as reefUtils } from '@reef-defi/react-lib';
+import BigNumber from 'bignumber.js';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import {
-  TokenWithAmount, utils as reefUtils, utils, appState, hooks, Token, ReefSigner,
-} from '@reef-defi/react-lib';
-import { Balance } from './Balance';
-import { ActionButtons } from './ActionButtons';
-import './Dashboard.css';
-import { TokenBalances } from './TokenBalances';
-import { TokenActivity } from './TokenActivity';
-import { Nfts } from './Nfts';
-import { Staking } from './Staking';
 import Tabs from '../../common/Tabs';
-import { bonds } from '../bonds/utils/bonds';
-import Bind from '../bind/Bind';
+import NftContext from '../../context/NftContext';
 import TokenContext from '../../context/TokenContext';
 import TokenPricesContext from '../../context/TokenPricesContext';
-import BigNumber from 'bignumber.js';
-import NftContext from '../../context/NftContext';
+import Bind from '../bind/Bind';
+import { bonds } from '../bonds/utils/bonds';
+import { ActionButtons } from './ActionButtons';
+import { Balance } from './Balance';
+import './Dashboard.css';
+import { Nfts } from './Nfts';
+import { Staking } from './Staking';
+import { TokenActivity } from './TokenActivity';
+import { TokenBalances } from './TokenBalances';
 
 const {
   DataProgress, isDataSet,
