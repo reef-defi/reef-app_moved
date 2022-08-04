@@ -14,9 +14,10 @@ interface Params {
 interface Time {
   time: Date;
 }
+// eslint-disable-next-line
 const timeToNumber = <T extends Time>(obj: T) => ({
   ...obj,
-  time: obj.time.toLocaleDateString().split("/").reverse().join("-"),
+  time: obj.time.toLocaleDateString().split('/').reverse().join('-'),
 });
 
 const Pool = (): JSX.Element => {
@@ -40,9 +41,9 @@ const Pool = (): JSX.Element => {
 
   const tokenPrice1 = (poolInfo ? tokenPrices[poolInfo.firstToken.address] : 0) || 0;
   const tokenPrice2 = (poolInfo ? tokenPrices[poolInfo.secondToken.address] : 0) || 0;
-  const decimal1 = 18// TODO(poolInfo ? poolInfo.firstToken.] : 0) || 0;
-  const decimal2 = 18// TODO(poolInfo ? poolInfo.firstToken.] : 0) || 0;
-  
+  const decimal1 = 18;// TODO(poolInfo ? poolInfo.firstToken.] : 0) || 0;
+  const decimal2 = 18;// TODO(poolInfo ? poolInfo.firstToken.] : 0) || 0;
+
   const [poolData, poolDataLoading] = hooks.usePoolData({
     address,
     decimal1,
@@ -50,7 +51,6 @@ const Pool = (): JSX.Element => {
     price1: tokenPrice1,
     price2: tokenPrice2,
   });
-
 
   if (!poolInfo) {
     return <div>Loading...</div>;

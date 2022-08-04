@@ -58,7 +58,7 @@ const PoolsList = (): JSX.Element => {
       <Uik.Table
         seamless
         pagination={{
-          count: Math.ceil(count/pageCount),
+          count: Math.ceil(count / pageCount),
           current: currentPage,
           onChange: (page) => { changePage(page); setChangedPage(true); },
         }}

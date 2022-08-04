@@ -75,7 +75,7 @@ const MyPoolsList = (): JSX.Element => {
       <Uik.Table
         seamless
         pagination={{
-          count: Math.ceil(count/perPage), // TODO change to count once endpoints are online...
+          count: Math.ceil(count / perPage), // TODO change to count once endpoints are online...
           current: currentPage,
           onChange: (page) => { changePage(page); setChangedPage(true); },
         }}
