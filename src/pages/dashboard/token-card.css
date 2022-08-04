@@ -1,0 +1,129 @@
+.token-card {
+  width: 100%;
+}
+
+.token-card__wrapper {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background: white;
+  box-shadow: var(--shadow);
+  border-radius: 15px;
+  padding: 15px;
+}
+
+.token-card__main {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.token-card__image {
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  min-height: 44px;
+  background-size: cover;
+  border-radius: 50%;
+  border: none;
+  transition: all 0.15s;
+}
+
+.token-card__image:hover {
+  cursor: pointer;
+  filter: brightness(1.05);
+}
+
+.token-card__image:active {
+  cursor: pointer;
+  filter: brightness(1.25);
+}
+
+.token-card__info {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: flex-start;
+  margin-left: 15px;
+}
+
+.token-card__token-info {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: flex-end;
+  white-space: nowrap;
+}
+
+.token-card__token-name {
+  font-size: 17px;
+  line-height: 1.25;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.token-card__token-price {
+  font-size: 13px;
+  line-height: 1.25;
+  font-weight: 500;
+  color: var(--text);
+  border: none;
+  background: transparent;
+  margin: 0;
+  padding: 0;
+  transition: all 0.15;
+}
+
+.token-card__token-price:not([disabled]):hover {
+  color: var(--primary);
+  cursor: pointer;
+}
+
+.token-card__aside {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 5px;
+}
+
+.token-card__values {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: flex-end;
+  text-align: right;
+  white-space: nowrap;
+  margin: 0 25px;
+}
+
+.token-card__value {
+  font-weight: 900;
+  background: -webkit-linear-gradient(0deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.25;
+  font-size: 19px;
+}
+
+.token-card__amount {
+  font-size: 13px;
+  line-height: 1.25;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.token-card .uik-button .uik-button__icon {
+  margin-left: -2px;
+}
+
+.token-card .uik-button + .uik-button {
+  margin-left: 15px;
+}
+
+.token-card + .token-card {
+  margin-top: 15px;
+}

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import {
-  TokenWithAmount, utils as reefUtils, rpc, appState, hooks, Token, ReefSigner,
+  TokenWithAmount, utils as reefUtils, utils, appState, hooks, Token, ReefSigner,
 } from '@reef-defi/react-lib';
+import Uik from '@reef-defi/ui-kit';
 import { Balance } from './Balance';
 import { ActionButtons } from './ActionButtons';
 import './Dashboard.css';
@@ -19,21 +20,17 @@ const {
 
 const DEFAULT_TABS = [
   {
-    key: 'tokens',
-    title: 'Tokens',
+    value: 'tokens',
+    text: 'Tokens',
   },
   {
-    key: 'staking',
-    title: 'Staking',
-    notification: bonds?.length,
+    value: 'staking',
+    text: 'Staking',
+    indicator: bonds?.length,
   },
   {
-    key: 'nfts',
-    title: 'NFTs',
-  },
-  {
-    key: 'activity',
-    title: 'Activity',
+    value: 'nfts',
+    text: 'NFTs',
   },
 ];
 
@@ -46,20 +43,19 @@ const Dashboard = (): JSX.Element => {
 
   // If account is not bound, add bind tab to 'tabs' array
   if (!!selectedSigner && !selectedSigner.isEvmClaimed) {
-    const bindTab = { key: 'bind', title: 'Bind Account' };
+    const bindTab = { value: 'bind', text: 'Bind Account' };
     tabs = [bindTab, ...tabs];
   }
 
   useEffect(() => {
-    setTab(tabs[0].key);
+    setTab(tabs[0].value);
   }, [selectedSigner]);
 
   const totalBalance: reefUtils.DataWithProgress<number> = isDataSet(signerTokenBalances) && signerTokenBalances?.length ? (signerTokenBalances).reduce((state: reefUtils.DataWithProgress<number>, curr) => {
-    // rpc.filterTokensWithReefPool(signerTokenBalances );
     if (Number.isNaN(curr.balance) || Number.isNaN(curr.price) || !isDataSet(curr.balance)) {
       return state;
     }
-    const balVal = reefUtils.calculateBalanceValue(curr);
+    const balVal = utils.calculateBalanceValue(curr);
     if (!Number.isNaN(balVal) && isDataSet(balVal)) {
       const stateNr = isDataSet(state) ? state as number : 0;
       return stateNr + (balVal as number);
@@ -76,9 +72,9 @@ const Dashboard = (): JSX.Element => {
 
       <div className="dashboard__main">
         <div className="dashboard__left">
-          <Tabs tabs={tabs} selected={tab} onChange={(e) => setTab(e)} />
+          <Uik.Tabs options={tabs} value={tab} onChange={(e) => setTab(e)} />
 
-          { tab === 'tokens' ? <TokenBalances tokens={signerTokenBalances as reefUtils.DataWithProgress<TokenWithAmount[]>} /> : '' }
+          { tab === 'tokens' ? <TokenBalances tokens={signerTokenBalances as utils.DataWithProgress<TokenWithAmount[]>} /> : '' }
           { tab === 'staking' ? <Staking /> : '' }
           { tab === 'nfts' ? <Nfts tokens={signerNfts} /> : '' }
           { tab === 'activity' ? <TokenActivity address={selectedSigner?.evmAddress} /> : '' }
