@@ -15,7 +15,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const App = (): JSX.Element => {
   const { provider, loading, error } = hooks.useInitReefState(
-    'Reef Wallet App',
+    'Reef Wallet App', { ipfsHashResolverFn:(hash: string)=>`https://reef.infura-ipfs.io/ipfs/${hash}`}
   );
   const history = useHistory();
   const apollo: ApolloClient<any>|undefined = hooks.useObservableState(graphql.apolloClientInstance$);

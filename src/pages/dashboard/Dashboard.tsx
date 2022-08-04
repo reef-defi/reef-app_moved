@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  TokenWithAmount, utils as reefUtils, utils, appState, hooks, Token, ReefSigner,
+  TokenWithAmount, utils as reefUtils, rpc, appState, hooks, Token, ReefSigner,
 } from '@reef-defi/react-lib';
 import { Balance } from './Balance';
 import { ActionButtons } from './ActionButtons';
@@ -55,10 +55,11 @@ const Dashboard = (): JSX.Element => {
   }, [selectedSigner]);
 
   const totalBalance: reefUtils.DataWithProgress<number> = isDataSet(signerTokenBalances) && signerTokenBalances?.length ? (signerTokenBalances).reduce((state: reefUtils.DataWithProgress<number>, curr) => {
+    // rpc.filterTokensWithReefPool(signerTokenBalances );
     if (Number.isNaN(curr.balance) || Number.isNaN(curr.price) || !isDataSet(curr.balance)) {
       return state;
     }
-    const balVal = utils.calculateBalanceValue(curr);
+    const balVal = reefUtils.calculateBalanceValue(curr);
     if (!Number.isNaN(balVal) && isDataSet(balVal)) {
       const stateNr = isDataSet(state) ? state as number : 0;
       return stateNr + (balVal as number);
@@ -77,7 +78,7 @@ const Dashboard = (): JSX.Element => {
         <div className="dashboard__left">
           <Tabs tabs={tabs} selected={tab} onChange={(e) => setTab(e)} />
 
-          { tab === 'tokens' ? <TokenBalances tokens={signerTokenBalances as utils.DataWithProgress<TokenWithAmount[]>} /> : '' }
+          { tab === 'tokens' ? <TokenBalances tokens={signerTokenBalances as reefUtils.DataWithProgress<TokenWithAmount[]>} /> : '' }
           { tab === 'staking' ? <Staking /> : '' }
           { tab === 'nfts' ? <Nfts tokens={signerNfts} /> : '' }
           { tab === 'activity' ? <TokenActivity address={selectedSigner?.evmAddress} /> : '' }
