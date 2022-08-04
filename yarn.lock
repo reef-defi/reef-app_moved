@@ -3539,10 +3539,10 @@
   dependencies:
     "@babel/runtime" "^7.16.0"
 
-"@reef-defi/react-lib@^1.0.66":
-  version "1.0.66"
-  resolved "https://registry.yarnpkg.com/@reef-defi/react-lib/-/react-lib-1.0.66.tgz#6fdf108d2a8f670cbe6eec0f852fd38aa25821e5"
-  integrity sha512-8DKRzsOz/Q0CtaiipWBhMxw+CACyyLcZfozAqVcil0CdvxYbKYJcxJfekoxOZO5MYHHwDgX9wGJhrLwEwcn50g==
+"@reef-defi/react-lib@^1.0.67":
+  version "1.0.67"
+  resolved "https://registry.yarnpkg.com/@reef-defi/react-lib/-/react-lib-1.0.67.tgz#db2b29c38943fa461381d32d1cffbd53bb3ec3a9"
+  integrity sha512-TuI/cBsMAByblRgVi6VUL1a72VIERYlOT8HS7L7L4nUFekTuI6Fzjb2N3AvaxyKZ5jSc1hmR5XsLzZhRPC089w==
   dependencies:
     "@apollo/client" "^3.6.2"
     "@fortawesome/free-regular-svg-icons" "^6.1.0"
@@ -3553,7 +3553,7 @@
     "@reef-defi/extension-base" "^1.0.5"
     "@reef-defi/extension-dapp" "^0.41.2"
     "@reef-defi/extension-inject" "^0.41.2"
-    "@reef-defi/ui-kit" "^1.0.2"
+    "@reef-defi/ui-kit" "^1.0.3"
     "@types/react-router-dom" "^5.3.0"
     axios "^0.21.4"
     bignumber.js "^9.0.2"
@@ -3590,10 +3590,10 @@
     "@polkadot/typegen" "~6.4.2"
     "@polkadot/types" "~6.4.2"
 
-"@reef-defi/ui-kit@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@reef-defi/ui-kit/-/ui-kit-1.0.2.tgz#eb67af93da3e03d04b53b526c2e852dbd85b6887"
-  integrity sha512-i9MqfdSIJ8kNyKFtL7GR20zKJJatRdfcMmfnvqVHfNDnDgjG28ZDn3IaquPXh/GCNmp/4wMEK7USqHvlOdv3Xw==
+"@reef-defi/ui-kit@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@reef-defi/ui-kit/-/ui-kit-1.0.3.tgz#483f5018a1652bbd673cfcb31a8de91c4857470f"
+  integrity sha512-Jx3Uu398o+7gjB5zBiCk/rNXF/r/ON2NJw3iNWUnFGTB23oaCX01UAx6tu8Ussbw/UdzQOF+tCD0OmG9Ug/Eyg==
   dependencies:
     "@fortawesome/fontawesome-svg-core" "^6.1.0"
     "@fortawesome/free-regular-svg-icons" "^6.1.0"
@@ -3602,8 +3602,8 @@
     "@polkadot/react-identicon" "^2.0.1"
     "@types/jest" "^27.4.1"
     "@types/node" "^17.0.21"
-    "@types/react" "^18.0.5"
-    "@types/react-dom" "^18.0.1"
+    "@types/react" "^17.0.0"
+    "@types/react-dom" "^17.0.0"
     bignumber.js "^9.0.2"
     qrcode.react "^3.0.1"
     react-syntax-highlighter "^15.5.0"
@@ -4239,13 +4239,6 @@
   dependencies:
     "@types/react" "^17"
 
-"@types/react-dom@^18.0.1":
-  version "18.0.6"
-  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-18.0.6.tgz#36652900024842b74607a17786b6662dd1e103a1"
-  integrity sha512-/5OFZgfIPSwy+YuIBP/FgJnQnsxhZhjjrnxudMddeblOouIodEQ75X14Rr4wGSG/bknL+Omy9iWlLo1u/9GzAA==
-  dependencies:
-    "@types/react" "*"
-
 "@types/react-router-dom@^5.1.8", "@types/react-router-dom@^5.3.0":
   version "5.3.3"
   resolved "https://registry.yarnpkg.com/@types/react-router-dom/-/react-router-dom-5.3.3.tgz#e9d6b4a66fcdbd651a5f106c2656a30088cc1e83"
@@ -4270,7 +4263,7 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@^18.0.5":
+"@types/react@*":
   version "18.0.15"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-18.0.15.tgz#d355644c26832dc27f3e6cbf0c4f4603fc4ab7fe"
   integrity sha512-iz3BtLuIYH1uWdsv6wXYdhozhqj20oD4/Hk2DNXIn1kFsmp9x8d9QB6FnPhfkbhd2PgEONt9Q1x/ebkwjfFLow==
