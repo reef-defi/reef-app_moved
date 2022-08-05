@@ -1,3 +1,4 @@
+import {version} from "./../package.json";
 import { availableNetworks } from '@reef-defi/react-lib';
 
 /* {
@@ -10,4 +11,5 @@ import { availableNetworks } from '@reef-defi/react-lib';
 } as Network; */
 
 export const appAvailableNetworks = [availableNetworks.mainnet, availableNetworks.testnet];
-console.log('Version: 1.0.53');
+
+console.log(`Reef-app version: ${version}`);
