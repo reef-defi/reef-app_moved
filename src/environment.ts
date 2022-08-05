@@ -10,4 +10,3 @@ import { availableNetworks } from '@reef-defi/react-lib';
 } as Network; */
 
 export const appAvailableNetworks = [availableNetworks.mainnet, availableNetworks.testnet];
-console.log('Version: 1.0.53');

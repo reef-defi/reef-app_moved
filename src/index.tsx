@@ -7,6 +7,9 @@ import {
 } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
 import App from './App';
+import { version } from '../package.json';
+
+console.log(`Reef-app version: ${version}`);
 
 ReactDOM.render(
   <React.StrictMode>
