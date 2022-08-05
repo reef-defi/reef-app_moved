@@ -1,4 +1,3 @@
-
 import { availableNetworks } from '@reef-defi/react-lib';
 
 /* {
@@ -11,4 +10,3 @@ import { availableNetworks } from '@reef-defi/react-lib';
 } as Network; */
 
 export const appAvailableNetworks = [availableNetworks.mainnet, availableNetworks.testnet];
-
