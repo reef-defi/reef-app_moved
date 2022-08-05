@@ -17,7 +17,7 @@ interface Time {
 // eslint-disable-next-line
 const timeToNumber = <T extends Time>(obj: T) => ({
   ...obj,
-  time: obj.time.toLocaleDateString().split('/').reverse().join('-'),
+  time: obj.time.toISOString().slice(0, 10),
 });
 
 const Pool = (): JSX.Element => {
