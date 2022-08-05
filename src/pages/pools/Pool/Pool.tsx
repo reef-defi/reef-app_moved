@@ -14,10 +14,11 @@ interface Params {
 interface Time {
   time: Date;
 }
+
 // eslint-disable-next-line
 const timeToNumber = <T extends Time>(obj: T) => ({
   ...obj,
-  time: obj.time.toISOString().slice(0, 10),
+  time: obj.time.toLocaleDateString('en-CA'),
 });
 
 const Pool = (): JSX.Element => {
@@ -28,11 +29,6 @@ const Pool = (): JSX.Element => {
     appState.selectedSigner$,
   );
 
-  const fromTime = useMemo(
-    () => Date.now() - 31 * 24 * 60 * 60 * 1000,
-    [],
-  );
-
   const [poolInfo, loading] = hooks.usePoolInfo(
     address,
     signer?.address || '',
@@ -41,8 +37,8 @@ const Pool = (): JSX.Element => {
 
   const tokenPrice1 = (poolInfo ? tokenPrices[poolInfo.firstToken.address] : 0) || 0;
   const tokenPrice2 = (poolInfo ? tokenPrices[poolInfo.secondToken.address] : 0) || 0;
-  const decimal1 = 18;// TODO(poolInfo ? poolInfo.firstToken.] : 0) || 0;
-  const decimal2 = 18;// TODO(poolInfo ? poolInfo.firstToken.] : 0) || 0;
+  const decimal1 = 18; // TODO(poolInfo ? poolInfo.firstToken.] : 0) || 0;
+  const decimal2 = 18; // TODO(poolInfo ? poolInfo.firstToken.] : 0) || 0;
 
   const [poolData, poolDataLoading] = hooks.usePoolData({
     address,
