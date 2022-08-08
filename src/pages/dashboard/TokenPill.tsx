@@ -1,7 +1,9 @@
 import { Token, utils } from '@reef-defi/react-lib';
 import BigNumber from 'bignumber.js';
 import React, { useContext, useMemo } from 'react';
+import { useHistory } from 'react-router-dom';
 import TokenPricesContext from '../../context/TokenPricesContext';
+import { TOKEN_URL } from '../../urls';
 import { toCurrencyFormat } from '../../utils/utils';
 import './TokenPill.css';
 
@@ -12,6 +14,7 @@ interface TokenPill {
 }
 
 export const TokenPill = ({ token }: TokenPill): JSX.Element => {
+  const history = useHistory();
   const tokenPrices = useContext(TokenPricesContext);
 
   const price = useMemo(() => tokenPrices[token.address], [tokenPrices]);
@@ -22,9 +25,12 @@ export const TokenPill = ({ token }: TokenPill): JSX.Element => {
       .multipliedBy(price)
       .toNumber()
     : undefined;
+
+  const openToken = () => 
+    history.push(TOKEN_URL.replace(':address', token.address));
   return (
     <div key={token.address} className="col-md-12 col-lg-6">
-      <div className="token-balance-item radius-border d-flex d-flex-space-between d-flex-vert-center">
+      <div className="token-balance-item radius-border d-flex d-flex-space-between d-flex-vert-center" onClick={openToken}>
         <div className="token-balance-item_icon-text mr-1">
           <div className="token-balance-item_icon-text_w mr-1"><img src={token.iconUrl ? token.iconUrl : utils.getIconUrl(token.address)} alt={token.name} /></div>
           <div className="token-balance-item__info">

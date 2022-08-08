@@ -1,0 +1,12 @@
+.token__page {
+  display: flex;
+  width: 70%;
+}
+
+.token__info {
+  display: block;
+}
+.token__show-item {
+  display: flex;
+  justify-content: space-between;
+}

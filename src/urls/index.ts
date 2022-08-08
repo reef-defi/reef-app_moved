@@ -9,6 +9,7 @@ export const SPECIFIED_SWAP_URL = '/swap/:address1/:address2';
 export const POOLS_URL = '/pools';
 export const SETTINGS_URL = '/settings';
 export const DASHBOARD_URL = '/dashboard';
+export const TOKEN_URL = '/token/:address';
 export const ADD_LIQUIDITY_URL = '/add-supply/:address1/:address2';
 export const POOL_CHART_URL = '/chart/:address/:action';
 export const REMOVE_LIQUIDITY_URL = '/remove-supply/:address1/:address2';
