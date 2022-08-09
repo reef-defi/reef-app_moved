@@ -1,25 +1,23 @@
-import './actions.css';
 import {
   appState,
   Components,
   hooks,
   Network,
   ReefSigner,
-  store,
-  Token,
+  store
 } from '@reef-defi/react-lib';
-import React, { useContext, useMemo, useReducer, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import Uik from '@reef-defi/ui-kit';
+import React, { useContext, useReducer, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import TokenContext from '../../../context/TokenContext';
 import TokenPricesContext from '../../../context/TokenPricesContext';
-import { notify } from '../../../utils/utils';
-import Uik from '@reef-defi/ui-kit';
 import { POOL_CHART_URL } from '../../../urls';
+import { notify } from '../../../utils/utils';
+import './actions.css';
 
 const { Trade, Provide, Finalizing, Withdraw  } = Components;
 
 export type ActionTabs = 'provide' | 'withdraw' | 'trade';
-
 
 interface ActionsProps {
   poolAddress: string;
@@ -29,10 +27,9 @@ interface ActionsProps {
 }
 
 const Actions = ({ address1, address2, tab }: ActionsProps): JSX.Element => {
-  // const history = useHistory();
   const { tokens } = useContext(TokenContext);
   const tokenPrices = useContext(TokenPricesContext);
-  const [finalized, ] = useState(true);
+  const [finalized, ] = useState(true); // TODO add finalizing
 
   const signer: ReefSigner | undefined | null = hooks.useObservableState(
     appState.selectedSigner$,
@@ -124,20 +121,8 @@ const Actions = ({ address1, address2, tab }: ActionsProps): JSX.Element => {
     dispatch: withdrawDispatch,
   });
 
-  // const params = useParams();
-  // const getTab = useMemo(() => {
-  //   // @ts-ignore-next-line
-  //   const { action } = params;
-  //   return action.charAt(0).toUpperCase() + action.slice(1);
-  // }, [params]);
-
-  if (!signer) {
-    return <div/>
-  };
-
   // If finalized is false action will be 'false-void'
   const action = `${finalized}-${finalized ? tab : 'void'}`;
-
   switch (action) {
     case "false-void":
       return <Finalizing />;
@@ -173,24 +158,8 @@ const Actions = ({ address1, address2, tab }: ActionsProps): JSX.Element => {
         }}
       />;
     default:
-      return <div>No action defined...</div>;
+      return <Finalizing />;
   }
-  // return (
-  //   <>
-  //     {
-  //       !!signer
-  //       && (
-  //       <PoolActions
-  //         className="pool-actions"
-  //         tab={getTab}
-  //         trade={trade}
-  //         provide={provide}
-  //         withdraw={withdraw}
-  //       />
-  //       )
-  //     }
-  //   </>
-  // );
 };
 
 const ActionsWrapper = ({address1, address2, poolAddress, tab}: ActionsProps): JSX.Element => {
