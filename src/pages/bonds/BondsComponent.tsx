@@ -1,22 +1,20 @@
-import {
-  Components, Network, ReefSigner, rpc, utils,
-} from '@reef-defi/react-lib';
-import React, { useEffect, useState } from 'react';
-import {
-  BigNumber, Contract, Signer, ethers,
-} from 'ethers';
-import {
-  secondsToMilliseconds, format, compareAsc, intervalToDuration, formatDistance,
-} from 'date-fns';
-import './bonds.css';
-import BN from 'bn.js';
+import { DeriveEraRewards, DeriveOwnSlashes, DeriveStakerPoints } from '@polkadot/api-derive/types';
 import {
   BN_THOUSAND, BN_ZERO, isBn, isFunction,
 } from '@polkadot/util';
-import { DeriveEraRewards, DeriveOwnSlashes, DeriveStakerPoints } from '@polkadot/api-derive/types';
 import { Provider } from '@reef-defi/evm-provider';
-import { IBond } from './utils/bonds';
+import {
+  Components, ReefSigner, rpc, utils,
+} from '@reef-defi/react-lib';
+import BN from 'bn.js';
+import {
+  compareAsc, format, formatDistance, intervalToDuration, secondsToMilliseconds,
+} from 'date-fns';
+import { Contract, ethers, Signer } from 'ethers';
+import React, { useEffect, useState } from 'react';
+import './bonds.css';
 import BondData from './utils/bond-contract';
+import { IBond } from './utils/bonds';
 
 export const Skeleton = (): JSX.Element => (
   <div className="bond-skeleton">
@@ -44,22 +42,14 @@ export const getReefBondContract = (bond: IBond, signer: Signer): Contract => ne
 
 const {
   Display,
-  Card: CardModule,
   Modal,
-  Loading,
   Input: InputModule,
   Label,
   Button: ButtonModule,
-  Text,
 } = Components;
 
 const {
-  ColorText,
-} = Text;
-
-const {
   ComponentCenter,
-  MT,
   Margin,
 } = Display;
 const {

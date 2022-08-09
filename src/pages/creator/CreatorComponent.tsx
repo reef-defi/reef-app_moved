@@ -48,7 +48,6 @@ async function verify(contract: Contract, args: string[], network: Network, cont
   const verified = await verifyContract(contract, {
     source: JSON.stringify(contractData.sources),
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     contractName: compilationTarget[compTargetFileName],
     target: contractDataSettings.evmVersion,
     compilerVersion: `v${contractData.metadata.compiler.version}`,

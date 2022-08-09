@@ -4,7 +4,7 @@ import {
   hooks,
   Network,
   ReefSigner,
-  store
+  store,
 } from '@reef-defi/react-lib';
 import Uik from '@reef-defi/ui-kit';
 import React, { useContext, useReducer, useState } from 'react';
@@ -15,12 +15,13 @@ import { POOL_CHART_URL } from '../../../urls';
 import { notify } from '../../../utils/utils';
 import './actions.css';
 
-const { Trade, Provide, Finalizing, Withdraw  } = Components;
+const {
+  Trade, Provide, Finalizing, Withdraw,
+} = Components;
 
 export type ActionTabs = 'provide' | 'withdraw' | 'trade';
 
 interface ActionsProps {
-  poolAddress: string;
   address1: string;
   address2: string;
   tab: ActionTabs;
@@ -29,7 +30,7 @@ interface ActionsProps {
 const Actions = ({ address1, address2, tab }: ActionsProps): JSX.Element => {
   const { tokens } = useContext(TokenContext);
   const tokenPrices = useContext(TokenPricesContext);
-  const [finalized, ] = useState(true); // TODO add finalizing
+  const [finalized] = useState(true); // TODO add finalizing
 
   const signer: ReefSigner | undefined | null = hooks.useObservableState(
     appState.selectedSigner$,
@@ -95,7 +96,6 @@ const Actions = ({ address1, address2, tab }: ActionsProps): JSX.Element => {
     updateTokenState: async () => {}, // eslint-disable-line
   });
 
-
   // Withdraw
   const [withdrawState, withdrawDispatch] = useReducer(
     store.removeLiquidityReducer,
@@ -124,60 +124,71 @@ const Actions = ({ address1, address2, tab }: ActionsProps): JSX.Element => {
   // If finalized is false action will be 'false-void'
   const action = `${finalized}-${finalized ? tab : 'void'}`;
   switch (action) {
-    case "false-void":
+    case 'false-void':
       return <Finalizing />;
-    case "true-trade":
-      return <Trade
-        tokens={tokens} 
-        state={tradeState}
-        actions={{
-          onSwap,
-          onSwitch,
-          setPercentage: (amount: number) => tradeDispatch(store.setPercentageAction(amount)),
-          setToken1Amount: (amount: string): void => tradeDispatch(store.setToken1AmountAction(amount)),
-          setToken2Amount: (amount: string): void => tradeDispatch(store.setToken2AmountAction(amount)),
-          // selectToken1: (token: Token): void => tradeDispatch(store.setToken1Action(token)),
-          // selectToken2: (token: Token): void => tradeDispatch(store.setToken2Action(token)),
-        }}
-      />;
-    case "true-provide":
-      return <Provide 
-        state={provideState}
-        tokens={tokens}
-        actions={{
-          onAddLiquidity,
-          setPercentage: (amount: number) => provideDispatch(store.setPercentageAction(amount)),
-          setToken1Amount: (amount: any) => provideDispatch(store.setToken1AmountAction(amount)),
-          setToken2Amount: (amount: any) => provideDispatch(store.setToken2AmountAction(amount)), 
-        }}
-      />;
-    case "true-withdraw":
-      return <Withdraw 
-        state={withdrawState}
-        actions={{
-          onRemoveLiquidity,
-          setPercentage: (percentage: number) => withdrawDispatch(store.setPercentageAction(percentage))
-        }}
-      />;
+    case 'true-trade':
+      return (
+        <Trade
+          tokens={tokens}
+          state={tradeState}
+          actions={{
+            onSwap,
+            onSwitch,
+            setPercentage: (amount: number) => tradeDispatch(store.setPercentageAction(amount)),
+            setToken1Amount: (amount: string): void => tradeDispatch(store.setToken1AmountAction(amount)),
+            setToken2Amount: (amount: string): void => tradeDispatch(store.setToken2AmountAction(amount)),
+            // selectToken1: (token: Token): void => tradeDispatch(store.setToken1Action(token)),
+            // selectToken2: (token: Token): void => tradeDispatch(store.setToken2Action(token)),
+          }}
+        />
+      );
+    case 'true-provide':
+      return (
+        <Provide
+          state={provideState}
+          tokens={tokens}
+          actions={{
+            onAddLiquidity,
+            setPercentage: (amount: number) => provideDispatch(store.setPercentageAction(amount)),
+            setToken1Amount: (amount: any) => provideDispatch(store.setToken1AmountAction(amount)),
+            setToken2Amount: (amount: any) => provideDispatch(store.setToken2AmountAction(amount)),
+          }}
+        />
+      );
+    case 'true-withdraw':
+      return (
+        <Withdraw
+          state={withdrawState}
+          actions={{
+            onRemoveLiquidity,
+            setPercentage: (percentage: number) => withdrawDispatch(store.setPercentageAction(percentage)),
+          }}
+        />
+      );
     default:
       return <Finalizing />;
   }
 };
 
-const ActionsWrapper = ({address1, address2, poolAddress, tab}: ActionsProps): JSX.Element => {
+interface ActionsWrapperProps extends ActionsProps {
+  poolAddress: string;
+}
+const ActionsWrapper = ({
+  address1, address2, poolAddress, tab,
+}: ActionsWrapperProps): JSX.Element => {
   const history = useHistory();
 
   const selectTab = (newTab: ActionTabs): void => {
     history.push(
       POOL_CHART_URL
         .replace(':address', poolAddress)
-        .replace(':action', newTab.toLowerCase())
+        .replace(':action', newTab.toLowerCase()),
     );
-  }
+  };
 
   return (
     <div
-      className='uik-pool-actions pool-actions'
+      className="uik-pool-actions pool-actions"
     >
       <div className="uik-pool-actions__top">
         <Uik.Tabs
@@ -186,14 +197,13 @@ const ActionsWrapper = ({address1, address2, poolAddress, tab}: ActionsProps): J
           options={['Trade', 'Provide', 'Withdraw']}
         />
       </div>
-      <Actions 
+      <Actions
         address1={address1}
         address2={address2}
         tab={tab}
-        poolAddress={poolAddress}
       />
     </div>
-  )
-}
+  );
+};
 
 export default ActionsWrapper;
