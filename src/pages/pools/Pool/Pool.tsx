@@ -2,14 +2,14 @@ import { appState, hooks, ReefSigner } from '@reef-defi/react-lib';
 import React, { useContext, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import TokenPricesContext from '../../../context/TokenPricesContext';
-import Actions from './Actions';
+import Actions, { ActionTabs } from './Actions';
 import Chart from './Chart';
 import './pool.css';
 import Stats from './Stats';
 
 interface Params {
   address: string;
-  action: string;
+  action: ActionTabs;
 }
 interface Time {
   time: Date;
@@ -22,7 +22,7 @@ const timeToNumber = <T extends Time>(obj: T) => ({
 });
 
 const Pool = (): JSX.Element => {
-  const { address } = useParams<Params>();
+  const { address, action } = useParams<Params>();
   const tokenPrices = useContext(TokenPricesContext);
 
   const signer: ReefSigner | undefined | null = hooks.useObservableState(
@@ -58,6 +58,8 @@ const Pool = (): JSX.Element => {
 
       <div className="pool__content">
         <Actions
+          tab={action}
+          poolAddress={address}
           address1={poolInfo.firstToken.address}
           address2={poolInfo.secondToken.address}
         />

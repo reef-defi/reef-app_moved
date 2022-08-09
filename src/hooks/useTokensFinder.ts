@@ -67,7 +67,7 @@ export const useTokensFinder = ({
         defaultAmountValue: reefTokenWithAmount(),
       })
         .then(setToken1)
-        .catch((e) => console.error(`Token: ${address1} was not found`));
+        .catch(() => console.error(`Token: ${address1} was not found`));
 
       await findToken({
         signer,
@@ -76,7 +76,7 @@ export const useTokensFinder = ({
         defaultAmountValue: createEmptyTokenWithAmount(),
       })
         .then(setToken2)
-        .catch((e) => console.error(`Token: ${address2} was not found`));
+        .catch(() => console.error(`Token: ${address2} was not found`));
 
       setState('Success');
     };

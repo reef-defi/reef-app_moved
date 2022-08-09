@@ -1,20 +1,18 @@
+import { ApolloClient, ApolloProvider } from '@apollo/client';
+import { defaultOptions, graphql, hooks } from '@reef-defi/react-lib';
 import React from 'react';
-import {
-  appState, availableNetworks, defaultOptions, graphql, hooks, ReefSigner,
-} from '@reef-defi/react-lib';
-import { ApolloProvider, ApolloClient } from '@apollo/client';
-import { ToastContainer, toast } from 'react-toastify';
 import { useHistory } from 'react-router-dom';
-import ContentRouter from './pages/ContentRouter';
-import Nav from './common/Nav';
-import NoExtension from './pages/error/NoExtension';
-import NoAccount from './pages/error/NoAccount';
-import OptionContext from './context/OptionContext';
-import { notify } from './utils/utils';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Nav from './common/Nav';
+import OptionContext from './context/OptionContext';
+import ContentRouter from './pages/ContentRouter';
+import NoAccount from './pages/error/NoAccount';
+import NoExtension from './pages/error/NoExtension';
+import { notify } from './utils/utils';
 
 const App = (): JSX.Element => {
-  const { provider, loading, error } = hooks.useInitReefState(
+  const { loading, error } = hooks.useInitReefState(
     'Reef Wallet App', { ipfsHashResolverFn: (hash: string) => `https://reef.infura-ipfs.io/ipfs/${hash}` },
   );
   const history = useHistory();

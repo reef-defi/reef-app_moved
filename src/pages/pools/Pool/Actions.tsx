@@ -1,4 +1,3 @@
-import './actions.css';
 import {
   appState,
   Components,
@@ -7,23 +6,32 @@ import {
   ReefSigner,
   store,
 } from '@reef-defi/react-lib';
-import React, { useContext, useMemo, useReducer } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import Uik from '@reef-defi/ui-kit';
+import React, { useContext, useReducer, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import TokenContext from '../../../context/TokenContext';
 import TokenPricesContext from '../../../context/TokenPricesContext';
+import { POOL_CHART_URL } from '../../../urls';
 import { notify } from '../../../utils/utils';
+import './actions.css';
 
-const { PoolActions } = Components;
+const {
+  Trade, Provide, Finalizing, Withdraw,
+} = Components;
 
-interface Actions {
+export type ActionTabs = 'provide' | 'withdraw' | 'trade';
+
+interface ActionsProps {
   address1: string;
   address2: string;
+  tab: ActionTabs;
 }
 
-const Actions = ({ address1, address2 }: Actions): JSX.Element => {
-  const history = useHistory();
+const Actions = ({ address1, address2, tab }: ActionsProps): JSX.Element => {
   const { tokens } = useContext(TokenContext);
   const tokenPrices = useContext(TokenPricesContext);
+  const [finalized] = useState(true); // TODO add finalizing
+
   const signer: ReefSigner | undefined | null = hooks.useObservableState(
     appState.selectedSigner$,
   );
@@ -62,16 +70,6 @@ const Actions = ({ address1, address2 }: Actions): JSX.Element => {
     tradeDispatch(store.clearTokenAmountsAction());
   };
 
-  const trade = {
-    state: tradeState,
-    actions: {
-      onSwap,
-      onSwitch,
-      setPercentage: (amount: number) => tradeDispatch(store.setPercentageAction(amount)),
-      setToken1Amount: (amount: string): void => tradeDispatch(store.setToken1AmountAction(amount)),
-      setToken2Amount: (amount: string): void => tradeDispatch(store.setToken2AmountAction(amount)),
-    },
-  };
   // Provide
   const [provideState, provideDispatch] = useReducer(
     store.addLiquidityReducer,
@@ -98,17 +96,6 @@ const Actions = ({ address1, address2 }: Actions): JSX.Element => {
     updateTokenState: async () => {}, // eslint-disable-line
   });
 
-  const provide = {
-    state: provideState,
-    actions: {
-      onAddLiquidity,
-      back: history.goBack,
-      setPercentage: (amount: number) => provideDispatch(store.setPercentageAction(amount)),
-      setToken1Amount: (amount: any) => provideDispatch(store.setToken1AmountAction(amount)),
-      setToken2Amount: (amount: any) => provideDispatch(store.setToken2AmountAction(amount)),
-    },
-  };
-
   // Withdraw
   const [withdrawState, withdrawDispatch] = useReducer(
     store.removeLiquidityReducer,
@@ -134,38 +121,89 @@ const Actions = ({ address1, address2 }: Actions): JSX.Element => {
     dispatch: withdrawDispatch,
   });
 
-  const withdraw = {
-    state: withdrawState,
-    actions: {
-      onRemoveLiquidity,
-      back: history.goBack,
-      setPercentage: (percentage: number) => withdrawDispatch(store.setPercentageAction(percentage)),
-    },
+  // If finalized is false action will be 'false-void'
+  const action = `${finalized}-${finalized ? tab : 'void'}`;
+  switch (action) {
+    case 'false-void':
+      return <Finalizing />;
+    case 'true-trade':
+      return (
+        <Trade
+          tokens={tokens}
+          state={tradeState}
+          actions={{
+            onSwap,
+            onSwitch,
+            setPercentage: (amount: number) => tradeDispatch(store.setPercentageAction(amount)),
+            setToken1Amount: (amount: string): void => tradeDispatch(store.setToken1AmountAction(amount)),
+            setToken2Amount: (amount: string): void => tradeDispatch(store.setToken2AmountAction(amount)),
+            // selectToken1: (token: Token): void => tradeDispatch(store.setToken1Action(token)),
+            // selectToken2: (token: Token): void => tradeDispatch(store.setToken2Action(token)),
+          }}
+        />
+      );
+    case 'true-provide':
+      return (
+        <Provide
+          state={provideState}
+          tokens={tokens}
+          actions={{
+            onAddLiquidity,
+            setPercentage: (amount: number) => provideDispatch(store.setPercentageAction(amount)),
+            setToken1Amount: (amount: any) => provideDispatch(store.setToken1AmountAction(amount)),
+            setToken2Amount: (amount: any) => provideDispatch(store.setToken2AmountAction(amount)),
+          }}
+        />
+      );
+    case 'true-withdraw':
+      return (
+        <Withdraw
+          state={withdrawState}
+          actions={{
+            onRemoveLiquidity,
+            setPercentage: (percentage: number) => withdrawDispatch(store.setPercentageAction(percentage)),
+          }}
+        />
+      );
+    default:
+      return <Finalizing />;
+  }
+};
+
+interface ActionsWrapperProps extends ActionsProps {
+  poolAddress: string;
+}
+const ActionsWrapper = ({
+  address1, address2, poolAddress, tab,
+}: ActionsWrapperProps): JSX.Element => {
+  const history = useHistory();
+
+  const selectTab = (newTab: ActionTabs): void => {
+    history.push(
+      POOL_CHART_URL
+        .replace(':address', poolAddress)
+        .replace(':action', newTab.toLowerCase()),
+    );
   };
 
-  const params = useParams();
-  const getTab = useMemo(() => {
-    // @ts-ignore-next-line
-    const { action } = params;
-    return action.charAt(0).toUpperCase() + action.slice(1);
-  }, [params]);
-
   return (
-    <>
-      {
-        !!signer
-        && (
-        <PoolActions
-          className="pool-actions"
-          tab={getTab}
-          trade={trade}
-          provide={provide}
-          withdraw={withdraw}
+    <div
+      className="uik-pool-actions pool-actions"
+    >
+      <div className="uik-pool-actions__top">
+        <Uik.Tabs
+          value={tab}
+          onChange={(value) => selectTab(value)}
+          options={['Trade', 'Provide', 'Withdraw']}
         />
-        )
-      }
-    </>
+      </div>
+      <Actions
+        address1={address1}
+        address2={address2}
+        tab={tab}
+      />
+    </div>
   );
 };
 
-export default Actions;
+export default ActionsWrapper;
