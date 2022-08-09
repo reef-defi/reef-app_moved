@@ -127,7 +127,9 @@ const Actions = ({ address1, address2, tab }: ActionsProps): JSX.Element => {
     case "false-void":
       return <Finalizing />;
     case "true-trade":
-      return <Trade 
+      return <Trade
+        tokens={tokens} 
+        state={tradeState}
         actions={{
           onSwap,
           onSwitch,
@@ -137,11 +139,11 @@ const Actions = ({ address1, address2, tab }: ActionsProps): JSX.Element => {
           // selectToken1: (token: Token): void => tradeDispatch(store.setToken1Action(token)),
           // selectToken2: (token: Token): void => tradeDispatch(store.setToken2Action(token)),
         }}
-        state={tradeState}
       />;
     case "true-provide":
       return <Provide 
         state={provideState}
+        tokens={tokens}
         actions={{
           onAddLiquidity,
           setPercentage: (amount: number) => provideDispatch(store.setPercentageAction(amount)),
