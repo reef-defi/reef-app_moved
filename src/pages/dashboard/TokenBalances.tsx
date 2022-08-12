@@ -1,9 +1,14 @@
 import { Token } from '@reef-defi/react-lib';
-import React from 'react';
-import { TokenPill } from './TokenPill';
+import React, { useContext, useState } from 'react';
+import OverlaySend from '../../common/OverlaySend';
+import OverlaySwap from '../../common/OverlaySwap';
+import TokenPricesContext from '../../context/TokenPricesContext';
+import TokenCard from './TokenCard';
+
 
 interface TokenBalances {
-  tokens: Token[];
+    tokens: Token[];
+    onRefresh?: () => void;
 }
 
 export const Skeleton = (): JSX.Element => (
@@ -36,27 +41,39 @@ export const Skeleton = (): JSX.Element => (
   </div>
 );
 
-export const TokenBalances = ({ tokens }: TokenBalances): JSX.Element => (
-  <div className="token-balances">
-    <div className="col-12">
-      {tokens.length === 0 && (
-      <div className="tokens-container">
-        <Skeleton />
-        <Skeleton />
-      </div>
-      )}
-      { tokens.length > 0 && (
-      <div
-        className={`
-          tokens-container
-          ${tokens?.length === 1 ? 'tokens-container--single' : ''}
-        `}
-        style={{ maxHeight: 'auto' }}
-      >
-        {tokens.map((token) => (<TokenPill token={token} key={token.address} />))}
-      </div>
-      )}
-    </div>
-  </div>
+export const TokenBalances = ({ tokens }: TokenBalances): JSX.Element => {
+  const tokenPrices = useContext(TokenPricesContext);
+  const [isSwapOpen, setSwapOpen] = useState(false);
+  const [isSendOpen, setSendOpen] = useState(false);
 
-);
+  const tokenCards = tokens
+    .filter(({balance}) => balance.gt(0))
+    .map((token) => (
+      <TokenCard
+        key={token.address}
+        token={token}
+        price={tokenPrices[token.address] || 0}
+        onClickSwap={() => setSwapOpen(true)}
+        onClickSend={() => setSendOpen(true)}
+      />
+    ));
+    
+  return (
+    <div className="dashboard__tokens">
+      { tokenCards }
+      { tokens.length === 0 &&
+        <div className="dashboard__no-tokens">No tokens to display.</div>
+      }
+
+      <OverlaySwap
+        isOpen={isSwapOpen}
+        onClose={() => setSwapOpen(false)}
+      />
+
+      <OverlaySend
+        isOpen={isSendOpen}
+        onClose={() => setSendOpen(false)}
+      />
+    </div>
+  );
+};

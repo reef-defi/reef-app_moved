@@ -91,7 +91,7 @@ const Dashboard = (): JSX.Element => {
         <div className="dashboard__left">
           <Tabs tabs={tabs} selected={tab} onChange={(e) => setTab(e)} />
 
-          { tab === 'tokens' ? <TokenBalances tokens={availableTokens} /> : '' }
+          { tab === 'tokens' ? <TokenBalances tokens={tokens} /> : '' }
           { tab === 'staking' ? <Staking /> : '' }
           { tab === 'nfts' ? <Nfts nfts={nfts} /> : '' }
           { tab === 'activity' ? <TokenActivity address={selectedSigner?.evmAddress} /> : '' }
