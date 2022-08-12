@@ -187,9 +187,7 @@ const ActionsWrapper = ({
   };
 
   return (
-    <div
-      className="uik-pool-actions pool-actions"
-    >
+    <div className="uik-pool-actions pool-actions">
       <div className="uik-pool-actions__top">
         <Uik.Tabs
           value={tab}

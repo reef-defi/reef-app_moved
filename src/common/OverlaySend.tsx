@@ -23,7 +23,7 @@ const OverlaySend = ({
   return (
     <OverlayAction
       isOpen={isOpen}
-      title="Swap"
+      title="Send"
       onClose={onClose}
     > 
       { provider && signer &&
