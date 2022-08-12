@@ -60,21 +60,20 @@ const OverlaySwap = ({
       isOpen={isOpen}
       title="Swap"
       onClose={onClose}
-    >(
+    >
       <Trade
         tokens={tokens}
         state={tradeState}
         actions={{
           onSwap,
           onSwitch,
+          selectToken1: (token: Token): void => setAddress1(token.address),
+          selectToken2: (token: Token): void => setAddress2(token.address),
           setPercentage: (amount: number) => tradeDispatch(store.setPercentageAction(amount)),
           setToken1Amount: (amount: string): void => tradeDispatch(store.setToken1AmountAction(amount)),
           setToken2Amount: (amount: string): void => tradeDispatch(store.setToken2AmountAction(amount)),
-          selectToken1: (token: Token): void => setAddress1(token.address),
-          selectToken2: (token: Token): void => setAddress2(token.address),
         }}
       />
-    );
     </OverlayAction>
   );
 }
