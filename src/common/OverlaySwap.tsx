@@ -3,9 +3,8 @@ import React, { useContext, useReducer, useState } from 'react';
 import TokenContext from '../context/TokenContext';
 import TokenPricesContext from '../context/TokenPricesContext';
 import { notify } from '../utils/utils';
-import OverlayAction from './OverlayAction';
 
-const {Trade} = Components;
+const {Trade, OverlayAction} = Components;
 
 export interface OverlaySwap {
   isOpen: boolean,
