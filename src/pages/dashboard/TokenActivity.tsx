@@ -1,13 +1,9 @@
-import React from 'react';
 import {
-  appState, createEmptyTokenWithAmount, hooks, Network, TokenTransfer,
+  appState, createEmptyTokenWithAmount, hooks,
 } from '@reef-defi/react-lib';
-import { TokenActivityItem, TokenActivityType } from './TokenActivityItem';
+import React from 'react';
 import './TokenActivity.css';
-
-interface TokenActivity {
-    address: string | undefined;
-}
+import { TokenActivityItem, TokenActivityType } from './TokenActivityItem';
 
 const noActivityTokenDisplay = createEmptyTokenWithAmount();
 noActivityTokenDisplay.address = '0x';
@@ -25,8 +21,8 @@ export const Skeleton = (): JSX.Element => (
     <div className="token-activity-skeleton__amount" />
   </div>
 );
-export const TokenActivity = ({ address }: TokenActivity): JSX.Element => {
-  const transfers: TokenTransfer[]|null|undefined = hooks.useObservableState(appState.transferHistory$);
+export const TokenActivity = (): JSX.Element => {
+  const transfers = hooks.useObservableState(appState.transferHistory$);
 
   return (
     <div className="token-activity">

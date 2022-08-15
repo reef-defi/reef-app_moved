@@ -126,7 +126,6 @@ async function calcuateBondTimes(contract: Contract): Promise<IBondTimes> {
   }
   const lockTime = formatDistance(new Date(secondsToMilliseconds(ends)), new Date(secondsToMilliseconds(starts)));
   const availableLockTime = opportunity === ends ? formatDistance(new Date(secondsToMilliseconds(ends)), new Date()) : lockTime;
-  const totalSupply = await contract?.totalSupply();
   const timeLeft = formatTimeLeftObj(intervalToDuration({
     start: new Date(),
     end: new Date(secondsToMilliseconds(ends)),
@@ -178,10 +177,10 @@ async function bondFunds(erc20Address: string, contract: Contract, signer: ReefS
   // const bondAmount = BigNumber.from(amount);
   const erc20 = await rpc.getREEF20Contract(erc20Address, signer.signer);
   const tx = await erc20?.contract.approve(contract.address, bondAmount);
-  const receipt = await tx.wait();
+  await tx.wait();
   status({ message: 'Staking' });
   const bonded = await contract.stake(bondAmount);
-  const bondedR = await bonded.wait();
+  await bonded.wait();
 }
 
 const formatAmountNearZero = (amount: string, symbol = ''): string => {
@@ -271,7 +270,7 @@ export const BondsComponent = ({
   const [loadingValues, setLoadingValues] = useState(false);
   const [txStatus, setTxStatus] = useState<ITxStatus | undefined>(undefined);
   const [validationText, setValidationText] = useState('');
-  const [bondRewards, setBondRewards] = useState<{total:number, average:number, days:number}>();
+  const [, setBondRewards] = useState<{total:number, average:number, days:number}>();
 
   /* useEffect(() => {
     if (bondRewards) {

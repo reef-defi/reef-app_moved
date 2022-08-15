@@ -1,14 +1,10 @@
 import { Token } from '@reef-defi/react-lib';
-import React, { useContext, useState } from 'react';
-import OverlaySend from '../../common/OverlaySend';
-import OverlaySwap from '../../common/OverlaySwap';
+import React, { useContext } from 'react';
 import TokenPricesContext from '../../context/TokenPricesContext';
 import TokenCard from './TokenCard';
 
-
 interface TokenBalances {
-    tokens: Token[];
-    onRefresh?: () => void;
+  tokens: Token[];
 }
 
 export const Skeleton = (): JSX.Element => (
@@ -45,7 +41,7 @@ export const TokenBalances = ({ tokens }: TokenBalances): JSX.Element => {
   const tokenPrices = useContext(TokenPricesContext);
 
   const tokenCards = tokens
-    .filter(({balance}) => balance.gt(0))
+    .filter(({ balance }) => balance.gt(0))
     .map((token) => (
       <TokenCard
         key={token.address}
@@ -53,13 +49,12 @@ export const TokenBalances = ({ tokens }: TokenBalances): JSX.Element => {
         price={tokenPrices[token.address] || 0}
       />
     ));
-    
+
   return (
     <div className="dashboard__tokens">
       { tokenCards }
-      { tokens.length === 0 &&
-        <div className="dashboard__no-tokens">No tokens to display.</div>
-      }
+      { tokens.length === 0
+        && <div className="dashboard__no-tokens">No tokens to display.</div>}
     </div>
   );
 };

@@ -1,15 +1,17 @@
-import { appState, Components, hooks, store, Token } from '@reef-defi/react-lib';
+import {
+  appState, Components, hooks, store, Token,
+} from '@reef-defi/react-lib';
 import React, { useContext, useReducer, useState } from 'react';
 import TokenContext from '../context/TokenContext';
 import TokenPricesContext from '../context/TokenPricesContext';
 import { notify } from '../utils/utils';
 
-const {Trade, OverlayAction} = Components;
+const { Trade, OverlayAction } = Components;
 
 export interface OverlaySwap {
-  isOpen: boolean,
+  isOpen: boolean;
   tokenAddress: string;
-  onClose?: () => any
+  onClose?: () => void;
 }
 
 const OverlaySwap = ({
@@ -18,8 +20,8 @@ const OverlaySwap = ({
   onClose,
 }: OverlaySwap): JSX.Element => {
   const [address1, setAddress1] = useState(tokenAddress);
-  const [address2, setAddress2] = useState("0x");
-  const {tokens} = useContext(TokenContext);
+  const [address2, setAddress2] = useState('0x');
+  const { tokens } = useContext(TokenContext);
   const tokenPrices = useContext(TokenPricesContext);
 
   const network = hooks.useObservableState(appState.currentNetwork$);
@@ -76,9 +78,9 @@ const OverlaySwap = ({
             setToken2Amount: (amount: string): void => tradeDispatch(store.setToken2AmountAction(amount)),
           }}
         />
-      </div> 
+      </div>
     </OverlayAction>
   );
-}
+};
 
 export default OverlaySwap;

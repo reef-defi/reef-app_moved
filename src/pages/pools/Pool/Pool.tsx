@@ -1,5 +1,5 @@
 import { appState, hooks, ReefSigner } from '@reef-defi/react-lib';
-import React, { useContext, useMemo } from 'react';
+import React, { useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import TokenPricesContext from '../../../context/TokenPricesContext';
 import Actions, { ActionTabs } from './Actions';
@@ -29,7 +29,7 @@ const Pool = (): JSX.Element => {
     appState.selectedSigner$,
   );
 
-  const [poolInfo, loading] = hooks.usePoolInfo(
+  const [poolInfo] = hooks.usePoolInfo(
     address,
     signer?.address || '',
     tokenPrices,
@@ -40,7 +40,7 @@ const Pool = (): JSX.Element => {
   const decimal1 = 18; // TODO(poolInfo ? poolInfo.firstToken.] : 0) || 0;
   const decimal2 = 18; // TODO(poolInfo ? poolInfo.firstToken.] : 0) || 0;
 
-  const [poolData, poolDataLoading] = hooks.usePoolData({
+  const [poolData] = hooks.usePoolData({
     address,
     decimal1,
     decimal2,

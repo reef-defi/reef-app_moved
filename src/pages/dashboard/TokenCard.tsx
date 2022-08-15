@@ -1,22 +1,20 @@
-import React, { useState } from 'react';
-import './token-card.css';
-import Uik from '@reef-defi/ui-kit';
 import {
   faRepeat,
-  faPaperPlane,
 } from '@fortawesome/free-solid-svg-icons';
 import { Token, utils } from '@reef-defi/react-lib';
-import { toCurrencyFormat } from '../../utils/utils';
+import Uik from '@reef-defi/ui-kit';
 import BigNumber from 'bignumber.js';
+import React, { useState } from 'react';
 import OverlaySwap from '../../common/OverlaySwap';
-import OverlaySend from '../../common/OverlaySend';
+import { toCurrencyFormat } from '../../utils/utils';
+import './token-card.css';
 
-const { isDataSet, showBalance } = utils;
+const { showBalance } = utils;
 
 export interface TokenCard {
   price: number;
   token: Token
-  onClickPrice?: (...args: any[]) => any
+  onClickPrice?: () => void;
   className?: string
 }
 
@@ -27,7 +25,7 @@ const TokenCard = ({
   className,
 }: TokenCard): JSX.Element => {
   const [isSwapOpen, setSwapOpen] = useState(false);
-  const [isSendOpen, setSendOpen] = useState(false);
+  // const [isSendOpen, setSendOpen] = useState(false);
 
   const copyAddress = (): void => {
     navigator.clipboard.writeText(token.address).then(() => {
@@ -36,7 +34,7 @@ const TokenCard = ({
       Uik.notify.danger('Cannot copy to clipboard');
     });
   };
-   
+
   const balanceValue = new BigNumber(token.balance.toString())
     .div(new BigNumber(10).pow(token.decimals))
     .multipliedBy(price)
@@ -101,7 +99,6 @@ const TokenCard = ({
           /> */}
         </div>
       </div>
-
 
       <OverlaySwap
         tokenAddress={token.address}
