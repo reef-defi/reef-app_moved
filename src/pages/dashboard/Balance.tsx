@@ -1,8 +1,5 @@
 import React from 'react';
-import { Components, utils } from '@reef-defi/react-lib';
 import { toCurrencyFormat } from '../../utils/utils';
-
-const { isDataSet, DataProgress } = utils;
 
 interface Balance {
   balance: number;
@@ -32,11 +29,6 @@ export const Balance = ({ balance, loading }:Balance): JSX.Element => (
         </span>
       )}
       {loading && <Loading />}
-      {/* {!isDataSet(balance) && balance === DataProgress.NO_DATA && (
-      <span className="dashboard_balance-txt title-font text-bold text-color-dark-accent">
-        {toCurrencyFormat(0, { maximumFractionDigits: 0 })}
-      </span>
-      )} */}
     </div>
   </div>
 );

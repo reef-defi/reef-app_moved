@@ -1,12 +1,8 @@
-import {
-  Components, Token, TokenNFT, utils,
-} from '@reef-defi/react-lib';
+import { Token, TokenNFT, utils } from '@reef-defi/react-lib';
 import React from 'react';
-import { formatDate } from '../../utils/utils';
 import './TokenActivityItem.css';
 
 const { showBalance } = utils;
-const { Loading } = Components.Loading;
 
 interface TokenActivityItem {
   timestamp: number;

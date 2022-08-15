@@ -2,7 +2,7 @@ import React from 'react';
 import Bubbles from './Bubbles';
 import './css/index.css';
 
-const NoExtension: React.FC<unknown> = ({ children }): JSX.Element => (
+const NoExtension = (): JSX.Element => (
   <div className="no-extension">
     <header className="header">
       <div className="header__content">

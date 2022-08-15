@@ -1,7 +1,7 @@
-import React from 'react';
 import {
   appState, Components, hooks, utils,
 } from '@reef-defi/react-lib';
+import React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { ADD_LIQUIDITY_URL, REMOVE_LIQUIDITY_URL, SPECIFIED_SWAP_URL } from '../../urls';
 
