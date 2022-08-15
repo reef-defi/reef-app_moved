@@ -1,4 +1,4 @@
-import { appState, Components, hooks, store, Token, utils } from '@reef-defi/react-lib';
+import { appState, Components, hooks, store, Token } from '@reef-defi/react-lib';
 import React, { useContext, useReducer, useState } from 'react';
 import TokenContext from '../context/TokenContext';
 import TokenPricesContext from '../context/TokenPricesContext';
@@ -8,26 +8,28 @@ const {Trade, OverlayAction} = Components;
 
 export interface OverlaySwap {
   isOpen: boolean,
+  tokenAddress: string;
   onClose?: () => any
 }
 
 const OverlaySwap = ({
+  tokenAddress,
   isOpen,
   onClose,
 }: OverlaySwap): JSX.Element => {
-  const [address1, setAddress1] = useState(utils.REEF_ADDRESS);
+  const [address1, setAddress1] = useState(tokenAddress);
   const [address2, setAddress2] = useState("0x");
   const {tokens} = useContext(TokenContext);
   const tokenPrices = useContext(TokenPricesContext);
 
   const network = hooks.useObservableState(appState.currentNetwork$);
   const signer = hooks.useObservableState(appState.selectedSigner$);
+
   // Trade
   const [tradeState, tradeDispatch] = useReducer(
     store.swapReducer,
     store.initialSwapState,
   );
-
 
   hooks.useSwapState({
     address1,
@@ -60,19 +62,21 @@ const OverlaySwap = ({
       title="Swap"
       onClose={onClose}
     >
-      <Trade
-        tokens={tokens}
-        state={tradeState}
-        actions={{
-          onSwap,
-          onSwitch,
-          selectToken1: (token: Token): void => setAddress1(token.address),
-          selectToken2: (token: Token): void => setAddress2(token.address),
-          setPercentage: (amount: number) => tradeDispatch(store.setPercentageAction(amount)),
-          setToken1Amount: (amount: string): void => tradeDispatch(store.setToken1AmountAction(amount)),
-          setToken2Amount: (amount: string): void => tradeDispatch(store.setToken2AmountAction(amount)),
-        }}
-      />
+      <div className="uik-pool-actions pool-actions">
+        <Trade
+          tokens={tokens}
+          state={tradeState}
+          actions={{
+            onSwap,
+            onSwitch,
+            selectToken1: (token: Token): void => setAddress1(token.address),
+            selectToken2: (token: Token): void => setAddress2(token.address),
+            setPercentage: (amount: number) => tradeDispatch(store.setPercentageAction(amount)),
+            setToken1Amount: (amount: string): void => tradeDispatch(store.setToken1AmountAction(amount)),
+            setToken2Amount: (amount: string): void => tradeDispatch(store.setToken2AmountAction(amount)),
+          }}
+        />
+      </div> 
     </OverlayAction>
   );
 }

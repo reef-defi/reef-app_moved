@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './token-card.css';
 import Uik from '@reef-defi/ui-kit';
 import {
@@ -8,14 +8,14 @@ import {
 import { Token, utils } from '@reef-defi/react-lib';
 import { toCurrencyFormat } from '../../utils/utils';
 import BigNumber from 'bignumber.js';
+import OverlaySwap from '../../common/OverlaySwap';
+import OverlaySend from '../../common/OverlaySend';
 
 const { isDataSet, showBalance } = utils;
 
 export interface TokenCard {
   price: number;
   token: Token
-  onClickSwap?: (...args: any[]) => any
-  onClickSend?: (...args: any[]) => any
   onClickPrice?: (...args: any[]) => any
   className?: string
 }
@@ -23,11 +23,12 @@ export interface TokenCard {
 const TokenCard = ({
   token,
   price,
-  onClickSwap,
-  onClickSend,
   onClickPrice,
   className,
 }: TokenCard): JSX.Element => {
+  const [isSwapOpen, setSwapOpen] = useState(false);
+  const [isSendOpen, setSendOpen] = useState(false);
+
   const copyAddress = (): void => {
     navigator.clipboard.writeText(token.address).then(() => {
       Uik.notify.info('Copied token address to clipboard');
@@ -87,19 +88,31 @@ const TokenCard = ({
           <Uik.Button
             text="Swap"
             icon={faRepeat}
-            onClick={onClickSwap}
+            onClick={() => setSwapOpen(true)}
             size="small"
           />
 
-          <Uik.Button
+          {/* <Uik.Button
             text="Send"
             icon={faPaperPlane}
-            onClick={onClickSend}
+            onClick={() => setSendOpen(true)}
             size="small"
             fill
-          />
+          /> */}
         </div>
       </div>
+
+
+      <OverlaySwap
+        tokenAddress={token.address}
+        isOpen={isSwapOpen}
+        onClose={() => setSwapOpen(false)}
+      />
+
+      {/* <OverlaySend
+        isOpen={isSendOpen}
+        onClose={() => setSendOpen(false)}
+      /> */}
     </div>
   );
 };

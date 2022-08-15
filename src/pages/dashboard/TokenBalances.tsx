@@ -43,8 +43,6 @@ export const Skeleton = (): JSX.Element => (
 
 export const TokenBalances = ({ tokens }: TokenBalances): JSX.Element => {
   const tokenPrices = useContext(TokenPricesContext);
-  const [isSwapOpen, setSwapOpen] = useState(false);
-  const [isSendOpen, setSendOpen] = useState(false);
 
   const tokenCards = tokens
     .filter(({balance}) => balance.gt(0))
@@ -53,8 +51,6 @@ export const TokenBalances = ({ tokens }: TokenBalances): JSX.Element => {
         key={token.address}
         token={token}
         price={tokenPrices[token.address] || 0}
-        onClickSwap={() => setSwapOpen(true)}
-        onClickSend={() => setSendOpen(true)}
       />
     ));
     
@@ -64,16 +60,6 @@ export const TokenBalances = ({ tokens }: TokenBalances): JSX.Element => {
       { tokens.length === 0 &&
         <div className="dashboard__no-tokens">No tokens to display.</div>
       }
-
-      <OverlaySwap
-        isOpen={isSwapOpen}
-        onClose={() => setSwapOpen(false)}
-      />
-
-      <OverlaySend
-        isOpen={isSendOpen}
-        onClose={() => setSendOpen(false)}
-      />
     </div>
   );
 };
