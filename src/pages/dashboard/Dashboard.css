@@ -242,3 +242,30 @@
         display: flex;
     }
 }
+
+.dashboard-mx {
+  padding: 0;
+  width: 100%;
+  max-width: 100%;
+  min-height: calc(100vh - 60px);
+  max-height: calc(100vh - 60px);
+  overflow: hidden;
+  background-color: #ded9ed;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  animation: pool-appear 0.4s;
+}
+
+
+
+
+
+
+
+/* TODO remove completely when css lib will be fixed, kinda useless now */
+/* 
+.base_stats .ui-text--headline {
+  -webkit-text-fill-color: whitesmoke !important; 
+} */
