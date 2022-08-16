@@ -1,0 +1,30 @@
+
+.stats {
+  width: 100%;
+  max-width: 100%;
+  position: relative;
+  background: linear-gradient(to right, #962477, #5631a3);
+  transform-origin: 50% 0;
+}
+
+.stats__wrapper {
+  width: 100%;
+  max-width: calc(1500px + 3.5rem * 2);
+  margin: 0 auto;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: stretch;
+  animation: pool-stats-content-appear 0.4s;
+}
+
+.stats__token {
+  display: flex;
+  color: whitesmoke;
+  flex-flow: column nowrap;
+  border-left: solid 1px rgba(255, 255, 255, 0.1);
+}
+
+.base-stats {
+  color: whitesmoke;
+}
