@@ -16,7 +16,7 @@ const {
   Trade, Provide, Finalizing, Withdraw,
 } = Components;
 
-export type ActionTabs = 'provide' | 'withdraw' | 'trade';
+export type ActionTabs = 'stake' | 'unstake' | 'trade';
 
 interface ActionsProps {
   address1: string;
@@ -139,7 +139,7 @@ const Actions = ({ address1, address2, tab }: ActionsProps): JSX.Element => {
           }}
         />
       );
-    case 'true-provide':
+    case 'true-stake':
       return (
         <Provide
           state={provideState}
@@ -152,7 +152,7 @@ const Actions = ({ address1, address2, tab }: ActionsProps): JSX.Element => {
           }}
         />
       );
-    case 'true-withdraw':
+    case 'true-unstake':
       return (
         <Withdraw
           state={withdrawState}
@@ -189,7 +189,11 @@ const ActionsWrapper = ({
         <Uik.Tabs
           value={tab}
           onChange={(value) => selectTab(value)}
-          options={['Trade', 'Provide', 'Withdraw']}
+          options={[
+            { value: 'trade', text: 'Trade' },
+            { value: 'stake', text: 'Stake' },
+            { value: 'unstake', text: 'Unstake' },
+          ]}
         />
       </div>
       <Actions
