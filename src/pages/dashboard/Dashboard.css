@@ -242,3 +242,56 @@
         display: flex;
     }
 }
+
+.dashboard__tabs {
+    margin-bottom: 25px;
+}
+
+.dashboard__tokens {
+    width: 100%;
+}
+
+.dashboard__tokens-create-btn {
+    width: 100%;
+    border-radius: 15px;
+    padding: 15px;
+    background-color: transparent;
+    border: dashed 2px hsl(
+        var(--border-color-dark--h),
+        var(--border-color-dark--s),
+        calc(var(--border-color-dark--l) - 8.5%)
+    );
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: hsl(
+        var(--text--h),
+        var(--text--s),
+        var(--text--l),
+        0.85
+    );
+    line-height: 1.1;
+    min-height: 4rem;
+    transition: all 0.125s;
+    text-decoration: none;
+}
+
+.dashboard__tokens-create-btn:hover {
+    border-color: var(--primary);
+    border-style: solid;
+    color: var(--primary);
+}
+
+.dashboard__tokens-create-btn:active {
+    transform: scale(0.985);
+}
+
+.dashboard__tokens-create-btn .uik-icon {
+    width: 0.875rem;
+    height: 0.875rem;
+    margin-top: -0.125rem;
+    margin-right: 0.5rem;
+}

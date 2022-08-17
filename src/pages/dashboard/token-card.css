@@ -124,6 +124,23 @@
   margin-left: 15px;
 }
 
-.token-card + .token-card {
+.token-card + * {
   margin-top: 15px;
-} 
+}
+
+.token-card--skeleton .token-card__image {
+  background-color: var(--border-color);
+}
+
+.token-card--skeleton .token-card__token-name,
+.token-card--skeleton .token-card__token-price {
+  width: 200px;
+  height: 10px;
+  border-radius: 99px;
+  background-color: var(--border-color);
+}
+
+.token-card--skeleton .token-card__token-price {
+  width: 100px;
+  margin-top: 10px;
+}

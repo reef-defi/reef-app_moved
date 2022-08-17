@@ -1,40 +1,41 @@
 import { Token } from '@reef-defi/react-lib';
+import Uik from '@reef-defi/ui-kit';
 import React, { useContext } from 'react';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { Link } from 'react-router-dom';
 import TokenPricesContext from '../../context/TokenPricesContext';
 import TokenCard from './TokenCard';
+import { CREATE_ERC20_TOKEN_URL } from '../../urls';
 
 interface TokenBalances {
   tokens: Token[];
 }
 
 export const Skeleton = (): JSX.Element => (
-  <div className="col-md-12 col-lg-6 token-skeleton">
-    <div className="token-balance-item radius-border d-flex d-flex-space-between d-flex-vert-center">
-      <div className="token-balance-item_icon-text mr-1">
-        <div className="token-balance-item_icon-text_w mr-1">
-          <div className="token-skeleton__image" />
-        </div>
-        <div className="token-balance-item__info">
-          <div className="">
-            <div className="title-font text-bold ">
-              <div className="token-skeleton__title" />
-            </div>
-            <div className="token-balance-item_sub-title">
-              <span>
-                <div className="token-skeleton__sub-title" />
-              </span>
-            </div>
+  <div className="token-card token-card--skeleton">
+    <div className="token-card__wrapper">
+      <div className="token-card__main">
+        <div className="token-card__image" />
+        <div className="token-card__info">
+          <div className="token-card__token-info">
+            <span className="token-card__token-name" />
           </div>
-
-          <div className="token-balance-item_balances title-font text-bold text-color-dark-accent">
-            <div>
-              <div className="token-skeleton__balance" />
-            </div>
-          </div>
+          <div className="token-card__token-price" />
         </div>
       </div>
     </div>
   </div>
+);
+
+const CreateTokenButton = (): JSX.Element => (
+  <Link
+    to={CREATE_ERC20_TOKEN_URL}
+    type="button"
+    className="dashboard__tokens-create-btn"
+  >
+    <Uik.Icon icon={faPlus} />
+    <span>Create Own Token</span>
+  </Link>
 );
 
 export const TokenBalances = ({ tokens }: TokenBalances): JSX.Element => {
@@ -52,9 +53,23 @@ export const TokenBalances = ({ tokens }: TokenBalances): JSX.Element => {
 
   return (
     <div className="dashboard__tokens">
-      { tokenCards }
-      { tokens.length === 0
-        && <div className="dashboard__no-tokens">No tokens to display.</div>}
+      {
+        tokens.length === 0
+          ? (
+            <>
+              <Skeleton />
+              <Skeleton />
+              <Skeleton />
+              <Skeleton />
+            </>
+          )
+          : (
+            <>
+              { tokenCards }
+              <CreateTokenButton />
+            </>
+          )
+      }
     </div>
   );
 };

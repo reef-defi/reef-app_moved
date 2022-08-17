@@ -33,10 +33,6 @@ const DEFAULT_TABS = [
     value: 'nfts',
     text: 'NFTs',
   },
-  {
-    value: 'activity',
-    text: 'Activity',
-  },
 ];
 
 const Dashboard = (): JSX.Element => {
@@ -81,6 +77,7 @@ const Dashboard = (): JSX.Element => {
       <div className="dashboard__main">
         <div className="dashboard__left">
           <Uik.Tabs
+            className="dashboard__tabs"
             options={tabs}
             value={tab}
             onChange={(e) => setTab(e)}
