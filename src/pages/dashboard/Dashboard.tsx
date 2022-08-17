@@ -1,11 +1,11 @@
 import {
   appState, hooks, ReefSigner,
 } from '@reef-defi/react-lib';
+import Uik from '@reef-defi/ui-kit';
 import BigNumber from 'bignumber.js';
 import React, {
   useContext, useEffect, useMemo, useState,
 } from 'react';
-import Tabs from '../../common/Tabs';
 import NftContext from '../../context/NftContext';
 import TokenContext from '../../context/TokenContext';
 import TokenPricesContext from '../../context/TokenPricesContext';
@@ -21,21 +21,21 @@ import { TokenBalances } from './TokenBalances';
 
 const DEFAULT_TABS = [
   {
-    key: 'tokens',
-    title: 'Tokens',
+    value: 'tokens',
+    text: 'Tokens',
   },
   {
-    key: 'staking',
-    title: 'Staking',
-    notification: bonds?.length,
+    value: 'staking',
+    text: 'Staking',
+    indicator: bonds?.length,
   },
   {
-    key: 'nfts',
-    title: 'NFTs',
+    value: 'nfts',
+    text: 'NFTs',
   },
   {
-    key: 'activity',
-    title: 'Activity',
+    value: 'activity',
+    text: 'Activity',
   },
 ];
 
@@ -53,12 +53,12 @@ const Dashboard = (): JSX.Element => {
 
   // If account is not bound, add bind tab to 'tabs' array
   if (!!selectedSigner && !selectedSigner.isEvmClaimed) {
-    const bindTab = { key: 'bind', title: 'Bind Account' };
+    const bindTab = { value: 'bind', text: 'Bind Account' };
     tabs = [bindTab, ...tabs];
   }
 
   useEffect(() => {
-    setTab(tabs[0].key);
+    setTab(tabs[0].value);
   }, [selectedSigner]);
 
   const totalBalance = useMemo(() => tokens.reduce(
@@ -80,7 +80,11 @@ const Dashboard = (): JSX.Element => {
 
       <div className="dashboard__main">
         <div className="dashboard__left">
-          <Tabs tabs={tabs} selected={tab} onChange={(e) => setTab(e)} />
+          <Uik.Tabs
+            options={tabs}
+            value={tab}
+            onChange={(e) => setTab(e)}
+          />
 
           { tab === 'tokens' ? <TokenBalances tokens={tokens} /> : '' }
           { tab === 'staking' ? <Staking /> : '' }
