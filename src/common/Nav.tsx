@@ -9,8 +9,7 @@ import { ReefLogo, ReefTestnetLogo } from './Icons';
 import {
   addressReplacer,
   BIND_URL,
-  BONDS_URL,
-  CREATE_ERC20_TOKEN_URL, DASHBOARD_URL, defaultSwapUrl, POOLS_URL, TRANSFER_TOKEN,
+  CREATE_ERC20_TOKEN_URL, DASHBOARD_URL, POOLS_URL,
 } from '../urls';
 import { appAvailableNetworks } from '../environment';
 
@@ -27,10 +26,7 @@ const Nav = ({ display }: Nav): JSX.Element => {
   const mainnetSelected = network == null || network?.rpcUrl === availableNetworks.mainnet.rpcUrl;
   const menuItems = [
     { title: 'Dashboard', url: DASHBOARD_URL },
-    { title: 'Send', url: TRANSFER_TOKEN },
-    { title: 'Swap', url: defaultSwapUrl },
     { title: 'Pools', url: POOLS_URL },
-    { title: 'Staking', url: BONDS_URL },
     { title: 'Creator', url: CREATE_ERC20_TOKEN_URL },
   ];
 
