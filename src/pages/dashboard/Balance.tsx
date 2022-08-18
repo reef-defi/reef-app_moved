@@ -25,11 +25,12 @@ export const Balance = ({
   loading,
   className,
 }: Balance): JSX.Element => {
-  const [isHidden, setHidden] = useState(false);
+  const [isHidden, setHidden] = useState(localStorage.getItem('hideBalance') === 'true');
 
   const toggleHidden = (): boolean => {
     const value = !isHidden;
     setHidden(value);
+    localStorage.setItem('hideBalance', String(value));
     return value;
   };
 
