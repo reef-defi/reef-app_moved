@@ -15,7 +15,7 @@ html, body, #root, .App {
 
 .content > * {
     padding: 2.5rem calc(3.5rem + 5px);
-    max-width: calc(1500px + 3.5rem * 2);
+    max-width: calc(1400px + 3.5rem * 2);
     margin: 0 auto;
 }
 
