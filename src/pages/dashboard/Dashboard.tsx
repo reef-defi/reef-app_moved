@@ -13,6 +13,7 @@ import Bind from '../bind/Bind';
 import { bonds } from '../bonds/utils/bonds';
 import BuyReefButton from './BuyReefButton';
 import { Balance } from './Balance';
+import { Rewards } from './Rewards';
 import './Dashboard.css';
 import { Nfts } from './Nfts';
 import { Staking } from './Staking';
@@ -64,6 +65,7 @@ const Dashboard = (): JSX.Element => {
       <div className="dashboard__top">
         <div className="dashboard__top-left">
           <Balance balance={totalBalance} loading={loading} />
+          <Rewards rewards={0} />
         </div>
         <div className="dashboard__top-right">
           <BuyReefButton />
