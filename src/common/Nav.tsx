@@ -9,6 +9,7 @@ import { ReefLogo, ReefTestnetLogo } from './Icons';
 import {
   addressReplacer,
   BIND_URL,
+  BONDS_URL,
   CREATE_ERC20_TOKEN_URL, DASHBOARD_URL, POOLS_URL,
 } from '../urls';
 import { appAvailableNetworks } from '../environment';
@@ -27,6 +28,7 @@ const Nav = ({ display }: Nav): JSX.Element => {
   const menuItems = [
     { title: 'Dashboard', url: DASHBOARD_URL },
     { title: 'Pools', url: POOLS_URL },
+    { title: 'Bonds', url: BONDS_URL },
     { title: 'Creator', url: CREATE_ERC20_TOKEN_URL },
   ];
 
