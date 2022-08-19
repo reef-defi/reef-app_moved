@@ -1,14 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
-import {
-  Components, reefTokenWithAmount, Token, TokenWithAmount,
-} from '@reef-defi/react-lib';
 import { RIcon, SendIcon, SwapIcon } from '../../common/Icons';
 
 export const ActionButtons = (): JSX.Element => {
   const history = useHistory();
-  const [txToken, setTxToken] = useState(reefTokenWithAmount());
-  const [txAmount, setTxAmount] = useState('0');
   return (
     <div className="dashboard_actions col-12 col-md-6 d-flex d-flex-end d-flex-vert-center">
       <div className="mr-1">

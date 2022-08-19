@@ -1,4 +1,4 @@
-import { NFT as NFTData, hooks, utils } from '@reef-defi/react-lib';
+import { hooks, NFT as NFTData, utils } from '@reef-defi/react-lib';
 import React, { useState } from 'react';
 
 interface NftComponent {
@@ -20,6 +20,7 @@ const loadNft1155Data = async (address: string, balance: string): Promise<NftCom
   // Replace name and icon with loaded data
   return ({ name, icon, balance });
 };
+
 const useNftState = ({
   address, type, name, balance,
 }: NFTData): UseNftState => {

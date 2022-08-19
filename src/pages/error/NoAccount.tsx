@@ -2,7 +2,7 @@ import React from 'react';
 import Bubbles from './Bubbles';
 import './css/index.css';
 
-const NoAccount: React.FC<unknown> = ({ children }): JSX.Element => (
+const NoAccount = (): JSX.Element => (
   <div className="no-extension">
     <header className="header">
       <div className="header__content">

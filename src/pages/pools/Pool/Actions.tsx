@@ -1,10 +1,7 @@
 import {
   appState,
   Components,
-  hooks,
-  Network,
-  ReefSigner,
-  store,
+  hooks, store,
 } from '@reef-defi/react-lib';
 import Uik from '@reef-defi/ui-kit';
 import React, { useContext, useReducer, useState } from 'react';
@@ -32,10 +29,10 @@ const Actions = ({ address1, address2, tab }: ActionsProps): JSX.Element => {
   const tokenPrices = useContext(TokenPricesContext);
   const [finalized] = useState(true); // TODO add finalizing
 
-  const signer: ReefSigner | undefined | null = hooks.useObservableState(
+  const signer = hooks.useObservableState(
     appState.selectedSigner$,
   );
-  const network: Network | undefined = hooks.useObservableState(
+  const network = hooks.useObservableState(
     appState.currentNetwork$,
   );
 
@@ -150,8 +147,8 @@ const Actions = ({ address1, address2, tab }: ActionsProps): JSX.Element => {
           actions={{
             onAddLiquidity,
             setPercentage: (amount: number) => provideDispatch(store.setPercentageAction(amount)),
-            setToken1Amount: (amount: any) => provideDispatch(store.setToken1AmountAction(amount)),
-            setToken2Amount: (amount: any) => provideDispatch(store.setToken2AmountAction(amount)),
+            setToken1Amount: (amount: string) => provideDispatch(store.setToken1AmountAction(amount)),
+            setToken2Amount: (amount: string) => provideDispatch(store.setToken2AmountAction(amount)),
           }}
         />
       );
@@ -187,9 +184,7 @@ const ActionsWrapper = ({
   };
 
   return (
-    <div
-      className="uik-pool-actions pool-actions"
-    >
+    <div className="uik-pool-actions pool-actions">
       <div className="uik-pool-actions__top">
         <Uik.Tabs
           value={tab}

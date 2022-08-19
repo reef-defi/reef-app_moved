@@ -1,11 +1,10 @@
+import { NFT as NFTData } from '@reef-defi/react-lib';
 import React from 'react';
-import { NFT as NFTData, TokenNFT, utils } from '@reef-defi/react-lib';
 import './Nfts.css';
 
 import NFT from './NFT';
 
 // const { isDataSet, DataProgress } = utils;
-
 // const placeholderImage = 'https://cryptotelegram.com/wp-content/uploads/2021/04/reef-crypto-explained.jpg';
 
 export const Skeleton = (): JSX.Element => (

@@ -1,4 +1,4 @@
-type CbFunction = (...args: any[]) => any;
+type CbFunction = () => void;
 
 export interface Arguments {
   url: string,

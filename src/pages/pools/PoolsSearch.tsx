@@ -3,15 +3,15 @@ import Uik from '@reef-defi/ui-kit';
 import { faSearch, faXmark } from '@fortawesome/free-solid-svg-icons';
 import './pools.css';
 
-export interface Props {
+export interface PoolsSearch {
   value?: string,
-  onInput?: (...args: any[]) => any,
+  onInput?: (value: string) => void,
 }
 
 const PoolsSearch = ({
   value,
   onInput,
-}: Props): JSX.Element => (
+}: PoolsSearch): JSX.Element => (
   <div
     className={`
         pools-search

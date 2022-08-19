@@ -70,19 +70,20 @@ const isContrIndexed = async (address: string): Promise<boolean> => new Promise(
     resolve(false);
   }, 120000);
   const apolloClInst$: unknown = graphql.apolloClientInstance$;
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   const apollo = await firstValueFrom(apolloClInst$ as Observable<ApolloClient<any>>);
   apollo.subscribe({
     query: CONTRACT_EXISTS_GQL,
     variables: { address },
     fetchPolicy: 'network-only',
   }).subscribe({
-    next(result: any) {
+    next(result) {
       if (result.data.contract && result.data.contract.length) {
         clearTimeout(tmt);
         resolve(true);
       }
     },
-    error(err: any) {
+    error(err) {
       clearTimeout(tmt);
       console.log('isContrIndexed error=', err);
       resolve(false);

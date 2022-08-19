@@ -1,5 +1,5 @@
 import {
-  appState, hooks, ReefSigner, utils as reefUtils,
+  appState, hooks, ReefSigner,
 } from '@reef-defi/react-lib';
 import BigNumber from 'bignumber.js';
 import React, {
@@ -18,10 +18,6 @@ import { Nfts } from './Nfts';
 import { Staking } from './Staking';
 import { TokenActivity } from './TokenActivity';
 import { TokenBalances } from './TokenBalances';
-
-const {
-  DataProgress, isDataSet,
-} = reefUtils;
 
 const DEFAULT_TABS = [
   {
@@ -75,11 +71,6 @@ const Dashboard = (): JSX.Element => {
   ).toNumber(),
   [tokenPrices, tokens]);
 
-  const availableTokens = useMemo(
-    () => tokens.filter(({ balance }) => balance.gt(0)),
-    [tokens],
-  );
-
   return (
     <div className="dashboard">
       <div className="dashboard__top">
@@ -91,15 +82,15 @@ const Dashboard = (): JSX.Element => {
         <div className="dashboard__left">
           <Tabs tabs={tabs} selected={tab} onChange={(e) => setTab(e)} />
 
-          { tab === 'tokens' ? <TokenBalances tokens={availableTokens} /> : '' }
+          { tab === 'tokens' ? <TokenBalances tokens={tokens} /> : '' }
           { tab === 'staking' ? <Staking /> : '' }
           { tab === 'nfts' ? <Nfts nfts={nfts} /> : '' }
-          { tab === 'activity' ? <TokenActivity address={selectedSigner?.evmAddress} /> : '' }
+          { tab === 'activity' ? <TokenActivity /> : '' }
           { tab === 'bind' ? <Bind /> : '' }
         </div>
 
         <div className="dashboard__right">
-          <TokenActivity address={selectedSigner?.evmAddress} />
+          <TokenActivity />
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { ApolloClient, ApolloProvider } from '@apollo/client';
+import { ApolloProvider } from '@apollo/client';
 import { defaultOptions, graphql, hooks } from '@reef-defi/react-lib';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
@@ -16,7 +16,7 @@ const App = (): JSX.Element => {
     'Reef Wallet App', { ipfsHashResolverFn: (hash: string) => `https://reef.infura-ipfs.io/ipfs/${hash}` },
   );
   const history = useHistory();
-  const apollo: ApolloClient<any>|undefined = hooks.useObservableState(graphql.apolloClientInstance$);
+  const apollo = hooks.useObservableState(graphql.apolloClientInstance$);
 
   return (
     <>

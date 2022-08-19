@@ -1,5 +1,5 @@
 import { Notify } from '@reef-defi/react-lib';
-import { utils as ethUtils, BigNumber } from 'ethers';
+import { BigNumber, utils as ethUtils } from 'ethers';
 import { toast } from 'react-toastify';
 
 // eslint-disable-next-line
@@ -7,7 +7,7 @@ export const notify = (message: string, type: Notify='success'): void => {
   toast[type](message);
 };
 
-export const toCurrencyFormat = (value: number, options?: any): string => Intl.NumberFormat(navigator.language, {
+export const toCurrencyFormat = (value: number, options?: Intl.NumberFormatOptions): string => Intl.NumberFormat(navigator.language, {
   style: 'currency', currency: 'USD', currencyDisplay: 'symbol', ...options,
 }).format(value);
 
