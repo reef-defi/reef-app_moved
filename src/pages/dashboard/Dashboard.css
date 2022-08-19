@@ -78,7 +78,19 @@
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
+}
+
+.dashboard__top-left {
+    flex-basis: 0;
+    flex-grow: 2;
+}
+
+.dashboard__top-right {
+    flex-basis: 0;
+    flex-grow: 1;
+    margin-left: 80px;
+    transform: translateY(5px);
 }
 
 .dashboard__top h5 {
@@ -347,4 +359,10 @@
 
 .dashboard__balance-hide-btn .uik-icon {
     height: 16px;
+}
+
+.dashboard__left .uik-text--title {
+    padding-left: 2px;
+    margin-top: 17px;
+    margin-bottom: 15px;
 }

@@ -11,7 +11,7 @@ import TokenContext from '../../context/TokenContext';
 import TokenPricesContext from '../../context/TokenPricesContext';
 import Bind from '../bind/Bind';
 import { bonds } from '../bonds/utils/bonds';
-import { ActionButtons } from './ActionButtons';
+import BuyReefButton from './BuyReefButton';
 import { Balance } from './Balance';
 import './Dashboard.css';
 import { Nfts } from './Nfts';
@@ -19,26 +19,18 @@ import { Staking } from './Staking';
 import { TokenActivity } from './TokenActivity';
 import { TokenBalances } from './TokenBalances';
 
-const DEFAULT_TABS = [
-  {
-    value: 'tokens',
-    text: 'Tokens',
-  },
-  {
-    value: 'staking',
-    text: 'Staking',
-    indicator: bonds?.length,
-  },
-  {
-    value: 'nfts',
-    text: 'NFTs',
-  },
-];
-
 const Dashboard = (): JSX.Element => {
-  let tabs = DEFAULT_TABS;
-
   const { nfts } = useContext(NftContext);
+
+  let tabs = (() => {
+    const list = [{ value: 'tokens', text: 'Tokens' }];
+    // @todo Tab should display only bonds that have user's funds staked. Display tab if there's at least one bond to display.
+    if (bonds.length) list.push({ value: 'bonds', text: 'Bonds' });
+    if (nfts.length) list.push({ value: 'nfts', text: 'NFTs' });
+
+    return list;
+  })();
+
   const { tokens, loading } = useContext(TokenContext);
   const tokenPrices = useContext(TokenPricesContext);
 
@@ -70,23 +62,32 @@ const Dashboard = (): JSX.Element => {
   return (
     <div className="dashboard">
       <div className="dashboard__top">
-        <Balance balance={totalBalance} loading={loading} />
-        <ActionButtons />
+        <div className="dashboard__top-left">
+          <Balance balance={totalBalance} loading={loading} />
+        </div>
+        <div className="dashboard__top-right">
+          <BuyReefButton />
+        </div>
       </div>
 
       <div className="dashboard__main">
         <div className="dashboard__left">
-          <Uik.Tabs
-            className="dashboard__tabs"
-            options={tabs}
-            value={tab}
-            onChange={(e) => setTab(e)}
-          />
+          {
+            tabs.length > 1
+              ? (
+                <Uik.Tabs
+                  className="dashboard__tabs"
+                  options={tabs}
+                  value={tab}
+                  onChange={(e) => setTab(e)}
+                />
+              )
+              : <Uik.Text type="title" text="Tokens" />
+          }
 
           { tab === 'tokens' ? <TokenBalances tokens={tokens} /> : '' }
-          { tab === 'staking' ? <Staking /> : '' }
+          { tab === 'bonds' ? <Staking /> : '' }
           { tab === 'nfts' ? <Nfts nfts={nfts} /> : '' }
-          { tab === 'activity' ? <TokenActivity /> : '' }
           { tab === 'bind' ? <Bind /> : '' }
         </div>
 
