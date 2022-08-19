@@ -109,11 +109,47 @@
   font-size: 19px;
 }
 
+.token-card__value--hidden {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-end;
+  align-items: center;
+  cursor: pointer;
+}
+
+.token-card__value--hidden div {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--primary);
+  margin-left: 3px;
+  animation: dashboard-balance-hidden-dot 0.15s;
+}
+
 .token-card__amount {
   font-size: 13px;
   line-height: 1.25;
   font-weight: 500;
   color: var(--text);
+}
+
+.token-card__amount--hidden {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-end;
+  align-items: center;
+  padding-top: 7px;
+  margin-bottom: -1px;
+  cursor: pointer;
+}
+
+.token-card__amount--hidden div {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--text-light);
+  margin-left: 3px;
+  animation: dashboard-balance-hidden-dot 0.15s;
 }
 
 .token-card .uik-button .uik-button__icon {

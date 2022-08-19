@@ -1,7 +1,8 @@
 import Uik from '@reef-defi/ui-kit';
-import React, { useState, useMemo } from 'react';
+import React, { useContext, useMemo } from 'react';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { toCurrencyFormat } from '../../utils/utils';
+import HideBalance from '../../context/HideBalance';
 
 interface Balance {
   balance: number;
@@ -25,14 +26,7 @@ export const Balance = ({
   loading,
   className,
 }: Balance): JSX.Element => {
-  const [isHidden, setHidden] = useState(localStorage.getItem('hideBalance') === 'true');
-
-  const toggleHidden = (): boolean => {
-    const value = !isHidden;
-    setHidden(value);
-    localStorage.setItem('hideBalance', String(value));
-    return value;
-  };
+  const { isHidden, toggle } = useContext(HideBalance);
 
   const getBalance = useMemo((): string => toCurrencyFormat(balance as number, { maximumFractionDigits: balance < 10000 ? 2 : 0 }), [balance]);
 
@@ -51,7 +45,7 @@ export const Balance = ({
               dashboard__balance-hide-btn
               ${isHidden ? 'dashboard__balance-hide-btn--hidden' : ''}
             `}
-          onClick={toggleHidden}
+          onClick={toggle}
         >
           <Uik.Icon icon={isHidden ? faEyeSlash : faEye} />
         </button>
@@ -64,6 +58,7 @@ export const Balance = ({
                 dashboard__balance-value
                 ${isHidden ? 'dashboard__balance-value--hidden' : ''}
               `}
+              onClick={isHidden ? toggle : () => {}}
             >
               {
                 isHidden

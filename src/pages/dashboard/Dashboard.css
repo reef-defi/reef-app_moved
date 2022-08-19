@@ -266,6 +266,7 @@
     flex-flow: row nowrap;
     justify-content: flex-start;
     align-items: center;
+    cursor: pointer;
 }
 
 .dashboard__balance-value--hidden div {

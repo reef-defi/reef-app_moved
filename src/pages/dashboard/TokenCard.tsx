@@ -1,13 +1,13 @@
-import {
-  faRepeat,
-} from '@fortawesome/free-solid-svg-icons';
+import { faRepeat, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { Token, utils } from '@reef-defi/react-lib';
 import Uik from '@reef-defi/ui-kit';
 import BigNumber from 'bignumber.js';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import OverlaySwap from '../../common/OverlaySwap';
+import OverlaySend from '../../common/OverlaySend';
 import { toCurrencyFormat } from '../../utils/utils';
 import './token-card.css';
+import HideBalance from '../../context/HideBalance';
 
 const { showBalance } = utils;
 
@@ -25,7 +25,9 @@ const TokenCard = ({
   className,
 }: TokenCard): JSX.Element => {
   const [isSwapOpen, setSwapOpen] = useState(false);
-  // const [isSendOpen, setSendOpen] = useState(false);
+  const [isSendOpen, setSendOpen] = useState(false);
+
+  const hideBalance = useContext(HideBalance);
 
   const copyAddress = (): void => {
     navigator.clipboard.writeText(token.address).then(() => {
@@ -70,17 +72,61 @@ const TokenCard = ({
               onClick={onClickPrice}
               type="button"
             >
-              $
-              { Uik.utils.formatAmount(Uik.utils.maxDecimals(price, 4)) }
+              {
+                !!price
+                && (
+                <>
+                  $
+                  { Uik.utils.formatAmount(Uik.utils.maxDecimals(price, 4)) }
+                </>
+                )
+              }
             </button>
           </div>
         </div>
         <div className="token-card__aside">
           <div className="token-card__values">
-            <div className="token-card__value">
-              {toCurrencyFormat(balanceValue)}
+            <div
+              className={`
+                token-card__value
+                ${hideBalance.isHidden ? 'token-card__value--hidden' : ''}
+              `}
+              onClick={hideBalance.isHidden ? hideBalance.toggle : () => {}}
+            >
+              {
+                !hideBalance.isHidden
+                  ? toCurrencyFormat(balanceValue)
+                  : (
+                    <>
+                      <div />
+                      <div />
+                      <div />
+                      <div />
+                      <div />
+                    </>
+                  )
+              }
             </div>
-            <div className="token-card__amount">{ showBalance(token) }</div>
+            <div
+              className={`
+                token-card__amount
+                ${hideBalance.isHidden ? 'token-card__amount--hidden' : ''}
+              `}
+              onClick={hideBalance.isHidden ? hideBalance.toggle : () => {}}
+            >
+              {
+              !hideBalance.isHidden
+                ? showBalance(token)
+                : (
+                  <>
+                    <div />
+                    <div />
+                    <div />
+                    <div />
+                  </>
+                )
+            }
+            </div>
           </div>
 
           <Uik.Button
@@ -90,13 +136,13 @@ const TokenCard = ({
             size="small"
           />
 
-          {/* <Uik.Button
+          <Uik.Button
             text="Send"
             icon={faPaperPlane}
             onClick={() => setSendOpen(true)}
             size="small"
             fill
-          /> */}
+          />
         </div>
       </div>
 
@@ -106,10 +152,10 @@ const TokenCard = ({
         onClose={() => setSwapOpen(false)}
       />
 
-      {/* <OverlaySend
-        isOpen={isSendOpen}
+      <OverlaySend
+        isOpen={isSendOpen && false}
         onClose={() => setSendOpen(false)}
-      /> */}
+      />
     </div>
   );
 };
