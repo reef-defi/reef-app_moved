@@ -1,0 +1,43 @@
+.overlay-swap .overlay-action__wrapper {
+  background: hsla(
+    var(--bg--h),
+    var(--bg--s),
+    var(--bg--l),
+    0.9
+  );
+  backdrop-filter: blur(10px);
+}
+
+.overlay-swap .overlay-action__close-btn {
+  background-color: var(--bg);
+}
+
+.overlay-swap .overlay-action__content {
+  max-width: 600px;
+}
+
+.overlay-swap .overlay-action__slot {
+  align-items: center;
+  padding-top: 60px;
+}
+
+.overlay-swap .uik-pool-actions {
+  box-shadow: 10px 10px 20px -5px hsl(
+    var(--bg--h),
+    var(--bg--s),
+    calc(var(--bg--l) - 10%)
+  ),
+  -10px -10px 20px -5px hsl(
+    var(--bg--h),
+    var(--bg--s),
+    calc(var(--bg--l) + 4%)
+  );
+  max-width: 100%;
+  min-width: 100%;
+  width: 100%;
+  margin-right: 0;
+} 
+
+.overlay-swap .uik-pool-actions__tokens {
+  margin-top: 0;
+}

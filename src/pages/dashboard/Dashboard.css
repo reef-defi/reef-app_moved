@@ -219,19 +219,18 @@
     border: dashed 2px hsl(
         var(--border-color-dark--h),
         var(--border-color-dark--s),
-        calc(var(--border-color-dark--l) - 8.5%)
+        calc(var(--border-color-dark--l) - 5%)
     );
     display: flex;
     flex-flow: row nowrap;
     justify-content: center;
     align-items: center;
     font-size: 0.875rem;
-    font-weight: 500;
+    font-weight: 400;
     color: hsl(
-        var(--text--h),
-        var(--text--s),
-        var(--text--l),
-        0.85
+        var(--border-color-dark--h),
+        var(--border-color-dark--s),
+        calc(var(--border-color-dark--l) - 25%)
     );
     line-height: 1.1;
     min-height: 4rem;
@@ -250,8 +249,8 @@
 }
 
 .dashboard__tokens-create-btn .uik-icon {
-    width: 0.875rem;
-    height: 0.875rem;
+    width: 0.813rem;
+    height: 0.813rem;
     margin-top: -0.125rem;
     margin-right: 0.5rem;
 }

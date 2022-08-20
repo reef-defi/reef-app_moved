@@ -5,6 +5,7 @@ import React, { useContext, useReducer, useState } from 'react';
 import TokenContext from '../context/TokenContext';
 import TokenPricesContext from '../context/TokenPricesContext';
 import { notify } from '../utils/utils';
+import './overlay-swap.css';
 
 const { Trade, OverlayAction } = Components;
 
@@ -63,6 +64,7 @@ const OverlaySwap = ({
       isOpen={isOpen}
       title="Swap"
       onClose={onClose}
+      className="overlay-swap"
     >
       <div className="uik-pool-actions pool-actions">
         <Trade
