@@ -44,12 +44,6 @@ const Nav = ({ display }: Nav): JSX.Element => {
     appState.setCurrentAddress(index != null ? accounts?.[index].address : undefined);
   };
 
-  /* Add "bind account" link if EVM address is not already claimed */
-  if (!!signer && !signer.isEvmClaimed) {
-    const url = addressReplacer(BIND_URL, signer.address);
-    menuItems.push({ title: 'Bind Account', url });
-  }
-
   const menuItemsView = menuItems
     .map((item) => {
       let classes = 'navigation_menu-items_menu-item';

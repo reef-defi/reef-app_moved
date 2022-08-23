@@ -6,7 +6,7 @@
 .staking__bonds {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(1fr);
   grid-gap: 24px;
   padding: 0;
 }

@@ -11,6 +11,7 @@ import NoAccount from './pages/error/NoAccount';
 import NoExtension from './pages/error/NoExtension';
 import { notify } from './utils/utils';
 import HideBalance, { toggleHidden, getStoredPref } from './context/HideBalance';
+import Bind from './common/Bind/Bind';
 
 const App = (): JSX.Element => {
   const { loading, error } = hooks.useInitReefState(
@@ -55,6 +56,7 @@ const App = (): JSX.Element => {
                 pauseOnHover={false}
               />
 
+              <Bind />
             </div>
           </div>
         </HideBalance.Provider>

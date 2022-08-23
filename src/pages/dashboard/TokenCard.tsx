@@ -153,7 +153,7 @@ const TokenCard = ({
       />
 
       <OverlaySend
-        isOpen={isSendOpen && false}
+        isOpen={isSendOpen}
         onClose={() => setSendOpen(false)}
       />
     </div>
