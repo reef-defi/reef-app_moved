@@ -1,8 +1,7 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   appState, hooks, ReefSigner, Components,
 } from '@reef-defi/react-lib';
-import { faLink } from '@fortawesome/free-solid-svg-icons';
 import Uik from '@reef-defi/ui-kit';
 import './bind.css';
 import { TxStatusUpdate } from '@reef-defi/react-lib/dist/utils';
@@ -49,10 +48,6 @@ const Bind = (): JSX.Element => {
 
   const [isOpen, setOpen] = useState(false);
 
-  useEffect(() => {
-    if (!isBound) setOpen(true);
-  }, [isBound]);
-
   if (isBound || !selectedSigner || !accounts) return <div />;
 
   return (
@@ -69,29 +64,18 @@ const Bind = (): JSX.Element => {
         />
       </Uik.Modal>
 
-      {
-        !isOpen
-        && (
-        <Uik.Tooltip
-          className="evm-bind__btn-wrapper"
-          text="Bind EVM Address"
-          position="left"
-          delay={0}
+      <div className="evm-bind__alert">
+        <Uik.Alert
+          type="info"
+          text={`Account ${selectedSigner?.name} does not have an Ethereum VM address`}
         >
-          <button
-            title="Bind EVM Address"
-            className={`
-              evm-bind__open-popup-btn
-              ${isOpen ? 'evm-bind__open-popup-btn--open' : ''}
-            `}
-            type="button"
+          <Uik.Button
+            text="Register EVM Address"
+            fill
             onClick={() => setOpen(true)}
-          >
-            <Uik.Icon icon={faLink} />
-          </button>
-        </Uik.Tooltip>
-        )
-      }
+          />
+        </Uik.Alert>
+      </div>
     </div>
   );
 };
