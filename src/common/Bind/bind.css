@@ -16,3 +16,8 @@
     width: 100%;
     animation: uik-open-notification 0.5s;
 }
+
+.evm-bind .uik-modal__popup {
+  width: 550px !important;
+  background-color: #eeebf6 !important;
+}

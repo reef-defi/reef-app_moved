@@ -328,3 +328,8 @@ input.form-control:focus {
     justify-content: flex-end;
     align-items: center;
 }
+
+.modal-backdrop {
+    z-index: 999 !important;
+    opacity: 0 !important;
+}

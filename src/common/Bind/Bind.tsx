@@ -44,11 +44,17 @@ const Bind = (): JSX.Element => {
     appState.onTxUpdateResetSigners(state, updateActions);
   };
 
+  const [show, setShow] = useState(false);
+
   const isBound = useMemo(() => !selectedSigner || selectedSigner?.isEvmClaimed, [selectedSigner]);
+
+  useMemo(() => {
+    if (!isBound) setShow(true);
+  }, [isBound]);
 
   const [isOpen, setOpen] = useState(false);
 
-  if (isBound || !selectedSigner || !accounts) return <div />;
+  if (!show || !selectedSigner || !accounts) return <div />;
 
   return (
     <div className="evm-bind">
@@ -64,18 +70,23 @@ const Bind = (): JSX.Element => {
         />
       </Uik.Modal>
 
-      <div className="evm-bind__alert">
-        <Uik.Alert
-          type="info"
-          text={`Account ${selectedSigner?.name} does not have an Ethereum VM address`}
-        >
-          <Uik.Button
-            text="Register EVM Address"
-            fill
-            onClick={() => setOpen(true)}
-          />
-        </Uik.Alert>
-      </div>
+      {
+        !isBound
+        && (
+        <div className="evm-bind__alert">
+          <Uik.Alert
+            type="info"
+            text={`Account ${selectedSigner?.name} does not have an Ethereum VM address`}
+          >
+            <Uik.Button
+              text="Register EVM Address"
+              fill
+              onClick={() => setOpen(true)}
+            />
+          </Uik.Alert>
+        </div>
+        )
+      }
     </div>
   );
 };
