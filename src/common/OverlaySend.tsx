@@ -2,6 +2,7 @@ import { appState, Components, hooks } from '@reef-defi/react-lib';
 import React, { useContext } from 'react';
 import TokenContext from '../context/TokenContext';
 import { notify } from '../utils/utils';
+import './overlay-swap.css';
 
 const { Send, OverlayAction } = Components;
 
@@ -25,17 +26,20 @@ const OverlaySend = ({
       isOpen={isOpen}
       title="Send"
       onClose={onClose}
+      className="overlay-swap"
     >
-      { provider && signer
-        && (
-        <Send
-          accounts={accounts || []}
-          notify={notify}
-          provider={provider}
-          signer={signer}
-          tokens={tokens}
-        />
-        )}
+      <div className="uik-pool-actions pool-actions">
+        { provider && signer
+          && (
+          <Send
+            accounts={accounts || []}
+            notify={notify}
+            provider={provider}
+            signer={signer}
+            tokens={tokens}
+          />
+          )}
+      </div>
     </OverlayAction>
   );
 };
