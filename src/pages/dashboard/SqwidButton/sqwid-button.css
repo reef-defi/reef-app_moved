@@ -1,0 +1,74 @@
+.sqwid-btn {
+  background: linear-gradient(135deg, #0d65d4, #0b3397);
+  box-shadow: 0 0.313rem 1.25rem -0.625rem #0b3397;
+  padding: 1rem 1.625rem;
+  border-radius: 1.125rem;
+  font-size: 1rem;
+}
+
+.sqwid-btn:hover {
+  transform: scale(1.06);
+  transition: all 0s, transform 0.15s;
+}
+
+.sqwid-btn:active {
+  transform: scale(0.94);
+}
+
+.sqwid-btn .uik-button__text {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.sqwid-btn__logo {
+  display: flex;
+  margin-right: 0.625rem;
+  margin-left: -0.313rem;
+  margin-top: -0.188rem;
+  animation: sqwid-btn-logo 2.5s ease-in-out infinite;
+}
+
+@keyframes sqwid-btn-logo {
+  from, to {
+    transform: translateY(-0.125rem);
+  }
+
+  50% {
+    transform: translateY(0.125rem);
+  }
+}
+
+.sqwid-logo {
+  width: 2rem;
+  height: 2rem;
+  stroke: currentColor;
+  stroke-width: 0.156rem;
+  stroke-dasharray: 3.125rem;
+  stroke-dashoffset: 3.125rem;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  animation: sqwid-logo 2.5s ease forwards infinite;
+}
+
+@keyframes sqwid-logo {
+  from {
+    stroke-dashoffset: 0;
+    fill: currentColor;
+  }
+
+  7.5%, 25% {
+    fill: transparent;
+  }
+
+  37.5% {
+    stroke-width: 0.156rem;
+  }
+
+  50%, to {
+    stroke-dashoffset: 6.875rem;
+    fill: currentColor;
+    stroke-width: 0;
+  }
+}

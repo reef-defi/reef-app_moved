@@ -1,6 +1,8 @@
 import { NFT as NFTData } from '@reef-defi/react-lib';
 import React from 'react';
 import './Nfts.css';
+import Uik from '@reef-defi/ui-kit';
+import SqwidButton from './SqwidButton/SqwidButton';
 
 import NFT from './NFT';
 
@@ -21,8 +23,9 @@ interface Nfts {
 export const Nfts = ({ nfts }: Nfts): JSX.Element => (
   <div className="nfts">
     {nfts.length === 0 && (
-    <div className="col-12 card">
-      <div className="nfts__empty-nft-list">No NFTs in your wallet.</div>
+    <div className="nfts__empty">
+      <Uik.Text type="light">Your wallet doesn't own any NFTs.</Uik.Text>
+      <SqwidButton />
     </div>
     )}
     {nfts.length > 0 && (

@@ -126,3 +126,28 @@
       grid-template-columns: 1fr;
   }
 }
+
+.nfts__empty {
+  padding: 1.25rem;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-flow: column nowrap;
+  width: 100%;
+}
+
+.nfts__empty .uik-text {
+  animation: nfts-empty-appear 0.5s;
+}
+
+.nfts__empty .uik-button {
+  margin-top: 1.25rem;
+  animation: nfts-empty-appear 0.5s 0.2s backwards;
+}
+
+@keyframes nfts-empty-appear {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
