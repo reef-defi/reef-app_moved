@@ -1,0 +1,23 @@
+.evm-bind__alert {
+  position: fixed;
+  z-index: 100;
+  bottom: 0;
+  right: 0;
+  padding: 15px;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-end;
+  align-items: flex-end;
+  width: 27rem;
+  max-width: 100%;
+}
+
+.evm-bind__alert .uik-alert {
+    width: 100%;
+    animation: uik-open-notification 0.5s;
+}
+
+.evm-bind .uik-modal__popup {
+  width: 550px !important;
+  background-color: #eeebf6 !important;
+}

@@ -49,7 +49,7 @@ const MyPoolsList = (): JSX.Element => {
   const history = useHistory();
   const openPool = (
     address: string,
-    action: 'trade' | 'provide' | 'withdraw' = 'trade',
+    action: 'trade' | 'stake' | 'unstake' = 'trade',
   ): void => history.push(
     POOL_CHART_URL
       .replace(':address', address || 'address')
@@ -135,21 +135,21 @@ const MyPoolsList = (): JSX.Element => {
                   </Uik.Td>
                   <Uik.Td align="right">
                     <Uik.Button
-                      text="Withdraw"
+                      text="Unstake"
                       icon={faArrowUpFromBracket}
                       fill
                       onClick={(e) => {
                         e.stopPropagation();
-                        openPool(item.address || '', 'withdraw');
+                        openPool(item.address || '', 'unstake');
                       }}
                     />
                     <Uik.Button
-                      text="Provide"
+                      text="Stake"
                       icon={faCoins}
                       fill
                       onClick={(e) => {
                         e.stopPropagation();
-                        openPool(item.address || '', 'provide');
+                        openPool(item.address || '', 'stake');
                       }}
                     />
                   </Uik.Td>

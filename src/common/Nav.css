@@ -1,7 +1,11 @@
 .navigation {
   min-height: 60px;
   background-color: #f3f0f8;
-  box-shadow: 0.2em 0.2em 1.5em #e2def1;
+  box-shadow: 0 5px 20px -5px hsl(
+    var(--bg--h),
+    var(--bg--s),
+    calc(var(--bg--l) - 10%)
+  );
   display: flex;
   justify-content: center;
   align-items: center;
@@ -14,7 +18,7 @@
 }
 
 .navigation__wrapper {
-  max-width: 1500px;
+  max-width: 1400px;
   width: 100%;
   display: flex;
   justify-content: space-between;

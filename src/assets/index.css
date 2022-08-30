@@ -14,8 +14,8 @@ html, body, #root, .App {
 }
 
 .content > * {
-    padding: 2.5rem 3.5rem;
-    max-width: calc(1500px + 3.5rem * 2);
+    padding: 2.5rem calc(3.5rem + 5px);
+    max-width: calc(1400px + 3.5rem * 2);
     margin: 0 auto;
 }
 
@@ -327,4 +327,9 @@ input.form-control:focus {
     flex-flow: row nowrap;
     justify-content: flex-end;
     align-items: center;
+}
+
+.modal-backdrop {
+    z-index: 999 !important;
+    opacity: 0 !important;
 }

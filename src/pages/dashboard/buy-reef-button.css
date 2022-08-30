@@ -1,0 +1,85 @@
+.buy-reef-btn {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #c52cbc, #8332ca);
+  box-shadow: 0 15px 30px -15px #8332ca;
+  color: white;
+  padding: 25px 30px;
+  min-width: 100px;
+  text-decoration: none;
+  border-radius: 20px;
+  border: none;
+  position: relative;
+  overflow: hidden;
+  filter: brightness(1.05);
+  transition: all 0.1s;
+}
+
+.buy-reef-btn__icon {
+  color: white;
+  height: 30px;
+  margin-top: -1px;
+  margin-left: -18px;
+}
+
+.buy-reef-btn__text {
+  font-size: 18px;
+  line-height: 1.1;
+  font-weight: 400;
+  margin-left: 18px;
+}
+
+.buy-reef-btn:hover {
+  cursor: pointer;
+  transform: scale(1.03);
+  filter: brightness(1.15);
+  color: white;
+}
+
+.buy-reef-btn:active {
+  transform: scale(.97);
+  filter: brightness(1.1);
+}
+
+.buy-reef-btn > * {
+  z-index: 2;
+}
+
+.buy-reef-btn .uik-bubbles {
+  z-index: 0;
+  opacity: 0.5;
+}
+
+.buy-reef-btn .uik-bubbles__bubble {
+  width: 7px;
+  height: 7px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25), inset 0 0 4px white,
+      inset 0 2px 2px rgba(255, 255, 255, 0.25);
+}
+
+.buy-reef-btn .buy-reef-btn__shape {
+  z-index: 1;
+  position: absolute;
+  left: 0;
+  bottom: -40%;
+  width: 100%;
+  opacity: 0.25;
+  fill: hsl(
+    var(--secondary--h),
+    var(--secondary--s),
+    calc(var(--secondary--l) - 25%)
+  );
+  animation: buy-reef-btn-shape 3s infinite ease-in-out;
+}
+
+@keyframes buy-reef-btn-shape {
+  from, to {
+    transform: none;
+  }
+
+  50% {
+    transform: translateY(-2.5%);
+  }
+}

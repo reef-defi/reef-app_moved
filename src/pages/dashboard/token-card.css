@@ -107,6 +107,24 @@
   -webkit-text-fill-color: transparent;
   line-height: 1.25;
   font-size: 19px;
+  border: none;
+}
+
+.token-card__value--hidden {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-end;
+  align-items: center;
+  cursor: pointer;
+}
+
+.token-card__value--hidden div {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--primary);
+  margin-left: 3px;
+  animation: dashboard-balance-hidden-dot 0.15s;
 }
 
 .token-card__amount {
@@ -114,6 +132,37 @@
   line-height: 1.25;
   font-weight: 500;
   color: var(--text);
+  border: none;
+  background-color: transparent;
+}
+
+.token-card__value:hover,
+.token-card__amount:hover {
+  cursor: initial;
+}
+
+.token-card__value--hidden:hover,
+.token-card__amount--hidden:hover {
+  cursor: pointer;
+}
+
+.token-card__amount--hidden {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-end;
+  align-items: center;
+  padding-top: 7px;
+  margin-bottom: -1px;
+  cursor: pointer;
+}
+
+.token-card__amount--hidden div {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--text-light);
+  margin-left: 3px;
+  animation: dashboard-balance-hidden-dot 0.15s;
 }
 
 .token-card .uik-button .uik-button__icon {
@@ -124,6 +173,23 @@
   margin-left: 15px;
 }
 
-.token-card + .token-card {
+.token-card + * {
   margin-top: 15px;
-} 
+}
+
+.token-card--skeleton .token-card__image {
+  background-color: var(--border-color);
+}
+
+.token-card--skeleton .token-card__token-name,
+.token-card--skeleton .token-card__token-price {
+  width: 200px;
+  height: 10px;
+  border-radius: 99px;
+  background-color: var(--border-color);
+}
+
+.token-card--skeleton .token-card__token-price {
+  width: 100px;
+  margin-top: 10px;
+}

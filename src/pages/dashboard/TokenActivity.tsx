@@ -1,6 +1,7 @@
 import {
   appState, createEmptyTokenWithAmount, hooks,
 } from '@reef-defi/react-lib';
+import Uik from '@reef-defi/ui-kit';
 import React from 'react';
 import './TokenActivity.css';
 import { TokenActivityItem, TokenActivityType } from './TokenActivityItem';
@@ -25,13 +26,9 @@ export const TokenActivity = (): JSX.Element => {
   const transfers = hooks.useObservableState(appState.transferHistory$);
 
   return (
-    <div className="token-activity">
-      <div className="mb-4 col-12 d-flex d-flex-space-between d-flex-vert-base token-activity__title">
-        <div>
-          <h5 className="my-auto title-color text-semi-bold">Activity</h5>
-        </div>
+    <div className="token-activity activity">
+      <Uik.Text type="title" text="Activity" className="activity__title" />
 
-      </div>
       <div className={`col-12 card  ${transfers?.length ? 'card-bg-light' : ''}`}>
         {!!transfers && !transfers.length && <div className="no-token-activity">No recent transfer activity.</div>}
         {!!transfers && !!transfers.length && (

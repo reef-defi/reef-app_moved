@@ -1,65 +1,38 @@
-import {
-  appState, hooks, ReefSigner,
-} from '@reef-defi/react-lib';
+import Uik from '@reef-defi/ui-kit';
 import BigNumber from 'bignumber.js';
 import React, {
-  useContext, useEffect, useMemo, useState,
+  useContext, useMemo, useState,
 } from 'react';
-import Tabs from '../../common/Tabs';
 import NftContext from '../../context/NftContext';
 import TokenContext from '../../context/TokenContext';
 import TokenPricesContext from '../../context/TokenPricesContext';
-import Bind from '../bind/Bind';
 import { bonds } from '../bonds/utils/bonds';
-import { ActionButtons } from './ActionButtons';
+import BuyReefButton from './BuyReefButton';
 import { Balance } from './Balance';
+import { Rewards } from './Rewards';
 import './Dashboard.css';
 import { Nfts } from './Nfts';
 import { Staking } from './Staking';
 import { TokenActivity } from './TokenActivity';
 import { TokenBalances } from './TokenBalances';
 
-const DEFAULT_TABS = [
-  {
-    key: 'tokens',
-    title: 'Tokens',
-  },
-  {
-    key: 'staking',
-    title: 'Staking',
-    notification: bonds?.length,
-  },
-  {
-    key: 'nfts',
-    title: 'NFTs',
-  },
-  {
-    key: 'activity',
-    title: 'Activity',
-  },
-];
-
 const Dashboard = (): JSX.Element => {
-  let tabs = DEFAULT_TABS;
-
   const { nfts } = useContext(NftContext);
+
+  const tabs = (() => {
+    const list = [
+      { value: 'tokens', text: 'Tokens' },
+      { value: 'bonds', text: 'Bonds', indicator: bonds.length },
+      { value: 'nfts', text: 'NFTs' },
+    ];
+
+    return list;
+  })();
+
   const { tokens, loading } = useContext(TokenContext);
   const tokenPrices = useContext(TokenPricesContext);
 
-  // const signerTokenBalances: TokenWithAmount[]|undefined = hooks.useObservableState(appState.tokenPrices$);
-  // const signerNfts = hooks.useObservableState(appState.selectedSignerNFTs$);
-  const selectedSigner: ReefSigner|undefined | null = hooks.useObservableState(appState.selectedSigner$);
-  const [tab, setTab] = useState<string>('');
-
-  // If account is not bound, add bind tab to 'tabs' array
-  if (!!selectedSigner && !selectedSigner.isEvmClaimed) {
-    const bindTab = { key: 'bind', title: 'Bind Account' };
-    tabs = [bindTab, ...tabs];
-  }
-
-  useEffect(() => {
-    setTab(tabs[0].key);
-  }, [selectedSigner]);
+  const [tab, setTab] = useState<string>(tabs[0].value);
 
   const totalBalance = useMemo(() => tokens.reduce(
     (acc, { balance, decimals, address }) => acc.plus(
@@ -74,19 +47,27 @@ const Dashboard = (): JSX.Element => {
   return (
     <div className="dashboard">
       <div className="dashboard__top">
-        <Balance balance={totalBalance} loading={loading} />
-        <ActionButtons />
+        <div className="dashboard__top-left">
+          <Balance balance={totalBalance} loading={loading} />
+          <Rewards rewards={0} />
+        </div>
+        <div className="dashboard__top-right">
+          <BuyReefButton />
+        </div>
       </div>
 
       <div className="dashboard__main">
         <div className="dashboard__left">
-          <Tabs tabs={tabs} selected={tab} onChange={(e) => setTab(e)} />
+          <Uik.Tabs
+            className="dashboard__tabs"
+            options={tabs}
+            value={tab}
+            onChange={(e) => setTab(e)}
+          />
 
           { tab === 'tokens' ? <TokenBalances tokens={tokens} /> : '' }
-          { tab === 'staking' ? <Staking /> : '' }
+          { tab === 'bonds' ? <Staking /> : '' }
           { tab === 'nfts' ? <Nfts nfts={nfts} /> : '' }
-          { tab === 'activity' ? <TokenActivity /> : '' }
-          { tab === 'bind' ? <Bind /> : '' }
         </div>
 
         <div className="dashboard__right">
