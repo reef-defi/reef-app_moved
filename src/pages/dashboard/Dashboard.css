@@ -271,6 +271,7 @@
 
 .dashboard__balance-value,
 .dashboard__balance-loading {
+    border: none;
     font-size: 3rem;
     color: var(--primary);
     background: -webkit-linear-gradient(0deg, var(--primary), var(--secondary));
@@ -279,6 +280,10 @@
     font-weight: 900 !important;
     line-height: 1.2;
     font-family: 'Lato', sans-serif;
+}
+
+.dashboard__balance-value:hover {
+    cursor: initial;
 }
 
 .dashboard__rewards {
@@ -311,6 +316,10 @@
     flex-flow: row nowrap;
     justify-content: flex-start;
     align-items: center;
+    cursor: pointer;
+}
+
+.dashboard__balance-value--hidden:hover {
     cursor: pointer;
 }
 

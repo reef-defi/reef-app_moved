@@ -30,6 +30,10 @@ export const Balance = ({
 
   const getBalance = useMemo((): string => toCurrencyFormat(balance as number, { maximumFractionDigits: balance < 10000 ? 2 : 0 }), [balance]);
 
+  const toggleHidden = (): void => {
+    if (isHidden) toggle();
+  };
+
   return (
     <div className={`
       dashboard__balance
@@ -53,12 +57,13 @@ export const Balance = ({
       {
         loading ? <Loading />
           : (
-            <div
+            <button
+              type="button"
               className={`
                 dashboard__balance-value
                 ${isHidden ? 'dashboard__balance-value--hidden' : ''}
               `}
-              onClick={isHidden ? toggle : () => {}}
+              onClick={toggleHidden}
             >
               {
                 isHidden
@@ -74,7 +79,7 @@ export const Balance = ({
                   )
                   : getBalance
               }
-            </div>
+            </button>
           )
       }
     </div>

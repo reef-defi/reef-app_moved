@@ -86,12 +86,15 @@ const TokenCard = ({
         </div>
         <div className="token-card__aside">
           <div className="token-card__values">
-            <div
+            <button
+              type="button"
               className={`
                 token-card__value
                 ${hideBalance.isHidden ? 'token-card__value--hidden' : ''}
               `}
-              onClick={hideBalance.isHidden ? hideBalance.toggle : () => {}}
+              onClick={() => {
+                if (hideBalance.isHidden) hideBalance.toggle();
+              }}
             >
               {
                 !hideBalance.isHidden
@@ -106,13 +109,16 @@ const TokenCard = ({
                     </>
                   )
               }
-            </div>
-            <div
+            </button>
+            <button
+              type="button"
               className={`
                 token-card__amount
                 ${hideBalance.isHidden ? 'token-card__amount--hidden' : ''}
               `}
-              onClick={hideBalance.isHidden ? hideBalance.toggle : () => {}}
+              onClick={() => {
+                if (hideBalance.isHidden) hideBalance.toggle();
+              }}
             >
               {
               !hideBalance.isHidden
@@ -126,7 +132,7 @@ const TokenCard = ({
                   </>
                 )
             }
-            </div>
+            </button>
           </div>
 
           <Uik.Button

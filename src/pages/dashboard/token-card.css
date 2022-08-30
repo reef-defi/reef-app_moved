@@ -107,6 +107,7 @@
   -webkit-text-fill-color: transparent;
   line-height: 1.25;
   font-size: 19px;
+  border: none;
 }
 
 .token-card__value--hidden {
@@ -131,6 +132,18 @@
   line-height: 1.25;
   font-weight: 500;
   color: var(--text);
+  border: none;
+  background-color: transparent;
+}
+
+.token-card__value:hover,
+.token-card__amount:hover {
+  cursor: initial;
+}
+
+.token-card__value--hidden:hover,
+.token-card__amount--hidden:hover {
+  cursor: pointer;
 }
 
 .token-card__amount--hidden {

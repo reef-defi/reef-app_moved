@@ -19,6 +19,10 @@ export const Rewards = ({
     return `$${Uik.utils.formatAmount(Uik.utils.maxDecimals(rewards, 2).toFixed(2))}`;
   }, [rewards]);
 
+  const toggleHidden = (): void => {
+    if (isHidden) toggle();
+  };
+
   return (
     <div className={`
       dashboard__balance
@@ -29,14 +33,15 @@ export const Rewards = ({
       <div className="dashboard__balance-label">
         <Uik.Text type="mini">Rewards</Uik.Text>
       </div>
-      <div
+      <button
+        type="button"
         className={`
             dashboard__balance-value
             dashboard__rewards-value
             ${!rewards ? 'dashboard__rewards-value--empty' : ''}
             ${isHidden ? 'dashboard__balance-value--hidden' : ''}
           `}
-        onClick={isHidden ? toggle : () => {}}
+        onClick={toggleHidden}
       >
         {
             isHidden
@@ -52,7 +57,7 @@ export const Rewards = ({
               )
               : getRewards
           }
-      </div>
+      </button>
     </div>
   );
 };
