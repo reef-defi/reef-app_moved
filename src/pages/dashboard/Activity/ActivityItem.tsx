@@ -77,7 +77,7 @@ const TokenActivityItem = ({
 
       <div className="activity-item__content">
         <div className="activity-item__info">
-          <div className="activity-item__title">{ title }</div>
+          <div className="activity-item__title" title={title}>{ title }</div>
           <div className="activity-item__date">{ formatDate(timestamp) }</div>
         </div>
 

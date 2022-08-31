@@ -99,14 +99,19 @@
 
 .activity-item__title {
   font-size: 0.938rem;
-  line-height: 1.45;
+  line-height: 1.1;
   font-weight: 600;
   color: var(--text);
+  display: block;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 15rem;
 }
 
 .activity-item__date {
   font-size: 0.813rem;
-  line-height: 1.5;
+  line-height: 1.1;
   font-weight: 500;
   color: hsla(
     var(--text--h),
@@ -114,6 +119,12 @@
     var(--text--l),
     0.8
   );
+  display: block;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 15rem;
+  margin-top: 0.313rem;
 }
 
 .activity-item__amount-wrapper {
@@ -127,6 +138,12 @@
   font-size: 1.063rem;
   line-height: 1.1;
   font-weight: 600;
+  text-align: right;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 15rem;
+  padding-left: 1rem;
 }
 
 .activity-item__amount--hidden > div {
