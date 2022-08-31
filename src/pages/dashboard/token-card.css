@@ -59,15 +59,15 @@
 }
 
 .token-card__token-name {
-  font-size: 17px;
-  line-height: 1.25;
+  font-size: 16px;
+  line-height: 1.45;
   font-weight: 600;
   color: var(--text);
 }
 
 .token-card__token-price {
   font-size: 13px;
-  line-height: 1.25;
+  line-height: 1.35;
   font-weight: 500;
   color: var(--text);
   border: none;
@@ -105,8 +105,8 @@
   background: -webkit-linear-gradient(0deg, var(--primary), var(--secondary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  line-height: 1.25;
-  font-size: 19px;
+  line-height: 1.35;
+  font-size: 18px;
   border: none;
 }
 
@@ -129,7 +129,7 @@
 
 .token-card__amount {
   font-size: 13px;
-  line-height: 1.25;
+  line-height: 1.35;
   font-weight: 500;
   color: var(--text);
   border: none;

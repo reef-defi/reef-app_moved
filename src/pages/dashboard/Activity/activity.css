@@ -8,6 +8,7 @@
   border-radius: 15px;
   border: none;
   width: 100%;
+  overflow: hidden;
 }
 
 .token-activity__title {

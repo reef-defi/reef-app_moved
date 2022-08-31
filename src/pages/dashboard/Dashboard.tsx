@@ -13,7 +13,7 @@ import { Rewards } from './Rewards';
 import './Dashboard.css';
 import { Nfts } from './Nfts';
 import { Staking } from './Staking';
-import { TokenActivity } from './TokenActivity';
+import { Activity } from './Activity/Activity';
 import { TokenBalances } from './TokenBalances';
 
 const Dashboard = (): JSX.Element => {
@@ -71,7 +71,7 @@ const Dashboard = (): JSX.Element => {
         </div>
 
         <div className="dashboard__right">
-          <TokenActivity />
+          <Activity />
         </div>
       </div>
     </div>
