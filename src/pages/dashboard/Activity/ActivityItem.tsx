@@ -1,8 +1,9 @@
 import { Token, TokenNFT, utils } from '@reef-defi/react-lib';
 import Uik from '@reef-defi/ui-kit';
-import React, { useMemo } from 'react';
+import React, { useMemo, useContext } from 'react';
 import './activity-item.css';
 import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
+import HideBalance from '../../../context/HideBalance';
 
 const { showBalance } = utils;
 
@@ -56,6 +57,8 @@ const TokenActivityItem = ({
     return `${prefix} ${amt}`;
   }, [token, type]);
 
+  const hideBalance = useContext(HideBalance);
+
   return (
     <a
       key={timestamp}
@@ -89,7 +92,22 @@ const TokenActivityItem = ({
               className="activity-item__amount-wrapper"
               title={`${type === 'receive' ? '+' : '-'} ${showBalance(token)}`}
             >
-              <div className="activity-item__amount">{ amount }</div>
+              <div
+                className={`
+                  activity-item__amount
+                  ${hideBalance.isHidden ? 'activity-item__amount--hidden' : ''}
+                `}
+              >{
+                !hideBalance.isHidden ? amount : (
+                  <div>
+                    <div/>
+                    <div/>
+                    <div/>
+                    <div/>
+                    <div/>
+                  </div>
+                )
+              }</div>
               <div
                 className="activity-item__amount-token-icon"
                 style={{ backgroundImage: `url(${token.iconUrl})` }}
