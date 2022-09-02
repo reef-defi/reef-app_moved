@@ -1,4 +1,5 @@
 import { appState, hooks, ReefSigner } from '@reef-defi/react-lib';
+import Uik from '@reef-defi/ui-kit';
 import React, { useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import TokenPricesContext from '../../../context/TokenPricesContext';
@@ -49,7 +50,7 @@ const Pool = (): JSX.Element => {
   });
 
   if (!poolInfo) {
-    return <div>Loading...</div>;
+    return <Uik.Loading />;
   }
 
   return (

@@ -400,12 +400,14 @@ export const BondsComponent = ({
                 <div className="bond-card__subtitle">{bond.bondDescription}</div>
                 <div className="bond-card__description">
                   Stake
+                  {' '}
                   {bond.stake}
                   {' '}
                   to earn
+                  {' '}
                   {bond.farm}
                   {' '}
-                  validator rewards
+                  validator rewards.
                 </div>
 
                 <div className="bond-card__stats">

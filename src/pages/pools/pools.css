@@ -98,6 +98,17 @@
   margin-top: 50px;
 }
 
+.pools__buttons {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.pools__buttons > * + * {
+  margin-left: 12px;
+}
+
 .pools__table-top {
   width: 100%;
   display: flex;

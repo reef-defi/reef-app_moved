@@ -8,6 +8,7 @@
   border-radius: 15px;
   border: none;
   width: 100%;
+  overflow: hidden;
 }
 
 .token-activity__title {
@@ -75,10 +76,30 @@
 }
 
 .activity {
-  margin-top: 40px;
+  margin-top: 30px;
+}
+
+.activity__head {
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 18px;
 }
 
 .activity__title {
   padding-left: 2px;
-  margin-bottom: 18px;
+}
+
+.activity__open-explorer-btn {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--primary);
+  padding: 5px;
+  text-decoration: none;
 }
