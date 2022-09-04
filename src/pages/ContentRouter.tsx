@@ -28,7 +28,7 @@ const ContentRouter = (): JSX.Element => {
   // Once its decared properlly in App move TokenContext in the parent component (App.tsx)
 
   const [tokens, tokenLoading] = hooks.useAllTokens(currentSigner?.address);
-  const [nfts, nftsLoading] = hooks.useAllNfts(currentSigner?.address);
+  const [nfts, nftsLoading] = hooks.useAllNfts();
   const pools = hooks.useAllPools();
   const tokenPrices = useMemo(
     () => hooks.estimatePrice(tokens, pools, reefPrice || 0),

@@ -35,13 +35,9 @@ export const Nfts = ({ nfts }: Nfts): JSX.Element => (
           {nfts.map((nft) => (
             <NFT
               key={`${nft.address}-${nft.nftId}`}
-              address={nft.address}
-              balance={nft.balance}
-              data={nft.data}
               iconUrl={nft.iconUrl}
               name={nft.name}
-              nftId={nft.nftId}
-              type={nft.type}
+              balance={nft.balance}
             />
           ))}
         </div>

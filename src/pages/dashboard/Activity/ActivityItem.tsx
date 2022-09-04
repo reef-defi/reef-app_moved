@@ -1,8 +1,8 @@
-import { Token, TokenNFT, utils } from '@reef-defi/react-lib';
+import {NFT, Token, utils} from '@reef-defi/react-lib';
 import Uik from '@reef-defi/ui-kit';
-import React, { useMemo, useContext } from 'react';
+import React, {useContext, useMemo} from 'react';
 import './activity-item.css';
-import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
+import {faArrowDown} from '@fortawesome/free-solid-svg-icons';
 import HideBalance from '../../../context/HideBalance';
 
 const { showBalance } = utils;
@@ -10,7 +10,7 @@ const { showBalance } = utils;
 interface Props {
   timestamp: number;
   inbound: boolean;
-  token: Token | TokenNFT;
+  token: Token | NFT;
   url: string;
 }
 
@@ -46,7 +46,7 @@ const TokenActivityItem = ({
   }, [type, token.name]);
 
   const amount = useMemo(() => {
-    const base = showBalance(token);
+    const base = showBalance(token as Token);
     const amt = parseFloat(base);
     const prefixMap = {
       receive: '+',
@@ -90,7 +90,7 @@ const TokenActivityItem = ({
           ) : (
             <div
               className="activity-item__amount-wrapper"
-              title={`${type === 'receive' ? '+' : '-'} ${showBalance(token)}`}
+              title={`${type === 'receive' ? '+' : '-'} ${showBalance(token as Token)}`}
             >
               <div
                 className={`

@@ -14,11 +14,9 @@ noActivityTokenDisplay.name = 'No account history yet.';
 
 export const Activity = (): JSX.Element => {
   const transfers = hooks.useObservableState(appState.transferHistory$);
-  
+
   const signer: ReefSigner | undefined |null = hooks.useObservableState(appState.selectedSigner$);
   const network: Network|undefined = hooks.useObservableState(appState.currentNetwork$);
-
-  console.log(signer)
 
   return (
     <div className="token-activity activity">

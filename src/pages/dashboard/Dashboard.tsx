@@ -18,7 +18,6 @@ import { TokenBalances } from './TokenBalances';
 
 const Dashboard = (): JSX.Element => {
   const { nfts } = useContext(NftContext);
-
   const tabs = (() => {
     const list = [
       { value: 'tokens', text: 'Tokens' },
