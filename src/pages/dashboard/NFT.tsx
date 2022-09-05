@@ -1,5 +1,5 @@
 import React from 'react';
-import {BigNumber} from "ethers";
+import { BigNumber } from 'ethers';
 
 interface NFTData {
     iconUrl: string;
@@ -8,7 +8,7 @@ interface NFTData {
 }
 
 const NFT = ({ iconUrl, name, balance }: NFTData): JSX.Element => {
-    const loading = false;
+  const loading = false;
   return (
     <div className="nfts__item">
       <div

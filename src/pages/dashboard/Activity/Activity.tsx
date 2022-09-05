@@ -1,11 +1,11 @@
 import {
-  appState, createEmptyTokenWithAmount, hooks, ReefSigner, Network
+  appState, createEmptyTokenWithAmount, hooks, ReefSigner, Network,
 } from '@reef-defi/react-lib';
 import Uik from '@reef-defi/ui-kit';
 import React from 'react';
 import './activity.css';
+import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
 import ActivityItem, { Skeleton } from './ActivityItem';
-import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons"
 
 const noActivityTokenDisplay = createEmptyTokenWithAmount();
 noActivityTokenDisplay.address = '0x';
@@ -20,16 +20,18 @@ export const Activity = (): JSX.Element => {
 
   return (
     <div className="token-activity activity">
-      <div className='activity__head'>
+      <div className="activity__head">
         <Uik.Text type="title" text="Activity" className="activity__title" />
         {
-          !!signer?.address && !!network?.reefscanUrl &&
+          !!signer?.address && !!network?.reefscanUrl
+          && (
           <Uik.Button
             size="small"
             icon={faArrowUpRightFromSquare}
             text="Open Explorer"
             onClick={() => window.open(`${network?.reefscanUrl}/account/${signer.address}`)}
           />
+          )
         }
       </div>
 

@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unknown-property */
 import React from 'react';
 import Bubbles from './Bubbles';
 import './css/index.css';
