@@ -10,7 +10,7 @@
     "@polkadot/extension-dapp": "^0.40.3",
     "@popperjs/core": "^2.11.5",
     "@reef-defi/extension-dapp": "^1.0.9",
-    "@reef-defi/react-lib": "^1.1.1",
+    "@reef-defi/react-lib": "^1.2.0",
     "@reef-defi/ui-kit": "^1.0.3",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
