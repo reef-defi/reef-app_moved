@@ -27,7 +27,7 @@ interface ActionsProps {
 const Actions = ({ address1, address2, tab }: ActionsProps): JSX.Element => {
   const { tokens } = useContext(TokenContext);
   const tokenPrices = useContext(TokenPricesContext);
-  const [finalized] = useState(true); // TODO add finalizing
+  const [finalized, setFinalized] = useState(true);
 
   const signer = hooks.useObservableState(
     appState.selectedSigner$,
@@ -60,6 +60,8 @@ const Actions = ({ address1, address2, tab }: ActionsProps): JSX.Element => {
     dispatch: tradeDispatch,
     notify,
     updateTokenState: async () => {}, // eslint-disable-line
+    onSuccess: () => setFinalized(false),
+    onFinalized: () => setFinalized(true),
   });
   const onSwitch = (): void => {
     tradeDispatch(store.switchTokensAction());
@@ -91,6 +93,8 @@ const Actions = ({ address1, address2, tab }: ActionsProps): JSX.Element => {
     dispatch: provideDispatch,
     notify,
     updateTokenState: async () => {}, // eslint-disable-line
+    onSuccess: () => setFinalized(false),
+    onFinalized: () => setFinalized(true),
   });
 
   // Withdraw
@@ -116,7 +120,11 @@ const Actions = ({ address1, address2, tab }: ActionsProps): JSX.Element => {
     signer: signer || undefined,
     notify,
     dispatch: withdrawDispatch,
+    onSuccess: () => setFinalized(false),
+    onFinalized: () => setFinalized(true),
   });
+
+  if (!finalized) return <Finalizing />;
 
   // If finalized is false action will be 'false-void'
   const action = `${finalized}-${finalized ? tab : 'void'}`;
