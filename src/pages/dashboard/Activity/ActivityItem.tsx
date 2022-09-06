@@ -42,8 +42,8 @@ const TokenActivityItem = ({
 
     const action = actionMap[type];
 
-    return `${action} ${token.name}`;
-  }, [type, token.name]);
+    return `${action} ${token.symbol}`;
+  }, [type, token.symbol]);
 
   const amount = useMemo(() => {
     const base = showBalance(token as Token);
