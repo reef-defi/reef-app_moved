@@ -260,3 +260,34 @@
   border-radius: 99px;
   background-color: var(--border-color);
 }
+
+.bond__cta {
+  border: none;
+  background: transparent;
+  width: 100%;
+  display: flex;
+}
+
+.bond__cta-btn {
+  width: 100%;
+}
+
+.bond-card__input-wrapper {
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.bond-card__input-wrapper input {
+  padding-right: 67px;
+}
+
+.bond-card__max-btn.uik-button--small {
+  position: absolute;
+  right: 10px;
+  padding: 7px 10px;
+  border-radius: 7px;
+}

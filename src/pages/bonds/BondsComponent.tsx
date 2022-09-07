@@ -11,8 +11,9 @@ import {
   compareAsc, format, formatDistance, intervalToDuration, secondsToMilliseconds,
 } from 'date-fns';
 import { Contract, ethers, Signer } from 'ethers';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import './bonds.css';
+import Uik from '@reef-defi/ui-kit';
 import BondData from './utils/bond-contract';
 import { IBond } from './utils/bonds';
 
@@ -61,7 +62,6 @@ const {
   NumberInput,
 } = InputModule;
 const { ConfirmLabel } = Label;
-const { Button } = ButtonModule;
 
 interface IBondTimes {
   lockTime: string;
@@ -381,6 +381,8 @@ export const BondsComponent = ({
     setVars();
   }, [account?.address]);
 
+  const isDisabled = useMemo(() => !!validationText || bondTimes?.opportunity.ended || bondTimes?.ending.ended, [validationText, bondTimes]);
+
   return (
     <>
       {!bondTimes?.lockTime || loadingValues
@@ -481,29 +483,39 @@ export const BondsComponent = ({
                 {
               account && !stakingClosedText && !loadingText ? (
                 <div className="bond-card__bottom">
-                  <NumberInput
-                    className="form-control form-control-lg border-rad"
-                    value={bondAmount}
-                    min={0}
-                    onChange={setBondAmount}
-                    disableDecimals
-                    placeholder="Enter amount to bond"
-                  />
-                  <div className="max-btn-w">
-                    <span
-                      className="text-primary text-decoration-none"
-                      role="button"
+                  <div className="bond-card__input-wrapper">
+                    <NumberInput
+                      className="form-control form-control-lg border-rad"
+                      value={bondAmount}
+                      min={0}
+                      onChange={setBondAmount}
+                      disableDecimals
+                      placeholder="Enter amount to bond"
+                    />
+
+                    <Uik.Button
+                      className="bond-card__max-btn"
+                      size="small"
+                      text="Max"
                       onClick={() => setBondAmount(bondAmountMax.toString(10))}
-                    >
-                      <small>(Max)</small>
-                    </span>
+                    />
                   </div>
-                  <OpenModalButton
-                    disabled={!!validationText || bondTimes?.opportunity.ended || bondTimes?.ending.ended}
-                    id={`bondConfirmation${bond.id}`}
+
+                  <button
+                    type="button"
+                    className="bond__cta"
+                    data-bs-toggle="modal"
+                    data-bs-target={`#bondConfirmation${bond.id}`}
+                    disabled={isDisabled}
                   >
-                    {validationText || 'Continue'}
-                  </OpenModalButton>
+                    <Uik.Button
+                      className="bond__cta-btn"
+                      size="large"
+                      fill={!isDisabled}
+                      disabled={isDisabled}
+                      text={validationText || 'Continue'}
+                    />
+                  </button>
                 </div>
               ) : (
                 <>
@@ -523,12 +535,13 @@ export const BondsComponent = ({
                   {
                 !loadingText && bondTimes.ending.ended
                 && (
-                <Button
+                <Uik.Button
+                  size="large"
                   disabled={!(+lockedAmount > 0)}
                   onClick={() => exit(contract!, ({ message }) => setLoadingText(message))}
-                >
-                  Claim rewards
-                </Button>
+                  text="Claim Rewards"
+                  fill
+                />
                 )
               }
                 </div>
