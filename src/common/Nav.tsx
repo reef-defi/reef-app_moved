@@ -81,10 +81,6 @@ const Nav = ({ display }: Nav): JSX.Element => {
               accounts={accounts}
               selectedSigner={signer || undefined}
               selectAccount={selectAccount}
-              reefscanUrl={network.reefscanUrl}
-              selectNetwork={appState.setCurrentNetwork}
-              availableNetworks={appAvailableNetworks}
-              bindAccountCb={navigateToBind}
             />
             )}
           </nav>
