@@ -2,6 +2,7 @@ import {
   appState, Components, hooks, store, Token,
 } from '@reef-defi/react-lib';
 import React, { useContext, useReducer, useState } from 'react';
+import PoolContext from '../context/PoolContext';
 import TokenContext from '../context/TokenContext';
 import TokenPricesContext from '../context/TokenPricesContext';
 import { notify } from '../utils/utils';
@@ -25,6 +26,7 @@ const OverlaySwap = ({
   const { tokens } = useContext(TokenContext);
   const tokenPrices = useContext(TokenPricesContext);
   const [finalized, setFinalized] = useState(true);
+  const pools = useContext(PoolContext);
 
   const network = hooks.useObservableState(appState.currentNetwork$);
   const signer = hooks.useObservableState(appState.selectedSigner$);
@@ -77,6 +79,7 @@ const OverlaySwap = ({
           finalized
             ? (
               <Trade
+                pools={pools}
                 tokens={tokens}
                 state={tradeState}
                 actions={{

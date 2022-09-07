@@ -6,6 +6,7 @@ import {
 import Uik from '@reef-defi/ui-kit';
 import React, { useContext, useReducer, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import PoolContext from '../../../context/PoolContext';
 import TokenContext from '../../../context/TokenContext';
 import TokenPricesContext from '../../../context/TokenPricesContext';
 import { POOL_CHART_URL } from '../../../urls';
@@ -28,6 +29,7 @@ const Actions = ({ address1, address2, tab }: ActionsProps): JSX.Element => {
   const { tokens } = useContext(TokenContext);
   const tokenPrices = useContext(TokenPricesContext);
   const [finalized, setFinalized] = useState(true);
+  const pools = useContext(PoolContext);
 
   const signer = hooks.useObservableState(
     appState.selectedSigner$,
@@ -134,6 +136,7 @@ const Actions = ({ address1, address2, tab }: ActionsProps): JSX.Element => {
     case 'true-trade':
       return (
         <Trade
+          pools={pools}
           tokens={tokens}
           state={tradeState}
           actions={{
