@@ -4,6 +4,7 @@ import React, { useContext, useMemo } from 'react';
 import './activity-item.css';
 import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import HideBalance from '../../../context/HideBalance';
+import { displayBalanceFromToken } from '../../../utils/displayBalance';
 
 const { showBalance } = utils;
 
@@ -46,8 +47,7 @@ const TokenActivityItem = ({
   }, [type, token.symbol]);
 
   const amount = useMemo(() => {
-    const base = showBalance(token as Token);
-    const amt = parseFloat(base);
+    const amt = displayBalanceFromToken(token as Token);
     const prefixMap = {
       receive: '+',
       send: '-',

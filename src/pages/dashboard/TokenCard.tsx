@@ -1,15 +1,14 @@
 import { faRepeat, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
-import { Token, utils } from '@reef-defi/react-lib';
+import { Token } from '@reef-defi/react-lib';
 import Uik from '@reef-defi/ui-kit';
 import BigNumber from 'bignumber.js';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 import OverlaySwap from '../../common/OverlaySwap';
 import OverlaySend from '../../common/OverlaySend';
 import { toCurrencyFormat } from '../../utils/utils';
 import './token-card.css';
 import HideBalance from '../../context/HideBalance';
-
-const { showBalance } = utils;
+import { displayBalance, displayBalanceFromToken } from '../../utils/displayBalance';
 
 export interface TokenCard {
   price: number;
@@ -41,6 +40,14 @@ const TokenCard = ({
     .div(new BigNumber(10).pow(token.decimals))
     .multipliedBy(price)
     .toNumber();
+
+  const balance = useMemo(() => {
+    if (balanceValue >= 1000000) {
+      return `$${displayBalance(balanceValue)}`;
+    }
+
+    return toCurrencyFormat(balanceValue);
+  }, [balanceValue]);
 
   return (
     <div className={`
@@ -98,7 +105,7 @@ const TokenCard = ({
             >
               {
                 !hideBalance.isHidden
-                  ? toCurrencyFormat(balanceValue)
+                  ? balance
                   : (
                     <>
                       <div />
@@ -122,7 +129,7 @@ const TokenCard = ({
             >
               {
               !hideBalance.isHidden
-                ? showBalance(token)
+                ? `${displayBalanceFromToken(token)} ${token.symbol}`
                 : (
                   <>
                     <div />

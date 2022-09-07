@@ -3,6 +3,7 @@ import React, { useContext, useMemo } from 'react';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { toCurrencyFormat } from '../../utils/utils';
 import HideBalance from '../../context/HideBalance';
+import { displayBalance } from '../../utils/displayBalance';
 
 interface Balance {
   balance: number;
@@ -28,7 +29,13 @@ export const Balance = ({
 }: Balance): JSX.Element => {
   const { isHidden, toggle } = useContext(HideBalance);
 
-  const getBalance = useMemo((): string => toCurrencyFormat(balance as number, { maximumFractionDigits: balance < 10000 ? 2 : 0 }), [balance]);
+  const getBalance = useMemo((): string => {
+    if (balance >= 1000000) {
+      return `$${displayBalance(balance)}`;
+    }
+
+    return toCurrencyFormat(balance as number, { maximumFractionDigits: balance < 10000 ? 2 : 0 });
+  }, [balance]);
 
   const toggleHidden = (): void => {
     if (isHidden) toggle();

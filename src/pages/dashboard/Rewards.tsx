@@ -1,6 +1,8 @@
 import Uik from '@reef-defi/ui-kit';
 import React, { useContext, useMemo } from 'react';
+import { toCurrencyFormat } from '../../utils/utils';
 import HideBalance from '../../context/HideBalance';
+import { displayBalance } from '../../utils/displayBalance';
 
 interface Rewards {
   rewards?: number | string;
@@ -8,15 +10,17 @@ interface Rewards {
 }
 
 export const Rewards = ({
-  rewards,
+  rewards = 0,
   className,
 }: Rewards): JSX.Element => {
   const { isHidden, toggle } = useContext(HideBalance);
 
   const getRewards = useMemo((): string => {
-    if (!rewards) return '$0.00';
+    if (rewards >= 1000000) {
+      return `$${displayBalance(rewards)}`;
+    }
 
-    return `$${Uik.utils.formatAmount(Uik.utils.maxDecimals(rewards, 2).toFixed(2))}`;
+    return toCurrencyFormat(rewards as number, { maximumFractionDigits: rewards < 10000 ? 2 : 0 });
   }, [rewards]);
 
   const toggleHidden = (): void => {
