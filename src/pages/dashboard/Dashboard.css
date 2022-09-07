@@ -98,7 +98,6 @@
     flex-basis: 0;
     flex-grow: 0.6;
     margin-left: 80px;
-    transform: translateY(5px);
 }
 
 .dashboard__top h5 {
