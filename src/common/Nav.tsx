@@ -4,8 +4,9 @@ import {
 } from '@reef-defi/react-lib';
 import './Nav.css';
 import { Link, useHistory, useLocation } from 'react-router-dom';
+import Uik from '@reef-defi/ui-kit';
 import { saveSignerLocalPointer } from '../store/internalStore';
-import { ReefLogo, ReefTestnetLogo } from './Icons';
+import { ReefLogo } from './Icons';
 import {
   BONDS_URL,
   CREATE_ERC20_TOKEN_URL, DASHBOARD_URL, POOLS_URL,
@@ -73,13 +74,13 @@ const Nav = ({ display }: Nav): JSX.Element => {
   return (
     <div className="nav-content navigation d-flex d-flex-space-between">
       <div className="navigation__wrapper">
-        <div className="logo-w">
-          <button type="button" className="logo-btn" onClick={() => { history.push('/'); }}>
-            <div className="svg-w h-100 w-100">
-              {mainnetSelected ? <ReefLogo /> : <ReefTestnetLogo />}
-            </div>
-          </button>
-        </div>
+        <button type="button" className="logo-btn" onClick={() => { history.push('/'); }}>
+          {
+              !mainnetSelected
+              && <span>Testnet</span>
+            }
+          <Uik.ReefLogo className="navigation__logo" />
+        </button>
 
         {display && (
           <nav className="d-flex justify-content-end d-flex-vert-center">

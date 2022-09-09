@@ -114,14 +114,14 @@
 
 .logo-btn {
   height: 44px;
-  width: 100%;
+  width: auto;
   border: none;
   background: none;
-}
-
-.logo-w {
-  width: 6em;
-  min-width: 6em;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  position: relative;
 }
 
 .no-break-text {
@@ -130,3 +130,21 @@
   overflow: hidden;
 }
 
+.logo-btn span:first-child {
+  font-size: 9px;
+  text-transform: uppercase;
+  font-weight: 800;
+  line-height: 1;
+  display: block;
+  color: var(--text-light);
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  background: -webkit-linear-gradient(0deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+span + .navigation__logo {
+  transform: translateY(-3px);
+}
