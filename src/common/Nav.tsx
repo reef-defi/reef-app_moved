@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useContext } from 'react';
 import {
   Components, appState, hooks, ReefSigner, Network, availableNetworks,
 } from '@reef-defi/react-lib';
@@ -11,6 +11,7 @@ import {
   CREATE_ERC20_TOKEN_URL, DASHBOARD_URL, POOLS_URL,
 } from '../urls';
 import { appAvailableNetworks } from '../environment';
+import HideBalance from '../context/HideBalance';
 
 export interface Nav {
     display: boolean;
@@ -29,6 +30,8 @@ const Nav = ({ display }: Nav): JSX.Element => {
     { title: 'Bonds', url: BONDS_URL },
     { title: 'Creator', url: CREATE_ERC20_TOKEN_URL },
   ];
+
+  const hideBalance = useContext(HideBalance);
 
   const selectAccount = (index: number): void => {
     saveSignerLocalPointer(index);
@@ -91,6 +94,8 @@ const Nav = ({ display }: Nav): JSX.Element => {
               selectAccount={selectAccount}
               onNetworkSelect={selectNetwork}
               selectedNetwork={selectedNetwork}
+              isBalanceHidden={hideBalance.isHidden}
+              showBalance={hideBalance.toggle}
             />
             )}
           </nav>
