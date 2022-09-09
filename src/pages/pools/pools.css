@@ -15,7 +15,7 @@
 @keyframes pools-top-appear {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-8px);
   }
 }
 
@@ -90,7 +90,7 @@
 @keyframes pools-list-appear {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-8px);
   }
 }
 

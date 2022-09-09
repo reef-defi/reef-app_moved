@@ -35,6 +35,6 @@
 
 @keyframes pool-content-appear {
   from {
-    transform: translateY(-15px);
+    transform: translateY(-8px);
   }
 }
