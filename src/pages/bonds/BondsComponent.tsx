@@ -47,6 +47,7 @@ const {
   Input: InputModule,
   Label,
   Button: ButtonModule,
+  BondConfirmPopup,
 } = Components;
 
 const {
@@ -383,6 +384,8 @@ export const BondsComponent = ({
 
   const isDisabled = useMemo(() => !!validationText || bondTimes?.opportunity.ended || bondTimes?.ending.ended, [validationText, bondTimes]);
 
+  const [isConfirmOpen, setConfirmOpen] = useState(false);
+
   return (
     <>
       {!bondTimes?.lockTime || loadingValues
@@ -501,21 +504,16 @@ export const BondsComponent = ({
                     />
                   </div>
 
-                  <button
-                    type="button"
-                    className="bond__cta"
-                    data-bs-toggle="modal"
-                    data-bs-target={`#bondConfirmation${bond.id}`}
-                    disabled={isDisabled}
-                  >
+                  <div className="bond__cta">
                     <Uik.Button
                       className="bond__cta-btn"
                       size="large"
                       fill={!isDisabled}
                       disabled={isDisabled}
                       text={validationText || 'Continue'}
+                      onClick={() => setConfirmOpen(true)}
                     />
-                  </button>
+                  </div>
                 </div>
               ) : (
                 <>
@@ -548,11 +546,10 @@ export const BondsComponent = ({
               </div>
             </div>
 
-            <ConfirmationModal
-              id={`bondConfirmation${bond.id}`}
-              title="Confirm Staking"
-              confirmBtnLabel="Stake"
-              confirmFun={async () => {
+            <BondConfirmPopup
+              isOpen={isConfirmOpen}
+              onClose={() => setConfirmOpen(false)}
+              onConfirm={async () => {
                 setLoadingText('Processing...');
                 try {
                   await bondFunds(bond.farmTokenAddress, contract!, account!, bondAmount, ({ message }) => setLoadingText(message));
@@ -573,20 +570,11 @@ export const BondsComponent = ({
                   setTxStatus(undefined);
                 }, 5000);
               }}
-            >
-              <Margin size="3">
-                <ConfirmLabel title="Bond Name" value={bond.bondName} />
-              </Margin>
-              <Margin size="3">
-                <ConfirmLabel title="Stake Amount" value={bondAmount} />
-              </Margin>
-              <Margin size="3">
-                <ConfirmLabel title="Contract" value={utils.toAddressShortDisplay(bond.bondContractAddress)} />
-              </Margin>
-              <Margin size="3">
-                <ConfirmLabel title="Staking duration" value={`Until ${bondTimes?.ending.endDate}`} />
-              </Margin>
-            </ConfirmationModal>
+              name={bond.bondName}
+              amount={bondAmount}
+              contract={utils.toAddressShortDisplay(bond.bondContractAddress)}
+              duration={`Until ${bondTimes?.ending.endDate}`}
+            />
           </ComponentCenter>
         )}
     </>
