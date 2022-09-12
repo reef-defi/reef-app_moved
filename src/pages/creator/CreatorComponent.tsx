@@ -8,27 +8,27 @@ import {
 import React, { useEffect, useState } from 'react';
 import { Contract, ContractFactory, utils } from 'ethers';
 import { Link } from 'react-router-dom';
+import Uik from '@reef-defi/ui-kit';
 import { verifyContract } from '../../utils/contract';
 import { DeployContractData, deployTokens } from './tokensDeployData';
+import './creator.css';
 
 const {
   Display,
   Card: CardModule,
   Modal,
   Loading,
-  Input: InputModule,
   Label,
   Button: ButtonModule,
 } = Components;
 const {
-  ComponentCenter, MT, CenterColumn, Margin,
+  ComponentCenter, MT, Margin,
 } = Display;
 const {
   CardHeader, CardHeaderBlank, CardTitle, Card,
 } = CardModule;
-const { OpenModalButton, default: ConfirmationModal, ModalFooter } = Modal;
+const { default: ConfirmationModal, ModalFooter } = Modal;
 
-const { Input, NumberInput, CheckboxInput } = InputModule;
 const { ConfirmLabel } = Label;
 const { Button } = ButtonModule;
 
@@ -264,91 +264,102 @@ export const CreatorComponent = ({
     setResultMessage(null);
   };
 
+  const handleSupplyInput = (value = ''): void => {
+    const numeric = value.replace(/[^0-9]/g, '');
+    setInitialSupply(numeric || '');
+  };
+
   // @ts-ignore
   return (
     <>
       {!resultMessage && (
         <>
-          <ComponentCenter>
-            <Card>
-              <CardHeader>
-                <CardHeaderBlank />
-                <CardTitle title="Create Your Token" />
-                <CardHeaderBlank />
-              </CardHeader>
+          <div className="creator">
+            <div className="creator__form">
+              <Uik.Text type="headline">Create Your Token</Uik.Text>
+              <Uik.Text type="lead">Use Reef chain to create your own token.</Uik.Text>
 
-              <MT size="2">
-                <Input
+              <Uik.Form>
+                <Uik.Input
+                  label="Token Name"
+                  placeholder="My Token"
                   value={tokenName}
                   maxLength={42}
-                  onChange={setTokenName}
-                  placeholder="Token Name"
+                  onInput={(e) => setTokenName(e.target.value)}
                 />
-              </MT>
-              <MT size="2">
-                <Input
+
+                <Uik.Input
+                  className="creator__token-symbol-input"
+                  label="Token Symbol"
+                  placeholder="MYTKN"
                   value={symbol}
                   maxLength={42}
-                  onChange={setSymbol}
-                  placeholder="Token Symbol"
+                  onInput={(e) => setSymbol(e.target.value)}
                 />
-              </MT>
-              <MT size="2">
-                <NumberInput
-                  className="form-control form-control-lg border-rad"
+
+                <Uik.Input
+                  label="Initial Supply"
+                  placeholder="0"
                   value={initialSupply}
                   min={1}
-                  onChange={(e) => {
-                    setInitialSupply(e || '');
-                  }}
-                  disableDecimals
-                  placeholder="Token Initial Supply Number"
+                  onInput={(e) => handleSupplyInput(e.target.value)}
                 />
-                <div>
-                  <small className="text-color-disabled">
-                    {initialSupply
-                      && `Decimal value on chain: ${utils.parseEther(
-                        initialSupply,
-                      )}`}
-                  </small>
-                </div>
-              </MT>
-              <MT size="2">
-                <div className="d-flex">
-                  <div className="mr-2">
-                    <CheckboxInput
-                      checked={tokenOptions.burnable}
-                      onChange={() => setTokenOptions({
-                        ...tokenOptions,
-                        burnable: !tokenOptions.burnable,
-                      })}
-                      id="burn"
-                      labelText="Burnable"
-                    />
-                  </div>
-                  <CheckboxInput
-                    checked={tokenOptions.mintable}
+
+                <Uik.Container flow="start">
+                  <Uik.Toggle
+                    label="Burnable"
+                    onText="Yes"
+                    offText="No"
+                    value={tokenOptions.burnable}
+                    onChange={() => setTokenOptions({
+                      ...tokenOptions,
+                      burnable: !tokenOptions.burnable,
+                    })}
+                  />
+
+                  <Uik.Toggle
+                    label="Mintable"
+                    onText="Yes"
+                    offText="No"
+                    value={tokenOptions.mintable}
                     onChange={() => setTokenOptions({
                       ...tokenOptions,
                       mintable: !tokenOptions.mintable,
                     })}
-                    id="mint"
-                    labelText="Mintable"
                   />
+                </Uik.Container>
+              </Uik.Form>
+            </div>
+            <div className="creator__preview">
+              <div className="creator__preview-wrapper">
+                <Uik.Text type="lead" className="creator__preview-title">Token Preview</Uik.Text>
+
+                <div className="creator__preview-token">
+                  <div className="creator__preview-token-image" />
+                  <div className="creator__preview-token-info">
+                    <div className="creator__preview-token-name">{ tokenName }</div>
+                    <div className="creator__preview-token-symbol">{ symbol }</div>
+                  </div>
                 </div>
-              </MT>
-              <MT size="2">
-                <CenterColumn>
-                  <OpenModalButton
-                    id="createModalToggle"
-                    disabled={!!validationMsg}
-                  >
-                    {validationMsg || 'Create'}
-                  </OpenModalButton>
-                </CenterColumn>
-              </MT>
-            </Card>
-          </ComponentCenter>
+
+                { initialSupply
+                  && (
+                  <Uik.Text className="creator__preview-decimal">
+                    Decimal value on chain:
+                    {' '}
+                    {Uik.utils.formatAmount(utils.parseEther(initialSupply).toString())}
+                  </Uik.Text>
+                  )}
+
+                <Uik.Button
+                  disabled={!!validationMsg}
+                  text="Create Token"
+                  fill={!validationMsg}
+                  size="large"
+                />
+              </div>
+            </div>
+          </div>
 
           <ConfirmationModal
             id="createModalToggle"
