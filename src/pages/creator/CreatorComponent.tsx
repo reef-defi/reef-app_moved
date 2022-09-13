@@ -351,12 +351,24 @@ export const CreatorComponent = ({
                   </Uik.Text>
                   )}
 
-                <Uik.Button
+                <button
+                  type="button"
+                  data-bs-toggle="modal"
+                  data-bs-target="#createModalToggle"
                   disabled={!!validationMsg}
-                  text="Create Token"
-                  fill={!validationMsg}
-                  size="large"
-                />
+                  style={{
+                    width: '100%',
+                    border: 'none',
+                    background: 'transparent',
+                  }}
+                >
+                  <Uik.Button
+                    disabled={!!validationMsg}
+                    text="Create Token"
+                    fill={!validationMsg}
+                    size="large"
+                  />
+                </button>
               </div>
             </div>
           </div>
