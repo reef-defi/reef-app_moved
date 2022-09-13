@@ -7,7 +7,7 @@ const { OverlayAction } = Components;
 
 export interface Props {
   isOpen: boolean,
-  onClose: (...args: any[]) => any
+  onClose: () => void
 }
 
 const PoolSelect = ({ isOpen, onClose }: Props): JSX.Element => (

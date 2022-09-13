@@ -43,26 +43,17 @@ export const getReefBondContract = (bond: IBond, signer: Signer): Contract => ne
 
 const {
   Display,
-  Modal,
   Input: InputModule,
-  Label,
-  Button: ButtonModule,
   BondConfirmPopup,
 } = Components;
 
 const {
   ComponentCenter,
-  Margin,
 } = Display;
-const {
-  OpenModalButton,
-  default: ConfirmationModal,
-} = Modal;
 
 const {
   NumberInput,
 } = InputModule;
-const { ConfirmLabel } = Label;
 
 interface IBondTimes {
   lockTime: string;
