@@ -52,12 +52,25 @@
   margin-top: 25px;
 }
 
+.creator__form-main .uik-input:first-child {
+  flex-grow: 2;
+}
+
 .creator__form .uik-form .uik-container > * + * {
   margin-left: 30px;
 }
 
-.creator__form .uik-container > * {
-  flex-grow: unset;
+.creator__form-bottom {
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.creator__form .uik-label {
+  white-space: nowrap;
+}
+
+.creator__form-bottom > * {
+  flex-grow: unset !important;
 }
 
 .creator__form .uik-label {
@@ -81,6 +94,11 @@
 }
 
 .creator__form .uik-input .uik-input__wrapper .uik-input__input-wrapper .uik-input__input:focus {
+  background-color: hsl(
+    var(--bg--h),
+    var(--bg--s),
+    calc(var(--bg--l) + 1%)
+  );
   border-color: var(--primary);
   box-shadow: 0 10px 15px -8px hsla(
     var(--secondary--h),
@@ -105,6 +123,10 @@
 
 .creator__token-symbol-input .uik-input__input {
   text-transform: uppercase;
+}
+
+.creator .icon-upload {
+  transform: translateY(-3px);
 }
 
 .creator__preview {
@@ -142,7 +164,15 @@
     var(--bg--s),
     calc(var(--bg--l) - 1%)
   );
+  overflow: hidden;
   box-shadow: var(--neomorph-in);
+}
+
+.creator__preview-token-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: icon-upload-image 0.25s ease-out;
 }
 
 .creator__preview-token-info {
@@ -157,7 +187,12 @@
 .creator__preview-token-name {
   font-size: 1.125rem;
   font-weight: 500;
-  color: var(--text);
+  color: hsla(
+    var(--text--h),
+    var(--text--s),
+    var(--text--l),
+    0.9
+  );
   line-height: 1.3;
   min-height: calc(1.125rem * 1.3);
   max-width: 100%;

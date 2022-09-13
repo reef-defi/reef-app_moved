@@ -12,6 +12,7 @@ import Uik from '@reef-defi/ui-kit';
 import { verifyContract } from '../../utils/contract';
 import { DeployContractData, deployTokens } from './tokensDeployData';
 import './creator.css';
+import IconUpload from './IconUpload';
 
 const {
   Display,
@@ -269,6 +270,8 @@ export const CreatorComponent = ({
     setInitialSupply(numeric || '');
   };
 
+  const [icon, setIcon] = useState('');
+
   // @ts-ignore
   return (
     <>
@@ -276,26 +279,36 @@ export const CreatorComponent = ({
         <>
           <div className="creator">
             <div className="creator__form">
-              <Uik.Text type="headline">Create Your Token</Uik.Text>
-              <Uik.Text type="lead">Use Reef chain to create your own token.</Uik.Text>
+              <Uik.Container flow="spaceBetween">
+                <Uik.Container vertical flow="start">
+                  <Uik.Text type="headline">Create Your Token</Uik.Text>
+                  <Uik.Text type="lead">Use Reef chain to create your own token.</Uik.Text>
+                </Uik.Container>
+                <IconUpload
+                  value={icon}
+                  onChange={(e) => setIcon(e)}
+                />
+              </Uik.Container>
 
               <Uik.Form>
-                <Uik.Input
-                  label="Token Name"
-                  placeholder="My Token"
-                  value={tokenName}
-                  maxLength={42}
-                  onInput={(e) => setTokenName(e.target.value)}
-                />
+                <Uik.Container className="creator__form-main">
+                  <Uik.Input
+                    label="Token Name"
+                    placeholder="My Token"
+                    value={tokenName}
+                    maxLength={42}
+                    onInput={(e) => setTokenName(e.target.value)}
+                  />
 
-                <Uik.Input
-                  className="creator__token-symbol-input"
-                  label="Token Symbol"
-                  placeholder="MYTKN"
-                  value={symbol}
-                  maxLength={42}
-                  onInput={(e) => setSymbol(e.target.value)}
-                />
+                  <Uik.Input
+                    className="creator__token-symbol-input"
+                    label="Token Symbol"
+                    placeholder="MYTKN"
+                    value={symbol}
+                    maxLength={42}
+                    onInput={(e) => setSymbol(e.target.value)}
+                  />
+                </Uik.Container>
 
                 <Uik.Input
                   label="Initial Supply"
@@ -305,7 +318,7 @@ export const CreatorComponent = ({
                   onInput={(e) => handleSupplyInput(e.target.value)}
                 />
 
-                <Uik.Container flow="start">
+                <Uik.Container className="creator__form-bottom">
                   <Uik.Toggle
                     label="Burnable"
                     onText="Yes"
@@ -335,7 +348,18 @@ export const CreatorComponent = ({
                 <Uik.Text type="lead" className="creator__preview-title">Token Preview</Uik.Text>
 
                 <div className="creator__preview-token">
-                  <div className="creator__preview-token-image" />
+                  <div className="creator__preview-token-image">
+                    {
+                      !!icon
+                      && (
+                      <img
+                        src={icon}
+                        alt="Token icon"
+                        key={icon}
+                      />
+                      )
+                    }
+                  </div>
                   <div className="creator__preview-token-info">
                     <div className="creator__preview-token-name">{ tokenName }</div>
                     <div className="creator__preview-token-symbol">{ symbol }</div>
