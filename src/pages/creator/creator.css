@@ -65,6 +65,10 @@
   align-items: flex-start;
 }
 
+.creator__form-bottom .uik-toggle:first-child .uik-toggle__text {
+  min-width: 68px;
+}
+
 .creator__form .uik-label {
   white-space: nowrap;
 }
