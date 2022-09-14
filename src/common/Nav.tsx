@@ -38,6 +38,7 @@ const Nav = ({ display }: Nav): JSX.Element => {
   };
 
   const selectNetwork = (key: 'mainnet' | 'testnet'): void => {
+    document.body.style.overflow = '';
     const toSelect = appAvailableNetworks.find((item) => item.name === key);
     if (toSelect) {
       appState.setCurrentNetwork(toSelect);
