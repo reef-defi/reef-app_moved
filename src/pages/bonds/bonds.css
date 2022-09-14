@@ -42,19 +42,6 @@
   text-align: center;
 }
 
-.bond-card::after,
-.bond-skeleton::after {
-  content: "";
-  position: absolute;
-  z-index: 1;
-  width: calc(100% - 26px);
-  bottom: 0;
-  height: 20px;
-  left: 13px;
-  background-color: white;
-  border-radius: 0 0 10px 10px;
-}
-
 .bond-card__token-image {
   width: 60px;
 }
