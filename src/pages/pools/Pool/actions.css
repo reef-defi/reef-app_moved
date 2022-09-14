@@ -34,3 +34,13 @@
 .uik-pool-actions .uik-button--loading .uik-loading__spinner-dot::before {
   background: var(--text-light) !important;
 }
+
+.uik-pool-actions-token {
+  position: relative;
+}
+
+.uik-pool-actions-token__select-dropdown {
+  position: absolute !important;
+  left: 0;
+  width: 100%;
+}
