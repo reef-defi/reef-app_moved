@@ -366,15 +366,6 @@ export const CreatorComponent = ({
                   </div>
                 </div>
 
-                { initialSupply
-                  && (
-                  <Uik.Text className="creator__preview-decimal">
-                    Decimal value on chain:
-                    {' '}
-                    {Uik.utils.formatAmount(utils.parseEther(initialSupply).toString())}
-                  </Uik.Text>
-                  )}
-
                 <button
                   type="button"
                   data-bs-toggle="modal"
