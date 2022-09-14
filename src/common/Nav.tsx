@@ -1,6 +1,6 @@
 import React, { useMemo, useContext } from 'react';
 import {
-  Components, appState, hooks, ReefSigner, Network, availableNetworks,
+  Components, appState, hooks, ReefSigner, Network,
 } from '@reef-defi/react-lib';
 import './Nav.css';
 import { Link, useHistory, useLocation } from 'react-router-dom';
@@ -23,7 +23,6 @@ const Nav = ({ display }: Nav): JSX.Element => {
   const signer: ReefSigner|undefined|null = hooks.useObservableState(appState.selectedSigner$);
   const accounts: ReefSigner[]|undefined|null = hooks.useObservableState(appState.signers$);
   const network: Network|undefined = hooks.useObservableState(appState.currentNetwork$);
-  const mainnetSelected = network == null || network?.rpcUrl === availableNetworks.mainnet.rpcUrl;
   const menuItems = [
     { title: 'Dashboard', url: DASHBOARD_URL },
     { title: 'Pools', url: POOLS_URL },
@@ -74,10 +73,6 @@ const Nav = ({ display }: Nav): JSX.Element => {
     <div className="nav-content navigation d-flex d-flex-space-between">
       <div className="navigation__wrapper">
         <button type="button" className="logo-btn" onClick={() => { history.push('/'); }}>
-          {
-              !mainnetSelected
-              && <span>Testnet</span>
-            }
           <Uik.ReefLogo className="navigation__logo" />
         </button>
 
