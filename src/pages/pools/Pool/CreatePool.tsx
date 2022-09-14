@@ -12,7 +12,7 @@ import { notify } from '../../../utils/utils';
 import '../../../common/overlay-swap.css';
 import './create-pool.css';
 
-const { Provide, OverlayAction } = Components;
+const { Provide, OverlayAction, Finalizing } = Components;
 
 export interface Props {
   isOpen: boolean;
@@ -25,6 +25,8 @@ const CreatePool = ({
 }: Props): JSX.Element => {
   const [address1, setAddress1] = useState('0x');
   const [address2, setAddress2] = useState('0x');
+
+  const [finalized, setFinalized] = useState(true);
 
   const { tokens } = useContext(TokenContext);
   const tokenPrices = useContext(TokenPricesContext);
@@ -59,6 +61,11 @@ const CreatePool = ({
     dispatch: provideDispatch,
     notify,
     updateTokenState: async () => {}, // eslint-disable-line
+    onSuccess: () => setFinalized(false),
+    onFinalized: () => {
+      setFinalized(true);
+      if (onClose) onClose();
+    },
   });
 
   const onClosed = (): void => {
@@ -82,19 +89,25 @@ const CreatePool = ({
       className="overlay-swap create-pool"
     >
       <div className="uik-pool-actions pool-actions">
-        <Provide
-          state={provideState}
-          tokens={tokens}
-          actions={{
-            onAddLiquidity,
-            selectToken1: (token: Token): void => setAddress1(token.address),
-            selectToken2: (token: Token): void => setAddress2(token.address),
-            setPercentage: (amount: number) => provideDispatch(store.setPercentageAction(amount)),
-            setToken1Amount: (amount: string) => provideDispatch(store.setToken1AmountAction(amount)),
-            setToken2Amount: (amount: string) => provideDispatch(store.setToken2AmountAction(amount)),
-          }}
-          confirmText="Create Pool"
-        />
+        {
+          finalized
+            ? (
+              <Provide
+                state={provideState}
+                tokens={tokens}
+                actions={{
+                  onAddLiquidity,
+                  selectToken1: (token: Token): void => setAddress1(token.address),
+                  selectToken2: (token: Token): void => setAddress2(token.address),
+                  setPercentage: (amount: number) => provideDispatch(store.setPercentageAction(amount)),
+                  setToken1Amount: (amount: string) => provideDispatch(store.setToken1AmountAction(amount)),
+                  setToken2Amount: (amount: string) => provideDispatch(store.setToken2AmountAction(amount)),
+                }}
+                confirmText="Create Pool"
+              />
+            )
+            : <Finalizing />
+        }
       </div>
     </OverlayAction>
   );

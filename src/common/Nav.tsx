@@ -1,18 +1,17 @@
-import React from 'react';
+import React, { useMemo, useContext } from 'react';
 import {
-  Components, appState, hooks, ReefSigner, Network, utils, availableNetworks,
+  Components, appState, hooks, ReefSigner, Network,
 } from '@reef-defi/react-lib';
 import './Nav.css';
 import { Link, useHistory, useLocation } from 'react-router-dom';
+import Uik from '@reef-defi/ui-kit';
 import { saveSignerLocalPointer } from '../store/internalStore';
-import { ReefLogo, ReefTestnetLogo } from './Icons';
 import {
-  addressReplacer,
-  BIND_URL,
   BONDS_URL,
   CREATE_ERC20_TOKEN_URL, DASHBOARD_URL, POOLS_URL,
 } from '../urls';
 import { appAvailableNetworks } from '../environment';
+import HideBalance from '../context/HideBalance';
 
 export interface Nav {
     display: boolean;
@@ -24,7 +23,6 @@ const Nav = ({ display }: Nav): JSX.Element => {
   const signer: ReefSigner|undefined|null = hooks.useObservableState(appState.selectedSigner$);
   const accounts: ReefSigner[]|undefined|null = hooks.useObservableState(appState.signers$);
   const network: Network|undefined = hooks.useObservableState(appState.currentNetwork$);
-  const mainnetSelected = network == null || network?.rpcUrl === availableNetworks.mainnet.rpcUrl;
   const menuItems = [
     { title: 'Dashboard', url: DASHBOARD_URL },
     { title: 'Pools', url: POOLS_URL },
@@ -32,16 +30,18 @@ const Nav = ({ display }: Nav): JSX.Element => {
     { title: 'Creator', url: CREATE_ERC20_TOKEN_URL },
   ];
 
-  const navigateToBind = (): void => {
-    if (signer) {
-      history.push(addressReplacer(BIND_URL, signer.address));
-      utils.closeModal('account-modal');
-    }
-  };
+  const hideBalance = useContext(HideBalance);
 
   const selectAccount = (index: number): void => {
     saveSignerLocalPointer(index);
     appState.setCurrentAddress(index != null ? accounts?.[index].address : undefined);
+  };
+
+  const selectNetwork = (key: 'mainnet' | 'testnet'): void => {
+    const toSelect = appAvailableNetworks.find((item) => item.name === key);
+    if (toSelect) {
+      appState.setCurrentNetwork(toSelect);
+    }
   };
 
   const menuItemsView = menuItems
@@ -59,16 +59,22 @@ const Nav = ({ display }: Nav): JSX.Element => {
       );
     });
 
+  const selectedNetwork = useMemo(() => {
+    const name = network?.name;
+
+    if (name === 'mainnet' || name === 'testnet') {
+      return name;
+    }
+
+    return undefined;
+  }, [network]);
+
   return (
     <div className="nav-content navigation d-flex d-flex-space-between">
       <div className="navigation__wrapper">
-        <div className="logo-w">
-          <button type="button" className="logo-btn" onClick={() => { history.push('/'); }}>
-            <div className="svg-w h-100 w-100">
-              {mainnetSelected ? <ReefLogo /> : <ReefTestnetLogo />}
-            </div>
-          </button>
-        </div>
+        <button type="button" className="logo-btn" onClick={() => { history.push('/'); }}>
+          <Uik.ReefLogo className="navigation__logo" />
+        </button>
 
         {display && (
           <nav className="d-flex justify-content-end d-flex-vert-center">
@@ -81,10 +87,10 @@ const Nav = ({ display }: Nav): JSX.Element => {
               accounts={accounts}
               selectedSigner={signer || undefined}
               selectAccount={selectAccount}
-              reefscanUrl={network.reefscanUrl}
-              selectNetwork={appState.setCurrentNetwork}
-              availableNetworks={appAvailableNetworks}
-              bindAccountCb={navigateToBind}
+              onNetworkSelect={selectNetwork}
+              selectedNetwork={selectedNetwork}
+              isBalanceHidden={hideBalance.isHidden}
+              showBalance={hideBalance.toggle}
             />
             )}
           </nav>

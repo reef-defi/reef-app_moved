@@ -18,7 +18,7 @@
 
 @keyframes pool-stats-content-appear {
   from {
-    transform: translateY(-15px);
+    transform: translateY(-8px);
     opacity: 0;
   }
 }

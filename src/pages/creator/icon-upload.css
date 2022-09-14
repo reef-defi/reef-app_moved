@@ -1,0 +1,56 @@
+.icon-upload input {
+  display: none;
+}
+
+.icon-upload__area {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  width: 76px;
+  min-width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: hsl(var(--border-color--h),var(--border-color--s),calc(var(--border-color--l) + 3%));
+  box-shadow: inset 0 0 0 1px hsl(
+    var(--bg--h),
+    var(--bg--s),
+    calc(var(--bg--l) - 4%)
+  );
+  cursor: pointer;
+  position: relative;
+  transition: all 0.125s;
+}
+
+.icon-upload__area:hover {
+  background-color: hsl(
+    var(--bg--h),
+    var(--bg--s),
+    calc(var(--bg--l) + 1%)
+  );
+}
+
+.icon-upload__icon {
+  width: 34px;
+  opacity: 0.1;
+  color: var(--text);
+}
+
+.icon-upload__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: icon-upload-image 0.25s ease-out;
+  transition: all 0.125s;
+}
+
+.icon-upload__image:hover {
+  opacity: 0.8;
+}
+
+@keyframes icon-upload-image {
+  from {
+    transform: scale(1.5);
+  }
+}

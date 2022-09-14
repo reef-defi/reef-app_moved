@@ -11,8 +11,9 @@ import {
   compareAsc, format, formatDistance, intervalToDuration, secondsToMilliseconds,
 } from 'date-fns';
 import { Contract, ethers, Signer } from 'ethers';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import './bonds.css';
+import Uik from '@reef-defi/ui-kit';
 import BondData from './utils/bond-contract';
 import { IBond } from './utils/bonds';
 
@@ -42,26 +43,17 @@ export const getReefBondContract = (bond: IBond, signer: Signer): Contract => ne
 
 const {
   Display,
-  Modal,
   Input: InputModule,
-  Label,
-  Button: ButtonModule,
+  BondConfirmPopup,
 } = Components;
 
 const {
   ComponentCenter,
-  Margin,
 } = Display;
-const {
-  OpenModalButton,
-  default: ConfirmationModal,
-} = Modal;
 
 const {
   NumberInput,
 } = InputModule;
-const { ConfirmLabel } = Label;
-const { Button } = ButtonModule;
 
 interface IBondTimes {
   lockTime: string;
@@ -381,6 +373,10 @@ export const BondsComponent = ({
     setVars();
   }, [account?.address]);
 
+  const isDisabled = useMemo(() => !!validationText || bondTimes?.opportunity.ended || bondTimes?.ending.ended, [validationText, bondTimes]);
+
+  const [isConfirmOpen, setConfirmOpen] = useState(false);
+
   return (
     <>
       {!bondTimes?.lockTime || loadingValues
@@ -481,29 +477,34 @@ export const BondsComponent = ({
                 {
               account && !stakingClosedText && !loadingText ? (
                 <div className="bond-card__bottom">
-                  <NumberInput
-                    className="form-control form-control-lg border-rad"
-                    value={bondAmount}
-                    min={0}
-                    onChange={setBondAmount}
-                    disableDecimals
-                    placeholder="Enter amount to bond"
-                  />
-                  <div className="max-btn-w">
-                    <span
-                      className="text-primary text-decoration-none"
-                      role="button"
+                  <div className="bond-card__input-wrapper">
+                    <NumberInput
+                      className="form-control form-control-lg border-rad"
+                      value={bondAmount}
+                      min={0}
+                      onChange={setBondAmount}
+                      disableDecimals
+                      placeholder="Enter amount to bond"
+                    />
+
+                    <Uik.Button
+                      className="bond-card__max-btn"
+                      size="small"
+                      text="Max"
                       onClick={() => setBondAmount(bondAmountMax.toString(10))}
-                    >
-                      <small>(Max)</small>
-                    </span>
+                    />
                   </div>
-                  <OpenModalButton
-                    disabled={!!validationText || bondTimes?.opportunity.ended || bondTimes?.ending.ended}
-                    id={`bondConfirmation${bond.id}`}
-                  >
-                    {validationText || 'Continue'}
-                  </OpenModalButton>
+
+                  <div className="bond__cta">
+                    <Uik.Button
+                      className="bond__cta-btn"
+                      size="large"
+                      fill={!isDisabled}
+                      disabled={isDisabled}
+                      text={validationText || 'Continue'}
+                      onClick={() => setConfirmOpen(true)}
+                    />
+                  </div>
                 </div>
               ) : (
                 <>
@@ -523,23 +524,23 @@ export const BondsComponent = ({
                   {
                 !loadingText && bondTimes.ending.ended
                 && (
-                <Button
+                <Uik.Button
+                  size="large"
                   disabled={!(+lockedAmount > 0)}
                   onClick={() => exit(contract!, ({ message }) => setLoadingText(message))}
-                >
-                  Claim rewards
-                </Button>
+                  text="Claim Rewards"
+                  fill
+                />
                 )
               }
                 </div>
               </div>
             </div>
 
-            <ConfirmationModal
-              id={`bondConfirmation${bond.id}`}
-              title="Confirm Staking"
-              confirmBtnLabel="Stake"
-              confirmFun={async () => {
+            <BondConfirmPopup
+              isOpen={isConfirmOpen}
+              onClose={() => setConfirmOpen(false)}
+              onConfirm={async () => {
                 setLoadingText('Processing...');
                 try {
                   await bondFunds(bond.farmTokenAddress, contract!, account!, bondAmount, ({ message }) => setLoadingText(message));
@@ -560,20 +561,11 @@ export const BondsComponent = ({
                   setTxStatus(undefined);
                 }, 5000);
               }}
-            >
-              <Margin size="3">
-                <ConfirmLabel title="Bond Name" value={bond.bondName} />
-              </Margin>
-              <Margin size="3">
-                <ConfirmLabel title="Stake Amount" value={bondAmount} />
-              </Margin>
-              <Margin size="3">
-                <ConfirmLabel title="Contract" value={utils.toAddressShortDisplay(bond.bondContractAddress)} />
-              </Margin>
-              <Margin size="3">
-                <ConfirmLabel title="Staking duration" value={`Until ${bondTimes?.ending.endDate}`} />
-              </Margin>
-            </ConfirmationModal>
+              name={bond.bondName}
+              amount={bondAmount}
+              contract={utils.toAddressShortDisplay(bond.bondContractAddress)}
+              duration={`Until ${bondTimes?.ending.endDate}`}
+            />
           </ComponentCenter>
         )}
     </>

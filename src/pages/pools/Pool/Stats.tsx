@@ -1,7 +1,8 @@
 import './stats.css';
 import Uik from '@reef-defi/ui-kit';
-import React from 'react';
+import React, { useState } from 'react';
 import { hooks } from '@reef-defi/react-lib';
+import PoolSelect from './PoolSelect';
 
 interface StatsProps {
   data: hooks.PoolStats;
@@ -75,88 +76,98 @@ const Token = ({ token, price }: TokenStatsProps): JSX.Element => (
   </div>
 );
 
-const Stats = ({ data, price1, price2 }: StatsProps): JSX.Element => (
-  <div className="pool-stats">
-    <div className="pool-stats__wrapper">
-      <div className="pool-stats__main">
-        <Uik.Container flow="spaceBetween">
-          <button
-            className="pool-stats__pool-select"
-            type="button"
-          >
-            <div className="pool-stats__pool-select-pair">
-              <img
-                src={data.firstToken.icon}
-                alt={data.firstToken.symbol}
-                className={`pool-stats__pool-select-pair--${Uik.utils.slug(data.firstToken.symbol)}`}
-              />
-              <img
-                src={data.secondToken.icon}
-                alt={data.firstToken.symbol}
-                className={`pool-stats__pool-select-pair--${Uik.utils.slug(data.secondToken.symbol)}`}
-              />
-            </div>
-            <span className="pool-stats__pool-select-name">
-              { data.firstToken.symbol }
-              {' '}
-              /
-              {' '}
-              { data.secondToken.symbol }
-            </span>
-          </button>
+const Stats = ({ data, price1, price2 }: StatsProps): JSX.Element => {
+  const [isSelectOpen, setSelectOpen] = useState(false);
 
-          <Uik.Button
-            className="pool-stats__transactions-btn"
-            size="small"
-            text="Show Transactions"
-          />
-        </Uik.Container>
+  return (
+    <div className="pool-stats">
+      <div className="pool-stats__wrapper">
+        <div className="pool-stats__main">
+          <Uik.Container flow="spaceBetween">
+            <button
+              className="pool-stats__pool-select"
+              type="button"
+              onClick={() => setSelectOpen(true)}
+            >
+              <div className="pool-stats__pool-select-pair">
+                <img
+                  src={data.firstToken.icon}
+                  alt={data.firstToken.symbol}
+                  className={`pool-stats__pool-select-pair--${Uik.utils.slug(data.firstToken.symbol)}`}
+                />
+                <img
+                  src={data.secondToken.icon}
+                  alt={data.firstToken.symbol}
+                  className={`pool-stats__pool-select-pair--${Uik.utils.slug(data.secondToken.symbol)}`}
+                />
+              </div>
+              <span className="pool-stats__pool-select-name">
+                { data.firstToken.symbol }
+                {' '}
+                /
+                {' '}
+                { data.secondToken.symbol }
+              </span>
+            </button>
 
-        <Uik.Container className="pool-stats__main-stats">
-          <div className="pool-stats__main-stat">
-            <div className="pool-stats__main-stat-label">Total Value Locked</div>
-            <div className="pool-stats__main-stat-value">
-              $
-              {' '}
-              { displayAmount(data.tvlUSD) }
-            </div>
-          </div>
+            <Uik.Button
+              className="pool-stats__transactions-btn"
+              size="small"
+              text="Show Transactions"
+            />
+          </Uik.Container>
 
-          <div className="pool-stats__main-stat">
-            <div className="pool-stats__main-stat-label">My Liquidity</div>
-            <div className="pool-stats__main-stat-value">
-              $
-              {' '}
-              { displayAmount(data.mySupplyUSD) }
-            </div>
-          </div>
-
-          <div className="pool-stats__main-stat">
-            <div className="pool-stats__main-stat-label">24h Volume</div>
-            <div className="pool-stats__main-stat-value">
-              <span>
+          <Uik.Container className="pool-stats__main-stats">
+            <div className="pool-stats__main-stat">
+              <div className="pool-stats__main-stat-label">Total Value Locked</div>
+              <div className="pool-stats__main-stat-value">
                 $
                 {' '}
-                { displayAmount(data.volume24hUSD) }
-              </span>
-              <Uik.Trend
-                type={data.volumeChange24h >= 0 ? 'good' : 'bad'}
-                direction={data.volumeChange24h >= 0 ? 'up' : 'down'}
-                text={`${data.volumeChange24h.toFixed(2)}%`}
-              />
+                { displayAmount(data.tvlUSD) }
+              </div>
             </div>
-          </div>
-        </Uik.Container>
+
+            <div className="pool-stats__main-stat">
+              <div className="pool-stats__main-stat-label">My Liquidity</div>
+              <div className="pool-stats__main-stat-value">
+                $
+                {' '}
+                { displayAmount(data.mySupplyUSD) }
+              </div>
+            </div>
+
+            <div className="pool-stats__main-stat">
+              <div className="pool-stats__main-stat-label">24h Volume</div>
+              <div className="pool-stats__main-stat-value">
+                <span>
+                  $
+                  {' '}
+                  { displayAmount(data.volume24hUSD) }
+                </span>
+                <Uik.Trend
+                  type={data.volumeChange24h >= 0 ? 'good' : 'bad'}
+                  direction={data.volumeChange24h >= 0 ? 'up' : 'down'}
+                  text={`${data.volumeChange24h.toFixed(2)}%`}
+                />
+              </div>
+            </div>
+          </Uik.Container>
+        </div>
+
+        <div className="pool-stats__tokens">
+          <Token token={data.firstToken} price={price1} />
+          <Token token={data.secondToken} price={price2} />
+        </div>
       </div>
 
-      <div className="pool-stats__tokens">
-        <Token token={data.firstToken} price={price1} />
-        <Token token={data.secondToken} price={price2} />
-      </div>
+      <Uik.Bubbles />
+
+      <PoolSelect
+        isOpen={isSelectOpen}
+        onClose={() => setSelectOpen(false)}
+      />
     </div>
-
-    <Uik.Bubbles />
-  </div>
-);
+  );
+};
 
 export default Stats;

@@ -1,3 +1,14 @@
+.dashboard {
+    animation: dashboard-appear 0.4s;
+}
+
+@keyframes dashboard-appear {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+}
+
 .dashboard_refresh-btn {
     padding: 0.2em 0.7em !important;
     font-size: 0.8rem;
@@ -98,7 +109,6 @@
     flex-basis: 0;
     flex-grow: 0.6;
     margin-left: 80px;
-    transform: translateY(5px);
 }
 
 .dashboard__top h5 {
@@ -287,7 +297,7 @@
 }
 
 .dashboard__rewards {
-    margin-bottom: -0.75rem;
+    margin-bottom: -0.875rem;
 }
 
 .dashboard__rewards-value {

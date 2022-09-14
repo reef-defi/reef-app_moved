@@ -1,0 +1,15 @@
+.pool-select .overlay-action__content {
+  max-width: 1490px;
+}
+
+.pool-select .pools__list {
+  width: 100%;
+}
+
+.pool-select .pools__table-top {
+  margin-top: 15px;
+}
+
+.pool-select .pools__table-top .uik-text {
+  display: none;
+}
