@@ -364,6 +364,11 @@ export const CreatorComponent = ({
                     <div className="creator__preview-token-name">{ tokenName }</div>
                     <div className="creator__preview-token-symbol">{ symbol }</div>
                   </div>
+
+                  {
+                    !!initialSupply
+                    && <Uik.Text className="creator__preview-token-supply" type="headline">{ Uik.utils.formatHumanAmount(initialSupply) }</Uik.Text>
+                  }
                 </div>
 
                 <button
