@@ -1,3 +1,11 @@
 .create-pool .uik-pool-actions__description {
   display: none;
 }
+
+.create-pool .uik-pool-actions__slider {
+  display: none;
+}
+
+.create-pool .uik-pool-actions__cta {
+  margin-top: 25px;
+}
