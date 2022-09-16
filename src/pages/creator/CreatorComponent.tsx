@@ -1,37 +1,20 @@
 import {
   availableNetworks,
-  Components,
   Network,
   ReefSigner,
   utils as reefUtils,
 } from '@reef-defi/react-lib';
 import React, { useEffect, useState } from 'react';
 import { faCheckCircle, faXmarkCircle } from '@fortawesome/free-regular-svg-icons';
+import { faArrowUpRightFromSquare, faCoins } from '@fortawesome/free-solid-svg-icons';
 import { Contract, ContractFactory, utils } from 'ethers';
-import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import Uik from '@reef-defi/ui-kit';
 import { verifyContract } from '../../utils/contract';
 import { DeployContractData, deployTokens } from './tokensDeployData';
 import './creator.css';
 import IconUpload from './IconUpload';
 import ConfirmToken from './ConfirmToken';
-
-const {
-  Display,
-  Card: CardModule,
-  Modal,
-  Loading,
-  Button: ButtonModule,
-} = Components;
-const {
-  ComponentCenter, MT,
-} = Display;
-const {
-  CardHeader, CardHeaderBlank, CardTitle, Card,
-} = CardModule;
-const { ModalFooter } = Modal;
-
-const { Button } = ButtonModule;
 
 interface CreatorComponent {
   signer: ReefSigner | undefined;
@@ -226,6 +209,7 @@ export const CreatorComponent = ({
   const [initialSupply, setInitialSupply] = useState('');
   const [validationMsg, setValidationMsg] = useState('');
   const [, setVerifiedContract] = useState<Contract>();
+  // eslint-disable-next-line
   const [deployedContract, setDeployedContract] = useState<Contract>();
   const [isConfirmOpen, setConfirmOpen] = useState(false);
 
@@ -265,7 +249,6 @@ export const CreatorComponent = ({
     setInitialSupply('');
     setResultMessage(null);
   };
-
   const handleSupplyInput = (value = ''): void => {
     const numeric = value.replace(/[^0-9]/g, '');
     setInitialSupply(numeric || '');
@@ -273,11 +256,13 @@ export const CreatorComponent = ({
 
   const [icon, setIcon] = useState('');
 
+  const history = useHistory();
+
   // @ts-ignore
   return (
     <>
-      {!resultMessage && (
-        <>
+      <>
+        {!resultMessage && (
           <div className="creator">
             <div className="creator__form">
               <Uik.Container flow="spaceBetween">
@@ -424,84 +409,82 @@ export const CreatorComponent = ({
                 />
               </div>
             </div>
-
-            <ConfirmToken
-              name={tokenName}
-              symbol={symbol}
-              supply={initialSupply}
-              isBurnable={tokenOptions.burnable}
-              isMintable={tokenOptions.mintable}
-              isOpen={isConfirmOpen}
-              icon={icon}
-              onClose={() => setConfirmOpen(false)}
-              onConfirm={() => createToken({
-                signer,
-                network,
-                tokenName,
-                symbol,
-                initialSupply,
-                tokenOptions,
-                onTxUpdate,
-                setResultMessage,
-                setVerifiedContract,
-                setDeployedContract,
-              })}
-            />
           </div>
+        )}
 
-        </>
-      )}
+        <ConfirmToken
+          name={tokenName}
+          symbol={symbol}
+          supply={initialSupply}
+          isBurnable={tokenOptions.burnable}
+          isMintable={tokenOptions.mintable}
+          isOpen={isConfirmOpen}
+          icon={icon}
+          onClose={() => setConfirmOpen(false)}
+          onConfirm={() => createToken({
+            signer,
+            network,
+            tokenName,
+            symbol,
+            initialSupply,
+            tokenOptions,
+            onTxUpdate,
+            setResultMessage,
+            setVerifiedContract,
+            setDeployedContract,
+          })}
+        />
+      </>
 
-      {resultMessage && (
-        <ComponentCenter>
-          <Card>
-            <CardHeader>
-              <CardHeaderBlank />
-              <CardTitle title={resultMessage.title} />
-              <CardHeaderBlank />
-            </CardHeader>
-            <MT size="3">
-              <div className="text-center">
-                {!resultMessage.complete && <Loading.Loading />}
-                <div>
-                  <p>
-                    {resultMessage.message}
-                    <br />
-                    {resultMessage.contract && (
-                      <small>
-                        <a
-                          href={`${network.reefscanFrontendUrl}/contract/${resultMessage.contract.address}`}
-                          target="self"
-                        >
-                          open in explorer
-                        </a>
-                      </small>
-                    )}
-                  </p>
-                </div>
+      {
+        resultMessage
+        && (
+        <div className="creator">
+          <div className="creator__creating" key={resultMessage.title}>
+            { !resultMessage.complete && <Uik.Loading /> }
+
+            <Uik.Text type="headline">{ resultMessage.title }</Uik.Text>
+            <Uik.Text>{ resultMessage.message }</Uik.Text>
+
+            {
+              !!resultMessage.contract
+              && resultMessage.complete
+              && (
+              <div className="creator__creating-cta">
+                <Uik.Button
+                  text="View in Explorer"
+                  icon={faArrowUpRightFromSquare}
+                  size="large"
+                  onClick={() => window.open(`${network.reefscanFrontendUrl}/contract/${resultMessage.contract?.address}`)}
+                />
+
+                <Uik.Button
+                  fill
+                  text="Create a Pool"
+                  icon={faCoins}
+                  size="large"
+                  onClick={() => history.push('/pools')}
+                />
               </div>
-            </MT>
-            <MT size="2">
-              <ModalFooter>
-                <Button disabled={!resultMessage.complete} onClick={init}>
-                  Close
-                </Button>
-                {resultMessage.complete && (
-                  <Link
-                    to={`/add-supply/0x0000000000000000000000000000000001000000/${deployedContract?.address}`}
-                    className="btn btn-reef border-rad"
-                  >
-                    <span>Create pool</span>
-                  </Link>
-                )}
-                {!resultMessage.complete && (
-                  <Button disabled>Create pool</Button>
-                )}
-              </ModalFooter>
-            </MT>
-          </Card>
-        </ComponentCenter>
-      )}
+              )
+            }
+
+            {
+              resultMessage.title === 'Error creating token'
+              && (
+              <div className="creator__creating-cta">
+                <Uik.Button
+                  text="Return to Creator"
+                  size="large"
+                  onClick={init}
+                />
+              </div>
+              )
+            }
+          </div>
+        </div>
+        )
+      }
     </>
   );
 };
