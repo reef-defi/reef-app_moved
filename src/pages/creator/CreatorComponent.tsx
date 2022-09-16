@@ -14,24 +14,23 @@ import { verifyContract } from '../../utils/contract';
 import { DeployContractData, deployTokens } from './tokensDeployData';
 import './creator.css';
 import IconUpload from './IconUpload';
+import ConfirmToken from './ConfirmToken';
 
 const {
   Display,
   Card: CardModule,
   Modal,
   Loading,
-  Label,
   Button: ButtonModule,
 } = Components;
 const {
-  ComponentCenter, MT, Margin,
+  ComponentCenter, MT,
 } = Display;
 const {
   CardHeader, CardHeaderBlank, CardTitle, Card,
 } = CardModule;
-const { default: ConfirmationModal, ModalFooter } = Modal;
+const { ModalFooter } = Modal;
 
-const { ConfirmLabel } = Label;
 const { Button } = ButtonModule;
 
 interface CreatorComponent {
@@ -228,6 +227,7 @@ export const CreatorComponent = ({
   const [validationMsg, setValidationMsg] = useState('');
   const [, setVerifiedContract] = useState<Contract>();
   const [deployedContract, setDeployedContract] = useState<Contract>();
+  const [isConfirmOpen, setConfirmOpen] = useState(false);
 
   useEffect(() => {
     if (tokenName.trim().length < 1) {
@@ -415,75 +415,40 @@ export const CreatorComponent = ({
                     be created and added to the total supply.
                   </Uik.Text>
                 </div>
-
-                <button
-                  type="button"
-                  data-bs-toggle="modal"
-                  data-bs-target="#createModalToggle"
+                <Uik.Button
                   disabled={!!validationMsg}
-                  style={{
-                    width: '100%',
-                    border: 'none',
-                    background: 'transparent',
-                  }}
-                >
-                  <Uik.Button
-                    disabled={!!validationMsg}
-                    text="Create Token"
-                    fill={!validationMsg}
-                    size="large"
-                  />
-                </button>
+                  text="Create Token"
+                  fill={!validationMsg}
+                  size="large"
+                  onClick={() => setConfirmOpen(true)}
+                />
               </div>
             </div>
+
+            <ConfirmToken
+              name={tokenName}
+              symbol={symbol}
+              supply={initialSupply}
+              isBurnable={tokenOptions.burnable}
+              isMintable={tokenOptions.mintable}
+              isOpen={isConfirmOpen}
+              icon={icon}
+              onClose={() => setConfirmOpen(false)}
+              onConfirm={() => createToken({
+                signer,
+                network,
+                tokenName,
+                symbol,
+                initialSupply,
+                tokenOptions,
+                onTxUpdate,
+                setResultMessage,
+                setVerifiedContract,
+                setDeployedContract,
+              })}
+            />
           </div>
 
-          <ConfirmationModal
-            id="createModalToggle"
-            title="Confirm and Create"
-            confirmBtnLabel="Create"
-            confirmFun={() => createToken({
-              signer,
-              network,
-              tokenName,
-              symbol,
-              initialSupply,
-              tokenOptions,
-              onTxUpdate,
-              setResultMessage,
-              setVerifiedContract,
-              setDeployedContract,
-            })}
-          >
-            <Margin size="3">
-              <ConfirmLabel title="Name" value={tokenName} />
-            </Margin>
-            <Margin size="3">
-              <ConfirmLabel title="Symbol" value={symbol.toUpperCase()} />
-            </Margin>
-            <Margin size="3">
-              <ConfirmLabel
-                title="Initial Supply"
-                value={
-                  initialSupply
-                    ? utils.parseEther(initialSupply).toString()
-                    : ''
-                }
-              />
-            </Margin>
-            <Margin size="3">
-              <ConfirmLabel
-                title="Burnable"
-                value={tokenOptions.burnable ? 'Yes' : 'No'}
-              />
-            </Margin>
-            <Margin size="3">
-              <ConfirmLabel
-                title="Mintable"
-                value={tokenOptions.mintable ? 'Yes' : 'No'}
-              />
-            </Margin>
-          </ConfirmationModal>
         </>
       )}
 
