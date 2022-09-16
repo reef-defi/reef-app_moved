@@ -6,6 +6,7 @@ import {
   utils as reefUtils,
 } from '@reef-defi/react-lib';
 import React, { useEffect, useState } from 'react';
+import { faCheckCircle, faXmarkCircle } from '@fortawesome/free-regular-svg-icons';
 import { Contract, ContractFactory, utils } from 'ethers';
 import { Link } from 'react-router-dom';
 import Uik from '@reef-defi/ui-kit';
@@ -369,6 +370,50 @@ export const CreatorComponent = ({
                     !!initialSupply
                     && <Uik.Text className="creator__preview-token-supply" type="headline">{ Uik.utils.formatHumanAmount(initialSupply) }</Uik.Text>
                   }
+                </div>
+
+                <div
+                  className={`
+                    creator__preview-info
+                    ${!tokenOptions.burnable ? 'creator__preview-info--disabled' : ''}
+                  `}
+                >
+                  <Uik.Container flow="start">
+                    <Uik.Icon icon={tokenOptions.burnable ? faCheckCircle : faXmarkCircle} />
+                    <Uik.Text>
+                      { !tokenOptions.burnable && 'Not ' }
+                      Burnable
+                    </Uik.Text>
+                  </Uik.Container>
+                  <Uik.Text type="mini">
+                    Existing tokens
+                    {' '}
+                    { tokenOptions.burnable ? 'can' : 'cannot' }
+                    {' '}
+                    be destroyed to decrease the total supply.
+                  </Uik.Text>
+                </div>
+
+                <div
+                  className={`
+                    creator__preview-info
+                    ${!tokenOptions.mintable ? 'creator__preview-info--disabled' : ''}
+                  `}
+                >
+                  <Uik.Container flow="start">
+                    <Uik.Icon icon={tokenOptions.mintable ? faCheckCircle : faXmarkCircle} />
+                    <Uik.Text>
+                      { !tokenOptions.mintable && 'Not ' }
+                      Mintable
+                    </Uik.Text>
+                  </Uik.Container>
+                  <Uik.Text type="mini">
+                    New tokens
+                    {' '}
+                    { tokenOptions.mintable ? 'can' : 'cannot' }
+                    {' '}
+                    be created and added to the total supply.
+                  </Uik.Text>
                 </div>
 
                 <button
