@@ -14,6 +14,7 @@ export interface IBond {
   farmDecimals: number;
   entryStartTime: string;
   apy: string;
+  network: 'mainnet' | 'testnet';
 }
 
 export const bonds: IBond[] = [
@@ -33,6 +34,25 @@ export const bonds: IBond[] = [
     farmDecimals: 0,
     entryStartTime: '',
     apy: '32',
+    network: 'mainnet'
+  },
+  {
+    id: 2,
+    bondName: 'Reef community staking bond',
+    bondDescription: '',
+    bondContractAddress: '0xA8E81f5DA3C01426Fd3eEC8105d1541F99E4E2c4',
+    bondValidatorAddress: '5G6qCzHmfKgk9W5QBidVndsbhXQ2PvfUDu1YKuizqfDP7j3y',
+    stake: 'REEF',
+    stakeTokenAddress: '0x0000000000000000000000000000000001000000',
+    stakeTokenLogo: 'https://stake.reef.finance/assets/images/reef/reef-token.svg',
+    stakeDecimals: 0,
+    farm: 'REEF',
+    farmTokenAddress: '0x0000000000000000000000000000000001000000',
+    farmTokenLogo: 'https://stake.reef.finance/assets/images/reef/reef-token.svg',
+    farmDecimals: 0,
+    entryStartTime: '',
+    apy: '32',
+    network: 'testnet'
   },
   /* {
   'id': 2,
