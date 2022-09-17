@@ -15,13 +15,15 @@ import { Nfts } from './Nfts';
 import { Staking } from './Staking';
 import { Activity } from './Activity/Activity';
 import { TokenBalances } from './TokenBalances';
+import { appState, hooks } from '@reef-defi/react-lib';
 
 const Dashboard = (): JSX.Element => {
   const { nfts } = useContext(NftContext);
+  const network = hooks.useObservableState(appState.currentNetwork$);
   const tabs = (() => {
     const list = [
       { value: 'tokens', text: 'Tokens' },
-      { value: 'bonds', text: 'Bonds', indicator: bonds.length },
+      { value: 'bonds', text: 'Bonds', indicator: bonds.filter((bond) => network && bond.network === network.name).length },
       { value: 'nfts', text: 'NFTs' },
     ];
 

@@ -12,7 +12,9 @@ export const Bonds = (): JSX.Element => {
   return (
     <>
       {network && selectedSigner ? (
-        bonds.map((bond: IBond) => (
+        bonds
+        .filter((bond) => bond.network === network.name)
+        .map((bond: IBond) => (
           <BondsComponent
             key={bond.id}
             account={selectedSigner}
