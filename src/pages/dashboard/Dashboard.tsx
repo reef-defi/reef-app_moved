@@ -23,7 +23,7 @@ const Dashboard = (): JSX.Element => {
   const tabs = (() => {
     const list = [
       { value: 'tokens', text: 'Tokens' },
-      { value: 'bonds', text: 'Bonds', indicator: bonds.filter((bond) => network && bond.network === network.name).length },
+      { value: 'bonds', text: 'Bonds', indicator: bonds.filter((bond) => bond.network === network?.name).length },
       { value: 'nfts', text: 'NFTs' },
     ];
 
