@@ -13,12 +13,14 @@ export const Staking = (): JSX.Element => {
   return (
     <div className="staking">
       {
-        bonds?.length
+        bonds?.filter((bond) => bond.network === network?.name).length
           ? (
             <div className="col-12 staking__bonds">
               <>
                 {network && selectedSigner ? (
-                  bonds.map((bond: IBond) => (
+                  bonds
+                  .filter((bond) => bond.network === network.name)
+                  .map((bond: IBond) => (
                     <BondsComponent
                       key={bond.id}
                       account={selectedSigner}

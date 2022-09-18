@@ -3251,10 +3251,10 @@
   dependencies:
     "@babel/runtime" "^7.16.0"
 
-"@reef-defi/react-lib@^1.2.2":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@reef-defi/react-lib/-/react-lib-1.2.2.tgz#f4f750d5a1d42be7c4ca5f982b015dae81fa4763"
-  integrity sha512-VWzP2ilNyC2nxAhx1nO7HONxgcuW94en9ZAUNU0hw/Whk/O76kM4bzMvOZpHKeQq2US4IzITx1n0stKBAy6Kjw==
+"@reef-defi/react-lib@^1.2.3":
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@reef-defi/react-lib/-/react-lib-1.2.3.tgz#2e9e2bc33ff17547daf1b885108c46e690e38368"
+  integrity sha512-3elioWwhqHvuxbVy0oiMguiiRMdTqQ9twitCL4v2l4wiwOkURDbJWVlL5noFyycACno8l3y9qnb99RIwPq9qTg==
   dependencies:
     "@apollo/client" "^3.6.2"
     "@fortawesome/free-regular-svg-icons" "^6.1.0"
@@ -3265,7 +3265,7 @@
     "@reef-defi/extension-base" "^1.0.9"
     "@reef-defi/extension-dapp" "^1.0.9"
     "@reef-defi/extension-inject" "^1.0.9"
-    "@reef-defi/ui-kit" "^1.0.3"
+    "@reef-defi/ui-kit" "1.0.5"
     "@types/react-router-dom" "^5.3.0"
     axios "^0.21.4"
     bignumber.js "^9.0.2"
@@ -3303,10 +3303,29 @@
     "@polkadot/typegen" "~6.4.2"
     "@polkadot/types" "~6.4.2"
 
-"@reef-defi/ui-kit@^1.0.3":
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/@reef-defi/ui-kit/-/ui-kit-1.0.4.tgz#095fc5e5b6ca99a9a9cdaae96459406d261a7b53"
-  integrity sha512-iQDeULTdV8AYs5ewJqboQ2qgMWPEIjNoZ+8XSvu0JkukNBlgtEH3plE4U6+yCxHWEi629OqoKzziSmRHDwM59g==
+"@reef-defi/ui-kit@1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@reef-defi/ui-kit/-/ui-kit-1.0.5.tgz#9fbbfe22a9baad167e67e52e115823b42310b1d4"
+  integrity sha512-0TEQIF5+E3VXEp3Hy2g0xVQ3ri1tFYiVfpcJPZcxfno4pBYRzia1ZFetDhH+tQtVuQlZn7UPkkKzSqkuYSIalQ==
+  dependencies:
+    "@fortawesome/fontawesome-svg-core" "^6.1.0"
+    "@fortawesome/free-regular-svg-icons" "^6.1.0"
+    "@fortawesome/free-solid-svg-icons" "^6.1.0"
+    "@fortawesome/react-fontawesome" "^0.1.17"
+    "@polkadot/react-identicon" "^2.0.1"
+    "@types/jest" "^27.4.1"
+    "@types/node" "^17.0.21"
+    "@types/react" "^17.0.0"
+    "@types/react-dom" "^17.0.0"
+    bignumber.js "^9.0.2"
+    qrcode.react "^3.0.1"
+    react-syntax-highlighter "^15.5.0"
+    react-transition-group "^4.4.2"
+
+"@reef-defi/ui-kit@^1.0.5":
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/@reef-defi/ui-kit/-/ui-kit-1.0.6.tgz#87e67938dca51195cd10ddefc5bb8456944978e9"
+  integrity sha512-Tud95bWuTmjB2zY9ni9pTqXNxW3m5JziSPYUV2CRK7izc4IxgkcKuLu3riegyL7qg6T471QUAroaRNOnD+yJ8g==
   dependencies:
     "@fortawesome/fontawesome-svg-core" "^6.1.0"
     "@fortawesome/free-regular-svg-icons" "^6.1.0"
