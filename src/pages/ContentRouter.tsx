@@ -9,6 +9,7 @@ import {
   ADD_LIQUIDITY_URL, BIND_URL, BONDS_URL, CREATE_ERC20_TOKEN_URL,
   DASHBOARD_URL,
   POOLS_URL, POOL_CHART_URL, REMOVE_LIQUIDITY_URL, SPECIFIED_SWAP_URL, TRANSFER_TOKEN,
+  BUY_URL,
 } from '../urls';
 import Bind from './bind/Bind';
 import { Bonds } from './bonds/Bonds';
@@ -19,6 +20,7 @@ import Pool from './pools/Pool/Pool';
 import Pools from './pools/Pools';
 import RemoveLiquidity from './pools/RemoveLiquidity';
 import Swap from './swap/Swap';
+import Buy from './buy/Buy';
 import { Transfer } from './transfer/Transfer';
 
 const ContentRouter = (): JSX.Element => {
@@ -53,6 +55,7 @@ const ContentRouter = (): JSX.Element => {
                 <Route exact path={CREATE_ERC20_TOKEN_URL} component={Creator} />
                 <Route exact path={BONDS_URL} component={Bonds} />
                 <Route path={BIND_URL} component={Bind} />
+                <Route path={BUY_URL} component={Buy} />
                 <Route path="/" render={() => (<Redirect to={DASHBOARD_URL} />)} />
               </Switch>
             </TokenPrices.Provider>
