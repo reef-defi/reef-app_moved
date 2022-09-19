@@ -35,6 +35,15 @@ export interface Props {
   data: Data
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const priceFormatter = (price: any): string => {
+  const base = Math.max(price, price * -1);
+  if (base > 0 && base < 0.001) return parseFloat(price).toFixed(8);
+  if (base >= 0.001 && base < 0.01) return parseFloat(price).toFixed(6);
+  if (base >= 0.01 && base < 0.1) return parseFloat(price).toFixed(4);
+  return parseFloat(price).toFixed(2);
+};
+
 const chartOptions = {
   layout: {
     textColor: '#898e9c',
@@ -69,6 +78,16 @@ const chartOptions = {
       color: '#d8dce6',
     },
   },
+  localization: {
+    priceFormatter: (price: number) => `$${priceFormatter(price)}`,
+  },
+};
+
+const seriesOptions = {
+  priceFormat: {
+    minMove: 0.00000001,
+    formatter: priceFormatter,
+  },
 };
 
 const renderChart = ({ el, type, data }: {
@@ -85,8 +104,8 @@ const renderChart = ({ el, type, data }: {
   const chart = createChart(el, { height, ...options });
 
   if (type === 'histogram') {
-    const upSeries = chart.addHistogramSeries({ color: '#35c47c' });
-    const downSeries = chart.addHistogramSeries({ color: '#e73644' });
+    const upSeries = chart.addHistogramSeries({ color: '#35c47c', ...seriesOptions });
+    const downSeries = chart.addHistogramSeries({ color: '#e73644', ...seriesOptions });
 
     const upData = [];
     const downData = [];
@@ -112,6 +131,7 @@ const renderChart = ({ el, type, data }: {
       topColor: 'rgba(163, 40, 171, 0.4)',
       bottomColor: 'rgba(163, 40, 171, 0)',
       lineColor: '#a328ab',
+      ...seriesOptions,
     });
 
     // @ts-ignore-next-line
@@ -123,6 +143,7 @@ const renderChart = ({ el, type, data }: {
       borderVisible: false,
       wickUpColor: '#35c47c',
       wickDownColor: '#e73644',
+      ...seriesOptions,
     });
 
     // @ts-ignore-next-line
