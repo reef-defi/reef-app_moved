@@ -1,6 +1,12 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { createChart } from 'lightweight-charts';
 import './lw-chart.css';
+
+export interface BusinessDay {
+  day: number,
+  year: number,
+  month: number
+}
 
 export interface AreaData {
   value?: number,
@@ -17,7 +23,7 @@ export interface CandlestickData {
   high?: number,
   low?: number,
   close?: number,
-  time?: number | string
+  time?: number | string | BusinessDay
 }
 
 export type Type = 'histogram' | 'candlestick' | 'area'
@@ -126,21 +132,46 @@ const renderChart = ({ el, type, data }: {
   chart.timeScale().fitContent();
 };
 
+const formatData = (type: Type, data: Data = []): Data => {
+  if (type === 'candlestick') {
+    const output: CandlestickData[] = [];
+
+    for (let i = 0; i < data.length; i += 1) {
+      const item: CandlestickData = data[i];
+      const prevItem: CandlestickData = data[i - 1];
+
+      const open = prevItem?.close || item.open;
+
+      output.push({
+        open,
+        close: item.close,
+        high: item.high,
+        low: item.low,
+        time: item.time,
+      });
+    }
+
+    return output;
+  }
+
+  return data;
+};
+
 const LWChart = ({
   type = 'histogram',
   data,
 }: Props): JSX.Element => {
   const chartWrapper = useRef(null);
-  let rendered = false;
+  const [isRendered, setRendered] = useState(false);
 
   useEffect(() => {
-    if (!rendered && data?.length) {
+    if (!isRendered && data?.length) {
       renderChart({
         el: chartWrapper.current,
         type,
-        data,
+        data: formatData(type, data),
       });
-      rendered = true;
+      setRendered(true);
     }
   }, []);
 
