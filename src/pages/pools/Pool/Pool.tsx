@@ -78,7 +78,11 @@ const Pool = (): JSX.Element => {
           data={{
             fees: poolData.fees.map(timeToNumber),
             tvl: poolData.tvl.map(timeToNumber),
-            volume: poolData.volume.map(timeToNumber),
+            volume: {
+              firstToken: poolData.firstTokenVolume.map(timeToNumber),
+              secondToken: poolData.secondTokenVolume.map(timeToNumber),
+              total: poolData.volume.map(timeToNumber),
+            },
             firstToken: poolData.firstToken.map(timeToNumber),
             secondToken: poolData.secondToken.map(timeToNumber),
           }}

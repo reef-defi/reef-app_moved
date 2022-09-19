@@ -3,11 +3,17 @@ import Uik from '@reef-defi/ui-kit';
 import './chart.css';
 import LWChart, { HistogramData, CandlestickData } from './LWChart';
 
+export interface Volume {
+  firstToken: HistogramData[],
+  secondToken: HistogramData[],
+  total: HistogramData[]
+}
+
 export interface Data {
   firstToken: CandlestickData[],
   secondToken: CandlestickData[],
   tvl: HistogramData[],
-  volume: HistogramData[],
+  volume: Volume,
   fees: HistogramData[]
 }
 
@@ -40,8 +46,20 @@ const Chart = ({
 }: Props): JSX.Element => {
   const [tab, setTab] = useState('firstToken');
 
-  // @ts-ignore-next-line
-  const getData = useMemo(() => (data?.[tab] || []), [data, tab]);
+  const getData = useMemo(() => {
+    // @ts-ignore-next-line
+    const chartData = data?.[tab] || [];
+    if (tab === 'volume') return chartData.total || [];
+    return chartData;
+  }, [data, tab]);
+
+  const getSubData = useMemo(() => {
+    if (tab === 'firstToken' || tab === 'secondToken') {
+      return data?.volume?.[tab] || [];
+    }
+
+    return undefined;
+  }, [data, tab]);
 
   return (
     <div className="pool-chart">
@@ -68,6 +86,7 @@ const Chart = ({
             // @ts-ignore-next-line
             type={chartTypes[tab]}
             data={getData}
+            subData={getSubData}
           />
           )
         }

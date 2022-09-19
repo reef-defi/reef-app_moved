@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { createChart } from 'lightweight-charts';
+import { createChart, IChartApi } from 'lightweight-charts';
 import './lw-chart.css';
 
 export interface BusinessDay {
@@ -32,7 +32,8 @@ export type Data = HistogramData[] | CandlestickData[] | AreaData[]
 
 export interface Props {
   type: Type,
-  data: Data
+  data: Data,
+  subData?: HistogramData[]
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -90,10 +91,70 @@ const seriesOptions = {
   },
 };
 
-const renderChart = ({ el, type, data }: {
+const addHistogramSeries = (
+  chart: IChartApi,
+  data: HistogramData[],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  options: any = {},
+  colors: { up: string, down: string } = { up: '#35c47c', down: '#e73644' },
+): void => {
+  const upSeries = chart.addHistogramSeries({ color: colors.up, ...seriesOptions, ...options });
+  const downSeries = chart.addHistogramSeries({ color: colors.down, ...seriesOptions, ...options });
+
+  const upData = [];
+  const downData = [];
+
+  for (let i = 0; i < data.length; i += 1) {
+    // @ts-ignore-next-line
+    const value = data[i]?.value || 0;
+    // @ts-ignore-next-line
+    const prevValue = data[i - 1]?.value || 0;
+
+    // @ts-ignore-next-line
+    if (value < prevValue) downData.push(data[i]);
+    // @ts-ignore-next-line
+    else upData.push(data[i]);
+  }
+
+  // @ts-ignore-next-line
+  upSeries.setData(upData);
+  // @ts-ignore-next-line
+  downSeries.setData(downData);
+};
+
+const addAreaSeries = (chart: IChartApi, data: AreaData[]): void => {
+  const series = chart.addAreaSeries({
+    topColor: 'rgba(163, 40, 171, 0.4)',
+    bottomColor: 'rgba(163, 40, 171, 0)',
+    lineColor: '#a328ab',
+    ...seriesOptions,
+  });
+
+  // @ts-ignore-next-line
+  series.setData(data);
+};
+
+const addCandlestickSeries = (chart: IChartApi, data: CandlestickData[]): void => {
+  const series = chart.addCandlestickSeries({
+    upColor: '#35c47c',
+    downColor: '#e73644',
+    borderVisible: false,
+    wickUpColor: '#35c47c',
+    wickDownColor: '#e73644',
+    ...seriesOptions,
+  });
+
+  // @ts-ignore-next-line
+  series.setData(data);
+};
+
+const renderChart = ({
+  el, type, data, subData,
+}: {
  el: HTMLElement | null,
  type: Type,
- data: Data
+ data: Data,
+ subData?: HistogramData[]
 }): void => {
   if (!el) return;
 
@@ -101,53 +162,27 @@ const renderChart = ({ el, type, data }: {
   const options = chartOptions;
 
   // @ts-ignore-next-line
-  const chart = createChart(el, { height, ...options });
+  const chart: IChartApi = createChart(el, { height, ...options });
 
   if (type === 'histogram') {
-    const upSeries = chart.addHistogramSeries({ color: '#35c47c', ...seriesOptions });
-    const downSeries = chart.addHistogramSeries({ color: '#e73644', ...seriesOptions });
-
-    const upData = [];
-    const downData = [];
-
-    for (let i = 0; i < data.length; i += 1) {
-      // @ts-ignore-next-line
-      const value = data[i]?.value || 0;
-      // @ts-ignore-next-line
-      const prevValue = data[i - 1]?.value || 0;
-
-      // @ts-ignore-next-line
-      if (value < prevValue) downData.push(data[i]);
-      // @ts-ignore-next-line
-      else upData.push(data[i]);
+    addHistogramSeries(chart, data as HistogramData[]);
+  } else if (type === 'area') {
+    addAreaSeries(chart, data as AreaData[]);
+  } else if (type === 'candlestick') {
+    if (subData) {
+      addHistogramSeries(chart, subData, {
+        priceScaleId: '',
+        scaleMargins: {
+          top: 0.9,
+          bottom: 0,
+        },
+      }, {
+        up: 'rgba(53, 196, 124, 0.5)',
+        down: 'rgba(231, 54, 68, 0.5)',
+      });
     }
 
-    // @ts-ignore-next-line
-    upSeries.setData(upData);
-    // @ts-ignore-next-line
-    downSeries.setData(downData);
-  } else if (type === 'area') {
-    const series = chart.addAreaSeries({
-      topColor: 'rgba(163, 40, 171, 0.4)',
-      bottomColor: 'rgba(163, 40, 171, 0)',
-      lineColor: '#a328ab',
-      ...seriesOptions,
-    });
-
-    // @ts-ignore-next-line
-    series.setData(data);
-  } else if (type === 'candlestick') {
-    const series = chart.addCandlestickSeries({
-      upColor: '#35c47c',
-      downColor: '#e73644',
-      borderVisible: false,
-      wickUpColor: '#35c47c',
-      wickDownColor: '#e73644',
-      ...seriesOptions,
-    });
-
-    // @ts-ignore-next-line
-    series.setData(data);
+    addCandlestickSeries(chart, data as CandlestickData[]);
   }
 
   chart.timeScale().fitContent();
@@ -181,6 +216,7 @@ const formatData = (type: Type, data: Data = []): Data => {
 const LWChart = ({
   type = 'histogram',
   data,
+  subData,
 }: Props): JSX.Element => {
   const chartWrapper = useRef(null);
   const [isRendered, setRendered] = useState(false);
@@ -191,10 +227,11 @@ const LWChart = ({
         el: chartWrapper.current,
         type,
         data: formatData(type, data),
+        subData,
       });
       setRendered(true);
     }
-  }, []);
+  }, [data, type]);
 
   return (
     <div className="lw-chart__wrapper">
