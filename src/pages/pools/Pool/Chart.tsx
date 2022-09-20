@@ -27,9 +27,13 @@ export interface Tokens {
   secondToken: Token
 }
 
+export type Timeframe = 'hour' | 'day' | 'week' | 'month';
+
 export interface Props {
   tokens: Tokens,
-  data: Data
+  data: Data,
+  timeframe: Timeframe,
+  setTimeframe: (value: Timeframe) => void
 }
 
 const chartTypes = {
@@ -43,6 +47,8 @@ const chartTypes = {
 const Chart = ({
   tokens,
   data,
+  timeframe,
+  setTimeframe,
 }: Props): JSX.Element => {
   const [tab, setTab] = useState('firstToken');
 
@@ -74,6 +80,17 @@ const Chart = ({
               { value: 'tvl', text: 'Liquidity' },
               { value: 'volume', text: 'Volume' },
               { value: 'fees', text: 'Fees' },
+            ]}
+          />
+
+          <Uik.Tabs
+            value={timeframe}
+            onChange={(value) => setTimeframe(value)}
+            options={[
+              { value: 'hour', text: '1h' },
+              { value: 'day', text: '1D' },
+              { value: 'week', text: '1W' },
+              { value: 'month', text: '1M' },
             ]}
           />
         </div>

@@ -36,6 +36,12 @@
   align-items: center;
   margin-bottom: 20px;
   z-index: 2;
+  position: relative;
+}
+
+.pool-chart__top .uik-tabs:last-child {
+    position: absolute;
+    right: 5px;
 }
 
 .pool-chart__top .uik-tabs {
