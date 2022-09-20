@@ -213,6 +213,23 @@ const formatData = (type: Type, data: Data = []): Data => {
   return data;
 };
 
+const Licence = (): JSX.Element => (
+  <a href="https://www.tradingview.com/" target="_blank" className="lw-chart__licence" rel="noreferrer">
+    <div className="lw-chart__licence-logo">
+      <svg viewBox="0 0 36 28" xmlns="http://www.w3.org/2000/svg">
+        <path d="M14 22H7V11H0V4h14v18zM28 22h-8l7.5-18h8L28 22z" fill="currentColor" />
+        <circle cx="20" cy="8" r="4" fill="currentColor" />
+      </svg>
+    </div>
+
+    <div className="lw-chart__licence-text">
+      TradingView Lightweight Charts
+      <br />
+      Copyright (&copy;) 2022 TradingView, Inc. https://www.tradingview.com/
+    </div>
+  </a>
+);
+
 const LWChart = ({
   type = 'histogram',
   data,
@@ -235,6 +252,8 @@ const LWChart = ({
 
   return (
     <div className="lw-chart__wrapper">
+      <Licence />
+
       <div
         ref={chartWrapper}
         className="lw-chart"
