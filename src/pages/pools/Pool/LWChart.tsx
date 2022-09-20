@@ -15,7 +15,8 @@ export interface AreaData {
 
 export interface HistogramData {
   value?: number,
-  time?: number | string
+  time?: number | string,
+  direction?: 'up' | 'down'
 }
 
 export interface CandlestickData {
@@ -106,14 +107,25 @@ const addHistogramSeries = (
 
   for (let i = 0; i < data.length; i += 1) {
     // @ts-ignore-next-line
-    const value = data[i]?.value || 0;
-    // @ts-ignore-next-line
-    const prevValue = data[i - 1]?.value || 0;
+    const direction = data[i]?.direction;
 
-    // @ts-ignore-next-line
-    if (value < prevValue) downData.push(data[i]);
-    // @ts-ignore-next-line
-    else upData.push(data[i]);
+    if (direction === 'up') {
+      // @ts-ignore-next-line
+      upData.push(data[i]);
+    } else if (direction === 'down') {
+      // @ts-ignore-next-line
+      downData.push(data[i]);
+    } else {
+      // @ts-ignore-next-line
+      const value = data[i]?.value || 0;
+      // @ts-ignore-next-line
+      const prevValue = data[i - 1]?.value || 0;
+
+      // @ts-ignore-next-line
+      if (value < prevValue) downData.push(data[i]);
+      // @ts-ignore-next-line
+      else upData.push(data[i]);
+    }
   }
 
   // @ts-ignore-next-line
@@ -148,6 +160,28 @@ const addCandlestickSeries = (chart: IChartApi, data: CandlestickData[]): void =
   series.setData(data);
 };
 
+const processSubData = (data: CandlestickData[], subdata: HistogramData[]): HistogramData[] => {
+  const output: HistogramData[] = [];
+
+  for (let i = 0; i < subdata.length; i += 1) {
+    const candle = data[i];
+    const item = subdata[i];
+    let direction: 'up' | 'down' | undefined;
+
+    if (candle) {
+      const { open, close } = candle;
+      if (open !== undefined && close !== undefined) {
+        if (open > close) direction = 'down';
+        else if (open <= close) direction = 'up';
+      }
+    }
+
+    output.push({ ...item, direction });
+  }
+
+  return output;
+};
+
 const renderChart = ({
   el, type, data, subData,
 }: {
@@ -170,7 +204,7 @@ const renderChart = ({
     addAreaSeries(chart, data as AreaData[]);
   } else if (type === 'candlestick') {
     if (subData) {
-      addHistogramSeries(chart, subData, {
+      addHistogramSeries(chart, processSubData(data, subData), {
         priceScaleId: '',
         scaleMargins: {
           top: 0.9,
