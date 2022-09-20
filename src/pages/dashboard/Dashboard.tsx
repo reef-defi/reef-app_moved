@@ -3,6 +3,7 @@ import BigNumber from 'bignumber.js';
 import React, {
   useContext, useMemo, useState,
 } from 'react';
+import { appState, hooks } from '@reef-defi/react-lib';
 import NftContext from '../../context/NftContext';
 import TokenContext from '../../context/TokenContext';
 import TokenPricesContext from '../../context/TokenPricesContext';
@@ -15,7 +16,6 @@ import { Nfts } from './Nfts';
 import { Staking } from './Staking';
 import { Activity } from './Activity/Activity';
 import { TokenBalances } from './TokenBalances';
-import { appState, hooks } from '@reef-defi/react-lib';
 
 const Dashboard = (): JSX.Element => {
   const { nfts } = useContext(NftContext);

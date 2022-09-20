@@ -34,7 +34,7 @@ export const bonds: IBond[] = [
     farmDecimals: 0,
     entryStartTime: '',
     apy: '32',
-    network: 'mainnet'
+    network: 'mainnet',
   },
   {
     id: 2,
@@ -52,7 +52,7 @@ export const bonds: IBond[] = [
     farmDecimals: 0,
     entryStartTime: '',
     apy: '32',
-    network: 'testnet'
+    network: 'testnet',
   },
   /* {
   'id': 2,

@@ -5,6 +5,7 @@ import Uik from '@reef-defi/ui-kit';
 export interface SummaryItemProps {
   label?: string
   value?: string | number
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   action?: (...args: any[]) => any
   className?: string
 }

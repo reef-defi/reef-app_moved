@@ -19,14 +19,14 @@ export const Staking = (): JSX.Element => {
               <>
                 {network && selectedSigner ? (
                   bonds
-                  .filter((bond) => bond.network === network.name)
-                  .map((bond: IBond) => (
-                    <BondsComponent
-                      key={bond.id}
-                      account={selectedSigner}
-                      bond={bond}
-                    />
-                  ))
+                    .filter((bond) => bond.network === network.name)
+                    .map((bond: IBond) => (
+                      <BondsComponent
+                        key={bond.id}
+                        account={selectedSigner}
+                        bond={bond}
+                      />
+                    ))
                 ) : <div />}
               </>
             </div>
