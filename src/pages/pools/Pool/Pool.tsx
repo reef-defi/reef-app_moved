@@ -1,10 +1,10 @@
 import { appState, hooks, ReefSigner } from '@reef-defi/react-lib';
 import Uik from '@reef-defi/ui-kit';
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import TokenPricesContext from '../../../context/TokenPricesContext';
 import Actions, { ActionTabs } from './Actions';
-import Chart from './Chart';
+import Chart, { Timeframe } from './Chart';
 import './pool.css';
 import Stats from './Stats';
 
@@ -40,6 +40,8 @@ const Pool = (): JSX.Element => {
   const tokenPrice2 = (poolInfo ? tokenPrices[poolInfo.secondToken.address] : 0) || 0;
   const decimal1 = 18; // TODO(poolInfo ? poolInfo.firstToken.] : 0) || 0;
   const decimal2 = 18; // TODO(poolInfo ? poolInfo.firstToken.] : 0) || 0;
+
+  const [timeframe, setTimeframe] = useState<Timeframe>('day');
 
   const [poolData] = hooks.usePoolData({
     address,
@@ -78,10 +80,16 @@ const Pool = (): JSX.Element => {
           data={{
             fees: poolData.fees.map(timeToNumber),
             tvl: poolData.tvl.map(timeToNumber),
-            volume: poolData.volume.map(timeToNumber),
+            volume: {
+              firstToken: poolData.firstTokenVolume.map(timeToNumber),
+              secondToken: poolData.secondTokenVolume.map(timeToNumber),
+              total: poolData.volume.map(timeToNumber),
+            },
             firstToken: poolData.firstToken.map(timeToNumber),
             secondToken: poolData.secondToken.map(timeToNumber),
           }}
+          timeframe={timeframe}
+          setTimeframe={setTimeframe}
         />
       </div>
     </div>

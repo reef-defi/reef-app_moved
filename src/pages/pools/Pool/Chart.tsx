@@ -3,11 +3,17 @@ import Uik from '@reef-defi/ui-kit';
 import './chart.css';
 import LWChart, { HistogramData, CandlestickData } from './LWChart';
 
+export interface Volume {
+  firstToken: HistogramData[],
+  secondToken: HistogramData[],
+  total: HistogramData[]
+}
+
 export interface Data {
   firstToken: CandlestickData[],
   secondToken: CandlestickData[],
   tvl: HistogramData[],
-  volume: HistogramData[],
+  volume: Volume,
   fees: HistogramData[]
 }
 
@@ -21,9 +27,13 @@ export interface Tokens {
   secondToken: Token
 }
 
+export type Timeframe = 'hour' | 'day' | 'week' | 'month';
+
 export interface Props {
   tokens: Tokens,
-  data: Data
+  data: Data,
+  timeframe: Timeframe,
+  setTimeframe: (value: Timeframe) => void
 }
 
 const chartTypes = {
@@ -37,11 +47,25 @@ const chartTypes = {
 const Chart = ({
   tokens,
   data,
+  timeframe,
+  setTimeframe,
 }: Props): JSX.Element => {
   const [tab, setTab] = useState('firstToken');
 
-  // @ts-ignore-next-line
-  const getData = useMemo(() => (data?.[tab] || []), [data, tab]);
+  const getData = useMemo(() => {
+    // @ts-ignore-next-line
+    const chartData = data?.[tab] || [];
+    if (tab === 'volume') return chartData.total || [];
+    return chartData;
+  }, [data, tab]);
+
+  const getSubData = useMemo(() => {
+    if (tab === 'firstToken' || tab === 'secondToken') {
+      return data?.volume?.[tab] || [];
+    }
+
+    return undefined;
+  }, [data, tab]);
 
   return (
     <div className="pool-chart">
@@ -58,6 +82,17 @@ const Chart = ({
               { value: 'fees', text: 'Fees' },
             ]}
           />
+
+          <Uik.Tabs
+            value={timeframe}
+            onChange={(value) => setTimeframe(value)}
+            options={[
+              { value: 'hour', text: '1h' },
+              { value: 'day', text: '1D' },
+              { value: 'week', text: '1W' },
+              { value: 'month', text: '1M' },
+            ]}
+          />
         </div>
 
         {
@@ -68,6 +103,7 @@ const Chart = ({
             // @ts-ignore-next-line
             type={chartTypes[tab]}
             data={getData}
+            subData={getSubData}
           />
           )
         }

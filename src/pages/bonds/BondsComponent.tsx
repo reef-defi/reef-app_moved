@@ -546,13 +546,15 @@ export const BondsComponent = ({
                   await bondFunds(bond.farmTokenAddress, contract!, account!, bondAmount, ({ message }) => setLoadingText(message));
                   setTxStatus({
                     state: 'DONE',
-                    text: 'Transaction Successful!',
+                    text: '',
                   });
+                  Uik.notify.success('Your funds have been successfully staked');
                 } catch (e) {
                   setTxStatus({
                     state: 'ERROR',
-                    text: 'Transaction Failed.',
+                    text: '',
                   });
+                  Uik.notify.danger('Transaction has failed');
                 }
                 await updateLockedAmt(contract!, account?.evmAddress);
                 setBondAmount('');

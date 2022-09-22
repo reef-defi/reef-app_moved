@@ -12,6 +12,7 @@ import {
 } from '../urls';
 import { appAvailableNetworks } from '../environment';
 import HideBalance from '../context/HideBalance';
+import NetworkSwitch from '../context/NetworkSwitch';
 
 export interface Nav {
     display: boolean;
@@ -31,6 +32,7 @@ const Nav = ({ display }: Nav): JSX.Element => {
   ];
 
   const hideBalance = useContext(HideBalance);
+  const networkSwitch = useContext(NetworkSwitch);
 
   const selectAccount = (index: number): void => {
     saveSignerLocalPointer(index);
@@ -39,6 +41,8 @@ const Nav = ({ display }: Nav): JSX.Element => {
 
   const selectNetwork = (key: 'mainnet' | 'testnet'): void => {
     const toSelect = appAvailableNetworks.find((item) => item.name === key);
+    networkSwitch.setSwitching(true);
+
     if (toSelect) {
       appState.setCurrentNetwork(toSelect);
     }

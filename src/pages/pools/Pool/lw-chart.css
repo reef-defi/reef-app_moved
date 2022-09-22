@@ -6,6 +6,7 @@
   align-items: flex-start;
   flex-grow: 1;
   overflow: hidden;
+  position: relative;
 }
 
 .lw-chart {
@@ -18,4 +19,55 @@
   from {
     opacity: 0;
   }
+}
+
+.lw-chart__licence {
+  bottom: 35px;
+  left: 10px;
+  position: absolute;
+  z-index: 3;
+  color: var(--text);
+  text-decoration: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 99px;
+  border: solid 1px var(--border-color-dark);
+  background-color: #eeebf6;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  transition: all 0.25s;
+  overflow: hidden;
+}
+
+.lw-chart__licence-logo  {
+  margin-left: 6px;
+  color: var(--text-light);
+  transition: all 0.25s;
+}
+
+.lw-chart__licence:hover {
+  color: var(--text);
+  background-color: #f5f3fb;
+  width: 390px;
+  transition: all 0.35s;
+}
+
+.lw-chart__licence:hover .lw-chart__licence-logo {
+  color: var(--primary);
+}
+
+.lw-chart__licence-logo svg {
+  width: 26px;
+  height: 20px;
+  margin: 0 !important;
+}
+
+.lw-chart__licence-text {
+  position: absolute;
+  left: 40px;
+  font-size: 10px;
+  width: 350px;
+  line-height: 1.3;
 }
