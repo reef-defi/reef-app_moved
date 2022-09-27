@@ -39,17 +39,26 @@ const CreateTokenButton = (): JSX.Element => (
   </Link>
 );
 
+const balanceValue = (token: Token, price = 0): number => (new BigNumber(token.balance.toString())
+  .div(new BigNumber(10).pow(token.decimals))
+  .multipliedBy(price)
+  .toNumber());
+
 export const TokenBalances = ({ tokens }: TokenBalances): JSX.Element => {
   const tokenPrices = useContext(TokenPricesContext);
 
   const tokenCards = tokens
     .filter(({ balance }) => balance.gt(0))
     .sort((a, b) => {
-      const balanceA = new BigNumber(a.balance.toString());
-      const balanceB = new BigNumber(b.balance.toString());
+      const balanceA = balanceValue(a, tokenPrices[a.address] || 0);
+      const balanceB = balanceValue(b, tokenPrices[b.address] || 0);
 
-      if (balanceA.isGreaterThan(balanceB)) return -1;
+      if (balanceA > balanceB) return -1;
       return 1;
+    })
+    .sort((a) => {
+      if (a.symbol !== 'REEF') return 1;
+      return -1;
     })
     .map((token) => (
       <TokenCard
