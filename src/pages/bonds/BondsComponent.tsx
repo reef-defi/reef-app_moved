@@ -197,7 +197,7 @@ interface ToBN {
   toBn: () => BN;
 }
 
-export function balanceToNumber(amount: BN | ToBN = BN_ZERO, divisor: BN): number {
+export function balanceToNumber(amount: BN | ToBN = BN_ZERO as BN, divisor: BN): number {
   let value = BN_ZERO;
 
   if (isBn(amount)) {
@@ -206,7 +206,7 @@ export function balanceToNumber(amount: BN | ToBN = BN_ZERO, divisor: BN): numbe
     value = amount.toBn();
   }
 
-  return value.mul(BN_THOUSAND).div(divisor).toNumber() / 1000;
+  return value.mul(BN_THOUSAND as BN).div(divisor).toNumber() / 1000;
 }
 
 interface ValidatorEra { era: string; slash: number; reward: number }
@@ -218,10 +218,10 @@ function extractRewards(erasRewards: DeriveEraRewards[] = [], ownSlashes: Derive
     const points = allPoints.find((point) => point.era.eq(era));
     const slashed = ownSlashes.find((slash) => slash.era.eq(era));
     const reward = points?.eraPoints.gtn(0)
-      ? balanceToNumber(points.points.mul(eraReward).div(points.eraPoints), divisor)
+      ? balanceToNumber(points.points.mul(eraReward).div(points.eraPoints) as BN, divisor)
       : 0;
     const slash = slashed
-      ? balanceToNumber(slashed.total, divisor)
+      ? balanceToNumber(slashed.total.toBn() as BN, divisor)
       : 0;
 
     if (reward > 0 || eraValues.length > 0) {
