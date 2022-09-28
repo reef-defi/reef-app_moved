@@ -166,6 +166,7 @@ const TokenCard = ({
       />
 
       <OverlaySend
+        tokenAddress={token.address}
         isOpen={isSendOpen}
         onClose={() => setSendOpen(false)}
       />

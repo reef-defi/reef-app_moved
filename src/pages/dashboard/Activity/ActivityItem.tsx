@@ -32,7 +32,7 @@ const TokenActivityItem = ({
   url,
 }: Props): JSX.Element => {
   // @ts-ignore-next-line
-  const isNFT = !!token.nftId;
+  const isNFT = !!(token as NFT).nftId;
   const type: 'receive' | 'send' = inbound ? 'receive' : 'send';
 
   const title = useMemo(() => {
@@ -42,8 +42,7 @@ const TokenActivityItem = ({
     };
 
     const action = actionMap[type];
-
-    return `${action} ${token.symbol}`;
+    return `${action} ${token.symbol||token.name}`;
   }, [type, token.symbol]);
 
   const amount = useMemo(() => {
