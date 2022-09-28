@@ -7,11 +7,13 @@ import './overlay-swap.css';
 const { Send, OverlayAction } = Components;
 
 export interface OverlaySend {
+  tokenAddress?: string;
   isOpen: boolean;
   onClose?: () => void;
 }
 
 const OverlaySend = ({
+  tokenAddress,
   isOpen,
   onClose,
 }: OverlaySend): JSX.Element => {
@@ -37,6 +39,7 @@ const OverlaySend = ({
             provider={provider}
             signer={signer}
             tokens={tokens}
+            tokenAddress={tokenAddress}
           />
           )}
       </div>

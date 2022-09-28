@@ -554,7 +554,12 @@ export const BondsComponent = ({
                     state: 'ERROR',
                     text: '',
                   });
-                  Uik.notify.danger('Transaction has failed');
+                  Uik.prompt({
+                    type: 'danger',
+                    title: 'Transaction has failed',
+                    message: "Transaction couldn't be processed.\nYour assets remain unchanged.",
+                    actions: <Uik.Button text="Close" danger />,
+                  });
                 }
                 await updateLockedAmt(contract!, account?.evmAddress);
                 setBondAmount('');
