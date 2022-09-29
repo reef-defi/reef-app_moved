@@ -1,7 +1,7 @@
 import React, { useContext, useMemo, useState } from 'react';
 import { BigNumber } from 'bignumber.js';
 
-import { faRightLeft, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { hooks } from '@reef-defi/react-lib';
 import Uik from '@reef-defi/ui-kit';
 
@@ -46,14 +46,10 @@ const Pools = (): JSX.Element => {
         </div>
         <div className="pools__buttons">
           <Uik.Button
-            icon={faRightLeft}
-            text="Show Transactions"
-          />
-
-          <Uik.Button
             icon={faPlus}
             text="Create Pool"
             onClick={() => setCreatePoolOpen(true)}
+            size="large"
           />
         </div>
       </Uik.Container>
