@@ -1,8 +1,11 @@
 import './stats.css';
 import Uik from '@reef-defi/ui-kit';
 import React, { useState } from 'react';
-import { hooks } from '@reef-defi/react-lib';
+import { appState, hooks } from '@reef-defi/react-lib';
+import { faRightLeft } from '@fortawesome/free-solid-svg-icons';
+import { useParams } from 'react-router-dom';
 import PoolSelect from './PoolSelect';
+import PoolTransactions from './PoolTransactions';
 
 interface StatsProps {
   data: hooks.PoolStats;
@@ -76,8 +79,16 @@ const Token = ({ token, price }: TokenStatsProps): JSX.Element => (
   </div>
 );
 
+interface UrlParams {
+  address: string;
+}
+
 const Stats = ({ data, price1, price2 }: StatsProps): JSX.Element => {
   const [isSelectOpen, setSelectOpen] = useState(false);
+  const [isTransactionsOpen, setTransactionsOpen] = useState(false);
+
+  const network = hooks.useObservableState(appState.currentNetwork$);
+  const { address } = useParams<UrlParams>();
 
   return (
     <div className="pool-stats">
@@ -114,6 +125,8 @@ const Stats = ({ data, price1, price2 }: StatsProps): JSX.Element => {
               className="pool-stats__transactions-btn"
               size="small"
               text="Show Transactions"
+              icon={faRightLeft}
+              onClick={() => setTransactionsOpen(true)}
             />
           </Uik.Container>
 
@@ -165,6 +178,17 @@ const Stats = ({ data, price1, price2 }: StatsProps): JSX.Element => {
       <PoolSelect
         isOpen={isSelectOpen}
         onClose={() => setSelectOpen(false)}
+      />
+
+      <PoolTransactions
+        address={address}
+        reefscanUrl={network?.reefscanFrontendUrl}
+        isOpen={isTransactionsOpen}
+        onClose={() => setTransactionsOpen(false)}
+        tokens={{
+          firstToken: data.firstToken,
+          secondToken: data.secondToken,
+        }}
       />
     </div>
   );

@@ -1,0 +1,44 @@
+.pool-transactions .overlay-action__content {
+  max-width: 1490px;
+}
+
+.pool-transactions__transaction-icon {
+  margin-right: 10px;
+  height: 14px;
+  width: 14px;
+}
+
+.pool-transactions__transaction-icon--trade {
+  color: hsl(
+    var(--success--h),
+    var(--success--s),
+    calc(var(--success--l) - 5%)
+  );
+}
+  
+.pool-transactions__transaction-icon--stake {
+  color: var(--primary);
+}
+
+.pool-transactions__transaction-icon--unstake {
+  color: var(--text-light);
+}
+
+.pool-transactions .uik-table {
+  margin-top: 30px;
+  animation: pool-transactions-table 0.4s;
+}
+
+@keyframes pool-transactions-table {
+  from {
+    opacity: 0;
+  }
+}
+
+.pool-transactions .uik-text--light {
+  width: 100%;
+  text-align: center;
+  font-weight: 400;
+  margin-top: 130px;
+  animation: pool-transactions-table 0.4s;
+}
