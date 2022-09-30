@@ -42,3 +42,19 @@
   margin-top: 130px;
   animation: pool-transactions-table 0.4s;
 }
+
+.pool-transactions .uik-table a {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.pool-transactions__transaction-account-identicon,
+.pool-transactions__transaction-account-identicon:hover {
+  cursor: pointer;
+}
+
+.pool-transactions__transaction-account-identicon + span {
+  margin-left: 4px;
+}

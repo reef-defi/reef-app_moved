@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Uik from '@reef-defi/ui-kit';
 import { utils, hooks } from '@reef-defi/react-lib';
 import { faRepeat, faCoins, faArrowUpFromBracket } from '@fortawesome/free-solid-svg-icons';
+import Identicon from '@polkadot/react-identicon';
 import { Tabs, Tokens } from './PoolTransactions';
 
 const { formatAgoDate, formatAmount, shortAddress } = utils;
@@ -136,8 +137,8 @@ const Transactions = ({
                       onClick={(e) => e.stopPropagation()}
                       rel="noreferrer"
                     >
-                      { shortAddress(to_address || signer) }
-
+                      <Identicon value={signer} size={18} className="pool-transactions__transaction-account-identicon" />
+                      <span>{ shortAddress(to_address || signer) }</span>
                     </a>
                   </Uik.Td>
 
