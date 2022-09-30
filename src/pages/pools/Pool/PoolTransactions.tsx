@@ -36,6 +36,7 @@ const PoolSelect = ({
       className="pool-transactions"
       isOpen={isOpen}
       onClose={onClose}
+      onOpened={() => setTab('All')}
     >
       <Uik.Tabs
         value={tab}
@@ -48,6 +49,7 @@ const PoolSelect = ({
         onChange={(e) => setTab(e)}
       />
       <Transactions
+        key={tab}
         address={address}
         reefscanUrl={reefscanUrl || ''}
         tab={tab}

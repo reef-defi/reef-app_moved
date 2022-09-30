@@ -45,9 +45,6 @@ const Transactions = ({
     ? Math.ceil(data.verified_pool_event_aggregate.aggregate.count / 10)
     : 1;
 
-  const nextPage = (): void => setPageIndex(Math.min(maxPage - 1, pageIndex + 1));
-  const prevPage = (): void => setPageIndex(Math.max(0, pageIndex - 1));
-
   const getType = (poolType: Tabs, amount_1: number, tokenSymbol1: string, tokenSymbol2: string): string => {
     switch (poolType) {
       case 'Swap': return `Traded ${amount_1 > 0 ? tokenSymbol1 : tokenSymbol2} for ${amount_1 > 0 ? tokenSymbol2 : tokenSymbol1}`;
@@ -68,7 +65,14 @@ const Transactions = ({
   }
 
   return (
-    <Uik.Table seamless>
+    <Uik.Table
+      seamless
+      pagination={{
+        count: maxPage,
+        current: pageIndex + 1,
+        onChange: (page) => { setPageIndex(page - 1); },
+      }}
+    >
       <Uik.THead>
         <Uik.Th>Type</Uik.Th>
         <Uik.Th>Account</Uik.Th>

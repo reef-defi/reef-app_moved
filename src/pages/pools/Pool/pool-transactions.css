@@ -26,6 +26,9 @@
 
 .pool-transactions .uik-table {
   margin-top: 30px;
+}
+
+.pool-transactions .uik-table__table {
   animation: pool-transactions-table 0.4s;
 }
 
