@@ -10,6 +10,7 @@ import MyPoolsList from './MyPoolsList';
 import './pools.css';
 import PoolsList from './PoolsList';
 import CreatePool from './Pool/CreatePool';
+import TokenContext from '../../context/TokenContext';
 
 const Pools = (): JSX.Element => {
   const tokenPrices = useContext(TokenPricesContext);
@@ -24,6 +25,7 @@ const Pools = (): JSX.Element => {
   [totalLiquidity, yesterdayTotalLiquidity]);
 
   const [isCreatePoolOpen, setCreatePoolOpen] = useState(false);
+  const { tokens } = useContext(TokenContext);
 
   return (
     <div className="pools">
@@ -59,8 +61,8 @@ const Pools = (): JSX.Element => {
         onClose={() => setCreatePoolOpen(false)}
       />
 
-      <MyPoolsList />
-      <PoolsList />
+      <MyPoolsList tokens={tokens} />
+      <PoolsList tokens={tokens} />
     </div>
   );
 };
