@@ -467,7 +467,10 @@ export const BondsComponent = ({
                   <div className="bond-card__info-item">
                     <div className="bond-card__info-label">Funds unlock on</div>
                     <div
-                      className="bond-card__info-value"
+                      className={`
+                        bond-card__info-value
+                        ${bondTimes?.ending.ended ? 'bond-card__info-value--success' : ''}
+                      `}
                     >
                       {bondTimes?.ending.ended ? 'Bond funds are unlocked!' : bondTimes?.ending.endDate}
                     </div>
@@ -508,32 +511,43 @@ export const BondsComponent = ({
                 </div>
               ) : (
                 <>
-                  {loadingText
-                && <Components.Loading.LoadingWithText text={loadingText} />}
+                  {
+                  !!loadingText
+                  && (
+                    <Uik.Loading text={loadingText} />
+                  )
+                }
                 </>
               )
 }
-                <div>{stakingClosedText}</div>
-                {txStatus && txStatus.state
-            && (
-            <strong className={`mt-3 ${txStatus.state === 'ERROR' ? 'text-danger' : 'text-success'}`}>
-              {txStatus.text}
-            </strong>
-            )}
-                <div className="mt-2">
-                  {
-                !loadingText && bondTimes.ending.ended
+                {
+                txStatus && txStatus.state
+                  && (
+                    <Uik.Text
+                      type="lead"
+                      className={txStatus.state === 'ERROR' ? 'bond-card__error' : 'bond-card__success'}
+                    >
+                      { txStatus.text }
+                    </Uik.Text>
+                  )
+                }
+
+                {
+                !loadingText && bondTimes.ending.ended && !!(+lockedAmount > 0)
                 && (
-                <Uik.Button
-                  size="large"
-                  disabled={!(+lockedAmount > 0)}
-                  onClick={() => exit(contract!, ({ message }) => setLoadingText(message))}
-                  text="Claim Rewards"
-                  fill
-                />
+                  <div className="bond-card__bottom">
+                    <div className="bond__cta">
+                      <Uik.Button
+                        size="large"
+                        className="bond__cta-btn"
+                        onClick={() => exit(contract!, ({ message }) => setLoadingText(message))}
+                        text="Claim Rewards"
+                        fill
+                      />
+                    </div>
+                  </div>
                 )
               }
-                </div>
               </div>
             </div>
 

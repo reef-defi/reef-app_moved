@@ -173,9 +173,40 @@
   margin-left: 10px;
 }
 
+.bond-card__info-value--success {
+  color: var(--success);
+}
+
+.bond-card__info-value a {
+  font-weight: 600;
+  color: var(--primary);
+  background: -webkit-linear-gradient(0deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-decoration: none;
+}
+
+.bond-card__info-value a:hover {
+  filter: brightness(1.2);
+}
+
 .bond-card__bottom {
   margin-top: 25px;
   width: 100%;
+}
+
+.bond-card .uik-loading {
+  margin-top: 35px;
+}
+
+.bond-card__success {
+  margin-top: 30px;
+  color: var(--success);
+}
+
+.bond-card__error {
+  margin-top: 30px;
+  color: var(--danger);
 }
 
 .bond-card__bottom > * + * {
