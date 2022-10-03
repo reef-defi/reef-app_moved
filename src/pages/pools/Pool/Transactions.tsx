@@ -74,19 +74,21 @@ const Transactions = ({
       }}
     >
       <Uik.THead>
-        <Uik.Th>Type</Uik.Th>
-        <Uik.Th>Account</Uik.Th>
-        <Uik.Th align="center">Time</Uik.Th>
-        <Uik.Th align="right">
-          { tokens?.firstToken?.symbol }
-          {' '}
-          Amount
-        </Uik.Th>
-        <Uik.Th align="right">
-          { tokens?.secondToken?.symbol }
-          {' '}
-          Amount
-        </Uik.Th>
+        <Uik.Tr>
+          <Uik.Th>Type</Uik.Th>
+          <Uik.Th>Account</Uik.Th>
+          <Uik.Th align="center">Time</Uik.Th>
+          <Uik.Th align="right">
+            { tokens?.firstToken?.symbol }
+            {' '}
+            Amount
+          </Uik.Th>
+          <Uik.Th align="right">
+            { tokens?.secondToken?.symbol }
+            {' '}
+            Amount
+          </Uik.Th>
+        </Uik.Tr>
       </Uik.THead>
 
       <Uik.TBody>
