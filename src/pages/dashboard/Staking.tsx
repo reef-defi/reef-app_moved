@@ -3,7 +3,7 @@ import './Staking.css';
 import {
   appState, hooks, Network, ReefSigner,
 } from '@reef-defi/react-lib';
-import { BondsComponent } from '../bonds/BondsComponent';
+import { BondsComponent, Skeleton } from '../bonds/BondsComponent';
 import { bonds, IBond } from '../bonds/utils/bonds';
 
 export const Staking = (): JSX.Element => {
@@ -15,7 +15,7 @@ export const Staking = (): JSX.Element => {
       {
         bonds?.filter((bond) => bond.network === network?.name).length
           ? (
-            <div className="col-12 staking__bonds">
+            <div className="staking__bonds">
               <>
                 {network && selectedSigner ? (
                   bonds

@@ -1,43 +1,18 @@
 .staking {
   width: 100%;
-  margin: 0;
+  animation: staking-appear 0.4s;
+}
+
+@keyframes staking-appear {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
 }
 
 .staking__bonds {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(1fr);
-  grid-gap: 24px;
-  padding: 0;
-}
-
-@media only screen and (max-width: 1400px) {
-  .staking__bonds {
-    grid-template-columns: repeat(1, 1fr);
-  }
-}
-
-.staking__bonds > .mx-auto {
-  margin: 0 !important;
-}
-
-@media only screen and (max-width: 1300px) {
-  .staking__bonds .bond-card__info-item {
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: flex-start;
-    align-items: flex-start;
-  }
-
-  .staking__bonds .bond-card__info-value {
-    text-align: left;
-    margin-top: 5px;
-    margin-left: 0;
-  }
-}
-
-@media only screen and (max-width: 1000px) {
-  .staking__bonds {
-    grid-template-columns: 100%;
-  }
+  grid-template-columns: 50% 50%;
+  grid-gap: 25px;
 }

@@ -19,23 +19,12 @@ import { IBond } from './utils/bonds';
 
 export const Skeleton = (): JSX.Element => (
   <div className="bond-skeleton">
-    <div className="bond-skeleton__wrapper">
-      <div className="bond-skeleton__image" />
-      <div className="bond-skeleton__title" />
-      <div className="bond-skeleton__subtitle" />
-      <div className="bond-skeleton__stats">
-        <div className="bond-skeleton__stat" />
-        <div className="bond-skeleton__stat" />
-      </div>
-      <div className="bond-skeleton__info">
-        <div />
-        <div />
-        <div />
-        <div />
-        <div />
-      </div>
-      <div className="bond-skeleton__cta" />
-    </div>
+    <div className="bond-skeleton__image" />
+    <div className="bond-skeleton__title" />
+    <div className="bond-skeleton__subtitle" />
+    <div className="bond-skeleton__stat" />
+    <div className="bond-skeleton__stat" />
+    <div className="bond-skeleton__cta" />
   </div>
 );
 
@@ -45,6 +34,7 @@ const {
   Display,
   Input: InputModule,
   BondConfirmPopup,
+  OverlayAction,
 } = Components;
 
 const {
@@ -264,6 +254,24 @@ export const BondsComponent = ({
   const [validationText, setValidationText] = useState('');
   const [, setBondRewards] = useState<{total:number, average:number, days:number}>();
 
+  const [isClaiming, setClaiming] = useState(false);
+
+  async function claimRewards(contract: Contract): Promise<void> {
+    try {
+      setClaiming(true);
+      const tx = await contract.exit();
+      await tx.wait();
+      Uik.notify.success('Successfully claimed rewards');
+    } catch {
+      Uik.prompt({
+        type: 'danger',
+        title: 'Something went wrong',
+        message: "Claiming couldn't be completed. Your assets remain unchanged. Please try again.",
+        actions: <Uik.Button text="Close" danger />,
+      });
+    }
+  }
+
   /* useEffect(() => {
     if (bondRewards) {
       const totalLocked = parseFloat(bondTotalLocked);
@@ -314,7 +322,7 @@ export const BondsComponent = ({
       setValidationText('Bond expired');
       return;
     }
-    if (!bondAmount) {
+    if (!bondAmount || !parseFloat(bondAmount)) {
       setValidationText('Enter amount to stake');
     } else if (+bondAmount > bondAmountMax) {
       if (bondAmountMax > 0) {
@@ -377,66 +385,86 @@ export const BondsComponent = ({
 
   const [isConfirmOpen, setConfirmOpen] = useState(false);
 
-  return (
-    <>
-      {!bondTimes?.lockTime || loadingValues
+  const description = useMemo(() => `Stake ${bond.stake} to earn ${bond.farm} validator rewards.`, [bond.stake, bond.farm]);
 
-        ? (
-          <ComponentCenter>
-            <Skeleton />
-          </ComponentCenter>
-        )
+  const isToClaim = useMemo(() => bondTimes?.ending.ended && !!(+lockedAmount > 0), [bondTimes?.ending.ended, lockedAmount]);
 
-        : (
-          <ComponentCenter>
-            <div className="bond-card">
-              <div className="bond-card__wrapper">
-                <img className="bond-card__token-image" src="/img/reef.png" alt="Reef" />
-                <div className="bond-card__title">{bond.bondName}</div>
-                <div className="bond-card__subtitle">{bond.bondDescription}</div>
-                <div className="bond-card__description">
-                  Stake
-                  {' '}
-                  {bond.stake}
-                  {' '}
-                  to earn
-                  {' '}
-                  {bond.farm}
-                  {' '}
-                  validator rewards.
-                </div>
+  const [isOpen, setOpen] = useState(false);
 
-                <div className="bond-card__stats">
-                  <div className="bond-card__stat">
-                    <div className="bond-card__stat-label">Staked</div>
-                    <div className="bond-card__stat-value">{lockedAmount}</div>
+  const cta = useMemo((): JSX.Element => {
+    if (isToClaim) {
+      return (
+        <Uik.Button
+          text="Claim rewards"
+          success
+          onClick={() => claimRewards(contract!)}
+          loading={isClaiming}
+          disabled={isClaiming}
+        />
+      );
+    }
+
+    if (stakingClosedText) {
+      return (
+        <Uik.Button
+          text="Closed"
+          disabled
+        />
+      );
+    }
+
+    return (
+      <Uik.Button
+        text="Stake"
+        fill
+        onClick={() => setOpen(true)}
+      />
+    );
+  }, [isToClaim, stakingClosedText]);
+
+  if (!bondTimes?.lockTime || loadingValues) return <Skeleton />;
+
+  const fullCard = (
+    <ComponentCenter>
+      <div className="bond-card">
+        <div className="bond-card__wrapper">
+          <img className="bond-card__token-image" src="/img/reef.png" alt="Reef" />
+          <div className="bond-card__title">{bond.bondName}</div>
+          <div className="bond-card__description">
+            { description }
+          </div>
+
+          <div className="bond-card__stats">
+            <div className="bond-card__stat">
+              <div className="bond-card__stat-label">Staked</div>
+              <div className="bond-card__stat-value">{lockedAmount}</div>
+            </div>
+
+            <div className="bond-card__stat">
+              <div className="bond-card__stat-label">Earned</div>
+              <div className="bond-card__stat-value">{earned}</div>
+            </div>
+          </div>
+
+          <div className="bond-card__info">
+            <>
+              <div className="bond-card__info-item">
+                <div className="bond-card__info-label">Bond contract</div>
+                <div className="bond-card__info-value"><a href={`https://reefscan.com/contract/${bond.bondContractAddress}`} target="_blank" rel="noreferrer">{utils.toAddressShortDisplay(bond.bondContractAddress)}</a></div>
+              </div>
+            </>
+            {!bondTimes?.opportunity.ended && !stakingClosedText
+              ? (
+                <>
+                  <div className="bond-card__info-item">
+                    <div className="bond-card__info-label">Staking closes in</div>
+                    <div className="bond-card__info-value">{bondTimes?.opportunity.timeLeft}</div>
                   </div>
+                </>
+              )
+              : ''}
 
-                  <div className="bond-card__stat">
-                    <div className="bond-card__stat-label">Earned</div>
-                    <div className="bond-card__stat-value">{earned}</div>
-                  </div>
-                </div>
-
-                <div className="bond-card__info">
-                  <>
-                    <div className="bond-card__info-item">
-                      <div className="bond-card__info-label">Bond contract</div>
-                      <div className="bond-card__info-value"><a href={`https://reefscan.com/contract/${bond.bondContractAddress}`} target="_blank" rel="noreferrer">{utils.toAddressShortDisplay(bond.bondContractAddress)}</a></div>
-                    </div>
-                  </>
-                  {!bondTimes?.opportunity.ended && !stakingClosedText
-                    ? (
-                      <>
-                        <div className="bond-card__info-item">
-                          <div className="bond-card__info-label">Staking closes in</div>
-                          <div className="bond-card__info-value">{bondTimes?.opportunity.timeLeft}</div>
-                        </div>
-                      </>
-                    )
-                    : ''}
-
-                  {/* { (
+            {/* { (
                   <div className="bond-card__info-item">
                     <div className="bond-card__info-label">Expected Bond APY</div>
                     <div className="bond-card__info-value">
@@ -445,7 +473,7 @@ export const BondsComponent = ({
                   </div>
                   )} */}
 
-                  {/* {
+            {/* {
                 !bondTimes.ending.ended
                 && (
                 <div className="bond-card__info-item">
@@ -455,29 +483,29 @@ export const BondsComponent = ({
                 )
               } */}
 
-                  <div className="bond-card__info-item">
-                    <div
-                      className="bond-card__info-label"
-                    >
-                      {bondTimes?.starting.started ? 'Bond started on' : 'Bond starts on'}
-                    </div>
-                    <div className="bond-card__info-value">{bondTimes?.starting?.startDate}</div>
-                  </div>
+            <div className="bond-card__info-item">
+              <div
+                className="bond-card__info-label"
+              >
+                {bondTimes?.starting.started ? 'Bond started on' : 'Bond starts on'}
+              </div>
+              <div className="bond-card__info-value">{bondTimes?.starting?.startDate}</div>
+            </div>
 
-                  <div className="bond-card__info-item">
-                    <div className="bond-card__info-label">Funds unlock on</div>
-                    <div
-                      className={`
+            <div className="bond-card__info-item">
+              <div className="bond-card__info-label">Funds unlock on</div>
+              <div
+                className={`
                         bond-card__info-value
                         ${bondTimes?.ending.ended ? 'bond-card__info-value--success' : ''}
                       `}
-                    >
-                      {bondTimes?.ending.ended ? 'Bond funds are unlocked!' : bondTimes?.ending.endDate}
-                    </div>
-                  </div>
-                </div>
+              >
+                {bondTimes?.ending.ended ? 'Bond funds are unlocked!' : bondTimes?.ending.endDate}
+              </div>
+            </div>
+          </div>
 
-                {
+          {
               account && !stakingClosedText && !loadingText ? (
                 <div className="bond-card__bottom">
                   <div className="bond-card__input-wrapper">
@@ -520,8 +548,8 @@ export const BondsComponent = ({
                 </>
               )
 }
-                {
-                txStatus && txStatus.state
+          {
+                txStatus && txStatus.state && txStatus.text
                   && (
                     <Uik.Text
                       type="lead"
@@ -532,7 +560,7 @@ export const BondsComponent = ({
                   )
                 }
 
-                {
+          {
                 !loadingText && bondTimes.ending.ended && !!(+lockedAmount > 0)
                 && (
                   <div className="bond-card__bottom">
@@ -548,47 +576,89 @@ export const BondsComponent = ({
                   </div>
                 )
               }
-              </div>
-            </div>
+        </div>
+      </div>
 
-            <BondConfirmPopup
-              isOpen={isConfirmOpen}
-              onClose={() => setConfirmOpen(false)}
-              onConfirm={async () => {
-                setLoadingText('Processing...');
-                try {
-                  await bondFunds(bond.farmTokenAddress, contract!, account!, bondAmount, ({ message }) => setLoadingText(message));
-                  setTxStatus({
-                    state: 'DONE',
-                    text: '',
-                  });
-                  Uik.notify.success('Your funds have been successfully staked');
-                } catch (e) {
-                  setTxStatus({
-                    state: 'ERROR',
-                    text: '',
-                  });
-                  Uik.prompt({
-                    type: 'danger',
-                    title: 'Transaction has failed',
-                    message: "Transaction couldn't be processed.\nYour assets remain unchanged.",
-                    actions: <Uik.Button text="Close" danger />,
-                  });
-                }
-                await updateLockedAmt(contract!, account?.evmAddress);
-                setBondAmount('');
-                setLoadingText('');
-                setTimeout(() => {
-                  setTxStatus(undefined);
-                }, 5000);
-              }}
-              name={bond.bondName}
-              amount={bondAmount}
-              contract={utils.toAddressShortDisplay(bond.bondContractAddress)}
-              duration={`Until ${bondTimes?.ending.endDate}`}
-            />
-          </ComponentCenter>
-        )}
+      <BondConfirmPopup
+        isOpen={isConfirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={async () => {
+          setLoadingText('Processing...');
+          try {
+            await bondFunds(bond.farmTokenAddress, contract!, account!, bondAmount, ({ message }) => setLoadingText(message));
+            setTxStatus({
+              state: 'DONE',
+              text: '',
+            });
+            Uik.notify.success('Your funds have been successfully staked');
+            setOpen(false);
+          } catch (e) {
+            setTxStatus({
+              state: 'ERROR',
+              text: '',
+            });
+            Uik.prompt({
+              type: 'danger',
+              title: 'Transaction has failed',
+              message: "Transaction couldn't be processed.\nYour assets remain unchanged.",
+              actions: <Uik.Button text="Close" danger />,
+            });
+          }
+          await updateLockedAmt(contract!, account?.evmAddress);
+          setBondAmount('');
+          setLoadingText('');
+          setTimeout(() => {
+            setTxStatus(undefined);
+          }, 5000);
+        }}
+        name={bond.bondName}
+        amount={bondAmount}
+        contract={utils.toAddressShortDisplay(bond.bondContractAddress)}
+        duration={`Until ${bondTimes?.ending.endDate}`}
+      />
+    </ComponentCenter>
+  );
+
+  const Card = (
+    <>
+      <Uik.Card className="bond-preview">
+        <div className="bond-preview__image">
+          <img src="/img/reef.png" alt="Reef" />
+        </div>
+
+        <div className="bond-preview__info">
+          <Uik.Text type="lead" className="bond-preview__title">{ bond.bondName }</Uik.Text>
+          <Uik.Text type="mini" className="bond-preview__subtitle">{ description }</Uik.Text>
+        </div>
+
+        <div className={`
+          bond-preview__data
+          ${parseFloat(lockedAmount) ? 'bond-preview__data--staked' : ''}
+        `}
+        >
+          <div className="bond-preview__data-item">
+            <span>Staked</span>
+            <span>{ lockedAmount }</span>
+          </div>
+
+          <div className="bond-preview__data-item">
+            <span>Earned</span>
+            <span>{ earned }</span>
+          </div>
+        </div>
+
+        <div className="bond-preview__footer">{ cta }</div>
+      </Uik.Card>
+
+      <OverlayAction
+        isOpen={isOpen}
+        onClose={() => setOpen(false)}
+        className="bond-overlay"
+      >
+        { fullCard }
+      </OverlayAction>
     </>
   );
+
+  return Card;
 };
