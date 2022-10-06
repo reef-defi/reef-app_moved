@@ -3,7 +3,7 @@ import './Staking.css';
 import {
   appState, hooks, Network, ReefSigner,
 } from '@reef-defi/react-lib';
-import { BondsComponent, Skeleton } from '../bonds/BondsComponent';
+import { BondsComponent } from '../bonds/BondsComponent';
 import { bonds, IBond } from '../bonds/utils/bonds';
 
 export const Staking = (): JSX.Element => {

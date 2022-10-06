@@ -256,10 +256,10 @@ export const BondsComponent = ({
 
   const [isClaiming, setClaiming] = useState(false);
 
-  async function claimRewards(contract: Contract): Promise<void> {
+  async function claimRewards(ct: Contract): Promise<void> {
     try {
       setClaiming(true);
-      const tx = await contract.exit();
+      const tx = await ct.exit();
       await tx.wait();
 
       Uik.notify.success({
