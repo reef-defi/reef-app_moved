@@ -1,7 +1,7 @@
 import React, { useContext, useMemo, useState } from 'react';
 import { BigNumber } from 'bignumber.js';
 
-import { faRightLeft, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { hooks } from '@reef-defi/react-lib';
 import Uik from '@reef-defi/ui-kit';
 
@@ -10,6 +10,7 @@ import MyPoolsList from './MyPoolsList';
 import './pools.css';
 import PoolsList from './PoolsList';
 import CreatePool from './Pool/CreatePool';
+import TokenContext from '../../context/TokenContext';
 
 const Pools = (): JSX.Element => {
   const tokenPrices = useContext(TokenPricesContext);
@@ -24,6 +25,7 @@ const Pools = (): JSX.Element => {
   [totalLiquidity, yesterdayTotalLiquidity]);
 
   const [isCreatePoolOpen, setCreatePoolOpen] = useState(false);
+  const { tokens } = useContext(TokenContext);
 
   return (
     <div className="pools">
@@ -46,14 +48,10 @@ const Pools = (): JSX.Element => {
         </div>
         <div className="pools__buttons">
           <Uik.Button
-            icon={faRightLeft}
-            text="Show Transactions"
-          />
-
-          <Uik.Button
             icon={faPlus}
             text="Create Pool"
             onClick={() => setCreatePoolOpen(true)}
+            size="large"
           />
         </div>
       </Uik.Container>
@@ -63,8 +61,8 @@ const Pools = (): JSX.Element => {
         onClose={() => setCreatePoolOpen(false)}
       />
 
-      <MyPoolsList />
-      <PoolsList />
+      <MyPoolsList tokens={tokens} />
+      <PoolsList tokens={tokens} />
     </div>
   );
 };

@@ -42,6 +42,7 @@ const Nav = ({ display }: Nav): JSX.Element => {
   const selectNetwork = (key: 'mainnet' | 'testnet'): void => {
     const toSelect = appAvailableNetworks.find((item) => item.name === key);
     networkSwitch.setSwitching(true);
+    history.push(DASHBOARD_URL);
 
     if (toSelect) {
       appState.setCurrentNetwork(toSelect);

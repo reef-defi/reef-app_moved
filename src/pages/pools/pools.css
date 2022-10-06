@@ -105,10 +105,6 @@
   align-items: center;
 }
 
-.pools__buttons > * + * {
-  margin-left: 12px;
-}
-
 .pools__table-top {
   width: 100%;
   display: flex;

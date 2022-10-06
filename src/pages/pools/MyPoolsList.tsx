@@ -1,8 +1,9 @@
-import { faArrowUpFromBracket, faCoins } from '@fortawesome/free-solid-svg-icons';
-import { appState, hooks } from '@reef-defi/react-lib';
+import { faArrowUpFromBracket, faCoins, faRepeat } from '@fortawesome/free-solid-svg-icons';
+import { appState, hooks, Token } from '@reef-defi/react-lib';
 import Uik from '@reef-defi/ui-kit';
 import React, { useContext, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import BigNumber from 'bignumber.js';
 import TokenPricesContext from '../../context/TokenPricesContext';
 import { POOL_CHART_URL } from '../../urls';
 import './pools.css';
@@ -24,7 +25,11 @@ interface Pool {
   };
 }
 
-const MyPoolsList = (): JSX.Element => {
+export interface Props {
+  tokens: Token[]
+}
+
+const MyPoolsList = ({ tokens }: Props): JSX.Element => {
   const perPage = 10;
   const [currentPage, changePage] = useState(1);
   const [changedPage, setChangedPage] = useState(false);
@@ -55,6 +60,35 @@ const MyPoolsList = (): JSX.Element => {
       .replace(':address', address || 'address')
       .replace(':action', action),
   );
+
+  interface TableToken {
+    name?: string
+    image?: string
+  }
+
+  const hasToken = ({ name }: TableToken = {}): boolean => {
+    const token = tokens.find((tkn: Token) => tkn.symbol === name);
+    if (!token) return false;
+
+    const hasBalance = (new BigNumber(token.balance.toString())).toNumber() > 0;
+    return hasBalance;
+  };
+
+  const canStake = ({
+    token1,
+    token2,
+  }: {
+    token1?: TableToken
+    token2?: TableToken
+  } = {}): boolean => hasToken(token1) && hasToken(token2);
+
+  const canTrade = ({
+    token1,
+    token2,
+  }: {
+    token1?: TableToken
+    token2?: TableToken
+  } = {}): boolean => hasToken(token1) || hasToken(token2);
 
   if (
     !pools.length
@@ -143,15 +177,34 @@ const MyPoolsList = (): JSX.Element => {
                         openPool(item.address || '', 'unstake');
                       }}
                     />
-                    <Uik.Button
-                      text="Stake"
-                      icon={faCoins}
-                      fill
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        openPool(item.address || '', 'stake');
-                      }}
-                    />
+                    {
+                        canStake(item)
+                        && (
+                          <Uik.Button
+                            text="Stake"
+                            icon={faCoins}
+                            fill
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openPool(item.address || '', 'stake');
+                            }}
+                          />
+                        )
+                      }
+                    {
+                        !canStake(item) && canTrade(item)
+                        && (
+                          <Uik.Button
+                            text="Trade"
+                            icon={faRepeat}
+                            fill
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openPool(item.address || '', 'trade');
+                            }}
+                          />
+                        )
+                      }
                   </Uik.Td>
                 </Uik.Tr>
               ))

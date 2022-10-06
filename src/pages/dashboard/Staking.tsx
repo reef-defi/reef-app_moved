@@ -15,7 +15,7 @@ export const Staking = (): JSX.Element => {
       {
         bonds?.filter((bond) => bond.network === network?.name).length
           ? (
-            <div className="col-12 staking__bonds">
+            <div className="staking__bonds">
               <>
                 {network && selectedSigner ? (
                   bonds
