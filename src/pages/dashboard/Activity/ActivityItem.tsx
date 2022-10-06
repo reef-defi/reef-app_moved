@@ -42,7 +42,7 @@ const TokenActivityItem = ({
     };
 
     const action = actionMap[type];
-    return `${action} ${token.symbol||token.name}`;
+    return `${action} ${token.symbol || token.name}`;
   }, [type, token.symbol]);
 
   const amount = useMemo(() => {
