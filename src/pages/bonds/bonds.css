@@ -360,7 +360,7 @@
   width: 100%;
 }
 
-.bond-preview .uik-button--disabled {
+.bond-preview__footer .uik-button--disabled {
   background-color: hsla(
     var(--border-color--h),
     var(--border-color--s),
@@ -429,8 +429,12 @@
   margin-top: 25px;
 }
 
+.bond-overlay .overlay-action__content {
+  padding-top: 65px;
+}
+
 .bond-overlay .bond-card {
-  margin-top: 10px;
+  margin-top: 5px;
 }
 
 .bond-overlay .bond-card__wrapper {
@@ -449,6 +453,15 @@
     calc(var(--bg--l) - 3%)
   );
   border-radius: 8px;
+}
+
+.bond-overlay .bond__cta-btn.uik-button--disabled {
+  background-color: hsl(
+    var(--bg--h),
+    var(--bg--s),
+    calc(var(--bg--l) - 3%)
+  );
+  font-weight: 500;
 }
 
 .bond-overlay .bond-card__input-wrapper {
@@ -476,4 +489,12 @@
     var(--primary--l),
     0.5
   );
+}
+
+.bonds-page {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding: 2.5rem 3.5rem;
+  grid-gap: 25px 35px;
 }

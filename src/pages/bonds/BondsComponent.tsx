@@ -648,15 +648,15 @@ export const BondsComponent = ({
         </div>
 
         <div className="bond-preview__footer">{ cta }</div>
-      </Uik.Card>
 
-      <OverlayAction
-        isOpen={isOpen}
-        onClose={() => setOpen(false)}
-        className="bond-overlay"
-      >
-        { fullCard }
-      </OverlayAction>
+        <OverlayAction
+          isOpen={isOpen}
+          onClose={() => setOpen(false)}
+          className="bond-overlay"
+        >
+          { fullCard }
+        </OverlayAction>
+      </Uik.Card>
     </>
   );
 
