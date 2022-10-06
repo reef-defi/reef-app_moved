@@ -261,7 +261,13 @@ export const BondsComponent = ({
       setClaiming(true);
       const tx = await contract.exit();
       await tx.wait();
-      Uik.notify.success('Successfully claimed rewards');
+
+      Uik.notify.success({
+        message: 'Successfully claimed rewards',
+        keepAlive: true,
+        children: <Uik.Button text="Close" success />,
+      });
+      Uik.dropConfetti();
     } catch {
       Uik.prompt({
         type: 'danger',
@@ -590,7 +596,12 @@ export const BondsComponent = ({
               state: 'DONE',
               text: '',
             });
-            Uik.notify.success('Your funds have been successfully staked');
+            Uik.notify.success({
+              message: 'Your funds have been successfully staked',
+              keepAlive: true,
+              children: <Uik.Button text="Close" success />,
+            });
+            Uik.dropConfetti();
             setOpen(false);
           } catch (e) {
             setTxStatus({
