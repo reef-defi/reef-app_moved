@@ -493,8 +493,26 @@
 
 .bonds-page {
   width: 100%;
+  padding: 2.5rem 3.5rem;
+  animation: bonds-page-appear 0.4s;
+}
+
+@keyframes bonds-page-appear {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+.bonds-page__title {
+  width: auto;
+  display: inline-block;
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+}
+
+.bonds-page__bonds {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  padding: 2.5rem 3.5rem;
   grid-gap: 25px 35px;
 }
