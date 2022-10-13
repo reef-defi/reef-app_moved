@@ -25,6 +25,7 @@ export const Staking = (): JSX.Element => {
                         key={bond.id}
                         account={selectedSigner}
                         bond={bond}
+                        onlyActive
                       />
                     ))
                 ) : <div />}
