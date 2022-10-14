@@ -240,7 +240,12 @@ const calcReturn = async (provider: Provider, validatorId: string): Promise< {re
 export const BondsComponent = ({
   account,
   bond,
-}: { account?: ReefSigner; bond: IBond;}): JSX.Element => {
+  onlyActive,
+}: {
+  account?: ReefSigner
+  bond: IBond
+  onlyActive?: boolean
+}): JSX.Element => {
   const [contract, setContract] = useState<Contract | undefined>(undefined);
   const [bondAmount, setBondAmount] = useState('');
   const [bondAmountMax, setBondAmountMax] = useState(0);
@@ -427,6 +432,10 @@ export const BondsComponent = ({
       />
     );
   }, [isToClaim, stakingClosedText]);
+
+  if (onlyActive && !isToClaim && stakingClosedText) {
+    return <></>;
+  }
 
   if (!bondTimes?.lockTime || loadingValues) return <Skeleton />;
 

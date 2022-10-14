@@ -3,11 +3,9 @@ import BigNumber from 'bignumber.js';
 import React, {
   useContext, useMemo, useState,
 } from 'react';
-import { appState, hooks } from '@reef-defi/react-lib';
 import NftContext from '../../context/NftContext';
 import TokenContext from '../../context/TokenContext';
 import TokenPricesContext from '../../context/TokenPricesContext';
-import { bonds } from '../bonds/utils/bonds';
 import BuyReefButton from './BuyReefButton';
 import { Balance } from './Balance';
 import { Rewards } from './Rewards';
@@ -19,11 +17,10 @@ import { TokenBalances } from './TokenBalances';
 
 const Dashboard = (): JSX.Element => {
   const { nfts } = useContext(NftContext);
-  const network = hooks.useObservableState(appState.currentNetwork$);
   const tabs = (() => {
     const list = [
       { value: 'tokens', text: 'Tokens' },
-      { value: 'bonds', text: 'Bonds', indicator: bonds.filter((bond) => bond.network === network?.name).length },
+      { value: 'bonds', text: 'Bonds' },
       { value: 'nfts', text: 'NFTs' },
     ];
 
