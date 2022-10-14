@@ -11,7 +11,7 @@
     "@popperjs/core": "^2.11.5",
     "@reef-defi/extension-dapp": "^1.0.14",
     "@reef-defi/react-lib": "^1.2.5",
-    "@reef-defi/ui-kit": "^1.0.8",
+    "@reef-defi/ui-kit": "^1.1.0",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
