@@ -3486,10 +3486,10 @@
   dependencies:
     "@babel/runtime" "^7.16.0"
 
-"@reef-defi/react-lib@^1.2.5":
-  version "1.2.5"
-  resolved "https://registry.yarnpkg.com/@reef-defi/react-lib/-/react-lib-1.2.5.tgz#2a91282a2bc14bfe3496320c3f4696777ad2b34b"
-  integrity sha512-5GOLFNgzxXuwcAl0MVYEiZE2+GEFn7Y7F9lSPKWv50KY4iUoH6YA0cLg2yR3MW1ux12WFkUmAvNyvwtNUkw0TA==
+"@reef-defi/react-lib@^1.2.6":
+  version "1.2.6"
+  resolved "https://registry.yarnpkg.com/@reef-defi/react-lib/-/react-lib-1.2.6.tgz#47278b10c9f8f782899cff739213a7dff7a5a341"
+  integrity sha512-3DO7BmrkyCTG/BXs0OjR4xvykfy+raUtM1A9Mb3UdWZN5UAja9ELhulLZfGCNz6azNP8OaJHVEhMCnDzJdNM2A==
   dependencies:
     "@apollo/client" "^3.6.2"
     "@fortawesome/free-regular-svg-icons" "^6.1.0"
@@ -3542,6 +3542,25 @@
   version "1.0.8"
   resolved "https://registry.yarnpkg.com/@reef-defi/ui-kit/-/ui-kit-1.0.8.tgz#184ca3bb632c0f337ca14d98c1e6a169c16e1a25"
   integrity sha512-BURtb4YaZEpoTk7WV4eCBDoWJPZkaaf25HKBgjgf97BIOJhZZh2dZ9TAdhR81dzvzfcHoN1uH4Ps2H0hDUcXoA==
+  dependencies:
+    "@fortawesome/fontawesome-svg-core" "^6.1.0"
+    "@fortawesome/free-regular-svg-icons" "^6.1.0"
+    "@fortawesome/free-solid-svg-icons" "^6.1.0"
+    "@fortawesome/react-fontawesome" "^0.1.17"
+    "@polkadot/react-identicon" "^2.0.1"
+    "@types/jest" "^27.4.1"
+    "@types/node" "^17.0.21"
+    "@types/react" "^17.0.0"
+    "@types/react-dom" "^17.0.0"
+    bignumber.js "^9.0.2"
+    qrcode.react "^3.0.1"
+    react-syntax-highlighter "^15.5.0"
+    react-transition-group "^4.4.2"
+
+"@reef-defi/ui-kit@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@reef-defi/ui-kit/-/ui-kit-1.1.0.tgz#87890998381fdbafd7a7502c8ab5c62e6905d04f"
+  integrity sha512-IghxYyQgaZrPdW6xCF7uGe1HTZkaO+KX06ONFLLFlJkmEemvx/xBwtxOnDNftXqZl4cdVvMRnyjKoEmRAD5TGQ==
   dependencies:
     "@fortawesome/fontawesome-svg-core" "^6.1.0"
     "@fortawesome/free-regular-svg-icons" "^6.1.0"
