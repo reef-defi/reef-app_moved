@@ -1,5 +1,5 @@
-import { appState, hooks, ReefSigner } from '@reef-defi/react-lib';
-import React, { useMemo } from 'react';
+import {AddressToNumber, appState, hooks, ReefSigner} from '@reef-defi/react-lib';
+import React, {useEffect, useMemo, useState} from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import NftContext from '../context/NftContext';
 import PoolContext from '../context/PoolContext';
@@ -24,20 +24,31 @@ import { Transfer } from './transfer/Transfer';
 const ContentRouter = (): JSX.Element => {
   const currentSigner: ReefSigner|undefined|null = hooks.useObservableState(appState.selectedSigner$);
   const reefPrice = hooks.useObservableState(appState.reefPrice$);
+  // const [tokenPrices, setTokenPrices] = useState({} as AddressToNumber<number>);
   // Its not appropriet to have token state in this component, but the problem was apollo client.
   // Once its decared properlly in App move TokenContext in the parent component (App.tsx)
 
-  const [tokens, tokenLoading] = hooks.useAllTokens(currentSigner?.address);
+  const [tokens, tokenLoading] = hooks.useObservableState<Token[]>(appState.selectedSignerTokenBalances$, []);
   const [nfts, nftsLoading] = hooks.useAllNfts();
-  const pools = hooks.useAllPools();
+  const pools = hooks.useObservableState(appState.poolReserves$, []);
+  // const pools = hooks.useAllPools();
   const tokenPrices = useMemo(
     () => hooks.estimatePrice(tokens, pools, reefPrice || 0),
     [tokens, pools, reefPrice],
   );
 
+  /*useEffect(() => {
+    if(tokens){
+      setTokenPrices(tokens.reduce((prices, tkn) => {
+        prices[tkn.address] = tkn.price
+        return prices
+      }, {}));
+    }
+  }, [tokens]);*/
+
   return (
     <div className="content">
-      <TokenContext.Provider value={{ tokens, loading: tokenLoading }}>
+      <TokenContext.Provider value={{ tokens: tokens, loading: tokenLoading }}>
         <NftContext.Provider value={{ nfts, loading: nftsLoading }}>
           <PoolContext.Provider value={pools}>
             <TokenPrices.Provider value={tokenPrices}>

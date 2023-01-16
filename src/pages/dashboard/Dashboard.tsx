@@ -1,19 +1,15 @@
 import Uik from '@reef-defi/ui-kit';
 import BigNumber from 'bignumber.js';
-import React, {
-  useContext, useMemo, useState,
-} from 'react';
+import React, {useContext, useMemo, useState,} from 'react';
 import NftContext from '../../context/NftContext';
 import TokenContext from '../../context/TokenContext';
 import TokenPricesContext from '../../context/TokenPricesContext';
 import BuyReefButton from './BuyReefButton';
-import { Balance } from './Balance';
-import { Rewards } from './Rewards';
+import {Balance} from './Balance';
+import {Rewards} from './Rewards';
 import './Dashboard.css';
-import { Nfts } from './Nfts';
-import { Staking } from './Staking';
-import { Activity } from './Activity/Activity';
-import { TokenBalances } from './TokenBalances';
+import {Staking} from './Staking';
+import {TokenBalances} from './TokenBalances';
 
 const Dashboard = (): JSX.Element => {
   const { nfts } = useContext(NftContext);
@@ -57,7 +53,7 @@ const Dashboard = (): JSX.Element => {
       <div className="dashboard__main">
         <div className="dashboard__left">
           <Uik.Tabs
-            className="dashboard__tabs"
+            className="dashboard__tabs "
             options={tabs}
             value={tab}
             onChange={(e) => setTab(e)}
@@ -65,11 +61,11 @@ const Dashboard = (): JSX.Element => {
 
           { tab === 'tokens' ? <TokenBalances tokens={tokens} /> : '' }
           { tab === 'bonds' ? <Staking /> : '' }
-          { tab === 'nfts' ? <Nfts nfts={nfts} /> : '' }
+          {/*{ tab === 'nfts' ? <Nfts nfts={nfts} /> : '' }*/}
         </div>
 
         <div className="dashboard__right">
-          <Activity />
+          {/*<Activity /> */}
         </div>
       </div>
     </div>
