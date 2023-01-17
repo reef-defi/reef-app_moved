@@ -24,7 +24,7 @@ export const Nfts = ({ nfts }: Nfts): JSX.Element => (
 
     {nfts.length === 0 && (
     <div className="nfts__empty">
-      <Uik.Text type="light">Your wallet doesn&apos;t own any NFTs.</Uik.Text>
+      {/* <Uik.Text type="light">Your wallet doesn&apos;t own any NFTs.</Uik.Text> */}
       <Uik.Text type="light">We&apos;re adding NFTs soon.</Uik.Text>
       <SqwidButton />
     </div>
