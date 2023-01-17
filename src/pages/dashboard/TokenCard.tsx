@@ -142,12 +142,12 @@ const TokenCard = ({
             </button>
           </div>
 
-          <Uik.Button
+          {/*<Uik.Button
             text="Swap"
             icon={faRepeat}
             onClick={() => setSwapOpen(true)}
             size="small"
-          />
+          />*/}
 
           <Uik.Button
             text="Send"

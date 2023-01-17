@@ -27,7 +27,7 @@ const Nav = ({ display }: Nav): JSX.Element => {
   const mainnetSelected = network == null || network?.rpcUrl === availableNetworks.mainnet.rpcUrl;
   const menuItems = [
     { title: 'Dashboard', url: DASHBOARD_URL },
-    { title: 'Pools', url: POOLS_URL },
+    // { title: 'Pools', url: POOLS_URL },
     { title: 'Bonds', url: BONDS_URL },
     { title: 'Creator', url: CREATE_ERC20_TOKEN_URL },
   ];

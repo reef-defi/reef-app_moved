@@ -83,7 +83,8 @@ export const TokenBalances = ({ tokens }: TokenBalances): JSX.Element => {
           : (
             <>
               { tokenCards }
-              <CreateTokenButton />
+              {/*<CreateTokenButton />*/}
+              <Uik.Text type="light">We're adding other tokens soon.</Uik.Text>
             </>
           )
       }

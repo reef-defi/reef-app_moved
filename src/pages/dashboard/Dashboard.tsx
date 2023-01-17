@@ -9,6 +9,7 @@ import {Balance} from './Balance';
 import {Rewards} from './Rewards';
 import './Dashboard.css';
 import {Staking} from './Staking';
+import {Nfts} from './Nfts';
 import {TokenBalances} from './TokenBalances';
 
 const Dashboard = (): JSX.Element => {
@@ -43,7 +44,7 @@ const Dashboard = (): JSX.Element => {
       <div className="dashboard__top">
         <div className="dashboard__top-left">
           <Balance balance={totalBalance} loading={loading} />
-          <Rewards rewards={0} />
+          {/*<Rewards rewards={0} />*/}
         </div>
         <div className="dashboard__top-right">
           <BuyReefButton />
@@ -61,7 +62,7 @@ const Dashboard = (): JSX.Element => {
 
           { tab === 'tokens' ? <TokenBalances tokens={tokens} /> : '' }
           { tab === 'bonds' ? <Staking /> : '' }
-          {/*{ tab === 'nfts' ? <Nfts nfts={nfts} /> : '' }*/}
+          { tab === 'nfts' ? <Nfts nfts={nfts} /> : '' }
         </div>
 
         <div className="dashboard__right">

@@ -1,4 +1,4 @@
-import {AddressToNumber, appState, hooks, ReefSigner} from '@reef-defi/react-lib';
+import {AddressToNumber, appState, hooks, ReefSigner, TokenWithAmount} from '@reef-defi/react-lib';
 import React, {useEffect, useMemo, useState} from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import NftContext from '../context/NftContext';
@@ -28,30 +28,30 @@ const ContentRouter = (): JSX.Element => {
   // Its not appropriet to have token state in this component, but the problem was apollo client.
   // Once its decared properlly in App move TokenContext in the parent component (App.tsx)
 
-  const [tokens, tokenLoading] = hooks.useObservableState<Token[]>(appState.selectedSignerTokenBalances$, []);
+  const tokens = hooks.useObservableState<TokenWithAmount[]|null>(appState.tokenPrices$, []);
   const [nfts, nftsLoading] = hooks.useAllNfts();
   const pools = hooks.useObservableState(appState.poolReserves$, []);
-  // const pools = hooks.useAllPools();
+  // TODO use when we have pools graphql - const pools = hooks.useAllPools();
   const tokenPrices = useMemo(
-    () => hooks.estimatePrice(tokens, pools, reefPrice || 0),
+    () => tokens?tokens.reduce((prices: AddressToNumber<number>, tkn)=>{
+      prices[tkn.address] = tkn.price;
+      return prices;
+    }, {}) : [],
+    [tokens],
+  );
+/*
+const tokenPrices = useMemo(
+    () => hooks.estimatePrice(tokens||[], pools, reefPrice || 0),
     [tokens, pools, reefPrice],
   );
-
-  /*useEffect(() => {
-    if(tokens){
-      setTokenPrices(tokens.reduce((prices, tkn) => {
-        prices[tkn.address] = tkn.price
-        return prices
-      }, {}));
-    }
-  }, [tokens]);*/
+*/
 
   return (
     <div className="content">
-      <TokenContext.Provider value={{ tokens: tokens, loading: tokenLoading }}>
+      <TokenContext.Provider value={{ tokens: tokens||[], loading: tokens==null }}>
         <NftContext.Provider value={{ nfts, loading: nftsLoading }}>
           <PoolContext.Provider value={pools}>
-            <TokenPrices.Provider value={tokenPrices}>
+            <TokenPrices.Provider value={tokenPrices as AddressToNumber<number>}>
               <Switch>
                 <Route path={SPECIFIED_SWAP_URL} component={Swap} />
                 <Route exact path={POOLS_URL} component={Pools} />

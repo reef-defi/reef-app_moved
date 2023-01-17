@@ -22,7 +22,8 @@ interface Nfts {
 
 export const Nfts = ({ nfts }: Nfts): JSX.Element => (
   <div className="nfts">
-    {nfts.length === 0 && (
+      <Uik.Text type="light">We're adding NFTs soon.</Uik.Text>
+    {/*{nfts.length === 0 && (
     <div className="nfts__empty">
       <Uik.Text type="light">Your wallet doesn&apos;t own any NFTs.</Uik.Text>
       <SqwidButton />
@@ -43,7 +44,7 @@ export const Nfts = ({ nfts }: Nfts): JSX.Element => (
         </div>
         )}
       </div>
-    )}
+    )}*/}
     {/* {nfts.length  && (
       <div className="col-12">
         <Skeleton />
