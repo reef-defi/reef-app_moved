@@ -1,18 +1,14 @@
 import Uik from '@reef-defi/ui-kit';
 import BigNumber from 'bignumber.js';
-import React, {
-  useContext, useMemo, useState,
-} from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 import NftContext from '../../context/NftContext';
 import TokenContext from '../../context/TokenContext';
 import TokenPricesContext from '../../context/TokenPricesContext';
 import BuyReefButton from './BuyReefButton';
 import { Balance } from './Balance';
-import { Rewards } from './Rewards';
 import './Dashboard.css';
-import { Nfts } from './Nfts';
 import { Staking } from './Staking';
-import { Activity } from './Activity/Activity';
+import { Nfts } from './Nfts';
 import { TokenBalances } from './TokenBalances';
 
 const Dashboard = (): JSX.Element => {
@@ -47,7 +43,7 @@ const Dashboard = (): JSX.Element => {
       <div className="dashboard__top">
         <div className="dashboard__top-left">
           <Balance balance={totalBalance} loading={loading} />
-          <Rewards rewards={0} />
+          {/* <Rewards rewards={0} /> */}
         </div>
         <div className="dashboard__top-right">
           <BuyReefButton />
@@ -57,7 +53,7 @@ const Dashboard = (): JSX.Element => {
       <div className="dashboard__main">
         <div className="dashboard__left">
           <Uik.Tabs
-            className="dashboard__tabs"
+            className="dashboard__tabs "
             options={tabs}
             value={tab}
             onChange={(e) => setTab(e)}
@@ -69,7 +65,7 @@ const Dashboard = (): JSX.Element => {
         </div>
 
         <div className="dashboard__right">
-          <Activity />
+          {/* <Activity /> */}
         </div>
       </div>
     </div>

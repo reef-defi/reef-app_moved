@@ -1,15 +1,12 @@
-import React, { useMemo, useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 import {
-  availableNetworks, Components, appState, hooks, ReefSigner, Network,
+  appState, availableNetworks, Components, hooks, Network, ReefSigner,
 } from '@reef-defi/react-lib';
 import './Nav.css';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import Uik from '@reef-defi/ui-kit';
 import { saveSignerLocalPointer } from '../store/internalStore';
-import {
-  BONDS_URL,
-  CREATE_ERC20_TOKEN_URL, DASHBOARD_URL, POOLS_URL,
-} from '../urls';
+import { BONDS_URL, CREATE_ERC20_TOKEN_URL, DASHBOARD_URL } from '../urls';
 import { appAvailableNetworks } from '../environment';
 import HideBalance from '../context/HideBalance';
 import NetworkSwitch from '../context/NetworkSwitch';
@@ -27,7 +24,7 @@ const Nav = ({ display }: Nav): JSX.Element => {
   const mainnetSelected = network == null || network?.rpcUrl === availableNetworks.mainnet.rpcUrl;
   const menuItems = [
     { title: 'Dashboard', url: DASHBOARD_URL },
-    { title: 'Pools', url: POOLS_URL },
+    // { title: 'Pools', url: POOLS_URL },
     { title: 'Bonds', url: BONDS_URL },
     { title: 'Creator', url: CREATE_ERC20_TOKEN_URL },
   ];

@@ -2,9 +2,8 @@ import { NFT as NFTData } from '@reef-defi/react-lib';
 import React from 'react';
 import './Nfts.css';
 import Uik from '@reef-defi/ui-kit';
-import SqwidButton from './SqwidButton/SqwidButton';
-
 import NFT from './NFT';
+import SqwidButton from './SqwidButton/SqwidButton';
 
 // const { isDataSet, DataProgress } = utils;
 // const placeholderImage = 'https://cryptotelegram.com/wp-content/uploads/2021/04/reef-crypto-explained.jpg';
@@ -22,9 +21,11 @@ interface Nfts {
 
 export const Nfts = ({ nfts }: Nfts): JSX.Element => (
   <div className="nfts">
+
     {nfts.length === 0 && (
     <div className="nfts__empty">
-      <Uik.Text type="light">Your wallet doesn&apos;t own any NFTs.</Uik.Text>
+      {/* <Uik.Text type="light">Your wallet doesn&apos;t own any NFTs.</Uik.Text> */}
+      <Uik.Text type="light">We&apos;re adding NFTs soon.</Uik.Text>
       <SqwidButton />
     </div>
     )}
