@@ -14,6 +14,7 @@ import HideBalance, { toggleHidden, getStoredPref } from './context/HideBalance'
 import NetworkSwitch, { setSwitching } from './context/NetworkSwitch';
 import Bind from './common/Bind/Bind';
 import NetworkSwitching from './common/NetworkSwitching';
+import InfoBar from './common/InfoBar';
 
 const App = (): JSX.Element => {
   const { loading, error } = hooks.useInitReefState(
@@ -44,6 +45,7 @@ const App = (): JSX.Element => {
       {apollo
     && (
     <ApolloProvider client={apollo}>
+      <InfoBar />
       <OptionContext.Provider value={{ ...defaultOptions, back: history.goBack, notify }}>
         <HideBalance.Provider value={hideBalance}>
           <NetworkSwitch.Provider value={networkSwitch}>

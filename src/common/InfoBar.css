@@ -1,0 +1,33 @@
+.infobar {
+    position: fixed;
+    top: -80px;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    text-align: center;
+    padding: 10px;
+    background: linear-gradient(135deg, #ae27a5, #742cb2);
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.25);
+    transition: top 0.8s ease-in-out;
+}
+
+.infobar-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    color: #fff;
+    gap: 30px;
+}
+
+.show {
+    top: 0px;
+}
+
+.visible {
+    display: block;
+}
+
+.hidden {
+    display: none;
+}
