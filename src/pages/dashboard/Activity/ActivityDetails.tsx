@@ -165,10 +165,9 @@ const ActivityDetails = ({
                     <div className="my-auto mx-2 fs-6">
                       <span className="transfer-asset__wallet-address">
                         {from.substring(1, 8)}
-                        ...
                       </span>
                     </div>
-                    <button className="transfer-asset__wallet-name">Tom</button>
+                    <button className="transfer-asset__wallet-name"></button>
                   </div>
                 </div>
 
@@ -177,12 +176,9 @@ const ActivityDetails = ({
                     <div className="my-auto mx-2 ">
                       <span className="transfer-asset__wallet-address">
                         {to.substring(1, 7)}
-                        ...
                       </span>
                     </div>
-                    <button className="transfer-asset__wallet-name">
-                      Bene
-                    </button>
+                    <button className="transfer-asset__wallet-name"></button>
                   </div>
                 </div>
               </div>
@@ -272,12 +268,9 @@ const ActivityDetails = ({
                     <div className="my-auto mx-2 fs-6">
                       <span className="transfer-asset__wallet-address">
                         {from.substring(1, 8)}
-                        ...
                       </span>
                     </div>
-                    <button className="transfer-asset__wallet-name">
-                      Tom
-                    </button>
+                    <button className="transfer-asset__wallet-name"></button>
                   </div>
                 </div>
 
@@ -286,12 +279,9 @@ const ActivityDetails = ({
                     <div className="my-auto mx-2 ">
                       <span className="transfer-asset__wallet-address">
                         {to.substring(1, 7)}
-                        ...
                       </span>
                     </div>
-                    <button className="transfer-asset__wallet-name">
-                      Bene
-                    </button>
+                    <button className="transfer-asset__wallet-name"></button>
                   </div>
                 </div>
               </div>
