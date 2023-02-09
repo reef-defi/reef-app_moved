@@ -47,7 +47,7 @@ export const Activity = (): JSX.Element => {
         {!!transfers && !!transfers.length && (
         <div>
 
-          {transfers.map((item, index) => (
+         {transfers.map((item, index) => (
             <div onClick={() => {
               setCurrentTransaction(item);
               setActivityModalOpen(!isActivityModalOpen);
