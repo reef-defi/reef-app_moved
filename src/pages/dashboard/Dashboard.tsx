@@ -10,6 +10,7 @@ import './Dashboard.css';
 import { Staking } from './Staking';
 import { Nfts } from './Nfts';
 import { TokenBalances } from './TokenBalances';
+import {Activity} from "./Activity/Activity";
 
 const Dashboard = (): JSX.Element => {
   const { nfts } = useContext(NftContext);
@@ -65,7 +66,7 @@ const Dashboard = (): JSX.Element => {
         </div>
 
         <div className="dashboard__right">
-          {/* <Activity /> */}
+           <Activity />
         </div>
       </div>
     </div>
