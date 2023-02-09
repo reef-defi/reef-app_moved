@@ -18,10 +18,10 @@ export const Activity = (): JSX.Element => {
   const [isActivityModalOpen, setActivityModalOpen] = useState(false);
   const signer: ReefSigner | undefined |null = hooks.useObservableState(appState.selectedSigner$);
   const network: Network|undefined = hooks.useObservableState(appState.currentNetwork$);
-  const [selectedTransaction, setTransaction] = useState<TokenTransfer|null>(null);
+  const [selectedTransaction, setSelectedTransaction] = useState<TokenTransfer|null>(null);
 
   const setCurrentTransaction = (transaction : TokenTransfer) => {
-    setTransaction(transaction);
+    setSelectedTransaction(transaction);
   };
 
   // @ts-ignore
@@ -46,7 +46,8 @@ export const Activity = (): JSX.Element => {
         {!!transfers && !transfers.length && <div className="no-token-activity">No recent transfer activity.</div>}
         {!!transfers && !!transfers.length && (
         <div>
-          {transfers.slice(0, 10).map((item, index) => (
+
+          {transfers.map((item, index) => (
             <div onClick={() => {
               setCurrentTransaction(item);
               setActivityModalOpen(!isActivityModalOpen);
