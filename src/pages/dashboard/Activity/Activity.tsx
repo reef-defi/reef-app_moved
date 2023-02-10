@@ -88,6 +88,22 @@ export const Activity = (): JSX.Element => {
               </div>
             ))}
           </div>
+         {transfers.map((item, index) => (
+            <div onClick={() => {
+              setCurrentTransaction(item);
+              setActivityModalOpen(!isActivityModalOpen);
+            }}
+            >
+              <ActivityItem
+                key={index}
+                timestamp={item.timestamp}
+                token={item.token}
+                url={item.url}
+                inbound={item.inbound}
+              />
+            </div>
+          ))}
+        </div>
         )}
         {!transfers && (
           <>
