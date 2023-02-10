@@ -1,4 +1,6 @@
-import { NFT, Token, utils } from '@reef-defi/react-lib';
+import {
+  NFT, Token, utils,
+} from '@reef-defi/react-lib';
 import React, {
   useContext, useMemo,
 } from 'react';
@@ -23,6 +25,8 @@ export interface Props {
   url: string;
   token: Token | NFT;
   timestamp: number;
+  sender: string | undefined;
+  recipient: string | undefined;
 }
 
 const formatDate = (timestamp: number): string => {
@@ -42,6 +46,8 @@ const ActivityDetails = ({
   inbound,
   url,
   token,
+  sender,
+  recipient,
 }: Props): JSX.Element => {
   const isNFT = !!(token as NFT).nftId;
   const type: 'receive' | 'send' = inbound ? 'receive' : 'send';
@@ -164,10 +170,11 @@ const ActivityDetails = ({
                   <div className="transfer-asset__wallet transfer-asset__direction-indicator">
                     <div className="my-auto mx-2 fs-6">
                       <span className="transfer-asset__wallet-address">
-                        {from.substring(1, 8)}
+                        {from.substring(0, 5)}
+                        ...
                       </span>
                     </div>
-                    <button className="transfer-asset__wallet-name"></button>
+                    <button type="button" className="transfer-asset__wallet-name">{ sender }</button>
                   </div>
                 </div>
 
@@ -175,10 +182,11 @@ const ActivityDetails = ({
                   <div className="transfer-asset__wallet">
                     <div className="my-auto mx-2 ">
                       <span className="transfer-asset__wallet-address">
-                        {to.substring(1, 7)}
+                        {to.substring(0, 5)}
+                        ...
                       </span>
                     </div>
-                    <button className="transfer-asset__wallet-name"></button>
+                    <button type="button" className="transfer-asset__wallet-name">{ recipient }</button>
                   </div>
                 </div>
               </div>
@@ -267,10 +275,11 @@ const ActivityDetails = ({
                   <div className="transfer-asset__wallet transfer-asset__direction-indicator">
                     <div className="my-auto mx-2 fs-6">
                       <span className="transfer-asset__wallet-address">
-                        {from.substring(1, 8)}
+                        {from.substring(0, 5)}
+                        ...
                       </span>
                     </div>
-                    <button className="transfer-asset__wallet-name"></button>
+                    <button type="button" className="transfer-asset__wallet-name">{ sender }</button>
                   </div>
                 </div>
 
@@ -278,10 +287,11 @@ const ActivityDetails = ({
                   <div className="transfer-asset__wallet">
                     <div className="my-auto mx-2 ">
                       <span className="transfer-asset__wallet-address">
-                        {to.substring(1, 7)}
+                        {to.substring(0, 5)}
+                        ...
                       </span>
                     </div>
-                    <button className="transfer-asset__wallet-name"></button>
+                    <button type="button" className="transfer-asset__wallet-name">{ recipient }</button>
                   </div>
                 </div>
               </div>

@@ -5,7 +5,7 @@
 }
 
 .transfer-asset .uik-modal__container .uik-modal__popup {
-  width: 920px !important;
+  width: 940px !important;
   background-color: #eeebf6 !important;
   box-shadow: var(--neomorph-out);
 }
@@ -221,7 +221,7 @@
   justify-content: flex-start;
   line-height: 1.1;
   overflow: hidden;
-  padding: 0.75rem 1.5rem;
+  padding: 0.6rem 1.5rem;
   text-decoration: none;
   transition: all .125s;
   -webkit-user-select: none;
@@ -260,7 +260,7 @@
   margin: 0 !important;
   padding: 0 11px 0 19px;
   font-size: 1rem !important;
-  line-height: 1.4;
+  line-height: 1.6;
   font-weight: 900;
   color: #a93185;
   background: linear-gradient(to right, #a93185, #5531a9);
