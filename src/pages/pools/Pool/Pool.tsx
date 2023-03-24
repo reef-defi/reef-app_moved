@@ -1,4 +1,4 @@
-import { appState, hooks, ReefSigner } from '@reef-defi/react-lib';
+import { appState, graphql, hooks, ReefSigner } from '@reef-defi/react-lib';
 import Uik from '@reef-defi/ui-kit';
 import React, { useContext, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -30,10 +30,14 @@ const Pool = (): JSX.Element => {
     appState.selectedSigner$,
   );
 
-  const [poolInfo] = hooks.usePoolInfo(
+  // TODO set as global var
+  const apolloDex = hooks.useObservableState(graphql.apolloDexClientInstance$);
+  
+  const [poolInfo] = hooks.usePoolInfo_(
     address,
     signer?.address || '',
     tokenPrices,
+    apolloDex
   );
 
   const tokenPrice1 = (poolInfo ? tokenPrices[poolInfo.firstToken.address] : 0) || 0;
@@ -43,13 +47,13 @@ const Pool = (): JSX.Element => {
 
   const [timeframe, setTimeframe] = useState<Timeframe>('day');
 
-  const [poolData] = hooks.usePoolData({
+  const [poolData] = hooks.usePoolData_({
     address,
     decimal1,
     decimal2,
     price1: tokenPrice1,
     price2: tokenPrice2,
-  });
+  }, apolloDex);
 
   if (!poolInfo) {
     return <Uik.Loading />;
