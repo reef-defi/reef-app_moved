@@ -33,7 +33,7 @@ const Pool = (): JSX.Element => {
   // TODO set as global var
   const apolloDex = hooks.useObservableState(graphql.apolloDexClientInstance$);
   
-  const [poolInfo] = hooks.usePoolInfo_(
+  const [poolInfo] = hooks.usePoolInfo(
     address,
     signer?.address || '',
     tokenPrices,
@@ -47,7 +47,7 @@ const Pool = (): JSX.Element => {
 
   const [timeframe, setTimeframe] = useState<Timeframe>('day');
 
-  const [poolData] = hooks.usePoolData_({
+  const [poolData] = hooks.usePoolData({
     address,
     decimal1,
     decimal2,

@@ -17,8 +17,8 @@ const Pools = (): JSX.Element => {
 
   // TODO set as global var
   const apolloDex = hooks.useObservableState(graphql.apolloDexClientInstance$);
-  const totalLiquidity = hooks.useTotalSupply_(tokenPrices, apolloDex);
-  const yesterdayTotalLiquidity = hooks.useTotalSupply_(tokenPrices, apolloDex, true);
+  const totalLiquidity = hooks.useTotalSupply(tokenPrices, apolloDex);
+  const yesterdayTotalLiquidity = hooks.useTotalSupply(tokenPrices, apolloDex, true);
 
   const percentage = useMemo(() => new BigNumber(totalLiquidity)
     .minus(yesterdayTotalLiquidity)
