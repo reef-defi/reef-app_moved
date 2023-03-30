@@ -1,5 +1,5 @@
 import { faArrowUpFromBracket, faCoins, faRepeat } from '@fortawesome/free-solid-svg-icons';
-import { appState, hooks, Token } from '@reef-defi/react-lib';
+import { appState, graphql, hooks, Token } from '@reef-defi/react-lib';
 import Uik from '@reef-defi/ui-kit';
 import React, { useContext, useState } from 'react';
 import { useHistory } from 'react-router-dom';
@@ -20,6 +20,8 @@ const PoolsList = ({ tokens }: Props): JSX.Element => {
   const [search, setSearch] = useState('');
   const tokenPrices = useContext(TokenPricesContext);
 
+  const apolloDex = hooks.useObservableState(graphql.apolloDexClientInstance$);
+
   const signer = hooks.useObservableState(
     appState.selectedSigner$,
   );
@@ -27,7 +29,7 @@ const PoolsList = ({ tokens }: Props): JSX.Element => {
   const [pools, , count] = hooks.usePoolsList({
     limit: pageCount,
     offset: (currentPage - 1) * pageCount,
-    reefscanApi: network?.reefscanUrl || '',
+    dexClient: apolloDex,
     search,
     signer: signer?.address || '',
     tokenPrices,

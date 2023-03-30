@@ -15,7 +15,6 @@ import TokenContext from '../../context/TokenContext';
 const Pools = (): JSX.Element => {
   const tokenPrices = useContext(TokenPricesContext);
 
-  // TODO set as global var
   const apolloDex = hooks.useObservableState(graphql.apolloDexClientInstance$);
   const totalLiquidity = hooks.useTotalSupply(tokenPrices, apolloDex);
   const yesterdayTotalLiquidity = hooks.useTotalSupply(tokenPrices, apolloDex, true);

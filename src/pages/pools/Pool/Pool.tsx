@@ -30,7 +30,6 @@ const Pool = (): JSX.Element => {
     appState.selectedSigner$,
   );
 
-  // TODO set as global var
   const apolloDex = hooks.useObservableState(graphql.apolloDexClientInstance$);
   
   const [poolInfo] = hooks.usePoolInfo(
