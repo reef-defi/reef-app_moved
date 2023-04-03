@@ -31,7 +31,8 @@ export const Activity = (): JSX.Element => {
   // compare the sender wallet address with the available signer wallet addresses.
   const getAccountName = (availableAccounts: ReefSigner[] | undefined | null, address: string | undefined): string => {
     const filteredAccount = availableAccounts?.find((account) => account.address === address)?.name;
-    if (filteredAccount && filteredAccount.length) {
+
+    if (filteredAccount) {
       // Set maximum length of 7 characters + dots.
       const maxLength = 7;
 
@@ -40,7 +41,7 @@ export const Activity = (): JSX.Element => {
         ? `${senderName.slice(0, maxLength - 3)}...${senderName.slice(-maxLength + 4)}`
         : senderName;
     }
-    return 'no name';
+    return 'unknown';
   };
 
   // memorizes the selected sender of selectedTransaction.
@@ -73,6 +74,7 @@ export const Activity = (): JSX.Element => {
           <div>
 
             {transfers.map((item, index) => (
+              // eslint-disable-next-line jsx-a11y/no-static-element-interactions
               <div onClick={() => {
                 setCurrentTransaction(item);
                 setActivityModalOpen(!isActivityModalOpen);
@@ -88,22 +90,6 @@ export const Activity = (): JSX.Element => {
               </div>
             ))}
           </div>
-         {transfers.map((item, index) => (
-            <div onClick={() => {
-              setCurrentTransaction(item);
-              setActivityModalOpen(!isActivityModalOpen);
-            }}
-            >
-              <ActivityItem
-                key={index}
-                timestamp={item.timestamp}
-                token={item.token}
-                url={item.url}
-                inbound={item.inbound}
-              />
-            </div>
-          ))}
-        </div>
         )}
         {!transfers && (
           <>
