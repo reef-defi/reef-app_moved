@@ -37,6 +37,7 @@ const Swap = (): JSX.Element => {
     state,
     network,
     account: signer || undefined,
+    batchTxs: network?.name === 'mainnet',
     dispatch,
     notify,
     updateTokenState: async () => {}, // eslint-disable-line

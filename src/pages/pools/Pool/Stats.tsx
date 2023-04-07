@@ -50,7 +50,7 @@ const Token = ({ token, price }: TokenStatsProps): JSX.Element => (
       <div>
         <div className="pool-stats__token-price">
           $
-          {price.toFixed(4)}
+          {isNaN(price) ? '?' : price.toFixed(4)}
         </div>
         <div className="pool-stats__token-value-ratio">
           {displayAmount(token.ratio.amount)}

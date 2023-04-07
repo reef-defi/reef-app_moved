@@ -70,7 +70,7 @@ async function verify(
       license: 'MIT',
     },
     args,
-    network.reefscanUrl,
+    network.verificationApiUrl,
   );
   return verified;
 }

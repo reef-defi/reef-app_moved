@@ -59,6 +59,7 @@ const Actions = ({ address1, address2, tab }: ActionsProps): JSX.Element => {
     state: tradeState,
     network,
     account: signer || undefined,
+    batchTxs: network?.name === 'mainnet',
     dispatch: tradeDispatch,
     notify,
     updateTokenState: async () => {}, // eslint-disable-line
@@ -92,6 +93,7 @@ const Actions = ({ address1, address2, tab }: ActionsProps): JSX.Element => {
     state: provideState,
     network,
     signer: signer || undefined,
+    batchTxs: network?.name === 'mainnet',
     dispatch: provideDispatch,
     notify,
     updateTokenState: async () => {}, // eslint-disable-line
@@ -120,6 +122,7 @@ const Actions = ({ address1, address2, tab }: ActionsProps): JSX.Element => {
     network,
     state: withdrawState,
     signer: signer || undefined,
+    batchTxs: network?.name === 'mainnet',
     notify,
     dispatch: withdrawDispatch,
     onSuccess: () => setFinalized(false),

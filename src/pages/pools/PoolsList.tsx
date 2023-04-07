@@ -25,7 +25,6 @@ const PoolsList = ({ tokens }: Props): JSX.Element => {
   const signer = hooks.useObservableState(
     appState.selectedSigner$,
   );
-  const network = hooks.useObservableState(appState.currentNetwork$);
   const [pools, , count] = hooks.usePoolsList({
     limit: pageCount,
     offset: (currentPage - 1) * pageCount,
