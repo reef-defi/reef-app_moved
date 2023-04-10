@@ -1,16 +1,19 @@
 import './stats.css';
 import Uik from '@reef-defi/ui-kit';
 import React, { useState } from 'react';
-import { appState, hooks } from '@reef-defi/react-lib';
+import { hooks } from '@reef-defi/react-lib';
 import { faRightLeft } from '@fortawesome/free-solid-svg-icons';
 import { useParams } from 'react-router-dom';
 import PoolSelect from './PoolSelect';
 import PoolTransactions from './PoolTransactions';
+import { ApolloClient } from '@apollo/client';
 
 interface StatsProps {
   data: hooks.PoolStats;
   price1: number;
-  price2: number
+  price2: number;
+  reefscanUrl: string;
+  dexClient: ApolloClient<any>;
 }
 interface TokenStatsProps {
   token: hooks.TokenStats;
@@ -83,11 +86,10 @@ interface UrlParams {
   address: string;
 }
 
-const Stats = ({ data, price1, price2 }: StatsProps): JSX.Element => {
+const Stats = ({ data, price1, price2, reefscanUrl, dexClient }: StatsProps): JSX.Element => {
   const [isSelectOpen, setSelectOpen] = useState(false);
   const [isTransactionsOpen, setTransactionsOpen] = useState(false);
 
-  const network = hooks.useObservableState(appState.currentNetwork$);
   const { address } = useParams<UrlParams>();
 
   return (
@@ -182,7 +184,8 @@ const Stats = ({ data, price1, price2 }: StatsProps): JSX.Element => {
 
       <PoolTransactions
         address={address}
-        reefscanUrl={network?.reefscanFrontendUrl}
+        reefscanUrl={reefscanUrl}
+        dexClient={dexClient}
         isOpen={isTransactionsOpen}
         onClose={() => setTransactionsOpen(false)}
         tokens={{

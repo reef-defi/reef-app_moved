@@ -31,6 +31,7 @@ const Pool = (): JSX.Element => {
   );
 
   const apolloDex = hooks.useObservableState(graphql.apolloDexClientInstance$);
+  const network = hooks.useObservableState(appState.currentNetwork$);
   
   const [poolInfo] = hooks.usePoolInfo(
     address,
@@ -60,7 +61,13 @@ const Pool = (): JSX.Element => {
 
   return (
     <div className="pool">
-      <Stats data={poolInfo} price1={tokenPrice1} price2={tokenPrice2} />
+      <Stats 
+        data={poolInfo} 
+        price1={tokenPrice1} 
+        price2={tokenPrice2} 
+        reefscanUrl={network.reefscanUrl}
+        dexClient={apolloDex} 
+      />
 
       <div className="pool__content">
         <Actions
