@@ -35,6 +35,10 @@
   background-color: var(--border-color);
 }
 
+.nfts__item-video {
+  max-width: 100%;
+}
+
 .nfts__item-image--loading {
   position: relative;
 }

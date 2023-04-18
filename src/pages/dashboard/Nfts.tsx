@@ -38,6 +38,7 @@ export const Nfts = ({ nfts }: Nfts): JSX.Element => (
               iconUrl={nft.iconUrl}
               name={nft.name}
               balance={nft.balance}
+              mimetype={nft.mimetype}
             />
           ))}
         </div>
