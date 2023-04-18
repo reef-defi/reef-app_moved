@@ -29,9 +29,15 @@ export interface Tokens {
 
 export type Timeframe = 'hour' | 'day' | 'week' | 'month';
 
+type TimeUnit = 'Day' | 'Hour' | 'Minute';
+export interface TimeData {
+  timeUnit: TimeUnit;
+  timeSpan: number;
+}
+
 export interface Props {
   tokens: Tokens,
-  data: Data,
+  data?: Data,
   timeframe: Timeframe,
   setTimeframe: (value: Timeframe) => void
 }
@@ -104,6 +110,7 @@ const Chart = ({
             type={chartTypes[tab]}
             data={getData}
             subData={getSubData}
+            timeVisible={timeframe !== 'month'}
           />
           )
         }

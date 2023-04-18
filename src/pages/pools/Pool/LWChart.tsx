@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { createChart, IChartApi } from 'lightweight-charts';
+import { createChart, IChartApi, UTCTimestamp } from 'lightweight-charts';
 import './lw-chart.css';
 
 export interface BusinessDay {
@@ -25,6 +25,7 @@ export interface CandlestickData {
   low?: number,
   close?: number,
   time?: number | string | BusinessDay
+  timeframe?: string
 }
 
 export type Type = 'histogram' | 'candlestick' | 'area'
@@ -34,7 +35,8 @@ export type Data = HistogramData[] | CandlestickData[] | AreaData[]
 export interface Props {
   type: Type,
   data: Data,
-  subData?: HistogramData[]
+  subData?: HistogramData[],
+  timeVisible?: boolean,
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -46,7 +48,7 @@ const priceFormatter = (price: any): string => {
   return parseFloat(price).toFixed(2);
 };
 
-const chartOptions = {
+const chartOptions = (timeVisible: boolean) => ({
   layout: {
     textColor: '#898e9c',
     fontSize: 12,
@@ -61,6 +63,7 @@ const chartOptions = {
   },
   timeScale: {
     borderColor: '#b7becf',
+    timeVisible: timeVisible,
   },
   crosshair: {
     vertLine: {
@@ -83,7 +86,7 @@ const chartOptions = {
   localization: {
     priceFormatter: (price: number) => `$${priceFormatter(price)}`,
   },
-};
+});
 
 const seriesOptions = {
   priceFormat: {
@@ -183,17 +186,18 @@ const processSubData = (data: CandlestickData[], subdata: HistogramData[]): Hist
 };
 
 const renderChart = ({
-  el, type, data, subData,
+  el, type, data, subData, timeVisible
 }: {
  el: HTMLElement | null,
  type: Type,
  data: Data,
- subData?: HistogramData[]
+ subData?: HistogramData[],
+ timeVisible: boolean
 }): void => {
   if (!el) return;
 
   const { height } = el.getBoundingClientRect();
-  const options = chartOptions;
+  const options = chartOptions(timeVisible);
 
   // @ts-ignore-next-line
   const chart: IChartApi = createChart(el, { height, ...options });
@@ -237,9 +241,11 @@ const formatData = (type: Type, data: Data = []): Data => {
         close: item.close,
         high: item.high,
         low: item.low,
-        time: item.time,
+        time: item.timeframe ? new Date(item.timeframe).getTime() / 1000 as UTCTimestamp : item.time,
       });
     }
+
+    // console.log("formatData", output)
 
     return output;
   }
@@ -259,7 +265,7 @@ const Licence = (): JSX.Element => (
     <div className="lw-chart__licence-text">
       TradingView Lightweight Charts
       <br />
-      Copyright (&copy;) 2022 TradingView, Inc. https://www.tradingview.com/
+      Copyright (&copy;) 2023 TradingView, Inc. https://www.tradingview.com/
     </div>
   </a>
 );
@@ -268,21 +274,24 @@ const LWChart = ({
   type = 'histogram',
   data,
   subData,
+  timeVisible = true,
 }: Props): JSX.Element => {
   const chartWrapper = useRef(null);
   const [isRendered, setRendered] = useState(false);
 
   useEffect(() => {
     if (!isRendered && data?.length) {
+      console.log("LWChart", data)
       renderChart({
         el: chartWrapper.current,
         type,
         data: formatData(type, data),
         subData,
+        timeVisible,
       });
       setRendered(true);
     }
-  }, [data, type]);
+  }, [data, type, timeVisible]);
 
   return (
     <div className="lw-chart__wrapper">

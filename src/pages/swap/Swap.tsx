@@ -20,7 +20,7 @@ const Swap = (): JSX.Element => {
   const signer: ReefSigner|undefined | null = hooks.useObservableState(appState.selectedSigner$);
 
   const [state, dispatch] = useReducer(store.swapReducer, store.initialSwapState);
-  // hook manages all nececcery swap updates
+  // hook manages all necessary swap updates
   hooks.useSwapState({
     address1,
     address2,

@@ -102,7 +102,8 @@ const Transactions = ({
               timestamp,
               toAddress,
               senderAddress,
-              hash,
+              blockHeight,
+              indexInBlock,
               type: transactionType,
               amountIn1,
               amountIn2,
@@ -122,7 +123,7 @@ const Transactions = ({
               return (
                 <Uik.Tr
                   key={id}
-                  onClick={() => window.open(`${reefscanUrl}/extrinsic/${hash}`)}
+                  onClick={() => window.open(`${reefscanUrl}/extrinsic/${blockHeight}/${indexInBlock}`)}
                 >
                   <Uik.Td>
                     <Uik.Icon
