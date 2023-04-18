@@ -70,7 +70,7 @@ async function verify(
       license: 'MIT',
     },
     args,
-    network.reefscanUrl,
+    network.verificationApiUrl,
   );
   return verified;
 }
@@ -455,7 +455,7 @@ export const CreatorComponent = ({
                   text="View in Explorer"
                   icon={faArrowUpRightFromSquare}
                   size="large"
-                  onClick={() => window.open(`${network.reefscanFrontendUrl}/contract/${resultMessage.contract?.address}`)}
+                  onClick={() => window.open(`${network.reefscanUrl}/contract/${resultMessage.contract?.address}`)}
                 />
 
                 <Uik.Button

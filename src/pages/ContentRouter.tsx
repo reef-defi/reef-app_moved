@@ -23,7 +23,7 @@ import Bind from './bind/Bind';
 import { Bonds } from './bonds/Bonds';
 import { Creator } from './creator/Creator';
 import Dashboard from './dashboard/Dashboard';
-import AddLiqudity from './pools/AddLiquidity';
+import AddPoolLiquidity from './pools/AddLiquidity';
 import Pool from './pools/Pool/Pool';
 import Pools from './pools/Pools';
 import RemoveLiquidity from './pools/RemoveLiquidity';
@@ -34,8 +34,8 @@ const ContentRouter = (): JSX.Element => {
   // const currentSigner: ReefSigner|undefined|null = hooks.useObservableState(appState.selectedSigner$);
   // const reefPrice = hooks.useObservableState(appState.reefPrice$);
   // const [tokenPrices, setTokenPrices] = useState({} as AddressToNumber<number>);
-  // Its not appropriet to have token state in this component, but the problem was apollo client.
-  // Once its decared properlly in App move TokenContext in the parent component (App.tsx)
+  // Its not appropriate to have token state in this component, but the problem was apollo client.
+  // Once its declared properly in App move TokenContext in the parent component (App.tsx)
 
   const tokens = hooks.useObservableState<TokenWithAmount[]|null>(appState.tokenPrices$, []);
   const [nfts, nftsLoading] = hooks.useAllNfts();
@@ -65,8 +65,8 @@ const tokenPrices = useMemo(
                 <Route path={SPECIFIED_SWAP_URL} component={Swap} />
                 <Route exact path={POOLS_URL} component={Pools} />
                 <Route exact path={DASHBOARD_URL} component={Dashboard} />
-                <Route path={ADD_LIQUIDITY_URL} component={AddLiqudity} />
-                <Route exact path={ADD_LIQUIDITY_URL} component={AddLiqudity} />
+                <Route path={ADD_LIQUIDITY_URL} component={AddPoolLiquidity} />
+                <Route exact path={ADD_LIQUIDITY_URL} component={AddPoolLiquidity} />
                 <Route path={POOL_CHART_URL} component={Pool} />
                 <Route path={REMOVE_LIQUIDITY_URL} component={RemoveLiquidity} />
                 <Route exact path={TRANSFER_TOKEN} component={Transfer} />

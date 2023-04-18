@@ -20,7 +20,7 @@ const App = (): JSX.Element => {
     'Reef Wallet App', { ipfsHashResolverFn: (hash: string) => `https://reef.infura-ipfs.io/ipfs/${hash}` },
   );
   const history = useHistory();
-  const apollo = hooks.useObservableState(graphql.apolloClientInstance$);
+  const apolloExplorer = hooks.useObservableState(graphql.apolloExplorerClientInstance$);
 
   const [isBalanceHidden, setBalanceHidden] = useState(getStoredPref());
   const hideBalance = {
@@ -41,9 +41,9 @@ const App = (): JSX.Element => {
 
   return (
     <>
-      {apollo
+      {apolloExplorer
     && (
-    <ApolloProvider client={apollo}>
+    <ApolloProvider client={apolloExplorer}>
       <OptionContext.Provider value={{ ...defaultOptions, back: history.goBack, notify }}>
         <HideBalance.Provider value={hideBalance}>
           <NetworkSwitch.Provider value={networkSwitch}>

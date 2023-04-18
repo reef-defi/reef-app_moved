@@ -16,7 +16,7 @@ interface UrlParams {
   address2: string;
 }
 
-const AddLiqudity = (): JSX.Element => {
+const AddPoolLiquidity = (): JSX.Element => {
   const { address1, address2 } = useParams<UrlParams>();
   const history = useHistory();
   const { tokens } = useContext(TokenContext);
@@ -52,6 +52,7 @@ const AddLiqudity = (): JSX.Element => {
     state,
     network,
     signer: signer || undefined,
+    batchTxs: network?.name === 'mainnet',
     dispatch,
     notify,
     updateTokenState: async () => {}, // eslint-disable-line
@@ -79,4 +80,4 @@ const AddLiqudity = (): JSX.Element => {
   );
 };
 
-export default AddLiqudity;
+export default AddPoolLiquidity;

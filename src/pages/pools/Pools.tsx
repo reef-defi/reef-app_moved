@@ -2,7 +2,7 @@ import React, { useContext, useMemo, useState } from 'react';
 import { BigNumber } from 'bignumber.js';
 
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import { hooks } from '@reef-defi/react-lib';
+import { graphql, hooks } from '@reef-defi/react-lib';
 import Uik from '@reef-defi/ui-kit';
 
 import TokenPricesContext from '../../context/TokenPricesContext';
@@ -14,8 +14,10 @@ import TokenContext from '../../context/TokenContext';
 
 const Pools = (): JSX.Element => {
   const tokenPrices = useContext(TokenPricesContext);
-  const totalLiquidity = hooks.useTotalSupply(tokenPrices);
-  const yesterdayTotalLiquidity = hooks.useTotalSupply(tokenPrices, true);
+
+  const apolloDex = hooks.useObservableState(graphql.apolloDexClientInstance$);
+  const totalLiquidity = hooks.useTotalSupply(tokenPrices, apolloDex);
+  const yesterdayTotalLiquidity = hooks.useTotalSupply(tokenPrices, apolloDex, true);
 
   const percentage = useMemo(() => new BigNumber(totalLiquidity)
     .minus(yesterdayTotalLiquidity)

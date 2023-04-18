@@ -52,6 +52,7 @@ const OverlaySwap = ({
     state: tradeState,
     network,
     account: signer || undefined,
+    batchTxs: network?.name === 'mainnet',
     dispatch: tradeDispatch,
     notify,
     updateTokenState: async () => {}, // eslint-disable-line
@@ -90,6 +91,7 @@ const OverlaySwap = ({
                   setPercentage: (amount: number) => tradeDispatch(store.setPercentageAction(amount)),
                   setToken1Amount: (amount: string): void => tradeDispatch(store.setToken1AmountAction(amount)),
                   setToken2Amount: (amount: string): void => tradeDispatch(store.setToken2AmountAction(amount)),
+                  setSlippage: (slippage: number) => tradeDispatch(store.setSettingsAction({...tradeState.settings, percentage: slippage})),
                 }}
               />
             )

@@ -1,5 +1,5 @@
 import {
-  appState, Components, hooks, utils,
+  appState, Components, graphql, hooks, utils,
 } from '@reef-defi/react-lib';
 import React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
@@ -15,6 +15,7 @@ const Pool = (): JSX.Element => {
   const history = useHistory();
   const { address } = useParams<UrlParam>();
   const network = hooks.useObservableState(appState.currentNetwork$);
+  const apolloDex = hooks.useObservableState(graphql.apolloDexClientInstance$);
 
   const openTrade = (address1: string, address2: string): void => history.push(
     SPECIFIED_SWAP_URL
@@ -40,11 +41,12 @@ const Pool = (): JSX.Element => {
       && (
       <PoolPage
         address={address}
-        reefscanFrontendUrl={network.reefscanFrontendUrl}
+        reefscanUrl={network.reefscanUrl}
         openTrade={openTrade}
         getIconUrl={utils.getIconUrl}
         openAddLiquidity={openAddLiquidity}
         openRemoveLiquidity={openRemoveLiquidity}
+        dexClient={apolloDex}
       />
       )}
     </>

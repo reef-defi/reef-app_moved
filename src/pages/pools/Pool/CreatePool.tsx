@@ -58,6 +58,7 @@ const CreatePool = ({
     state: provideState,
     network,
     signer: signer || undefined,
+    batchTxs: network?.name === 'mainnet',
     dispatch: provideDispatch,
     notify,
     updateTokenState: async () => {}, // eslint-disable-line

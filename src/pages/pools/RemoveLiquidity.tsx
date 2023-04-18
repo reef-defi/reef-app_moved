@@ -51,6 +51,7 @@ const RemoveLiquidity = (): JSX.Element => {
   const onRemoveLiquidity = hooks.onRemoveLiquidity({
     state,
     dispatch,
+    batchTxs: network?.name === 'mainnet',
     network,
     signer: signer || undefined,
     notify,

@@ -40,7 +40,7 @@ const CONTRACT_EXISTS_GQL = gql`
             }
           }
 `;
-/* const isContractIndexed$ = (address: string): Observable<boolean> => graphql.apolloClientInstance$.pipe(
+/* const isContractIndexed$ = (address: string): Observable<boolean> => graphql.apolloExplorerClientInstance$.pipe(
   timeout(120000),
   switchMap((apollo) => {
       const rxjsSubj = new Subject();
@@ -69,7 +69,7 @@ const isContrIndexed = async (address: string): Promise<boolean> => new Promise(
   const tmt = setTimeout(() => {
     resolve(false);
   }, 120000);
-  const apolloClInst$: unknown = graphql.apolloClientInstance$;
+  const apolloClInst$: unknown = graphql.apolloExplorerClientInstance$;
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   const apollo = await firstValueFrom(apolloClInst$ as Observable<ApolloClient<any>>);
   apollo.subscribe({
