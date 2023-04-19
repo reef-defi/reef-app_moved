@@ -4,7 +4,7 @@ import { ApolloClient, gql } from '@apollo/client';
 import { firstValueFrom, Observable } from 'rxjs';
 import { graphql } from '@reef-defi/react-lib';
 
-const CONTRACT_VERIFICATION_URL = '/api/verificator/submit-verification';
+const CONTRACT_VERIFICATION_URL = '/verification/submit';
 
 interface BaseContract {
     runs: number;
@@ -33,38 +33,14 @@ const toContractAddress = (address: string): string => utils.getAddress(address)
 
 const CONTRACT_EXISTS_GQL = gql`
   subscription query ($address: String!) {
-            contract(
-              where: { address: { _eq: $address } }
-            ) {
-              address
-            }
-          }
+      contracts(limit: 1, where: {id_eq: $address}) {
+        id
+      }
+  }
+          
+          
 `;
-/* const isContractIndexed$ = (address: string): Observable<boolean> => graphql.apolloExplorerClientInstance$.pipe(
-  timeout(120000),
-  switchMap((apollo) => {
-      const rxjsSubj = new Subject();
-      // apollo does not use rxjs and switchMap has issues
-      apollo.subscribe({
-          query: CONTRACT_EXISTS_GQL,
-          variables: {address},
-          fetchPolicy: 'network-only',
-      }).subscribe({
-          next(x) { rxjsSubj.next(x) },
-          error(err) { rxjsSubj.error(err) },
-          complete() { rxjsSubj.complete() }
-      });
-      return rxjsSubj;
-  }),
-  map((res:any) => res.data.contract && res.data.contract.length),
-  skipWhile((v) => !v),
-  catchError((e) => {
-    console.log('isContractIndexed$ err=', e);
-    return of(false);
-  }),
-  take(1),
-); */
-/* es-disable-next-line */
+
 const isContrIndexed = async (address: string): Promise<boolean> => new Promise(async (resolve) => {
   const tmt = setTimeout(() => {
     resolve(false);
@@ -72,21 +48,23 @@ const isContrIndexed = async (address: string): Promise<boolean> => new Promise(
   const apolloClInst$: unknown = graphql.apolloExplorerClientInstance$;
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   const apollo = await firstValueFrom(apolloClInst$ as Observable<ApolloClient<any>>);
-  apollo.subscribe({
+  const subs = apollo.subscribe({
     query: CONTRACT_EXISTS_GQL,
     variables: { address },
     fetchPolicy: 'network-only',
   }).subscribe({
     next(result) {
-      if (result.data.contract && result.data.contract.length) {
+      if (result.data.contracts && result.data.contracts.length) {
         clearTimeout(tmt);
         resolve(true);
+        subs.unsubscribe();
       }
     },
     error(err) {
       clearTimeout(tmt);
       console.log('isContrIndexed error=', err);
       resolve(false);
+      subs.unsubscribe();
     },
     complete() {
       clearTimeout(tmt);
@@ -99,13 +77,13 @@ export const verifyContract = async (deployedContract: Contract, contract: ReefC
   if (!url) {
     return false;
   }
-
   try {
     const contractAddress = toContractAddress(deployedContract.address);
     if (!await isContrIndexed(contractAddress)) {
     // if (!await firstValueFrom(isContractIndexed$(contractAddress))) {
       return false;
     }
+
     const body: VerificationContractReq = {
       address: contractAddress,
       arguments: JSON.stringify(arg),
