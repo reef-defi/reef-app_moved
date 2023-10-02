@@ -1,5 +1,6 @@
-# Reef-App
+<img src="https://i.imgur.com/DTv57Sk.png" width="120" alt="Reef" align="right">
 
+# Reef Web App
 
 ## Developer section
 
